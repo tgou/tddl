@@ -10,32 +10,32 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 抽象类 -- 用来在 BufferedLogWriter/SoftRefLogWriter 之间共享一些对象。
- * 
+ *
  * @author changyuan.lh
  */
 public abstract class AbstractStatLogWriter extends StatLogWriter {
 
     protected static ExecutorService flushExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
 
-                                                       // changyuan.lh: 给线程命名,
-                                                       // 并且设置成后台运行
-                                                       public Thread newThread(Runnable r) {
-                                                           Thread thd = new Thread(r,
-                                                               "BufferedStatLogWriter-Flush-Executor");
-                                                           thd.setDaemon(true);
-                                                           return thd;
-                                                       }
-                                                   });
+        // changyuan.lh: 给线程命名,
+        // 并且设置成后台运行
+        public Thread newThread(Runnable r) {
+            Thread thd = new Thread(r,
+                    "BufferedStatLogWriter-Flush-Executor");
+            thd.setDaemon(true);
+            return thd;
+        }
+    });
 
-    protected static Timer           flushTimer    = new Timer( // NL
-                                                   "BufferedStatLogWriter-Flush-Timer",
-                                                       true);
+    protected static Timer flushTimer = new Timer( // NL
+            "BufferedStatLogWriter-Flush-Timer",
+            true);
 
     public static final class UniversalComparator implements Comparator<Object> {
 
         public static final UniversalComparator INSTANCE = new UniversalComparator();
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         public int compare(Object o1, Object o2) {
             if (o1 == o2) return 0;
             if (o1 == null) return -1;
@@ -68,9 +68,9 @@ public abstract class AbstractStatLogWriter extends StatLogWriter {
     public static final class LogKey implements Comparable<LogKey> {
 
         private final Object[] keys;
-        private final int      hashCode;
+        private final int hashCode;
 
-        public LogKey(Object[] keys){
+        public LogKey(Object[] keys) {
             this.hashCode = Arrays.hashCode(keys);
             this.keys = keys;
         }
@@ -100,14 +100,14 @@ public abstract class AbstractStatLogWriter extends StatLogWriter {
 
     public static class LogCounter implements Comparable<LogCounter> {
 
-        private final LogKey     logKey;
-        private final Object[]   fields;
+        private final LogKey logKey;
+        private final Object[] fields;
         private final AtomicLong count = new AtomicLong();
         private final AtomicLong value = new AtomicLong();
-        private final AtomicLong min   = new AtomicLong(Long.MAX_VALUE); // value最小值
-        private final AtomicLong max   = new AtomicLong(Long.MIN_VALUE); // value最大值
+        private final AtomicLong min = new AtomicLong(Long.MAX_VALUE); // value最小值
+        private final AtomicLong max = new AtomicLong(Long.MIN_VALUE); // value最大值
 
-        public LogCounter(LogKey logKey, Object[] fields){
+        public LogCounter(LogKey logKey, Object[] fields) {
             this.logKey = logKey;
             this.fields = fields;
         }
@@ -166,7 +166,7 @@ public abstract class AbstractStatLogWriter extends StatLogWriter {
         }
 
         public long[] getValues() {
-            return new long[] { this.count.get(), this.value.get(), this.min.get(), this.max.get() };
+            return new long[]{this.count.get(), this.value.get(), this.min.get(), this.max.get()};
         }
     }
 }

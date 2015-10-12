@@ -36,10 +36,10 @@ public class MergeNodeCostEstimater implements QueryTreeCostEstimater {
         }
 
         if (query.getLimitFrom() != null
-            && (query.getLimitFrom() instanceof Long || query.getLimitFrom() instanceof Long)
-            && (Long) query.getLimitFrom() != 0 && query.getLimitTo() != null
-            && (query.getLimitTo() instanceof Long || query.getLimitTo() instanceof Long)
-            && (Long) query.getLimitTo() != 0) {
+                && (query.getLimitFrom() instanceof Long || query.getLimitFrom() instanceof Long)
+                && (Long) query.getLimitFrom() != 0 && query.getLimitTo() != null
+                && (query.getLimitTo() instanceof Long || query.getLimitTo() instanceof Long)
+                && (Long) query.getLimitTo() != 0) {
             rowCount = ((Long) query.getLimitTo() - (Long) query.getLimitFrom());
         }
 

@@ -1,20 +1,14 @@
 package com.taobao.tddl.optimizer.core.ast.build;
 
-import java.util.List;
-
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
 import com.taobao.tddl.optimizer.core.ast.query.KVIndexNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
 import com.taobao.tddl.optimizer.core.expression.IFunction.FunctionType;
-import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
+
+import java.util.List;
 
 /**
  * @since 5.0.0
@@ -23,7 +17,7 @@ public abstract class QueryTreeNodeBuilder {
 
     protected QueryTreeNode node;
 
-    public QueryTreeNodeBuilder(){
+    public QueryTreeNodeBuilder() {
     }
 
     public QueryTreeNode getNode() {
@@ -96,17 +90,17 @@ public abstract class QueryTreeNodeBuilder {
 
     /**
      * 用于标记当前节点是否需要根据meta信息填充信息
-     * 
+     * <p/>
      * <pre>
-     * SQL. 
+     * SQL.
      *  a. select id + 2 as id , id from test where id = 2 having id = 4;
      *  b. select id + 2 as id , id from test where id = 2 order by count(id)
-     * 
+     *
      * 解释：
      * 1.  COLUMN/WHERE/JOIN中列，是取自FROM的表字段
      * 2.  HAVING/ORDER BY/GROUP BY中的列，是取自SELECT中返回的字段，获取对应别名数据
      * </pre>
-     * 
+     *
      * @param c
      * @param findInSelectList 如果在from的meta中找不到，是否继续在select中寻找
      * @return
@@ -121,14 +115,14 @@ public abstract class QueryTreeNodeBuilder {
             // 对于TableNode如果别名存在别名
             if (node instanceof TableNode && (!(node instanceof KVIndexNode))) {
                 boolean isSameName = c.getTableName().equals(node.getAlias())
-                                     || c.getTableName().equals(((TableNode) node).getTableName());
+                        || c.getTableName().equals(((TableNode) node).getTableName());
                 if (node.isSubQuery() && node.getSubAlias() != null) {
                     isSameName |= c.getTableName().equals(node.getSubAlias());
                 }
 
                 if (!isSameName) {
                     throw new IllegalArgumentException("column: " + c.getFullName() + " is not existed in either "
-                                                       + this.getNode().getName() + " or select clause");
+                            + this.getNode().getName() + " or select clause");
                 }
                 c.setTableName(((TableNode) node).getTableName());// 统一改为表名
             }
@@ -158,7 +152,7 @@ public abstract class QueryTreeNodeBuilder {
 
         if (column == null) {
             throw new IllegalArgumentException("column: " + c.getFullName() + " is not existed in either "
-                                               + this.getNode().getName() + " or select clause");
+                    + this.getNode().getName() + " or select clause");
         }
 
         if ((column instanceof IColumn) && !IColumn.STAR.equals(column.getColumnName())) {
@@ -331,7 +325,7 @@ public abstract class QueryTreeNodeBuilder {
             boolean isThis = false;
             if (c.getTableName() != null) {
                 boolean isSameName = c.getTableName().equals(other.getAlias())
-                                     || c.getTableName().equals(selected.getTableName());
+                        || c.getTableName().equals(selected.getTableName());
                 if (other.isSubQuery() && other.getSubAlias() != null) {
                     isSameName |= c.getTableName().equals(other.getSubAlias());
                 }
@@ -351,7 +345,7 @@ public abstract class QueryTreeNodeBuilder {
                 if (res != null) {
                     // 说明出现两个ID，需要明确指定TABLE
                     throw new IllegalArgumentException("Column: '" + c.getFullName() + "' is ambiguous by exist ["
-                                                       + selected.getFullName() + "," + res.getFullName() + "]");
+                            + selected.getFullName() + "," + res.getFullName() + "]");
                 }
                 res = selected;
             }

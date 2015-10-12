@@ -1,24 +1,21 @@
 package com.taobao.tddl.rule.impl;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import com.taobao.tddl.rule.Rule;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.taobao.tddl.rule.Rule;
-
 /**
  * 通过表达式来表达规则的基类
- * 
- * @author linxuan
+ *
  * @param <T>
+ * @author linxuan
  */
 public abstract class ExpressionRule<T> implements Rule<T> {
 
-    private static final Pattern                      DOLLER_PATTERN;
+    private static final Pattern DOLLER_PATTERN;
+
     static {
         // 提供一个可配置的机会，但是在绝大多数默认的情况下，不想影响接口层次和代码结构
         String regex = System.getProperty("com.taobao.tddl.rule.columnParamRegex", "#.*?#");
@@ -29,15 +26,14 @@ public abstract class ExpressionRule<T> implements Rule<T> {
      * 当前规则需要用到的参数
      */
     protected final Map<String/* 大写列名 */, RuleColumn> parameters;
-    protected final Set<RuleColumn>                   parameterSet;    // 规则列
-
+    protected final Set<RuleColumn> parameterSet;    // 规则列
+    protected final String originExpression; // 原始的表达式
     /**
      * 当前规则需要用到的表达式
      */
-    protected String                                  expression;
-    protected final String                            originExpression; // 原始的表达式
+    protected String expression;
 
-    public ExpressionRule(String expression){
+    public ExpressionRule(String expression) {
         this.originExpression = expression;
         this.expression = expression;
         this.parameters = Collections.unmodifiableMap(parse());
@@ -64,7 +60,7 @@ public abstract class ExpressionRule<T> implements Rule<T> {
 
     /**
      * 子类将paramInDoller解析为RuleColumn，加入到parameters中，并返回替换后的字串
-     * 
+     *
      * @param paramInDoller
      * @param parameters
      * @return 替换后的字串

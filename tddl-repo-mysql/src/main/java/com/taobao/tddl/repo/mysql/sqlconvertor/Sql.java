@@ -1,16 +1,16 @@
 package com.taobao.tddl.repo.mysql.sqlconvertor;
 
+import com.taobao.tddl.common.jdbc.ParameterContext;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.taobao.tddl.common.jdbc.ParameterContext;
-
 /**
  * 一条需要执行的sql
- * 
+ *
  * @author whisper
  */
 public class Sql {
@@ -18,12 +18,12 @@ public class Sql {
     /**
      * 执行的sql
      */
-    private String                         sql;
+    private String sql;
     /**
      * 绑定变量
      */
     private Map<Integer, ParameterContext> param;
-    private Object                         ds;
+    private Object ds;
 
     public void clear() {
         param.clear();

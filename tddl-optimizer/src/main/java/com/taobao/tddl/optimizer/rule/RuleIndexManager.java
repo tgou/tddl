@@ -7,14 +7,14 @@ import com.taobao.tddl.optimizer.config.table.SchemaManager;
 
 /**
  * 基于{@linkplain RuleSchemaManager}完成index的获取
- * 
+ *
  * @since 5.0.0
  */
 public class RuleIndexManager extends AbstractLifecycle implements IndexManager {
 
     private SchemaManager schemaManager;
 
-    public RuleIndexManager(SchemaManager schemaManager){
+    public RuleIndexManager(SchemaManager schemaManager) {
         this.schemaManager = schemaManager;
     }
 

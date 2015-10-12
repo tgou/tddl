@@ -9,20 +9,20 @@ import java.util.regex.Pattern;
 /**
  * 使用约束 1. 不考虑sql中引号字符串包含关键字的情况。假定sql中无字串。都用prepareStatement加问号方式 2.
  * 对于from后有两个表的，包括括号方式的临时视图，伪表之类，都以第一个表名为准 3. ic_cache@lnk_icdb0 icuser.tb0
- * 
+ *
  * @author linxuan
  */
 public class SQLPreParser {
 
-    private static Pattern ptable        = Pattern.compile("\\s+([a-z0-9_@\\.\"$]+)\\s+");
-    private static Pattern pinsert_into  = Pattern.compile("\\s+into\\s+([a-z0-9_@\\.\"$]+)[\\s(]+");
-    private static Pattern pdelete_from  = Pattern.compile("\\s+from\\s+([a-z0-9_@\\.\"$]+)\\s+");
-    private static Pattern pselect_from  = Pattern.compile("\\s+from\\s+([a-z0-9_@\\.\"$]+)[\\s)]+");
+    private static Pattern ptable = Pattern.compile("\\s+([a-z0-9_@\\.\"$]+)\\s+");
+    private static Pattern pinsert_into = Pattern.compile("\\s+into\\s+([a-z0-9_@\\.\"$]+)[\\s(]+");
+    private static Pattern pdelete_from = Pattern.compile("\\s+from\\s+([a-z0-9_@\\.\"$]+)\\s+");
+    private static Pattern pselect_from = Pattern.compile("\\s+from\\s+([a-z0-9_@\\.\"$]+)[\\s)]+");
     private static Pattern preplace_from = Pattern.compile("\\s+into\\s+([a-z0-9_@\\.\"$]+)[\\s(]+");
-    private static Pattern pfrom_where   = Pattern.compile("\\s+from\\s+(.*)\\s+where\\s+");         // .*默认最大匹配
+    private static Pattern pfrom_where = Pattern.compile("\\s+from\\s+(.*)\\s+where\\s+");         // .*默认最大匹配
     // private static Pattern pfrom = Pattern.compile("\\s+from\\s+");
     // private static Pattern pwhere = Pattern.compile("\\s+where\\s+");
-    private static String  hintregx      = "/\\*.*?\\*/";                                            // hint正则式，懒惰匹配(最短匹配)
+    private static String hintregx = "/\\*.*?\\*/";                                            // hint正则式，懒惰匹配(最短匹配)
 
     // private static Pattern phint = Pattern.compile(hintregx);
 

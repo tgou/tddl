@@ -1,14 +1,5 @@
 package com.taobao.tddl.group.jdbc;
 
-import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import com.taobao.tddl.common.TddlConstants;
 import com.taobao.tddl.common.model.DBType;
 import com.taobao.tddl.common.model.DataSourceType;
@@ -19,13 +10,21 @@ import com.taobao.tddl.group.exception.TGroupDataSourceException;
 import com.taobao.tddl.group.listener.DataSourceChangeListener;
 import com.taobao.tddl.monitor.Monitor;
 
+import javax.sql.DataSource;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * TGroupDataSource并不是像名字所暗示的那样有一组DataSource，
  * 而是指TGroupDataSource内部包含一组(>=1个)同构的数据库， 这一组数据库的不同个体有不同的读写优先级和权重，
  * 当读写数据时也只是按读写优先级和权重对其中的一个数据库操作， 如果第一个数据库读写失败了，再尝试下一个数据库，
  * 如果第一个数据库读写成功了，直接返回结果给应用层， 其他数据库的同步更新由底层数据库内部完成， TGroupDataSource不负责数据同步。
  * 使用TGroupDataSource的步骤:
- * 
+ * <p/>
  * <pre>
  * TGroupDataSource tGroupDataSource = new TGroupDataSource();
  * tGroupDataSource.setDbGroupKey(&quot;myDbGroup&quot;);
@@ -33,68 +32,84 @@ import com.taobao.tddl.monitor.Monitor;
  * tGroupDataSource.init();
  * tGroupDataSource.getConnection();
  * </pre>
- * 
+ *
  * @author yangzhu
  * @author linxuan
  */
 public class TGroupDataSource implements DataSource {
 
-    public static final String                    VERSION                   = "2.4.1";
-    public static final String                    PREFIX                    = "com.taobao.tddl.jdbc.group_V" + VERSION
-                                                                              + "_";
-    public static final String                    EXTRA_PREFIX              = "com.taobao.tddl.jdbc.extra_config.group_V"
-                                                                              + VERSION + "_";
-    private GroupConfigManager                    configManager;
-
-    /**
-     * 下面三个为一组，支持本地配置
-     */
-    private String                                dsKeyAndWeightCommaArray;
-    private DataSourceFetcher                     dataSourceFetcher;
-    private DBType                                dbType                    = DBType.MYSQL;
-    private String                                appName;                                                           // app名字
-    private String                                unitName;                                                          // 单元化名字
-    private String                                dbGroupKey;
-    private String                                fullDbGroupKey            = null;                                  // dataId
-    private int                                   retryingTimes             = 3;                                     // 默认读写失败时重试3次
-    private long                                  configReceiveTimeout      = TddlConstants.DIAMOND_GET_DATA_TIMEOUT; // 取配置信息的默认超时时间为30秒
-    // 当运行期间主备发生切换时是否需要查找第一个可写的库
-    private boolean                               autoSelectWriteDataSource = false;
+    public static final String VERSION = "2.4.1";
+    public static final String PREFIX = "com.taobao.tddl.jdbc.group_V" + VERSION
+            + "_";
+    public static final String EXTRA_PREFIX = "com.taobao.tddl.jdbc.extra_config.group_V"
+            + VERSION + "_";
     /*
      * ========================================================================
      * 以下是保留当前写操作是在哪个库上执行的, 满足类似日志库插入的场景
      * ======================================================================
      */
     private static ThreadLocal<DataSourceWrapper> targetThreadLocal;
-
+    private GroupConfigManager configManager;
+    /**
+     * 下面三个为一组，支持本地配置
+     */
+    private String dsKeyAndWeightCommaArray;
+    private DataSourceFetcher dataSourceFetcher;
+    private DBType dbType = DBType.MYSQL;
+    private String appName;                                                           // app名字
+    private String unitName;                                                          // 单元化名字
+    private String dbGroupKey;
+    private String fullDbGroupKey = null;                                  // dataId
+    private int retryingTimes = 3;                                     // 默认读写失败时重试3次
+    private long configReceiveTimeout = TddlConstants.DIAMOND_GET_DATA_TIMEOUT; // 取配置信息的默认超时时间为30秒
+    // 当运行期间主备发生切换时是否需要查找第一个可写的库
+    private boolean autoSelectWriteDataSource = false;
     // 下面两个字段当建立实际的DataSource时必须传递过去
     // jdbc规范: DataSource刚建立时LogWriter为null
-    private PrintWriter                           out                       = null;
+    private PrintWriter out = null;
     // jdbc规范: DataSource刚建立时LoginTimeout为0
-    private int                                   seconds                   = 0;
+    private int seconds = 0;
 
     /**
      * 使用tbdatasource还是druid
      */
-    private DataSourceType                        dataSourceType            = DataSourceType.DruidDataSource;
+    private DataSourceType dataSourceType = DataSourceType.DruidDataSource;
 
-    public TGroupDataSource(){
+    public TGroupDataSource() {
     }
 
-    public TGroupDataSource(String dbGroupKey, String appName){
+    public TGroupDataSource(String dbGroupKey, String appName) {
         this.dbGroupKey = dbGroupKey;
         this.appName = appName;
     }
 
-    public TGroupDataSource(String dbGroupKey, String appName, DataSourceType dataSourceType){
+    public TGroupDataSource(String dbGroupKey, String appName, DataSourceType dataSourceType) {
         this.dbGroupKey = dbGroupKey;
         this.appName = appName;
         this.dataSourceType = dataSourceType;
     }
 
+    public static TGroupDataSource build(String groupKey, String dsWeights, DataSourceFetcher fetcher,
+                                         DataSourceType dataSourceType) {
+        List<DataSourceWrapper> dss = GroupConfigManager.buildDataSourceWrapper(dsWeights, fetcher);
+        TGroupDataSource tGroupDataSource = new TGroupDataSource();
+        tGroupDataSource.setDataSourceType(dataSourceType);
+        tGroupDataSource.setDbGroupKey(groupKey);
+        tGroupDataSource.init(dss);
+        return tGroupDataSource;
+    }
+
+    public static void setShutDownMBean(boolean shutDownMBean) {
+        TddlMBeanServer.shutDownMBean = shutDownMBean;
+    }
+
+    public static final String getFullDbGroupKey(String dbGroupKey) {
+        return PREFIX + dbGroupKey;
+    }
+
     /**
      * 基于dbGroupKey、appName来初始化多个TAtomDataSource
-     * 
+     *
      * @throws com.taobao.tddl.jdbc.group.exception.ConfigException
      */
     public void init() {
@@ -131,16 +146,6 @@ public class TGroupDataSource implements DataSource {
     public void init(List<DataSourceWrapper> dataSourceWrappers) {
         configManager = new GroupConfigManager(this);
         configManager.init(dataSourceWrappers);
-    }
-
-    public static TGroupDataSource build(String groupKey, String dsWeights, DataSourceFetcher fetcher,
-                                         DataSourceType dataSourceType) {
-        List<DataSourceWrapper> dss = GroupConfigManager.buildDataSourceWrapper(dsWeights, fetcher);
-        TGroupDataSource tGroupDataSource = new TGroupDataSource();
-        tGroupDataSource.setDataSourceType(dataSourceType);
-        tGroupDataSource.setDbGroupKey(groupKey);
-        tGroupDataSource.init(dss);
-        return tGroupDataSource;
     }
 
     /**
@@ -227,6 +232,12 @@ public class TGroupDataSource implements DataSource {
         return dsMap;
     }
 
+    /*
+     * ========================================================================
+     * 以下是javax.sql.DataSource的API实现
+     * ======================================================================
+     */
+
     public Map<String, DataSource> getDataSourcesMap(boolean isRead) {
         return this.getDBSelector(isRead).getDataSources();
     }
@@ -234,12 +245,6 @@ public class TGroupDataSource implements DataSource {
     public void setDataSourceChangeListener(DataSourceChangeListener dataSourceChangeListener) {
         this.configManager.setDataSourceChangeListener(dataSourceChangeListener);
     }
-
-    /*
-     * ========================================================================
-     * 以下是javax.sql.DataSource的API实现
-     * ======================================================================
-     */
 
     @Override
     public TGroupConnection getConnection() throws SQLException {
@@ -271,10 +276,6 @@ public class TGroupDataSource implements DataSource {
         this.seconds = seconds;
     }
 
-    public static void setShutDownMBean(boolean shutDownMBean) {
-        TddlMBeanServer.shutDownMBean = shutDownMBean;
-    }
-
     public String getUnitName() {
         return unitName;
     }
@@ -295,6 +296,10 @@ public class TGroupDataSource implements DataSource {
         return dbGroupKey;
     }
 
+    public void setDbGroupKey(String dbGroupKey) {
+        this.dbGroupKey = dbGroupKey;
+    }
+
     public String getFullDbGroupKey() {
         if (fullDbGroupKey == null) {
             fullDbGroupKey = PREFIX + getDbGroupKey();
@@ -304,10 +309,6 @@ public class TGroupDataSource implements DataSource {
 
     public String getDbGroupExtraConfigKey() {
         return EXTRA_PREFIX + getDbGroupKey() + "." + getAppName();
-    }
-
-    public void setDbGroupKey(String dbGroupKey) {
-        this.dbGroupKey = dbGroupKey;
     }
 
     public int getRetryingTimes() {
@@ -326,10 +327,6 @@ public class TGroupDataSource implements DataSource {
         this.configReceiveTimeout = configReceiveTimeout;
     }
 
-    public void setDsKeyAndWeightCommaArray(String dsKeyAndWeightCommaArray) {
-        this.dsKeyAndWeightCommaArray = dsKeyAndWeightCommaArray;
-    }
-
     public boolean getAutoSelectWriteDataSource() {
         return autoSelectWriteDataSource;
     }
@@ -342,16 +339,12 @@ public class TGroupDataSource implements DataSource {
         this.dataSourceFetcher = dataSourceFetcher;
     }
 
-    public void setDbType(DBType dbType) {
-        this.dbType = dbType;
-    }
-
     public String getDsKeyAndWeightCommaArray() {
         return dsKeyAndWeightCommaArray;
     }
 
-    public static final String getFullDbGroupKey(String dbGroupKey) {
-        return PREFIX + dbGroupKey;
+    public void setDsKeyAndWeightCommaArray(String dsKeyAndWeightCommaArray) {
+        this.dsKeyAndWeightCommaArray = dsKeyAndWeightCommaArray;
     }
 
     @Override
@@ -373,21 +366,25 @@ public class TGroupDataSource implements DataSource {
         return dataSourceType;
     }
 
-    public void setDataSourceType(DataSourceType dataSourceType) {
-        this.dataSourceType = dataSourceType;
-    }
-
     public void setDataSourceType(String dataSourceType) {
         this.dataSourceType = DataSourceType.valueOf(dataSourceType);
+    }
+
+    public void setDataSourceType(DataSourceType dataSourceType) {
+        this.dataSourceType = dataSourceType;
     }
 
     public DBType getDbType() {
         return dbType;
     }
 
+    public void setDbType(DBType dbType) {
+        this.dbType = dbType;
+    }
+
     /**
      * 销毁数据源，慎用
-     * 
+     *
      * @throws Exception
      */
     public void destroyDataSource() throws Exception {

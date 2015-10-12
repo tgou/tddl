@@ -1,11 +1,10 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.taobao.tddl.optimizer.utils.PermutationGenerator;
 import org.junit.Test;
 
-import com.taobao.tddl.optimizer.utils.PermutationGenerator;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PermutationGeneratorTest {
 

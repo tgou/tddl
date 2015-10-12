@@ -1,14 +1,14 @@
 package com.taobao.tddl.executor.cursor;
 
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.executor.common.DuplicateKVPair;
 import com.taobao.tddl.executor.common.KVPair;
 import com.taobao.tddl.executor.record.CloneableRecord;
 import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jianxing <jianxing.qx@taobao.com> 注解添加by danchen
@@ -120,7 +120,7 @@ public interface Cursor {
      * 比如一个索引， [0->0, 0->1 , 0->2...]
      * 那么当mget(0)的时候，应该返回[1],[2]...所有与0相关的值，但这个id是否排序，要看下层实现是否排序。
      * 如果有未找到的值，那么会向Map中插入空。
-     * 
+     *
      * @param keys
      * @param keyFilterOrValueFilter 为true使用keyFilter，为false使用valueFilter
      * @return
@@ -134,7 +134,7 @@ public interface Cursor {
      * 比如一个索引， [0->0, 0->1 , 0->2...]
      * 那么当mget(0)的时候，应该返回[1],[2]...所有与0相关的值，但这个id是否排序，要看下层实现是否排序。
      * 如果有未找到的值，那么会向List中插入空。
-     * 
+     *
      * @param keys
      * @param keyFilterOrValueFilter 为true使用keyFilter，为false使用valueFilter
      * @return
@@ -146,14 +146,14 @@ public interface Cursor {
     /**
      * 用于判断数据是否已经准备好了。 刚结束查询的时候，这个值是false .直到有数据返回后，这个值会变为true.
      * 并且只要变为true,就不再会回归到false的状态
-     * 
+     *
      * @return
      */
     public boolean isDone();
 
     /**
      * 用于输出带缩进的字符串
-     * 
+     *
      * @param inden
      * @return
      */
@@ -161,7 +161,7 @@ public interface Cursor {
 
     /**
      * 获取该cursor返回的所有列
-     * 
+     *
      * @return
      * @throws Exception
      */

@@ -1,12 +1,11 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
 import com.taobao.tddl.optimizer.exceptions.EmptyResultFilterException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class FilterPreProcessorTest extends BaseOptimizerTest {
 
@@ -58,7 +57,7 @@ public class FilterPreProcessorTest extends BaseOptimizerTest {
         FilterPreProcessor.optimize(table, true);
         System.out.println(FilterUtils.toDNFAndFlat(table.getWhereFilter()));
         Assert.assertEquals(table.getWhereFilter().toString(),
-            "((TABLE1.ID = 1 AND TABLE1.NAME = HELLO) OR (TABLE1.ID = 2 AND TABLE1.NAME = HELLO) OR TABLE1.ID = 3)");
+                "((TABLE1.ID = 1 AND TABLE1.NAME = HELLO) OR (TABLE1.ID = 2 AND TABLE1.NAME = HELLO) OR TABLE1.ID = 3)");
     }
 
     @Test
@@ -77,7 +76,7 @@ public class FilterPreProcessorTest extends BaseOptimizerTest {
         table.build();
         FilterPreProcessor.optimize(table, true);
         Assert.assertEquals(table.getWhereFilter().toString(),
-            "(TABLE1.ID = TABLE1.NAME AND TABLE1.NAME = TABLE1.ID AND TABLE1.NAME = HELLO)");
+                "(TABLE1.ID = TABLE1.NAME AND TABLE1.NAME = TABLE1.ID AND TABLE1.NAME = HELLO)");
     }
 
     @Test

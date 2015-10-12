@@ -10,19 +10,19 @@ public class TAtomDataSourceException extends RuntimeException {
 
     private static final long serialVersionUID = -1L;
 
-    public TAtomDataSourceException(){
+    public TAtomDataSourceException() {
         super();
     }
 
-    public TAtomDataSourceException(String msg){
+    public TAtomDataSourceException(String msg) {
         super(msg);
     }
 
-    public TAtomDataSourceException(Throwable cause){
+    public TAtomDataSourceException(Throwable cause) {
         super(cause);
     }
 
-    public TAtomDataSourceException(String msg, Throwable cause){
+    public TAtomDataSourceException(String msg, Throwable cause) {
         super(msg, cause);
     }
 

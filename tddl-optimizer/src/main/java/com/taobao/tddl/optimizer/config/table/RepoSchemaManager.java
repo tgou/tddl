@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.config.table;
 
-import java.util.Collection;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.Group;
@@ -9,43 +7,28 @@ import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.common.utils.extension.ExtensionLoader;
 import com.taobao.tddl.optimizer.rule.OptimizerRule;
 
+import java.util.Collection;
+
 /**
  * 基于repo的{@linkplain SchemaManager}的委托实现
- * 
+ *
  * @author jianghang 2013-11-19 下午4:53:08
  * @since 5.0.0
  */
 public class RepoSchemaManager extends AbstractLifecycle implements SchemaManager {
 
-    private RepoSchemaManager   delegate;
-    private boolean             isDelegate;
+    protected OptimizerRule rule = null;
+    private RepoSchemaManager delegate;
+    private boolean isDelegate;
     private StaticSchemaManager local;
-    private Group               group;
-
-    protected OptimizerRule     rule = null;
-
-    public void setRule(OptimizerRule rule) {
-        this.rule = rule;
-    }
+    private Group group;
 
     public OptimizerRule getRule() {
         return this.rule;
     }
 
-    public static class LogicalAndActualTableName {
-
-        public String logicalTableName;
-        public String actualTableName;
-
-        @Override
-        public int hashCode() {
-            return logicalTableName.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            return logicalTableName.equals(((LogicalAndActualTableName) o).logicalTableName);
-        }
+    public void setRule(OptimizerRule rule) {
+        this.rule = rule;
     }
 
     @Override
@@ -101,7 +84,7 @@ public class RepoSchemaManager extends AbstractLifecycle implements SchemaManage
 
     /**
      * 需要各Repo来实现
-     * 
+     *
      * @param tableName
      * @param actualTableName
      */
@@ -120,12 +103,12 @@ public class RepoSchemaManager extends AbstractLifecycle implements SchemaManage
         }
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
     public Group getGroup() {
         return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     public void setLocal(StaticSchemaManager local) {
@@ -134,6 +117,22 @@ public class RepoSchemaManager extends AbstractLifecycle implements SchemaManage
 
     public void setDelegate(boolean isDelegate) {
         this.isDelegate = isDelegate;
+    }
+
+    public static class LogicalAndActualTableName {
+
+        public String logicalTableName;
+        public String actualTableName;
+
+        @Override
+        public int hashCode() {
+            return logicalTableName.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return logicalTableName.equals(((LogicalAndActualTableName) o).logicalTableName);
+        }
     }
 
 }

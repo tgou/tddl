@@ -4,22 +4,14 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.Ref;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
 /**
  * PreparedStatement设置参数的处理
- * 
+ *
  * @author linxuan
  */
 public enum ParameterMethod {
@@ -32,7 +24,7 @@ public enum ParameterMethod {
     /**
      * eachElementInList[0]:ParameterMethod
      * eachElementInList[1]:ps.setXXX()的参数列表，组成见setParameter
-     * 
+     *
      * @param methodAndArgsList的每一个元素(eachElementInList)是一个Object数组。每个数组包含两个元素：
      */
     public static void setParameters(PreparedStatement stmt, List<Object[]> methodAndArgsList) throws SQLException {
@@ -44,7 +36,7 @@ public enum ParameterMethod {
     }
 
     public static void setParameters(PreparedStatement stmt, Map<Integer, ParameterContext> parameterSettings)
-                                                                                                              throws SQLException {
+            throws SQLException {
         if (null != parameterSettings) {
             for (ParameterContext context : parameterSettings.values()) {
                 context.getParameterMethod().setParameter(stmt, context.getArgs());
@@ -54,7 +46,7 @@ public enum ParameterMethod {
 
     /**
      * args[0]: index args[1..n] 参数
-     * 
+     *
      * @throws SQLException
      */
     @SuppressWarnings("deprecation")

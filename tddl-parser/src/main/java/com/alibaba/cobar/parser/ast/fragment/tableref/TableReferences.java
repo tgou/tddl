@@ -18,38 +18,38 @@
  */
 package com.alibaba.cobar.parser.ast.fragment.tableref;
 
+import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
+
 import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
-
 /**
  * used in <code>FROM</code> fragment
- * 
+ *
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class TableReferences implements TableReference {
+
+    private final List<TableReference> list;
+
+    public TableReferences(List<TableReference> list) throws SQLSyntaxErrorException {
+        if (list == null || list.isEmpty()) {
+            throw new SQLSyntaxErrorException("at least one table reference");
+        }
+        this.list = ensureListType(list);
+    }
 
     protected static List<TableReference> ensureListType(List<TableReference> list) {
         if (list instanceof ArrayList) return list;
         return new ArrayList<TableReference>(list);
     }
 
-    private final List<TableReference> list;
-
     /**
      * @return never null
      */
     public List<TableReference> getTableReferenceList() {
         return list;
-    }
-
-    public TableReferences(List<TableReference> list) throws SQLSyntaxErrorException{
-        if (list == null || list.isEmpty()) {
-            throw new SQLSyntaxErrorException("at least one table reference");
-        }
-        this.list = ensureListType(list);
     }
 
     @Override

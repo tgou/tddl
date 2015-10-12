@@ -1,12 +1,9 @@
 package com.taobao.tddl.qatest.matrix.basecrud;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -14,10 +11,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Comment for LocalServerInsertTest
@@ -27,13 +26,13 @@ import com.taobao.tddl.qatest.util.EclipseParameterized;
 @RunWith(EclipseParameterized.class)
 public class InsertTest extends BaseMatrixTestCase {
 
+    public InsertTest(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
+
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public InsertTest(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -56,7 +55,7 @@ public class InsertTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME" };
+        String[] columnParam = {"PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -70,7 +69,7 @@ public class InsertTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "GMT_TIMESTAMP", "FLOATCOL" };
+        String[] columnParam = {"PK", "GMT_TIMESTAMP", "FLOATCOL"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -87,7 +86,7 @@ public class InsertTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME" };
+        String[] columnParam = {"PK", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -100,7 +99,7 @@ public class InsertTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "NAME" };
+        String[] columnParam = {"PK", "NAME"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -116,7 +115,7 @@ public class InsertTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "ID" };
+        String[] columnParam = {"PK", "ID"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID + 1;
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
@@ -126,9 +125,9 @@ public class InsertTest extends BaseMatrixTestCase {
     @Test
     public void insertWithSelectTest() throws Exception {
         andorUpdateData("insert into student(id,name,school) values (?,?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, name, school }));
+                Arrays.asList(new Object[]{RANDOM_ID, name, school}));
         mysqlUpdateData("insert into student(id,name,school) values (?,?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, name, school }));
+                Arrays.asList(new Object[]{RANDOM_ID, name, school}));
 
         String sql = "insert into " + normaltblTableName + "(pk,name) select id,name from student where school=?";
         List<Object> param = new ArrayList<Object>();
@@ -136,11 +135,11 @@ public class InsertTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "name" };
+        String[] columnParam = {"name"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
 
-        andorUpdateData("delete from student where school=?", Arrays.asList(new Object[] { school }));
-        mysqlUpdateData("delete from student where school=?", Arrays.asList(new Object[] { school }));
+        andorUpdateData("delete from student where school=?", Arrays.asList(new Object[]{school}));
+        mysqlUpdateData("delete from student where school=?", Arrays.asList(new Object[]{school}));
     }
 
     @Test
@@ -153,7 +152,7 @@ public class InsertTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "GMT_CREATE", "FLOATCOL" };
+        String[] columnParam = {"PK", "GMT_CREATE", "FLOATCOL"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -167,25 +166,25 @@ public class InsertTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "GMT_CREATE", "FLOATCOL" };
+        String[] columnParam = {"PK", "GMT_CREATE", "FLOATCOL"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
     /**
      * 不带参数的sql语句测试，暂时不对mysql数据库进行测试
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void insertWithBdbOutParamTest() throws Exception {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String sql = "insert into " + normaltblTableName + "(pk,gmt_create,gmt_timestamp,gmt_datetime,id) values("
-                     + RANDOM_ID + ",'" + df.format(gmtDay) + "','" + df.format(gmt) + "','" + df.format(gmt) + "',"
-                     + RANDOM_INT + ")";
+                + RANDOM_ID + ",'" + df.format(gmtDay) + "','" + df.format(gmt) + "','" + df.format(gmt) + "',"
+                + RANDOM_INT + ")";
         execute(sql, Collections.EMPTY_LIST);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "GMT_CREATE", "ID", "GMT_TIMESTAMP", "GMT_DATETIME" };
+        String[] columnParam = {"PK", "GMT_CREATE", "ID", "GMT_TIMESTAMP", "GMT_DATETIME"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -200,7 +199,7 @@ public class InsertTest extends BaseMatrixTestCase {
         sql = "select * from " + normaltblTableName + " where pk=?";
         param.clear();
         param.add(RANDOM_ID);
-        String[] columnParam = { "PK", "NAME" };
+        String[] columnParam = {"PK", "NAME"};
         selectOrderAssert(sql, columnParam, param);
     }
 
@@ -234,10 +233,10 @@ public class InsertTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + pk;
-        String[] columnParam = { "PK", "ID" };
+        String[] columnParam = {"PK", "ID"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
 
-        andorUpdateData("delete from " + normaltblTableName + " where pk=?", Arrays.asList(new Object[] { pk }));
+        andorUpdateData("delete from " + normaltblTableName + " where pk=?", Arrays.asList(new Object[]{pk}));
         mysqlUpdateData("delete from " + normaltblTableName + " where pk=" + pk, null);
 
         pk = 0;
@@ -266,10 +265,10 @@ public class InsertTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + pk;
-        String[] columnParam = { "PK", "ID" };
+        String[] columnParam = {"PK", "ID"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
 
-        andorUpdateData("delete from " + normaltblTableName + " where pk=?", Arrays.asList(new Object[] { pk }));
+        andorUpdateData("delete from " + normaltblTableName + " where pk=?", Arrays.asList(new Object[]{pk}));
         mysqlUpdateData("delete from " + normaltblTableName + " where pk=" + pk, null);
 
         pk = Long.MIN_VALUE;
@@ -283,21 +282,21 @@ public class InsertTest extends BaseMatrixTestCase {
         sql = "select * from " + normaltblTableName + " where pk=" + pk;
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
 
-        andorUpdateData("delete from " + normaltblTableName + " where pk=?", Arrays.asList(new Object[] { pk }));
+        andorUpdateData("delete from " + normaltblTableName + " where pk=?", Arrays.asList(new Object[]{pk}));
         mysqlUpdateData("delete from " + normaltblTableName + " where pk=" + pk, null);
     }
 
     @Test
     public void insertWithNowTest() throws Exception {
         String sql = "insert into " + normaltblTableName + "(pk,gmt_timestamp,id) values(" + RANDOM_ID + ",now()," + 1
-                     + ")";
+                + ")";
         mysqlUpdateData(sql, null);
         andorUpdateData(sql, null);
 
         sql = "select * from " + normaltblTableName + " where pk=" + 1;
         rs = mysqlQueryData(sql, null);
         rc = andorQueryData(sql, null);
-        String[] columnParam = { "gmt_timestamp" };
+        String[] columnParam = {"gmt_timestamp"};
         assertOrder(rs, rc, columnParam);
     }
 

@@ -1,13 +1,13 @@
 package com.taobao.tddl.optimizer.core.datatype;
 
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.utils.convertor.Convertor;
 import com.taobao.tddl.common.utils.convertor.ConvertorException;
 import com.taobao.tddl.common.utils.convertor.ConvertorHelper;
+
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * @since 5.0.0
@@ -59,7 +59,7 @@ public abstract class AbstractDataType<DATA> implements DataType<DATA> {
         Convertor convertor = ConvertorHelper.getInstance().getConvertor(clazz, getDataClass());
         if (convertor == null) {
             throw new ConvertorException("Unsupported convert: [" + clazz.getName() + "," + getDataClass().getName()
-                                         + "]");
+                    + "]");
         } else {
             return convertor;
         }
@@ -67,7 +67,7 @@ public abstract class AbstractDataType<DATA> implements DataType<DATA> {
 
     /**
      * 取得范性信息
-     * 
+     *
      * @param cls
      * @param i
      * @return

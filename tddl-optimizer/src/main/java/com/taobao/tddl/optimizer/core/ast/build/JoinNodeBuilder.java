@@ -1,21 +1,13 @@
 package com.taobao.tddl.optimizer.core.ast.build;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
 import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
+
+import java.util.*;
 
 /**
  * @since 5.0.0
@@ -24,7 +16,7 @@ public class JoinNodeBuilder extends QueryTreeNodeBuilder {
 
     private Set<IColumn> columnInAggregate = new HashSet();
 
-    public JoinNodeBuilder(JoinNode joinNode){
+    public JoinNodeBuilder(JoinNode joinNode) {
         this.setNode(joinNode);
     }
 
@@ -127,7 +119,7 @@ public class JoinNodeBuilder extends QueryTreeNodeBuilder {
 
     /**
      * 构建列信息
-     * 
+     *
      * @param indexNode
      */
     public void buildSelected() {
@@ -138,8 +130,8 @@ public class JoinNodeBuilder extends QueryTreeNodeBuilder {
         // 如果为空，代表是用*
         if (this.getNode().getColumnsSelected().isEmpty()) {
             this.getNode()
-                .getColumnsSelected()
-                .add(ASTNodeFactory.getInstance().createColumn().setColumnName(IColumn.STAR));
+                    .getColumnsSelected()
+                    .add(ASTNodeFactory.getInstance().createColumn().setColumnName(IColumn.STAR));
         }
         // 如果有 * ，最后需要把*删掉
         List<Integer> delete = new LinkedList();
@@ -166,7 +158,7 @@ public class JoinNodeBuilder extends QueryTreeNodeBuilder {
                             // a. SELECT B.* FROM TABLE1 A INNER JOIN TABLE2 B
                             // b. SELECT * FROM TABLE1 A INNER JOIN TABLE2 B
                             if (selected.getTableName() != null
-                                && !selected.getTableName().equals(selectedFromChild.getTableName())) {
+                                    && !selected.getTableName().equals(selectedFromChild.getTableName())) {
                                 break;
                             }
 

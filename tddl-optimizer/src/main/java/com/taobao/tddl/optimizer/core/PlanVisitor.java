@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.core;
 
-import java.util.List;
-
 import com.taobao.tddl.optimizer.core.expression.IColumn;
 import com.taobao.tddl.optimizer.core.expression.IFilter;
 import com.taobao.tddl.optimizer.core.expression.IFunction;
@@ -13,6 +11,8 @@ import com.taobao.tddl.optimizer.core.plan.dml.IReplace;
 import com.taobao.tddl.optimizer.core.plan.dml.IUpdate;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
+
+import java.util.List;
 
 public interface PlanVisitor {
 

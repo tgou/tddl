@@ -1,12 +1,12 @@
 package com.taobao.tddl.optimizer.config.table;
 
-import java.io.Serializable;
-
 import com.taobao.tddl.optimizer.core.datatype.DataType;
+
+import java.io.Serializable;
 
 /**
  * 列信息
- * 
+ *
  * @author whisper
  */
 public class ColumnMessage implements Serializable {
@@ -16,31 +16,31 @@ public class ColumnMessage implements Serializable {
     /**
      * 列名
      */
-    protected final String    name;
+    protected final String name;
     /**
      * 当前列的类型
      */
-    protected final DataType  dataType;
+    protected final DataType dataType;
     /**
      * 当前列的别名
      */
-    protected final String    alias;
+    protected final String alias;
     /**
      * 是否准许为空
      */
-    protected final boolean   nullable;
+    protected final boolean nullable;
 
-    protected final boolean   isAutoCreated;
+    protected final boolean isAutoCreated;
 
-    public ColumnMessage(String name, DataType dataType, String alias){
+    public ColumnMessage(String name, DataType dataType, String alias) {
         this(name, dataType, alias, true, false);
     }
 
-    public ColumnMessage(String name, DataType dataType, String alias, boolean isAutoCreated){
+    public ColumnMessage(String name, DataType dataType, String alias, boolean isAutoCreated) {
         this(name, dataType, alias, true, isAutoCreated);
     }
 
-    public ColumnMessage(String name, DataType dataType, String alias, boolean nullable, boolean isAutoCreated){
+    public ColumnMessage(String name, DataType dataType, String alias, boolean nullable, boolean isAutoCreated) {
         this.name = name;
         this.dataType = dataType;
         this.alias = alias;
@@ -48,7 +48,7 @@ public class ColumnMessage implements Serializable {
         this.isAutoCreated = isAutoCreated;
     }
 
-    public ColumnMessage(String name, DataType dataType){
+    public ColumnMessage(String name, DataType dataType) {
         this(name, dataType, null);
     }
 
@@ -71,7 +71,7 @@ public class ColumnMessage implements Serializable {
     @Override
     public String toString() {
         return "ColumnMeta [" + (name != null ? "name=" + name + ", " : "") + (alias != null ? "alias=" + alias : "")
-               + "]";
+                + "]";
     }
 
     @Override

@@ -1,14 +1,14 @@
 package com.taobao.tddl.matrix.jdbc.utils;
 
-import java.sql.SQLException;
-import java.util.regex.Pattern;
-
 import com.taobao.tddl.common.model.SqlType;
 import com.taobao.tddl.common.utils.TStringUtil;
 
+import java.sql.SQLException;
+import java.util.regex.Pattern;
+
 /**
  * 解析SQL语句，得到这条语句的类型
- * 
+ *
  * @author yangzhu
  */
 public class PreParser {
@@ -18,11 +18,11 @@ public class PreParser {
      * 用于判断是否是一个select ... for update的sql
      */
     private static final Pattern SELECT_FOR_UPDATE_PATTERN = Pattern.compile("^select\\s+.*\\s+for\\s+update.*$",
-                                                               Pattern.CASE_INSENSITIVE);
+            Pattern.CASE_INSENSITIVE);
 
     /**
      * 获得SQL语句种类
-     * 
+     *
      * @param sql SQL语句
      * @throws SQLException 当SQL语句不是SELECT、INSERT、UPDATE、DELETE语句时，抛出异常。
      */
@@ -45,7 +45,7 @@ public class PreParser {
             // performance,so
             // first judge this sql whether have ' for ' string.
             if (noCommentsSql.toLowerCase().contains(" for ")
-                && SELECT_FOR_UPDATE_PATTERN.matcher(noCommentsSql).matches()) {
+                    && SELECT_FOR_UPDATE_PATTERN.matcher(noCommentsSql).matches()) {
                 sqlType = SqlType.SELECT_FOR_UPDATE;
             } else {
                 sqlType = SqlType.SELECT;

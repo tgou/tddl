@@ -27,29 +27,25 @@ import java.sql.SQLException;
 
 /**
  * The ExceptionSorter interface allows for <code>java.sql.SQLException</code>
- * evaluation to determine if an error is fatal. 
+ * evaluation to determine if an error is fatal.
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
  * @author <a href="mailto:weston.price@jboss.com>Weston Price</a>
- * 
+ * @version $Revision: 71554 $
  * @see ValidConnectionChecker
  * @see CheckValidConnectionSQL
- *  
- * @version $Revision: 71554 $
  */
 
-public interface ExceptionSorter
-{
+public interface ExceptionSorter {
 
 
-   /**
-    * Evaluates a <code>java.sql.SQLException</code> to determine if
-    * the error was fatal
-    * 
-    * @param e the <code>java.sql.SQLException</code>
-    * 
-    * @return whether or not the exception is vatal.
-    */
-   boolean isExceptionFatal(SQLException e);
+    /**
+     * Evaluates a <code>java.sql.SQLException</code> to determine if
+     * the error was fatal
+     *
+     * @param e the <code>java.sql.SQLException</code>
+     * @return whether or not the exception is vatal.
+     */
+    boolean isExceptionFatal(SQLException e);
 }

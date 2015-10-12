@@ -1,33 +1,33 @@
 package com.taobao.tddl.rule.utils;
 
-import java.util.Calendar;
-
 import com.taobao.tddl.common.utils.TStringUtil;
 import com.taobao.tddl.rule.model.AdvancedParameter;
 import com.taobao.tddl.rule.model.AdvancedParameter.AtomIncreaseType;
 import com.taobao.tddl.rule.model.AdvancedParameter.Range;
 import com.taobao.tddl.rule.model.DateEnumerationParameter;
 
+import java.util.Calendar;
+
 /**
  * {@linkplain AdvancedParameter}解析器
- * 
+ *
  * @author jianghang 2013-10-29 下午5:18:27
  * @since 5.0.0
  */
 public class AdvancedParameterParser {
 
-    public static final String PARAM_SEGMENT_SPLITOR           = ",";
-    public static final char   NEED_APPEAR_SYMBOL              = '?';
-    public static final String INCREASE_TYPE_SPLITOR           = "_";
-    public static final String RANGE_SEGMENT_SPLITOR           = "|";
+    public static final String PARAM_SEGMENT_SPLITOR = ",";
+    public static final char NEED_APPEAR_SYMBOL = '?';
+    public static final String INCREASE_TYPE_SPLITOR = "_";
+    public static final String RANGE_SEGMENT_SPLITOR = "|";
     public static final String RANGE_SEGMENT_START_END_SPLITOR = "_";
 
     /**
-     * @param paramToken 定义变量的分表片段，形式类似 #gmt_create?,1_month,-12_12#
-     * #id,1_number,1024# #name,1_string,a_z# #id,1_number,0_1024|1m_1g#
+     * @param paramToken     定义变量的分表片段，形式类似 #gmt_create?,1_month,-12_12#
+     *                       #id,1_number,1024# #name,1_string,a_z# #id,1_number,0_1024|1m_1g#
      * @param completeConfig 如果为true,那么paramToken必须满足逗号分隔的3段形式
-     * 如果为false,那么paramToken可以只配置分表或者分表键 2.3.x－2.4.3的老规则配置该参数为false
-     * 2.4.4后支持的新规则配置该参数为true;
+     *                       如果为false,那么paramToken可以只配置分表或者分表键 2.3.x－2.4.3的老规则配置该参数为false
+     *                       2.4.4后支持的新规则配置该参数为true;
      */
     public static AdvancedParameter getAdvancedParamByParamTokenNew(String paramToken, boolean completeConfig) {
         String key;
@@ -85,16 +85,16 @@ public class AdvancedParameterParser {
         }
 
         return new AdvancedParameter(key,
-            atomicIncreateValue,
-            cumulativeTimes,
-            needAppear[0],
-            atomicIncreateType,
-            rangeObjectArray);
+                atomicIncreateValue,
+                cumulativeTimes,
+                needAppear[0],
+                atomicIncreateType,
+                rangeObjectArray);
     }
 
     /**
      * ColumnName?表示可选
-     * 
+     *
      * @param keyPart 不可能传入null
      */
     private static String parseKeyPart(String keyPart, boolean[] needAppear) {

@@ -1,40 +1,38 @@
 package com.taobao.tddl.optimizer.core.expression;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.taobao.tddl.common.utils.extension.ExtensionLoader;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import com.taobao.tddl.optimizer.exceptions.FunctionException;
+import com.taobao.tddl.optimizer.utils.PackageUtils;
+import com.taobao.tddl.optimizer.utils.PackageUtils.ClassFilter;
+import org.apache.commons.lang.StringUtils;
+
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.taobao.tddl.common.utils.extension.ExtensionLoader;
-import com.taobao.tddl.optimizer.exceptions.FunctionException;
-import com.taobao.tddl.optimizer.utils.PackageUtils;
-import com.taobao.tddl.optimizer.utils.PackageUtils.ClassFilter;
-
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
-
 /**
  * {@linkplain IExtraFunction}加载器，以类名做为Function Name，<strong>注意：忽略了大小写</stong>
- * 
+ * <p/>
  * <pre>
  * Function加载：
  * 1. 自动扫描IExtraFunction对应Package目录下的所有Function实现
  * 2. 自动扫描Extension扩展方式下的自定义实现，比如在META-INF/tddl 或 META-INF/services 添加扩展配置文件
  * </pre>
- * 
+ *
  * @author jianghang 2013-11-8 下午5:30:35
  * @since 5.0.0
  */
 public class ExtraFunctionManager {
 
-    private static final Logger          logger               = LoggerFactory.getLogger(ExtraFunctionManager.class);
-    private static Map<String, Class<?>> functionCaches       = Maps.newConcurrentMap();
-    private static String                DUMMAY_FUNCTION      = "DUMMY";
-    private static String                DUMMAY_TEST_FUNCTION = "DUMMYTEST";
-    private static IExtraFunction        dummyFunction;                                                             // 缓存一下dummy，避免每次都反射创建
+    private static final Logger logger = LoggerFactory.getLogger(ExtraFunctionManager.class);
+    private static Map<String, Class<?>> functionCaches = Maps.newConcurrentMap();
+    private static String DUMMAY_FUNCTION = "DUMMY";
+    private static String DUMMAY_TEST_FUNCTION = "DUMMYTEST";
+    private static IExtraFunction dummyFunction;                                                             // 缓存一下dummy，避免每次都反射创建
 
     static {
         initFunctions();
@@ -46,7 +44,7 @@ public class ExtraFunctionManager {
 
     /**
      * 查找对应名字的函数类，忽略大小写
-     * 
+     *
      * @param functionName
      * @return
      */
@@ -91,7 +89,7 @@ public class ExtraFunctionManager {
             public boolean filter(Class clazz) {
                 int mod = clazz.getModifiers();
                 return !Modifier.isAbstract(mod) && !Modifier.isInterface(mod)
-                       && IExtraFunction.class.isAssignableFrom(clazz);
+                        && IExtraFunction.class.isAssignableFrom(clazz);
             }
 
             public boolean preFilter(String classFulName) {

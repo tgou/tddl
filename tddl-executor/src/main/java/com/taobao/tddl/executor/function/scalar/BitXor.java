@@ -7,7 +7,7 @@ import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
 /**
  * 对应mysql的bitxor '^'
- * 
+ *
  * @author jianghang 2014-2-13 上午11:55:29
  * @since 5.0.0
  */

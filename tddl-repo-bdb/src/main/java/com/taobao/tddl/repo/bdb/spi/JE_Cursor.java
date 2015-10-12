@@ -1,12 +1,5 @@
 package com.taobao.tddl.repo.bdb.spi;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.LockTimeoutException;
@@ -27,31 +20,33 @@ import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
 
+import java.util.*;
+
 /**
  * @author jianxing <jianxing.qx@taobao.com>
  */
 public class JE_Cursor implements Cursor {
 
     com.sleepycat.je.Cursor je_cursor;
-    DatabaseEntry           key             = new DatabaseEntry();
-    DatabaseEntry           value           = new DatabaseEntry();
-    LockMode                lockMode;
-    IndexMeta               indexMeta;
-    KVPair                  current         = new KVPair();
-    RecordCodec             key_codec;
-    RecordCodec             value_codec;
-    CloneableRecord         key_record;
-    CloneableRecord         value_record;
-    boolean                 reuse           = false;
-    ICursorMeta             iCursorMeta     = null;
-    DatabaseEntry           emptyValueEntry = new DatabaseEntry();
-    private boolean         isBeforeFirst   = false;
-
+    DatabaseEntry key = new DatabaseEntry();
+    DatabaseEntry value = new DatabaseEntry();
+    LockMode lockMode;
+    IndexMeta indexMeta;
+    KVPair current = new KVPair();
+    RecordCodec key_codec;
+    RecordCodec value_codec;
+    CloneableRecord key_record;
+    CloneableRecord value_record;
+    boolean reuse = false;
+    ICursorMeta iCursorMeta = null;
+    DatabaseEntry emptyValueEntry = new DatabaseEntry();
+    List<ColumnMeta> returnColumns = null;
+    private boolean isBeforeFirst = false;
     {
         emptyValueEntry.setData(new byte[1]);
     }
 
-    public JE_Cursor(IndexMeta meta, com.sleepycat.je.Cursor je_cursor, LockMode lockMode){
+    public JE_Cursor(IndexMeta meta, com.sleepycat.je.Cursor je_cursor, LockMode lockMode) {
         this.indexMeta = meta;
         this.iCursorMeta = ExecUtils.convertToICursorMeta(meta);
         this.je_cursor = je_cursor;
@@ -228,6 +223,17 @@ public class JE_Cursor implements Cursor {
         return OperationStatus.SUCCESS == je_cursor.delete();
     }
 
+    // public KVPair get(CloneableRecord search_key) throws TddlException {
+    // key.setData(key_codec.encode(search_key));
+    // OperationStatus status = je_cursor.getSearchKey(key, value, lockMode);
+    // if (OperationStatus.SUCCESS == status) {
+    // setKV();
+    // } else {
+    // current = null;
+    // }
+    // return current;
+    // }
+
     private void setKV() {
         current = new KVPair();
 
@@ -239,15 +245,16 @@ public class JE_Cursor implements Cursor {
         }
     }
 
-    // public KVPair get(CloneableRecord search_key) throws TddlException {
-    // key.setData(key_codec.encode(search_key));
-    // OperationStatus status = je_cursor.getSearchKey(key, value, lockMode);
-    // if (OperationStatus.SUCCESS == status) {
-    // setKV();
-    // } else {
-    // current = null;
+    // public KVPair get(KVPair kv) throws TddlException {
+    // for (ColumnMeta c : meta.getKeyColumns()) {
+    // Object v = kv.getKey().get(c.getName());
+    // if (v == null) {
+    // if(kv.getValue() != null)
+    // v = kv.getValue().get(c.getName());
     // }
-    // return current;
+    // key_record.put(c.getName(), v);
+    // }
+    // return get(key_record);
     // }
 
     @Override
@@ -270,18 +277,6 @@ public class JE_Cursor implements Cursor {
         // //System.out.println("skip false:"+skip_key);
         return false;
     }
-
-    // public KVPair get(KVPair kv) throws TddlException {
-    // for (ColumnMeta c : meta.getKeyColumns()) {
-    // Object v = kv.getKey().get(c.getName());
-    // if (v == null) {
-    // if(kv.getValue() != null)
-    // v = kv.getValue().get(c.getName());
-    // }
-    // key_record.put(c.getName(), v);
-    // }
-    // return get(key_record);
-    // }
 
     @Override
     public IRowSet getNextDup() throws TddlException {
@@ -438,8 +433,6 @@ public class JE_Cursor implements Cursor {
     public void setiCursorMeta(ICursorMeta iCursorMeta) {
         this.iCursorMeta = iCursorMeta;
     }
-
-    List<ColumnMeta> returnColumns = null;
 
     @Override
     public List<ColumnMeta> getReturnColumns() throws TddlException {

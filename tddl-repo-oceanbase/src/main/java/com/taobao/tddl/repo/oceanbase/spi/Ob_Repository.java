@@ -1,7 +1,5 @@
 package com.taobao.tddl.repo.oceanbase.spi;
 
-import javax.sql.DataSource;
-
 import com.alipay.oceanbase.OceanbaseDataSourceProxy;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -12,22 +10,18 @@ import com.taobao.tddl.common.model.Group;
 import com.taobao.tddl.common.utils.ExceptionErrorCodeUtils;
 import com.taobao.tddl.executor.common.TransactionConfig;
 import com.taobao.tddl.executor.repo.RepositoryConfig;
-import com.taobao.tddl.executor.spi.ICommandHandlerFactory;
-import com.taobao.tddl.executor.spi.ICursorFactory;
-import com.taobao.tddl.executor.spi.IDataSourceGetter;
-import com.taobao.tddl.executor.spi.IGroupExecutor;
-import com.taobao.tddl.executor.spi.IRepository;
-import com.taobao.tddl.executor.spi.ITable;
-import com.taobao.tddl.executor.spi.ITransaction;
+import com.taobao.tddl.executor.spi.*;
 import com.taobao.tddl.optimizer.config.table.TableMeta;
 import com.taobao.tddl.repo.mysql.executor.TddlGroupExecutor;
 import com.taobao.tddl.repo.mysql.spi.My_Repository;
 import com.taobao.tddl.repo.oceanbase.handler.ObCommandHandlerFactory;
 
+import javax.sql.DataSource;
+
 public class Ob_Repository extends My_Repository implements IRepository {
 
-    protected IDataSourceGetter dsGetter   = new ObDatasourceGetter();
-    public static final String  CONFIG_URL = "CONFIGURL";
+    public static final String CONFIG_URL = "CONFIGURL";
+    protected IDataSourceGetter dsGetter = new ObDatasourceGetter();
 
     @Override
     public void doInit() {

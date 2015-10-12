@@ -1,11 +1,10 @@
 package com.taobao.tddl.common.sorter;
 
-import java.sql.SQLException;
-
+import com.taobao.tddl.common.jdbc.sorter.MySQLExceptionSorter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.taobao.tddl.common.jdbc.sorter.MySQLExceptionSorter;
+import java.sql.SQLException;
 
 /**
  * @author yangzhu
@@ -15,7 +14,7 @@ public class MySQLExceptionSorterUnitTest {
     @Test
     public void all() {
         MySQLExceptionSorter s = new MySQLExceptionSorter();
-        int[] errors = new int[] { 1040, 1042, 1043, 1047, 1081, 1129, 1130, 1045, 1004, 1005, 1021, 1041, 1037, 1038 };
+        int[] errors = new int[]{1040, 1042, 1043, 1047, 1081, 1129, 1130, 1045, 1004, 1005, 1021, 1041, 1037, 1038};
 
         SQLException e = new SQLException("reason", "08S01");
 

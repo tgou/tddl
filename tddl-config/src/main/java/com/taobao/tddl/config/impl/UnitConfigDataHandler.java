@@ -1,28 +1,28 @@
 package com.taobao.tddl.config.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.common.utils.extension.ExtensionLoader;
 import com.taobao.tddl.config.ConfigDataHandler;
 import com.taobao.tddl.config.ConfigDataListener;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 基于unit的{@linkplain ConfigDataHandler}的delagate实现
- * 
+ *
  * @author jianghang 2013-10-28 下午7:00:35
  * @since 5.0.0
  */
 public abstract class UnitConfigDataHandler extends AbstractLifecycle implements ConfigDataHandler {
 
-    protected String                   unitName;
-    protected String                   appName;
-    protected String                   dataId;
-    protected Map<String, Object>      config;
+    protected String unitName;
+    protected String appName;
+    protected String dataId;
+    protected Map<String, Object> config;
     protected List<ConfigDataListener> listeners = Lists.newArrayList();
-    protected String                   initialData;
+    protected String initialData;
 
     protected UnitConfigDataHandler loadHandlerExtension() {
         UnitConfigDataHandler unitHandler = ExtensionLoader.load(UnitConfigDataHandler.class);

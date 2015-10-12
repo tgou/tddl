@@ -1,8 +1,7 @@
 package com.taobao.tddl.group.listener;
 
-import java.util.Map;
-
 import javax.sql.DataSource;
+import java.util.Map;
 
 public interface DataSourceChangeListener {
 

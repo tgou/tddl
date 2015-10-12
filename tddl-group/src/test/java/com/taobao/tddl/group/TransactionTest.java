@@ -1,11 +1,7 @@
 package com.taobao.tddl.group;
 
-import static org.junit.Assert.assertEquals;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import com.taobao.diamond.mockserver.MockServer;
+import com.taobao.tddl.group.jdbc.TGroupDataSource;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,8 +13,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.taobao.diamond.mockserver.MockServer;
-import com.taobao.tddl.group.jdbc.TGroupDataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import static org.junit.Assert.assertEquals;
 
 public class TransactionTest extends BaseGroupTest {
 
@@ -40,7 +39,7 @@ public class TransactionTest extends BaseGroupTest {
 
                 public Object doInTransaction(TransactionStatus status) {
                     assertEquals(1,
-                        jdbcTemplate.update("insert into tddl_test_0000(id,name,gmt_create,gmt_modified) values(10,'str',now(),now())"));
+                            jdbcTemplate.update("insert into tddl_test_0000(id,name,gmt_create,gmt_modified) values(10,'str',now(),now())"));
                     assertEquals(1, jdbcTemplate.update("update tddl_test_0000 set name='str2'"));
                     jdbcTemplate.execute(new StatementCallback() {
 

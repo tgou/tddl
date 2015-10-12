@@ -1,8 +1,7 @@
 package com.taobao.tddl.common.utils;
 
-import org.junit.Test;
-
 import com.googlecode.concurrentlinkedhashmap.EvictionListener;
+import org.junit.Test;
 
 public class GoogleConcurrentLruCacheTest {
 

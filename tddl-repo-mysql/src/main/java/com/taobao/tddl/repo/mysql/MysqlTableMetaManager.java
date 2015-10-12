@@ -1,34 +1,26 @@
 package com.taobao.tddl.repo.mysql;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-
-import javax.sql.DataSource;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.commons.lang.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.utils.XmlHelper;
 import com.taobao.tddl.common.utils.extension.Activate;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.executor.spi.IDataSourceGetter;
 import com.taobao.tddl.optimizer.config.table.RepoSchemaManager;
 import com.taobao.tddl.optimizer.config.table.TableMeta;
 import com.taobao.tddl.optimizer.config.table.parse.TableMetaParser;
 import com.taobao.tddl.repo.mysql.spi.DatasourceMySQLImplement;
+import org.apache.commons.lang.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import javax.sql.DataSource;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.sql.*;
+import java.util.List;
 
 /**
  * @author mengshi.sunmengshi 2013-12-5 下午6:18:14
@@ -37,82 +29,11 @@ import com.taobao.tddl.common.utils.logger.LoggerFactory;
 @Activate(name = "MYSQL_JDBC", order = 2)
 public class MysqlTableMetaManager extends RepoSchemaManager {
 
-    public static String            xmlHead       = "<tables xmlns=\"https://github.com/tddl/tddl/schema/table\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"https://github.com/tddl/tddl/schema/table https://raw.github.com/tddl/tddl/master/tddl-common/src/main/resources/META-INF/table.xsd\">";
-    private final static Logger     logger        = LoggerFactory.getLogger(MysqlTableMetaManager.class);
+    private final static Logger logger = LoggerFactory.getLogger(MysqlTableMetaManager.class);
+    public static String xmlHead = "<tables xmlns=\"https://github.com/tddl/tddl/schema/table\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"https://github.com/tddl/tddl/schema/table https://raw.github.com/tddl/tddl/master/tddl-common/src/main/resources/META-INF/table.xsd\">";
     private final IDataSourceGetter mysqlDsGetter = new DatasourceMySQLImplement();
 
-    public MysqlTableMetaManager(){
-    }
-
-    protected IDataSourceGetter getDatasourceGetter() {
-        return this.mysqlDsGetter;
-    }
-
-    /**
-     * 需要各Repo来实现
-     * 
-     * @param tableName
-     */
-    @Override
-    protected TableMeta getTable0(String logicalTableName, String actualTableName) {
-        TableMeta ts = fetchSchema(logicalTableName, actualTableName);
-        return ts;
-    }
-
-    private TableMeta fetchSchema(String logicalTableName, String actualTableName) {
-        if (actualTableName == null) {
-            throw new TddlRuntimeException("table " + logicalTableName + " cannot fetched without a actual tableName");
-        }
-
-        DataSource ds = getDatasourceGetter().getDataSource(this.getGroup().getName());
-        if (ds == null) {
-            logger.error("schema of " + logicalTableName + " cannot be fetched, datasource is null, group name is "
-                         + this.getGroup().getName());
-            return null;
-        }
-
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
-            conn = ds.getConnection();
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("select * from " + actualTableName + " limit 1");
-            ResultSetMetaData rsmd = rs.getMetaData();
-            DatabaseMetaData dbmd = conn.getMetaData();
-            return resultSetMetaToSchema(rsmd, dbmd, logicalTableName, actualTableName);
-        } catch (Exception e) {
-            if (e instanceof SQLException) {
-                if ("42000".equals(((SQLException) e).getSQLState())) {
-                    try {
-                        rs = stmt.executeQuery("select * from " + actualTableName + " where rownum<=2");
-                        ResultSetMetaData rsmd = rs.getMetaData();
-                        DatabaseMetaData dbmd = conn.getMetaData();
-                        return resultSetMetaToSchema(rsmd, dbmd, logicalTableName, actualTableName);
-                    } catch (SQLException e1) {
-                        logger.warn(e);
-                    }
-                }
-            }
-            e.printStackTrace();
-            logger.error("schema of " + logicalTableName + " cannot be fetched", e);
-            return null;
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                logger.warn(e);
-            }
-        }
-
+    public MysqlTableMetaManager() {
     }
 
     public static TableMeta resultSetMetaToSchema(ResultSetMetaData rsmd, DatabaseMetaData dbmd,
@@ -193,6 +114,77 @@ public class MysqlTableMetaManager extends RepoSchemaManager {
         } catch (Exception ex) {
             logger.error("fetch schema error", ex);
             return null;
+        }
+
+    }
+
+    protected IDataSourceGetter getDatasourceGetter() {
+        return this.mysqlDsGetter;
+    }
+
+    /**
+     * 需要各Repo来实现
+     *
+     * @param tableName
+     */
+    @Override
+    protected TableMeta getTable0(String logicalTableName, String actualTableName) {
+        TableMeta ts = fetchSchema(logicalTableName, actualTableName);
+        return ts;
+    }
+
+    private TableMeta fetchSchema(String logicalTableName, String actualTableName) {
+        if (actualTableName == null) {
+            throw new TddlRuntimeException("table " + logicalTableName + " cannot fetched without a actual tableName");
+        }
+
+        DataSource ds = getDatasourceGetter().getDataSource(this.getGroup().getName());
+        if (ds == null) {
+            logger.error("schema of " + logicalTableName + " cannot be fetched, datasource is null, group name is "
+                    + this.getGroup().getName());
+            return null;
+        }
+
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = ds.getConnection();
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("select * from " + actualTableName + " limit 1");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            DatabaseMetaData dbmd = conn.getMetaData();
+            return resultSetMetaToSchema(rsmd, dbmd, logicalTableName, actualTableName);
+        } catch (Exception e) {
+            if (e instanceof SQLException) {
+                if ("42000".equals(((SQLException) e).getSQLState())) {
+                    try {
+                        rs = stmt.executeQuery("select * from " + actualTableName + " where rownum<=2");
+                        ResultSetMetaData rsmd = rs.getMetaData();
+                        DatabaseMetaData dbmd = conn.getMetaData();
+                        return resultSetMetaToSchema(rsmd, dbmd, logicalTableName, actualTableName);
+                    } catch (SQLException e1) {
+                        logger.warn(e);
+                    }
+                }
+            }
+            e.printStackTrace();
+            logger.error("schema of " + logicalTableName + " cannot be fetched", e);
+            return null;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                logger.warn(e);
+            }
         }
 
     }

@@ -6,13 +6,13 @@ import com.taobao.tddl.optimizer.core.PlanVisitor;
 public class NullValue implements Comparable, CanVisit {
 
     private static NullValue instance = new NullValue();
-    private String           str      = "null";
+    private String str = "null";
+
+    private NullValue() {
+    }
 
     public static NullValue getNullValue() {
         return instance;
-    }
-
-    private NullValue(){
     }
 
     public int compareTo(Object o) {

@@ -1,11 +1,5 @@
 package com.taobao.tddl.executor.cursor.test;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.executor.cursor.ISchematicCursor;
 import com.taobao.tddl.executor.cursor.MockArrayCursor;
@@ -14,6 +8,11 @@ import com.taobao.tddl.executor.cursor.impl.SortMergeJoinCursor;
 import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
 import com.taobao.tddl.optimizer.core.expression.bean.Column;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SortMergeCursorTest {
 
@@ -25,7 +24,7 @@ public class SortMergeCursorTest {
         cursor.initMeta();
 
         for (Integer id : ids) {
-            cursor.addRow(new Object[] { id, "name" + id, "school" + id });
+            cursor.addRow(new Object[]{id, "name" + id, "school" + id});
 
         }
 
@@ -38,10 +37,10 @@ public class SortMergeCursorTest {
     @Test
     public void testInnerJoin() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 1, 1, 1, 2, 3, 4, 5, 6,
-                7 }));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{1, 1, 1, 2, 3, 4, 5, 6,
+                7}));
         ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2",
-            new Integer[] { 1, 1, 2, 2, 4, 5, 6, 7 }));
+                new Integer[]{1, 1, 2, 2, 4, 5, 6, 7}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -52,11 +51,11 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
-        Object[] expected = new Object[] { 1, 1, 1, 1, 1, 1, 2, 2, 4, 5, 6, 7 };
+        Object[] expected = new Object[]{1, 1, 1, 1, 1, 1, 2, 2, 4, 5, 6, 7};
         List actual = new ArrayList();
         IRowSet row = null;
         while ((row = c.next()) != null) {
@@ -70,9 +69,9 @@ public class SortMergeCursorTest {
     @Test
     public void testInnerJoinWithRightEmpty() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 1, 1, 1, 2, 3, 4, 5, 6,
-                7 }));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] {}));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{1, 1, 1, 2, 3, 4, 5, 6,
+                7}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -83,11 +82,11 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
-        Object[] expected = new Object[] {};
+        Object[] expected = new Object[]{};
         List actual = new ArrayList();
         IRowSet row = null;
         while ((row = c.next()) != null) {
@@ -101,8 +100,8 @@ public class SortMergeCursorTest {
     @Test
     public void testInnerJoinWithBothEmpty() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] {}));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] {}));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -113,11 +112,11 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
-        Object[] expected = new Object[] {};
+        Object[] expected = new Object[]{};
         List actual = new ArrayList();
         IRowSet row = null;
         while ((row = c.next()) != null) {
@@ -131,10 +130,10 @@ public class SortMergeCursorTest {
     @Test
     public void testInnerJoinWithTwoJoinOnColumns() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 1, 1, 1, 2, 3, 4, 5, 6,
-                7 }));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{1, 1, 1, 2, 3, 4, 5, 6,
+                7}));
         ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2",
-            new Integer[] { 1, 1, 2, 2, 4, 5, 6, 7 }));
+                new Integer[]{1, 1, 2, 2, 4, 5, 6, 7}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -147,11 +146,11 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("NAME").setDataType(DataType.StringType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
-        Object[] expected = new Object[] { 1, 1, 1, 1, 1, 1, 2, 2, 4, 5, 6, 7 };
+        Object[] expected = new Object[]{1, 1, 1, 1, 1, 1, 2, 2, 4, 5, 6, 7};
         List actual = new ArrayList();
         IRowSet row = null;
         while ((row = c.next()) != null) {
@@ -165,8 +164,8 @@ public class SortMergeCursorTest {
     @Test
     public void testLeftJoin() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 2, 3, 4, 5 }));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] { 2, 4, 5 }));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{2, 3, 4, 5}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{2, 4, 5}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -177,14 +176,14 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setLeftJoin(true);
 
-        Object[] leftExpected = new Object[] { 2, 3, 4, 5 };
-        Object[] rightExpected = new Object[] { 2, null, 4, 5 };
+        Object[] leftExpected = new Object[]{2, 3, 4, 5};
+        Object[] rightExpected = new Object[]{2, null, 4, 5};
         List leftActual = new ArrayList();
         List rightActual = new ArrayList();
         IRowSet row = null;
@@ -201,8 +200,8 @@ public class SortMergeCursorTest {
     @Test
     public void testLeftJoin2() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 2, 4, 5 }));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] { 2, 3, 4, 5 }));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{2, 4, 5}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{2, 3, 4, 5}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -213,14 +212,14 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setLeftJoin(true);
 
-        Object[] leftExpected = new Object[] { 2, 4, 5 };
-        Object[] rightExpected = new Object[] { 2, 4, 5 };
+        Object[] leftExpected = new Object[]{2, 4, 5};
+        Object[] rightExpected = new Object[]{2, 4, 5};
         List leftActual = new ArrayList();
         List rightActual = new ArrayList();
         IRowSet row = null;
@@ -237,8 +236,8 @@ public class SortMergeCursorTest {
     @Test
     public void testRightJoin() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 2, 3, 4, 5 }));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] { 2, 4, 5 }));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{2, 3, 4, 5}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{2, 4, 5}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -249,14 +248,14 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setRightJoin(true);
 
-        Object[] leftExpected = new Object[] { 2, 4, 5 };
-        Object[] rightExpected = new Object[] { 2, 4, 5 };
+        Object[] leftExpected = new Object[]{2, 4, 5};
+        Object[] rightExpected = new Object[]{2, 4, 5};
         List leftActual = new ArrayList();
         List rightActual = new ArrayList();
         IRowSet row = null;
@@ -273,8 +272,8 @@ public class SortMergeCursorTest {
     @Test
     public void testRightJoin2() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 2, 4, 5 }));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] { 2, 3, 4, 5 }));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{2, 4, 5}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{2, 3, 4, 5}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -285,14 +284,14 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setRightJoin(true);
 
-        Object[] leftExpected = new Object[] { 2, null, 4, 5 };
-        Object[] rightExpected = new Object[] { 2, 3, 4, 5 };
+        Object[] leftExpected = new Object[]{2, null, 4, 5};
+        Object[] rightExpected = new Object[]{2, 3, 4, 5};
         List leftActual = new ArrayList();
         List rightActual = new ArrayList();
         IRowSet row = null;
@@ -309,8 +308,8 @@ public class SortMergeCursorTest {
     @Test
     public void testFullOutterJoin() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 2, 3, 4, 5 }));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] { 2, 4, 5 }));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{2, 3, 4, 5}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{2, 4, 5}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -321,15 +320,15 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setRightJoin(true);
         c.setLeftJoin(true);
 
-        Object[] leftExpected = new Object[] { 2, 3, 4, 5 };
-        Object[] rightExpected = new Object[] { 2, null, 4, 5 };
+        Object[] leftExpected = new Object[]{2, 3, 4, 5};
+        Object[] rightExpected = new Object[]{2, null, 4, 5};
         List leftActual = new ArrayList();
         List rightActual = new ArrayList();
         IRowSet row = null;
@@ -346,8 +345,8 @@ public class SortMergeCursorTest {
     @Test
     public void testFullOutterJoin2() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 2, 4, 5 }));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] { 2, 3, 4, 5 }));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{2, 4, 5}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{2, 3, 4, 5}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -358,14 +357,14 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setRightJoin(true);
         c.setLeftJoin(true);
-        Object[] leftExpected = new Object[] { 2, null, 4, 5 };
-        Object[] rightExpected = new Object[] { 2, 3, 4, 5 };
+        Object[] leftExpected = new Object[]{2, null, 4, 5};
+        Object[] rightExpected = new Object[]{2, 3, 4, 5};
         List leftActual = new ArrayList();
         List rightActual = new ArrayList();
         IRowSet row = null;
@@ -382,8 +381,8 @@ public class SortMergeCursorTest {
     @Test
     public void testFullOutterJoin3() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 2, 4, 5, 6 }));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] { 2, 3, 4, 5 }));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{2, 4, 5, 6}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{2, 3, 4, 5}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -394,14 +393,14 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setRightJoin(true);
         c.setLeftJoin(true);
-        Object[] leftExpected = new Object[] { 2, null, 4, 5, 6 };
-        Object[] rightExpected = new Object[] { 2, 3, 4, 5, null };
+        Object[] leftExpected = new Object[]{2, null, 4, 5, 6};
+        Object[] rightExpected = new Object[]{2, 3, 4, 5, null};
         List leftActual = new ArrayList();
         List rightActual = new ArrayList();
         IRowSet row = null;
@@ -418,8 +417,8 @@ public class SortMergeCursorTest {
     @Test
     public void testFullOutterJoin4() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 2, 4, 5, 6 }));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] { 2, 3, 4, 5, 9 }));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{2, 4, 5, 6}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{2, 3, 4, 5, 9}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -430,14 +429,14 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setRightJoin(true);
         c.setLeftJoin(true);
-        Object[] leftExpected = new Object[] { 2, null, 4, 5, 6, null };
-        Object[] rightExpected = new Object[] { 2, 3, 4, 5, null, 9 };
+        Object[] leftExpected = new Object[]{2, null, 4, 5, 6, null};
+        Object[] rightExpected = new Object[]{2, 3, 4, 5, null, 9};
         List leftActual = new ArrayList();
         List rightActual = new ArrayList();
         IRowSet row = null;
@@ -454,9 +453,9 @@ public class SortMergeCursorTest {
     @Test
     public void testFullOutterJoin5() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] { 1, 1, 1, 2, 4, 5, 6, 6,
-                6 }));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] {}));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{1, 1, 1, 2, 4, 5, 6, 6,
+                6}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -467,14 +466,14 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setRightJoin(true);
         c.setLeftJoin(true);
-        Object[] leftExpected = new Object[] { 1, 1, 1, 2, 4, 5, 6, 6, 6 };
-        Object[] rightExpected = new Object[] { null, null, null, null, null, null, null, null, null };
+        Object[] leftExpected = new Object[]{1, 1, 1, 2, 4, 5, 6, 6, 6};
+        Object[] rightExpected = new Object[]{null, null, null, null, null, null, null, null, null};
         List leftActual = new ArrayList();
         List rightActual = new ArrayList();
         IRowSet row = null;
@@ -491,8 +490,8 @@ public class SortMergeCursorTest {
     @Test
     public void testFullOutterJoin6() throws TddlException {
 
-        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[] {}));
-        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[] {}));
+        ISchematicCursor left_cursor = new SchematicCursor(this.getCursor("T1", new Integer[]{}));
+        ISchematicCursor right_cursor = new SchematicCursor(this.getCursor("T2", new Integer[]{}));
 
         List leftJoinOnColumns = new ArrayList();
 
@@ -503,14 +502,14 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setRightJoin(true);
         c.setLeftJoin(true);
-        Object[] leftExpected = new Object[] {};
-        Object[] rightExpected = new Object[] {};
+        Object[] leftExpected = new Object[]{};
+        Object[] rightExpected = new Object[]{};
         List leftActual = new ArrayList();
         List rightActual = new ArrayList();
         IRowSet row = null;
@@ -527,8 +526,8 @@ public class SortMergeCursorTest {
     @Test
     public void testClose() throws TddlException {
 
-        MockArrayCursor leftMockCursor = this.getCursor("T1", new Integer[] { 2, 4, 5, 6 });
-        MockArrayCursor rightMockCursor = this.getCursor("T2", new Integer[] { 2, 3, 4, 5, 9 });
+        MockArrayCursor leftMockCursor = this.getCursor("T1", new Integer[]{2, 4, 5, 6});
+        MockArrayCursor rightMockCursor = this.getCursor("T2", new Integer[]{2, 3, 4, 5, 9});
         ISchematicCursor left_cursor = new SchematicCursor(leftMockCursor);
         ISchematicCursor right_cursor = new SchematicCursor(rightMockCursor);
 
@@ -541,9 +540,9 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setRightJoin(true);
         c.setLeftJoin(true);
@@ -568,8 +567,8 @@ public class SortMergeCursorTest {
     @Test
     public void testGetReturnColumns() throws TddlException {
 
-        MockArrayCursor leftMockCursor = this.getCursor("T1", new Integer[] { 2, 4, 5, 6 });
-        MockArrayCursor rightMockCursor = this.getCursor("T2", new Integer[] { 2, 3, 4, 5, 9 });
+        MockArrayCursor leftMockCursor = this.getCursor("T1", new Integer[]{2, 4, 5, 6});
+        MockArrayCursor rightMockCursor = this.getCursor("T2", new Integer[]{2, 3, 4, 5, 9});
         ISchematicCursor left_cursor = new SchematicCursor(leftMockCursor);
         ISchematicCursor right_cursor = new SchematicCursor(rightMockCursor);
 
@@ -582,9 +581,9 @@ public class SortMergeCursorTest {
         rightJoinOnColumns.add(new Column().setColumnName("ID").setDataType(DataType.IntegerType).setTableName("T2"));
 
         SortMergeJoinCursor c = new SortMergeJoinCursor(left_cursor,
-            right_cursor,
-            leftJoinOnColumns,
-            rightJoinOnColumns);
+                right_cursor,
+                leftJoinOnColumns,
+                rightJoinOnColumns);
 
         c.setRightJoin(true);
         c.setLeftJoin(true);

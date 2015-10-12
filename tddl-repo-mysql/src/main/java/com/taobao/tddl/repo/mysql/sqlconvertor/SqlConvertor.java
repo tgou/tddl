@@ -1,13 +1,13 @@
 package com.taobao.tddl.repo.mysql.sqlconvertor;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.IPut;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SqlConvertor {
 
@@ -46,7 +46,7 @@ public class SqlConvertor {
 
     /**
      * 因为原则上，目前简化版本的执行树只有一个merge，所以抽一个方法公用
-     * 
+     *
      * @param sqlMergeNode
      * @param nodeExecutor
      */

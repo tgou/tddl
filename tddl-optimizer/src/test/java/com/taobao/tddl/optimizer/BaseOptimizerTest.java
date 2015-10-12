@@ -1,14 +1,5 @@
 package com.taobao.tddl.optimizer;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.jdbc.ParameterMethod;
@@ -24,22 +15,30 @@ import com.taobao.tddl.optimizer.parse.cobar.CobarSqlParseManager;
 import com.taobao.tddl.optimizer.rule.OptimizerRule;
 import com.taobao.tddl.optimizer.rule.RuleIndexManager;
 import com.taobao.tddl.rule.TddlRule;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Ignore
 public class BaseOptimizerTest {
 
-    protected static final String       APPNAME               = "tddl";
-    protected static final String       table_file            = "config/test_table.xml";
-    protected static final String       matrix_file           = "config/test_matrix.xml";
-    protected static final String       rule_file             = "config/test_rule.xml";
-    protected static final String       table_stat_file       = "config/table_stat.xml";
-    protected static final String       table_index_stat_file = "config/kvIndex_stat.xml";
+    protected static final String APPNAME = "tddl";
+    protected static final String table_file = "config/test_table.xml";
+    protected static final String matrix_file = "config/test_matrix.xml";
+    protected static final String rule_file = "config/test_rule.xml";
+    protected static final String table_stat_file = "config/table_stat.xml";
+    protected static final String table_index_stat_file = "config/kvIndex_stat.xml";
 
-    protected static SqlParseManager    parser                = new CobarSqlParseManager();
-    protected static OptimizerRule      rule;
-    protected static RepoSchemaManager  schemaManager;
+    protected static SqlParseManager parser = new CobarSqlParseManager();
+    protected static OptimizerRule rule;
+    protected static RepoSchemaManager schemaManager;
     protected static CostBasedOptimizer optimizer;
-    protected static StatManager        statManager;
+    protected static StatManager statManager;
 
     @BeforeClass
     public static void initial() throws TddlException {
@@ -54,12 +53,12 @@ public class BaseOptimizerTest {
         rule = new OptimizerRule(tddlRule);
 
         StaticSchemaManager localSchemaManager = StaticSchemaManager.parseSchema(Thread.currentThread()
-            .getContextClassLoader()
-            .getResourceAsStream(table_file));
+                .getContextClassLoader()
+                .getResourceAsStream(table_file));
 
         Matrix matrix = MatrixParser.parse(Thread.currentThread()
-            .getContextClassLoader()
-            .getResourceAsStream(matrix_file));
+                .getContextClassLoader()
+                .getResourceAsStream(matrix_file));
 
         schemaManager = new RepoSchemaManager();
         schemaManager.setLocal(localSchemaManager);
@@ -67,9 +66,9 @@ public class BaseOptimizerTest {
         schemaManager.init();
 
         statManager = LocalStatManager.parseConfig(Thread.currentThread()
-            .getContextClassLoader()
-            .getResourceAsStream(table_stat_file),
-            Thread.currentThread().getContextClassLoader().getResourceAsStream(table_index_stat_file));
+                        .getContextClassLoader()
+                        .getResourceAsStream(table_stat_file),
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(table_index_stat_file));
 
         // statManager = new RepoStatManager();
         // statManager.setLocal(local);
@@ -102,7 +101,7 @@ public class BaseOptimizerTest {
         Map<Integer, ParameterContext> map = new HashMap<Integer, ParameterContext>(args.size());
         int index = 1;
         for (Object obj : args) {
-            ParameterContext context = new ParameterContext(ParameterMethod.setObject1, new Object[] { index, obj });
+            ParameterContext context = new ParameterContext(ParameterMethod.setObject1, new Object[]{index, obj});
             map.put(index, context);
             index++;
         }

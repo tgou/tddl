@@ -10,7 +10,7 @@ public interface HBaseColumnCoder {
 
     /**
      * 把一个列转换为bytes，用于非rowKey列
-     * 
+     *
      * @param type
      * @param o
      * @return
@@ -19,7 +19,7 @@ public interface HBaseColumnCoder {
 
     /**
      * 从bytes转换出一个列的实际值，用于非rowKey列
-     * 
+     *
      * @param type
      * @param bytes
      * @return
@@ -28,7 +28,7 @@ public interface HBaseColumnCoder {
 
     /**
      * 从string转换出一个列的实际值，用于rowKey中的列
-     * 
+     *
      * @param type
      * @param str
      * @return
@@ -37,7 +37,7 @@ public interface HBaseColumnCoder {
 
     /**
      * 把一个列的值转换为string，用于rowKey列
-     * 
+     *
      * @param type
      * @param o
      * @return

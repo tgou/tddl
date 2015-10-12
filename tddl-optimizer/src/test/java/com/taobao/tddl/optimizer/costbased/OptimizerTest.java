@@ -1,12 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
@@ -20,6 +13,12 @@ import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.core.plan.query.IParallelizableQueryTree.QUERY_CONCURRENCY;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 整个优化器的集成测试，主要是一些query
@@ -262,7 +261,7 @@ public class OptimizerTest extends BaseOptimizerTest {
         TableNode table = new TableNode("TABLE1");
         JoinNode join = table.join("TABLE2", "ID", "ID");
         join.select(OptimizerUtils.createColumnFromString("TABLE1.ID AS JID"),
-            OptimizerUtils.createColumnFromString("CONCAT(TABLE1.NAME,TABLE1.SCHOOL) AS JNAME"));
+                OptimizerUtils.createColumnFromString("CONCAT(TABLE1.NAME,TABLE1.SCHOOL) AS JNAME"));
         join.orderBy("JID");
         join.groupBy("JNAME");
         join.having("COUNT(JID) > 0");
@@ -276,7 +275,7 @@ public class OptimizerTest extends BaseOptimizerTest {
         TableNode table = new TableNode("TABLE1");
         JoinNode join = table.join("TABLE2", "ID", "ID");
         join.select(OptimizerUtils.createColumnFromString("TABLE1.ID AS JID"),
-            OptimizerUtils.createColumnFromString("CONCAT(TABLE1.NAME,TABLE1.SCHOOL) AS JNAME"));
+                OptimizerUtils.createColumnFromString("CONCAT(TABLE1.NAME,TABLE1.SCHOOL) AS JNAME"));
         join.limit(10, 20);
         IQueryTree qc = (IQueryTree) optimizer.optimizeAndAssignment(join, null, extraCmd);
         Assert.assertTrue(qc instanceof IMerge);

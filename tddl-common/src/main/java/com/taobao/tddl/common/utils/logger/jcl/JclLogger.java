@@ -1,25 +1,24 @@
 package com.taobao.tddl.common.utils.logger.jcl;
 
-import java.io.Serializable;
-
+import com.taobao.tddl.common.utils.logger.Logger;
 import org.apache.commons.logging.Log;
 
-import com.taobao.tddl.common.utils.logger.Logger;
+import java.io.Serializable;
 
 /**
  * copy from dubbo logger ,适配CommonsLogging，依赖于commons-logging.jar <br/>
  * 有关CommonsLogging详细信息请参阅：<a target="_blank"
  * href="http://www.apache.org/">http://www.apache.org/</a>
- * 
+ *
  * @author jianghang 2013-9-13 下午4:08:36
  */
 public class JclLogger implements Logger, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final Log         logger;
+    private final Log logger;
 
-    public JclLogger(Log logger){
+    public JclLogger(Log logger) {
         this.logger = logger;
     }
 

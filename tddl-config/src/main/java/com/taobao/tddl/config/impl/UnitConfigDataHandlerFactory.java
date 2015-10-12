@@ -1,41 +1,41 @@
 package com.taobao.tddl.config.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.config.ConfigDataHandler;
 import com.taobao.tddl.config.ConfigDataHandlerFactory;
 import com.taobao.tddl.config.ConfigDataListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
+
 /**
  * 基于unit的data handler factory实现，通过Extension机制获取对应的
  * {@linkplain ConfigDataHandler}
- * 
+ *
  * @author <a href="junyu@taobao.com">junyu</a>
  * @author <a href="jianghang.loujh@taobao.com">jianghang</a>
  * @version 1.0
- * @since 1.6
  * @date 2011-1-11下午01:17:21
+ * @since 1.6
  */
 public class UnitConfigDataHandlerFactory implements ConfigDataHandlerFactory {
 
     public static final String DEFAULT_UNITNAME = "";              // 空值
-    protected String           unitName         = DEFAULT_UNITNAME;
-    protected String           appName;                            // 如果为null，则不会进入holder处理逻辑
+    protected String unitName = DEFAULT_UNITNAME;
+    protected String appName;                            // 如果为null，则不会进入holder处理逻辑
 
-    public UnitConfigDataHandlerFactory(){
+    public UnitConfigDataHandlerFactory() {
     }
 
-    public UnitConfigDataHandlerFactory(String unitName){
+    public UnitConfigDataHandlerFactory(String unitName) {
         this.unitName = unitName;
     }
 
-    public UnitConfigDataHandlerFactory(String unitName, String appName){
+    public UnitConfigDataHandlerFactory(String unitName, String appName) {
         this.unitName = unitName;
         this.appName = appName;
     }
@@ -72,11 +72,11 @@ public class UnitConfigDataHandlerFactory implements ConfigDataHandlerFactory {
 
     /**
      * 不能更换listenerList的引用，避免后续对list的修改无效
-     * 
+     * <p/>
      * <pre>
-     * 以下做法是被禁止的 
+     * 以下做法是被禁止的
      * List result = new List
-     *  result.add 
+     *  result.add
      *  return result
      * </pre>
      */

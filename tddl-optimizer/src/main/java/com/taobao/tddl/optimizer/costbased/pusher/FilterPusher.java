@@ -1,9 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.pusher;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
 import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
@@ -17,35 +13,39 @@ import com.taobao.tddl.optimizer.exceptions.QueryException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * 将filter进行下推
- * 
+ * <p/>
  * <pre>
  * a. 如果条件中包含||条件则暂不优化，下推时会导致语义不正确
  * b. 如果条件中的column/value包含function，也不做下推 (比较麻烦，需要递归处理函数中的字段信息，同时检查是否符合下推条件，先简答处理)
  * c. 如果条件中的column/value中的字段来自于子节点的函数查询，也不做下推
- * 
+ *
  * 几种场景：
  * 1. where条件尽可能提前到叶子节点，同时提取出joinFilter
  * 处理类型： JoinNode/QueryNode
  * 注意点：JoinNode如果是outter节点，则不能继续下推
- * 
+ *
  * 如： tabl1.join(table2).query("table1.id>5 && table2.id<10 && table1.name = table2.name")
  * 优化成: table1.query("table1.id>5").join(table2.query("table2.id<10").on("table1.name = table2.name")
- * 
+ *
  * 如: table1.join(table2).query("table1.id = table2.id")
  * 优化成：table1.join(table2).on("table1.id = table2.id")
- * 
+ *
  * 2. join中的非字段列条件，比如column = 1的常量关系，提前到叶子节点
  * 处理类型：JoinNode
  * 注意点：
- * 
+ *
  * 如： tabl1.join(table2).on("table1.id>5&&table2.id<10")
  * 优化成: table1.query("table1.id>5").join(table2.query("table2.id<10")) t但如果条件中包含
- * 
+ *
  * 3. join filter中的字段进行条件推导到左/右的叶子节点上，在第1和第2步优化中同时处理
  * 处理类型：JoinNode
- * 
+ *
  * 如: table.join(table2).on("table1.id = table2.id and table1.id>5 && table2.id<10")
  * 优化成：table1.query("table1.id>5 && table1.id<10").join(table2.query("table2.id>5 && table2.id<10"))
  */
@@ -131,8 +131,8 @@ public class FilterPusher {
                 }
                 // 将左条件的表达式，推导到join filter的右条件上
                 DNFNodetoPushToRight.addAll(copyFilterToJoinOnColumns(DNFNodeToPush,
-                    jn.getLeftKeys(),
-                    jn.getRightKeys()));
+                        jn.getLeftKeys(),
+                        jn.getRightKeys()));
 
                 // 将右条件的表达式，推导到join filter的左条件上
                 DNFNodetoPushToLeft.addAll(copyFilterToJoinOnColumns(DNFNodeToPush, jn.getRightKeys(), jn.getLeftKeys()));
@@ -172,9 +172,9 @@ public class FilterPusher {
 
     /**
      * 约束条件应该尽量提前，针对join条件中的非join column列，比如column = 1的常量关系
-     * 
+     * <p/>
      * <pre>
-     * 如： tabl1.join(table2).on("table1.id>10&&table2.id<5") 
+     * 如： tabl1.join(table2).on("table1.id>10&&table2.id<5")
      * 优化成: able1.query("table1.id>10").join(table2.query("table2.id<5")) t但如果条件中包含||条件则暂不优化
      * </pre>
      */
@@ -249,15 +249,15 @@ public class FilterPusher {
                 // 这时对应的b.id = 1的条件不能推导到左表，否则语义不对
                 if (jn.isInnerJoin() || jn.isLeftOuterJoin()) {
                     DNFNodetoPushToRight.addAll(copyFilterToJoinOnColumns(DNFNodeToPush,
-                        jn.getLeftKeys(),
-                        jn.getRightKeys()));
+                            jn.getLeftKeys(),
+                            jn.getRightKeys()));
                 }
 
                 if (jn.isInnerJoin() || jn.isRightOuterJoin()) {
                     // 将右条件的表达式，推导到join filter的左条件上
                     DNFNodetoPushToLeft.addAll(copyFilterToJoinOnColumns(DNFNodeToPush,
-                        jn.getRightKeys(),
-                        jn.getLeftKeys()));
+                            jn.getRightKeys(),
+                            jn.getLeftKeys()));
                 }
             }
 
@@ -279,10 +279,10 @@ public class FilterPusher {
 
     /**
      * 将连接列上的约束复制到目标节点内
-     * 
-     * @param DNF 要复制的DNF filter
-     * @param other 要复制的目标节点
-     * @param qnColumns 源节点的join字段
+     *
+     * @param DNF          要复制的DNF filter
+     * @param other        要复制的目标节点
+     * @param qnColumns    源节点的join字段
      * @param otherColumns 目标节点的join字段
      * @throws QueryException
      */
@@ -370,7 +370,7 @@ public class FilterPusher {
         for (IFilter f : DNFNode) {
             if (f instanceof IBooleanFilter) {
                 if (((IBooleanFilter) f).getColumn() instanceof IColumn
-                    && ((IBooleanFilter) f).getValue() instanceof IColumn) {
+                        && ((IBooleanFilter) f).getValue() instanceof IColumn) {
                     return true;
                 }
             }
@@ -385,7 +385,7 @@ public class FilterPusher {
     private static ISelectable[] getJoinKeysWithColumnJoin(IBooleanFilter filter) {
         if (filter.getColumn() instanceof IColumn && filter.getValue() instanceof IColumn) {
             if (OPERATION.EQ.equals(filter.getOperation())) {
-                return new ISelectable[] { (ISelectable) filter.getColumn(), (ISelectable) filter.getValue() };
+                return new ISelectable[]{(ISelectable) filter.getColumn(), (ISelectable) filter.getValue()};
             }
         }
 

@@ -1,41 +1,41 @@
 package com.taobao.tddl.common.jdbc;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 
 public class TExceptionUtils {
 
-    public static StackTraceElement split                               = new StackTraceElement("------- one sql exceptions-----",
-                                                                            "",
-                                                                            "",
-                                                                            0);
-    public static final String      SQL_EXECUTION_ERROR_CONTEXT_LOG     = "SQL_EXECUTION_ERROR_CONTEXT_LOG";
-    private static final String     SQL_EXECUTION_ERROR_CONTEXT_MESSAGE = "SQLException ,context is ";
-    private static final Log        log                                 = LogFactory.getLog(SQL_EXECUTION_ERROR_CONTEXT_LOG);
+    public static final String SQL_EXECUTION_ERROR_CONTEXT_LOG = "SQL_EXECUTION_ERROR_CONTEXT_LOG";
+    private static final String SQL_EXECUTION_ERROR_CONTEXT_MESSAGE = "SQLException ,context is ";
+    private static final Log log = LogFactory.getLog(SQL_EXECUTION_ERROR_CONTEXT_LOG);
+    public static StackTraceElement split = new StackTraceElement("------- one sql exceptions-----",
+            "",
+            "",
+            0);
 
     public static void throwSQLException(List<SQLException> exceptions, String sql, List<Object> args)
-                                                                                                      throws SQLException {
+            throws SQLException {
         if (exceptions != null && !exceptions.isEmpty()) {
             SQLException first = exceptions.get(0);
             if (sql != null) {
                 log.info(("TDDL SQL EXECUTE ERROR REPORTER:" + getErrorContext(sql,
-                    args,
-                    SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)),
-                    first);
+                                args,
+                                SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)),
+                        first);
             }
             for (int i = 1, n = exceptions.size(); i < n; i++) {
                 if (sql != null) {
                     log.info(("layer:" + n + "TDDL SQL EXECUTE ERROR REPORTER :" + getErrorContext(sql,
-                        args,
-                        SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)),
-                        exceptions.get(i));
+                                    args,
+                                    SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)),
+                            exceptions.get(i));
                 }
             }
             throw mergeException(exceptions);
@@ -91,9 +91,9 @@ public class TExceptionUtils {
     public static void throwSQLException(SQLException exception, String sql, List<Object> args) throws SQLException {
         if (sql != null) {
             log.info(("TDDL SQL EXECUTE ERROR REPORTER:" + getErrorContext(sql,
-                args,
-                SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)) + "nest Exceptions is " + exception.getMessage(),
-                exception);
+                            args,
+                            SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)) + "nest Exceptions is " + exception.getMessage(),
+                    exception);
         }
         throw exception;
     }
@@ -111,12 +111,12 @@ public class TExceptionUtils {
             for (Object param : parameters) {
 
                 sb.append("[index:")
-                    .append(i)
-                    .append("|parameter:")
-                    .append(param)
-                    .append("|typeclass:")
-                    .append(param == null ? null : param.getClass().getName())
-                    .append("]");
+                        .append(i)
+                        .append("|parameter:")
+                        .append(param)
+                        .append("|typeclass:")
+                        .append(param == null ? null : param.getClass().getName())
+                        .append("]");
                 i++;
             }
         } else {
@@ -130,16 +130,16 @@ public class TExceptionUtils {
             SQLException first = exceptions.get(0);
             if (sql != null) {
                 log.info(("TDDL SQL EXECUTE ERROR REPORTER:" + getErrorContext(sql,
-                    parameter,
-                    SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)),
-                    first);
+                                parameter,
+                                SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)),
+                        first);
             }
             for (int i = 1, n = exceptions.size(); i < n; i++) {
                 if (sql != null) {
                     log.info(("layer:" + n + "TDDL SQL EXECUTE ERROR REPORTER :" + getErrorContext(sql,
-                        parameter,
-                        SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)),
-                        exceptions.get(i));
+                                    parameter,
+                                    SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)),
+                            exceptions.get(i));
                 }
             }
             throw mergeException(exceptions);
@@ -147,12 +147,12 @@ public class TExceptionUtils {
     }
 
     public static void throwSQLException(SQLException exception, String sql, Map<Integer, ParameterContext> parameter)
-                                                                                                                      throws SQLException {
+            throws SQLException {
         if (sql != null) {
             log.info(("TDDL SQL EXECUTE ERROR REPORTER:" + getErrorContext(sql,
-                parameter,
-                SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)) + "nest Exceptions is " + exception.getMessage(),
-                exception);
+                            parameter,
+                            SQL_EXECUTION_ERROR_CONTEXT_MESSAGE)) + "nest Exceptions is " + exception.getMessage(),
+                    exception);
         }
         throw exception;
     }
@@ -170,12 +170,12 @@ public class TExceptionUtils {
             for (Object param : parameter.entrySet()) {
 
                 sb.append("[index:")
-                    .append(i)
-                    .append("|parameter:")
-                    .append(param)
-                    .append("|typeclass:")
-                    .append(param == null ? null : param.getClass().getName())
-                    .append("]");
+                        .append(i)
+                        .append("|parameter:")
+                        .append(param)
+                        .append("|typeclass:")
+                        .append(param == null ? null : param.getClass().getName())
+                        .append("]");
                 i++;
             }
         } else {
@@ -186,7 +186,7 @@ public class TExceptionUtils {
     /**
      * 打印sqlException 到error log里，这并不会阻断整个执行流程，但为了保证不丢失log,所以必须将异常打印出去
      * 打印后的异常list会被清空
-     * 
+     *
      * @param logger
      * @param message
      * @param sqlExceptions

@@ -25,23 +25,33 @@ import java.math.BigInteger;
  */
 class EncodingConstants {
 
-    static final byte[]     EMPTY_BYTE_ARRAY   = new byte[0];
+    static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
-    /** Byte to use for null, low ordering */
-    static final byte       NULL_BYTE_LOW      = 0;
+    /**
+     * Byte to use for null, low ordering
+     */
+    static final byte NULL_BYTE_LOW = 0;
 
-    /** Byte to use for null, high ordering */
-    static final byte       NULL_BYTE_HIGH     = (byte) ~NULL_BYTE_LOW;
+    /**
+     * Byte to use for null, high ordering
+     */
+    static final byte NULL_BYTE_HIGH = (byte) ~NULL_BYTE_LOW;
 
-    /** Byte to use for not-null, low ordering */
-    static final byte       NOT_NULL_BYTE_HIGH = (byte) 128;
+    /**
+     * Byte to use for not-null, low ordering
+     */
+    static final byte NOT_NULL_BYTE_HIGH = (byte) 128;
 
-    /** Byte to use for not-null, high ordering */
-    static final byte       NOT_NULL_BYTE_LOW  = (byte) ~NOT_NULL_BYTE_HIGH;
+    /**
+     * Byte to use for not-null, high ordering
+     */
+    static final byte NOT_NULL_BYTE_LOW = (byte) ~NOT_NULL_BYTE_HIGH;
 
-    /** Byte to terminate variable data encoded for ascending order */
-    static final byte       TERMINATOR         = (byte) 1;
+    /**
+     * Byte to terminate variable data encoded for ascending order
+     */
+    static final byte TERMINATOR = (byte) 1;
 
-    static final BigInteger ONE_HUNDRED        = BigInteger.valueOf(100);
-    static final BigInteger ONE_THOUSAND       = BigInteger.valueOf(1000);
+    static final BigInteger ONE_HUNDRED = BigInteger.valueOf(100);
+    static final BigInteger ONE_THOUSAND = BigInteger.valueOf(1000);
 }

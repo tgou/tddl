@@ -1,18 +1,18 @@
 package com.taobao.tddl.config.impl.holder;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Maps;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.common.utils.extension.ExtensionLoader;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public abstract class AbstractConfigDataHolder extends AbstractLifecycle implements ConfigDataHolder {
 
-    protected Map<String, String>      configHouse         = new HashMap<String, String>();
-    protected AbstractConfigDataHolder delegateDataHolder  = null;
-    protected ConfigDataHolder         sonConfigDataHolder = null;
+    protected Map<String, String> configHouse = new HashMap<String, String>();
+    protected AbstractConfigDataHolder delegateDataHolder = null;
+    protected ConfigDataHolder sonConfigDataHolder = null;
 
     protected void loadDelegateExtension() {
         this.delegateDataHolder = ExtensionLoader.load(AbstractConfigDataHolder.class);

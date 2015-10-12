@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.utils;
 
-import java.util.List;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
 import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
@@ -10,9 +8,11 @@ import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
 import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
+import java.util.List;
+
 /**
  * {@linkplain IFilter}的toString()方法
- * 
+ *
  * @author mengshi.sunmengshi
  * @author <a href="jianghang.loujh@taobao.com">jianghang</a>
  */
@@ -35,7 +35,7 @@ public class OptimizerToString {
 
     /**
      * 根据给定的inden进行拼接filed : value
-     * 
+     *
      * @param sb
      * @param field
      * @param value
@@ -43,7 +43,7 @@ public class OptimizerToString {
      */
     public static void appendField(StringBuilder sb, String field, Object value, String inden) {
         if (value == null || value.toString().equals("") || value.toString().equals("[]")
-            || value.toString().equals("SEQUENTIAL") || value.toString().equals("SHARED_LOCK")) {
+                || value.toString().equals("SEQUENTIAL") || value.toString().equals("SHARED_LOCK")) {
             return;
         }
 
@@ -72,21 +72,21 @@ public class OptimizerToString {
             if (bf.getColumn() != null && (bf.getValue() != null || bf.getValues() != null)) {
                 if (bf.getOperation().equals(OPERATION.IN)) {
                     builder.append(getColumnName(bf, inden, needTable))
-                        .append(" ")
-                        .append(bf.getOperation().getOPERATIONString())
-                        .append(" ")
-                        .append(getValueName(bf, inden, needTable, true));
+                            .append(" ")
+                            .append(bf.getOperation().getOPERATIONString())
+                            .append(" ")
+                            .append(getValueName(bf, inden, needTable, true));
                 } else {
                     builder.append(getColumnName(bf, inden, needTable))
-                        .append(" ")
-                        .append(bf.getOperation().getOPERATIONString())
-                        .append(" ")
-                        .append(getValueName(bf, inden, needTable, false));
+                            .append(" ")
+                            .append(bf.getOperation().getOPERATIONString())
+                            .append(" ")
+                            .append(getValueName(bf, inden, needTable, false));
                 }
             } else if (bf.getOperation().equals(OPERATION.IS_NULL) || bf.getOperation().equals(OPERATION.IS_NOT_NULL)) {
                 builder.append(getColumnName(bf, inden, needTable))
-                    .append(" ")
-                    .append(bf.getOperation().getOPERATIONString());
+                        .append(" ")
+                        .append(bf.getOperation().getOPERATIONString());
             } else {
                 builder.append(getColumnName(bf, inden, needTable));
             }
@@ -107,9 +107,9 @@ public class OptimizerToString {
             builder.append(printFilterString(lf.getSubFilter().get(0)));
             for (int i = 1; i < lf.getSubFilter().size(); i++) {
                 builder.append(" ")
-                    .append(lf.getOperation().getOPERATIONString())
-                    .append(" ")
-                    .append(printFilterString(lf.getSubFilter().get(i)));
+                        .append(lf.getOperation().getOPERATIONString())
+                        .append(" ")
+                        .append(printFilterString(lf.getSubFilter().get(i)));
             }
 
             if (filter.isNot()) {

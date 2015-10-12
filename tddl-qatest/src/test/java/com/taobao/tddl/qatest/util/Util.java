@@ -1,12 +1,6 @@
 package com.taobao.tddl.qatest.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -93,7 +87,7 @@ public class Util {
      * @throws Exception
      */
     public static int mysqlUpdateData(String sql, List<Object> param, String ip, String db, String user, String passWord)
-                                                                                                                         throws Exception {
+            throws Exception {
         int rs = 0;
         Connection con = getConnection(ip, db, user, passWord);
         PreparedStatement ps = null;

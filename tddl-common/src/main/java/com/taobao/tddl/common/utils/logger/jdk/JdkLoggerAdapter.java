@@ -1,5 +1,9 @@
 package com.taobao.tddl.common.utils.logger.jdk;
 
+import com.taobao.tddl.common.utils.logger.Level;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerAdapter;
+
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -7,17 +11,13 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
 
-import com.taobao.tddl.common.utils.logger.Level;
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerAdapter;
-
 public class JdkLoggerAdapter implements LoggerAdapter {
 
     private static final String GLOBAL_LOGGER_NAME = "global";
 
-    private File                file;
+    private File file;
 
-    public JdkLoggerAdapter(){
+    public JdkLoggerAdapter() {
         try {
             InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("logging.properties");
             if (in != null) {
@@ -27,7 +27,7 @@ public class JdkLoggerAdapter implements LoggerAdapter {
             }
         } catch (Throwable t) {
             System.err.println("Failed to load logging.properties in classpath for jdk logging config, cause: "
-                               + t.getMessage());
+                    + t.getMessage());
         }
         try {
             Handler[] handlers = java.util.logging.Logger.getLogger(GLOBAL_LOGGER_NAME).getHandlers();
@@ -43,26 +43,6 @@ public class JdkLoggerAdapter implements LoggerAdapter {
             }
         } catch (Throwable t) {
         }
-    }
-
-    public Logger getLogger(Class<?> key) {
-        return new JdkLogger(java.util.logging.Logger.getLogger(key == null ? "" : key.getName()));
-    }
-
-    public Logger getLogger(String key) {
-        return new JdkLogger(java.util.logging.Logger.getLogger(key));
-    }
-
-    public void setLevel(Level level) {
-        java.util.logging.Logger.getLogger(GLOBAL_LOGGER_NAME).setLevel(toJdkLevel(level));
-    }
-
-    public Level getLevel() {
-        return fromJdkLevel(java.util.logging.Logger.getLogger(GLOBAL_LOGGER_NAME).getLevel());
-    }
-
-    public File getFile() {
-        return file;
     }
 
     private static java.util.logging.Level toJdkLevel(Level level) {
@@ -85,6 +65,26 @@ public class JdkLoggerAdapter implements LoggerAdapter {
         if (level == java.util.logging.Level.SEVERE) return Level.ERROR;
         // if (level == java.util.logging.Level.OFF)
         return Level.OFF;
+    }
+
+    public Logger getLogger(Class<?> key) {
+        return new JdkLogger(java.util.logging.Logger.getLogger(key == null ? "" : key.getName()));
+    }
+
+    public Logger getLogger(String key) {
+        return new JdkLogger(java.util.logging.Logger.getLogger(key));
+    }
+
+    public Level getLevel() {
+        return fromJdkLevel(java.util.logging.Logger.getLogger(GLOBAL_LOGGER_NAME).getLevel());
+    }
+
+    public void setLevel(Level level) {
+        java.util.logging.Logger.getLogger(GLOBAL_LOGGER_NAME).setLevel(toJdkLevel(level));
+    }
+
+    public File getFile() {
+        return file;
     }
 
     public void setFile(File file) {

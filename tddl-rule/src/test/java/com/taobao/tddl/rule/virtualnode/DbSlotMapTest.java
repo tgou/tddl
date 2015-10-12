@@ -1,13 +1,10 @@
 package com.taobao.tddl.rule.virtualnode;
 
-import java.util.Map;
-
+import com.google.common.collect.Maps;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.google.common.collect.Maps;
-import com.taobao.tddl.rule.virtualnode.DBTableMap;
-import com.taobao.tddl.rule.virtualnode.PartitionFunction;
+import java.util.Map;
 
 public class DbSlotMapTest {
 

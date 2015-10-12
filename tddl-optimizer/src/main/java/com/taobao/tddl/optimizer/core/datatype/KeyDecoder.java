@@ -18,19 +18,15 @@
 
 package com.taobao.tddl.optimizer.core.datatype;
 
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.EMPTY_BYTE_ARRAY;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NULL_BYTE_HIGH;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NULL_BYTE_LOW;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.ONE_HUNDRED;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.ONE_THOUSAND;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.*;
 
 /**
  * A very low-level class that decodes key components encoded by methods of
  * {@link KeyEncoder}.
- * 
+ *
  * @author Brian S O'Neill
  * @see DataDecoder
  */
@@ -39,8 +35,8 @@ public class KeyDecoder {
     /**
      * Decodes a signed integer from exactly 4 bytes, as encoded for descending
      * order.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed integer value
      */
@@ -51,8 +47,8 @@ public class KeyDecoder {
     /**
      * Decodes a signed Integer object from exactly 1 or 5 bytes, as encoded for
      * descending order. If null is returned, then 1 byte was read.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed Integer object or null
      */
@@ -71,8 +67,8 @@ public class KeyDecoder {
     /**
      * Decodes a signed long from exactly 8 bytes, as encoded for descending
      * order.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed long value
      */
@@ -83,8 +79,8 @@ public class KeyDecoder {
     /**
      * Decodes a signed Long object from exactly 1 or 9 bytes, as encoded for
      * descending order. If null is returned, then 1 byte was read.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed Long object or null
      */
@@ -103,8 +99,8 @@ public class KeyDecoder {
     /**
      * Decodes a signed byte from exactly 1 byte, as encoded for descending
      * order.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed byte value
      */
@@ -119,8 +115,8 @@ public class KeyDecoder {
     /**
      * Decodes a signed Byte object from exactly 1 or 2 bytes, as encoded for
      * descending order. If null is returned, then 1 byte was read.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed Byte object or null
      */
@@ -139,8 +135,8 @@ public class KeyDecoder {
     /**
      * Decodes a signed short from exactly 2 bytes, as encoded for descending
      * order.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed short value
      */
@@ -155,8 +151,8 @@ public class KeyDecoder {
     /**
      * Decodes a signed Short object from exactly 1 or 3 bytes, as encoded for
      * descending order. If null is returned, then 1 byte was read.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed Short object or null
      */
@@ -174,8 +170,8 @@ public class KeyDecoder {
 
     /**
      * Decodes a char from exactly 2 bytes, as encoded for descending order.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return char value
      */
@@ -190,8 +186,8 @@ public class KeyDecoder {
     /**
      * Decodes a Character object from exactly 1 or 3 bytes, as encoded for
      * descending order. If null is returned, then 1 byte was read.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return Character object or null
      */
@@ -209,8 +205,8 @@ public class KeyDecoder {
 
     /**
      * Decodes a boolean from exactly 1 byte, as encoded for descending order.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return boolean value
      */
@@ -225,8 +221,8 @@ public class KeyDecoder {
     /**
      * Decodes a Boolean object from exactly 1 byte, as encoded for descending
      * order.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return Boolean object or null
      */
@@ -248,8 +244,8 @@ public class KeyDecoder {
 
     /**
      * Decodes a float from exactly 4 bytes, as encoded for descending order.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return float value
      */
@@ -263,8 +259,8 @@ public class KeyDecoder {
 
     /**
      * Decodes a Float object from exactly 4 bytes.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return Float object or null
      */
@@ -278,8 +274,8 @@ public class KeyDecoder {
 
     /**
      * Decodes a double from exactly 8 bytes, as encoded for descending order.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return double value
      */
@@ -293,8 +289,8 @@ public class KeyDecoder {
 
     /**
      * Decodes a Double object from exactly 8 bytes.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return Double object or null
      */
@@ -308,11 +304,11 @@ public class KeyDecoder {
 
     /**
      * Decodes the given BigInteger as originally encoded for ascending order.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded BigInteger is stored in element 0, which may be
-     * null
+     * @param valueRef  decoded BigInteger is stored in element 0, which may be
+     *                  null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      * @since 1.2
@@ -355,11 +351,11 @@ public class KeyDecoder {
 
     /**
      * Decodes the given BigInteger as originally encoded for descending order.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded BigInteger is stored in element 0, which may be
-     * null
+     * @param valueRef  decoded BigInteger is stored in element 0, which may be
+     *                  null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      * @since 1.2
@@ -406,11 +402,11 @@ public class KeyDecoder {
 
     /**
      * Decodes the given BigDecimal as originally encoded for ascending order.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded BigDecimal is stored in element 0, which may be
-     * null
+     * @param valueRef  decoded BigDecimal is stored in element 0, which may be
+     *                  null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      * @since 1.2
@@ -421,11 +417,11 @@ public class KeyDecoder {
 
     /**
      * Decodes the given BigDecimal as originally encoded for descending order.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded BigDecimal is stored in element 0, which may be
-     * null
+     * @param valueRef  decoded BigDecimal is stored in element 0, which may be
+     *                  null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      * @since 1.2
@@ -438,7 +434,7 @@ public class KeyDecoder {
      * @param xorMask 0 for normal decoding, -1 for descending decoding
      */
     private static int decode(byte[] src, int srcOffset, BigDecimal[] valueRef, int xorMask)
-                                                                                            throws CorruptEncodingException {
+            throws CorruptEncodingException {
         final int originalOffset = srcOffset;
         BigInteger unscaledValue;
         int scale;
@@ -495,7 +491,8 @@ public class KeyDecoder {
             int bits = 0;
             BigInteger lastDigit = null;
 
-            loop: while (true) {
+            loop:
+            while (true) {
                 accum = (accum << 8) | ((src[srcOffset++] ^ xorMask) & 0xff);
                 bits += 8;
                 if (bits >= 10) {
@@ -560,11 +557,11 @@ public class KeyDecoder {
      * Decodes the given byte array as originally encoded for ascending order.
      * The decoding stops when any kind of terminator or illegal byte has been
      * read. The decoded bytes are stored in valueRef.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded byte array is stored in element 0, which may be
-     * null
+     * @param valueRef  decoded byte array is stored in element 0, which may be
+     *                  null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      */
@@ -580,11 +577,11 @@ public class KeyDecoder {
      * Decodes the given byte array as originally encoded for descending order.
      * The decoding stops when any kind of terminator or illegal byte has been
      * read. The decoded bytes are stored in valueRef.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded byte array is stored in element 0, which may be
-     * null
+     * @param valueRef  decoded byte array is stored in element 0, which may be
+     *                  null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      */
@@ -677,10 +674,10 @@ public class KeyDecoder {
 
     /**
      * Decodes an encoded string from the given byte array.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded string is stored in element 0, which may be null
+     * @param valueRef  decoded string is stored in element 0, which may be null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      */
@@ -695,10 +692,10 @@ public class KeyDecoder {
     /**
      * Decodes an encoded string from the given byte array as originally encoded
      * for descending order.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded string is stored in element 0, which may be null
+     * @param valueRef  decoded string is stored in element 0, which may be null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      */
@@ -714,7 +711,7 @@ public class KeyDecoder {
      * @param xorMask 0 for normal decoding, -1 for descending decoding
      */
     private static int decodeString(byte[] src, int srcOffset, String[] valueRef, int xorMask)
-                                                                                              throws CorruptEncodingException {
+            throws CorruptEncodingException {
         // Scan ahead, looking for terminator.
         int srcEnd = srcOffset;
         while (true) {
@@ -786,7 +783,7 @@ public class KeyDecoder {
                     // 111xxxxx
                     // Illegal.
                     throw new CorruptEncodingException("Corrupt encoded string data (source offset = "
-                                                       + (srcOffset - 1) + ')');
+                            + (srcOffset - 1) + ')');
             }
         }
 
@@ -808,14 +805,14 @@ public class KeyDecoder {
      * Decodes the given byte array which was encoded by
      * {@link KeyEncoder#encodeSingleDesc}. Always returns a new byte array
      * instance.
-     * 
+     *
      * @param prefixPadding amount of extra bytes to skip from start of encoded
-     * byte array
+     *                      byte array
      * @param suffixPadding amount of extra bytes to skip at end of encoded byte
-     * array
+     *                      array
      */
     public static byte[] decodeSingleDesc(byte[] src, int prefixPadding, int suffixPadding)
-                                                                                           throws CorruptEncodingException {
+            throws CorruptEncodingException {
         try {
             int length = src.length - suffixPadding - prefixPadding;
             if (length == 0) {
@@ -844,14 +841,14 @@ public class KeyDecoder {
      * Decodes the given byte array which was encoded by
      * {@link KeyEncoder#encodeSingleNullableDesc}. Always returns a new byte
      * array instance.
-     * 
+     *
      * @param prefixPadding amount of extra bytes to skip from start of encoded
-     * byte array
+     *                      byte array
      * @param suffixPadding amount of extra bytes to skip at end of encoded byte
-     * array
+     *                      array
      */
     public static byte[] decodeSingleNullableDesc(byte[] src, int prefixPadding, int suffixPadding)
-                                                                                                   throws CorruptEncodingException {
+            throws CorruptEncodingException {
         try {
             byte b = src[prefixPadding];
             if (b == NULL_BYTE_HIGH || b == NULL_BYTE_LOW) {

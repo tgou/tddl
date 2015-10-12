@@ -1,55 +1,55 @@
 package com.taobao.tddl.optimizer.config.table;
 
+import com.taobao.tddl.common.utils.GeneralUtil;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.tddl.common.utils.GeneralUtil;
-
 /**
  * 每一个索引（或者叫KV更直白点）的描述
- * 
+ *
  * @author jianxing <jianxing.qx@taobao.com>
  */
 public class IndexMeta implements Serializable, Cloneable {
 
-    private static final long       serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     /**
      * 表名+列名
      */
-    private final String            name;
+    private final String name;
     /**
      * 列名字
      */
-    private final List<ColumnMeta>  keyColumns;
+    private final List<ColumnMeta> keyColumns;
 
     /**
      * 值名字
      */
-    private final List<ColumnMeta>  valueColumns;
+    private final List<ColumnMeta> valueColumns;
 
     /**
      * 当前index的类型 @IndexType
      */
-    private final IndexType         indexType;
+    private final IndexType indexType;
 
     /**
      * 关系，用来处理多对多关系，暂时没有用到。 see IndexType
      */
-    private final Relationship      relationship;
+    private final Relationship relationship;
 
     /**
      * 是否强同步,目前只支持主key
      */
-    private final boolean           isStronglyConsistent;
-    private final boolean           isPrimaryKeyIndex;
+    private final boolean isStronglyConsistent;
+    private final boolean isPrimaryKeyIndex;
 
     /**
      * 该索引的拆分键
      */
-    private final List<ColumnMeta>  partitionColumns;
+    private final List<ColumnMeta> partitionColumns;
 
     // ================== 冗余字段 ==============
 
@@ -57,15 +57,15 @@ public class IndexMeta implements Serializable, Cloneable {
      * 表名+index名的方式进行命名的。 在查询时，会先根据.之前的，拿到表名，然后找到对应的schema。
      * 然后再根据.之后的，找到对应的schema
      */
-    private final String            tableName;
+    private final String tableName;
     /**
      * 保存了所有列，方便查找
      */
-    private Map<String, ColumnMeta> columnsMap       = new HashMap();
+    private Map<String, ColumnMeta> columnsMap = new HashMap();
 
     public IndexMeta(String tableName, List<ColumnMeta> keys, List<ColumnMeta> values, IndexType indexType,
                      Relationship relationship, boolean isStronglyConsistent, boolean isPrimaryKeyIndex,
-                     List<ColumnMeta> partitionColumns){
+                     List<ColumnMeta> partitionColumns) {
         this.tableName = tableName;
         this.keyColumns = uniq(keys);
         this.valueColumns = uniq(values);
@@ -159,7 +159,7 @@ public class IndexMeta implements Serializable, Cloneable {
 
     /**
      * 根据列名获取对应的index key column
-     * 
+     *
      * @param name
      * @return
      */
@@ -175,7 +175,7 @@ public class IndexMeta implements Serializable, Cloneable {
 
     /**
      * 根据列名获取对应的index value column
-     * 
+     *
      * @param name
      * @return
      */

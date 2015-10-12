@@ -1,20 +1,19 @@
 package com.taobao.tddl.optimizer.costbased.esitimater.stat;
 
-import java.util.List;
-
+import com.taobao.tddl.common.utils.TddlToStringStyle;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import com.taobao.tddl.common.utils.TddlToStringStyle;
+import java.util.List;
 
 /**
  * 一个表的列的统计数据
- * 
+ *
  * @author danchen
  */
 public class TableColumnStat {
 
     // 表名
-    private String             tableName;
+    private String tableName;
     // 列的统计数据
     private List<KVColumnStat> columnStats;
 

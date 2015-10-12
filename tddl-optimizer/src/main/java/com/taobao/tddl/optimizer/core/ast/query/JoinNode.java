@@ -1,13 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast.query;
 
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendField;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendln;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.printFilterString;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
@@ -23,13 +15,19 @@ import com.taobao.tddl.optimizer.exceptions.QueryException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import static com.taobao.tddl.optimizer.utils.OptimizerToString.*;
+
 public class JoinNode extends QueryTreeNode {
 
-    private JoinNodeBuilder      builder;
+    private JoinNodeBuilder builder;
     /**
      * join 策略
      */
-    private JoinStrategy         joinStrategy          = JoinStrategy.NEST_LOOP_JOIN;
+    private JoinStrategy joinStrategy = JoinStrategy.NEST_LOOP_JOIN;
 
     /**
      * <pre>
@@ -38,21 +36,21 @@ public class JoinNode extends QueryTreeNode {
      * rightOuterJoin:
      *      leftOuter=false && rightOuter=true
      * innerJoin:
-     *      leftOuter=false && rightOuter=false 
+     *      leftOuter=false && rightOuter=false
      * outerJoin:
      *      leftOuter=true && rightOuter=true
      * </pre>
      */
-    private boolean              leftOuter             = false;
-    private boolean              rightOuter            = false;
+    private boolean leftOuter = false;
+    private boolean rightOuter = false;
 
-    private boolean              isCrossJoin           = false;
-    private boolean              usedForIndexJoinPK    = false;
-    private List<IBooleanFilter> joinFilter            = new ArrayList();
+    private boolean isCrossJoin = false;
+    private boolean usedForIndexJoinPK = false;
+    private List<IBooleanFilter> joinFilter = new ArrayList();
 
-    private boolean              needOptimizeJoinOrder = true;
+    private boolean needOptimizeJoinOrder = true;
 
-    public JoinNode(){
+    public JoinNode() {
         builder = new JoinNodeBuilder(this);
     }
 
@@ -80,7 +78,7 @@ public class JoinNode extends QueryTreeNode {
 
     public JoinNode addJoinKeys(String leftKey, String rightKey) {
         return this.addJoinKeys(OptimizerUtils.createColumnFromString(leftKey),
-            OptimizerUtils.createColumnFromString(rightKey));
+                OptimizerUtils.createColumnFromString(rightKey));
     }
 
     public void addJoinFilter(IBooleanFilter filter) {
@@ -95,14 +93,6 @@ public class JoinNode extends QueryTreeNode {
         return (QueryTreeNode) this.getChildren().get(0);
     }
 
-    public QueryTreeNode getRightNode() {
-        if (this.getChildren() == null || this.getChildren().size() < 2) {
-            return null;
-        }
-
-        return (QueryTreeNode) this.getChildren().get(1);
-    }
-
     public void setLeftNode(QueryTreeNode left) {
         if (this.getChildren().isEmpty()) {
             this.getChildren().add(left);
@@ -110,6 +100,14 @@ public class JoinNode extends QueryTreeNode {
             this.getChildren().set(0, left);
         }
         setNeedBuild(true);
+    }
+
+    public QueryTreeNode getRightNode() {
+        if (this.getChildren() == null || this.getChildren().size() < 2) {
+            return null;
+        }
+
+        return (QueryTreeNode) this.getChildren().get(1);
     }
 
     public void setRightNode(QueryTreeNode right) {
@@ -140,7 +138,7 @@ public class JoinNode extends QueryTreeNode {
         List<IOrderBy> orders = new ArrayList();
         // index nested loop以左表顺序为准
         if (this.getJoinStrategy() == JoinStrategy.INDEX_NEST_LOOP
-            || this.getJoinStrategy() == JoinStrategy.NEST_LOOP_JOIN) {
+                || this.getJoinStrategy() == JoinStrategy.NEST_LOOP_JOIN) {
             orders = this.getLeftNode().getImplicitOrderBys();
         } else if (this.getJoinStrategy() == JoinStrategy.SORT_MERGE_JOIN) {
             // sort merge的话，返回空值，由上层来判断
@@ -248,7 +246,7 @@ public class JoinNode extends QueryTreeNode {
 
             // 复制join的右字段，修正一下表名
             List<ISelectable> rightIndexJoinOnColumns = OptimizerUtils.copySelectables(this.getRightKeys(),
-                rightIndexQuery.getName());
+                    rightIndexQuery.getName());
 
             // 添加left join index的条件
             for (int i = 0; i < this.getLeftKeys().size(); i++) {
@@ -260,11 +258,11 @@ public class JoinNode extends QueryTreeNode {
             List<ISelectable> leftJoinRightIndexColumns = new LinkedList();
             // 复制left的查询
             List<ISelectable> leftJoinColumns = OptimizerUtils.copySelectables(left.getColumnsSelected(),
-                left.getName());
+                    left.getName());
 
             // 复制index的查询
             List<ISelectable> rightIndexColumns = OptimizerUtils.copySelectables(rightIndexQuery.getColumnsSelected(),
-                rightIndexQuery.getName());
+                    rightIndexQuery.getName());
 
             leftJoinRightIndexColumns.addAll(leftJoinColumns);
             leftJoinRightIndexColumns.addAll(rightIndexColumns);
@@ -276,7 +274,7 @@ public class JoinNode extends QueryTreeNode {
             leftJoinRightIndexJoinRightKey.setJoinStrategy(JoinStrategy.INDEX_NEST_LOOP); // 也是走index
 
             List<ISelectable> leftKeys = OptimizerUtils.copySelectables(((JoinNode) right).getLeftKeys(),
-                rightIndexQuery.getName());
+                    rightIndexQuery.getName());
             for (int i = 0; i < leftKeys.size(); i++) {
                 leftJoinRightIndexJoinRightKey.addJoinKeys(leftKeys.get(i), ((JoinNode) right).getRightKeys().get(i));
             }
@@ -471,7 +469,7 @@ public class JoinNode extends QueryTreeNode {
         // printFilterString(this.getAllWhereFilter()), tabContent);
         appendField(sb, "having", printFilterString(this.getHavingFilter(), inden + 2), tabContent);
         if (!(this.getLimitFrom() != null && this.getLimitFrom().equals(0L) && this.getLimitTo() != null && this.getLimitTo()
-            .equals(0L))) {
+                .equals(0L))) {
             appendField(sb, "limitFrom", this.getLimitFrom(), tabContent);
             appendField(sb, "limitTo", this.getLimitTo(), tabContent);
         }

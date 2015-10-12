@@ -1,33 +1,18 @@
 package com.taobao.tddl.atom.jdbc;
 
+import com.taobao.tddl.common.jdbc.SqlTypeParser;
+import com.taobao.tddl.monitor.unit.UnitDeployProtect;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.ParameterMetaData;
-import java.sql.PreparedStatement;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
-
-import com.taobao.tddl.common.jdbc.SqlTypeParser;
-import com.taobao.tddl.monitor.unit.UnitDeployProtect;
 
 /**
  * preparedStatement 包装类
- * 
+ *
  * @author shenxun
  */
 public class TPreparedStatementWrapper extends TStatementWrapper implements TPreparedStatement {
@@ -35,7 +20,7 @@ public class TPreparedStatementWrapper extends TStatementWrapper implements TPre
     protected final String sql;
 
     public TPreparedStatementWrapper(Statement targetStatement, TConnectionWrapper connectionWrapper,
-                                     TDataSourceWrapper dataSourceWrapper, String sql){
+                                     TDataSourceWrapper dataSourceWrapper, String sql) {
         super(targetStatement, connectionWrapper, dataSourceWrapper);
         this.sql = sql;
     }
@@ -245,12 +230,12 @@ public class TPreparedStatementWrapper extends TStatementWrapper implements TPre
         return ((PreparedStatement) targetStatement).isClosed();
     }
 
-    public void setPoolable(boolean poolable) throws SQLException {
-        ((PreparedStatement) targetStatement).setPoolable(poolable);
-    }
-
     public boolean isPoolable() throws SQLException {
         return ((PreparedStatement) targetStatement).isPoolable();
+    }
+
+    public void setPoolable(boolean poolable) throws SQLException {
+        ((PreparedStatement) targetStatement).setPoolable(poolable);
     }
 
     @SuppressWarnings("unchecked")

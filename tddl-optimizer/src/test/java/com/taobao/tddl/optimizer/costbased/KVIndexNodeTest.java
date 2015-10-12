@@ -1,12 +1,11 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import org.junit.Test;
-
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
 import com.taobao.tddl.optimizer.core.ast.query.KVIndexNode;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
+import org.junit.Test;
 
 public class KVIndexNodeTest extends BaseOptimizerTest {
 

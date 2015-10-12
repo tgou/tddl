@@ -18,25 +18,21 @@
  */
 package com.alibaba.cobar.parser.ast.fragment.ddl.datatype;
 
-import java.util.List;
-
 import com.alibaba.cobar.parser.ast.ASTNode;
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.ast.expression.primary.Identifier;
 import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
 
+import java.util.List;
+
 /**
  * <code>spatial data type</code> for MyISAM is not supported
- * 
+ *
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class DataType implements ASTNode {
 
-    public static enum DataTypeName {
-        BIT, TINYINT, SMALLINT, MEDIUMINT, INT, BIGINT, REAL, DOUBLE, FLOAT, DECIMAL, DATE, TIME, TIMESTAMP, DATETIME,
-        YEAR, CHAR, VARCHAR, BINARY, VARBINARY, TINYBLOB, BLOB, MEDIUMBLOB, LONGBLOB, TINYTEXT, TEXT, MEDIUMTEXT,
-        LONGTEXT, ENUM, SET
-    }
+    private final DataTypeName typeName;
 
     //              BIT[(length)]
     //            | TINYINT[(length)] [UNSIGNED] [ZEROFILL]
@@ -70,20 +66,19 @@ public class DataType implements ASTNode {
     //            | ENUM(value1,value2,value3,...)[CHARACTER SET charset_name] [COLLATE collation_name]
     //            | SET(value1,value2,value3,...)[CHARACTER SET charset_name] [COLLATE collation_name]
     //            | spatial_type 不支持
-
-    private final DataTypeName     typeName;
-    private final boolean          unsigned;
-    private final boolean          zerofill;
-    /** for text only */
-    private final boolean          binary;
-    private final Expression       length;
-    private final Expression       decimals;
-    private final Identifier       charSet;
-    private final Identifier       collation;
+    private final boolean unsigned;
+    private final boolean zerofill;
+    /**
+     * for text only
+     */
+    private final boolean binary;
+    private final Expression length;
+    private final Expression decimals;
+    private final Identifier charSet;
+    private final Identifier collation;
     private final List<Expression> collectionVals;
-
     public DataType(DataTypeName typeName, boolean unsigned, boolean zerofill, boolean binary, Expression length,
-                    Expression decimals, Identifier charSet, Identifier collation, List<Expression> collectionVals){
+                    Expression decimals, Identifier charSet, Identifier collation, List<Expression> collectionVals) {
         if (typeName == null) throw new IllegalArgumentException("typeName is null");
         this.typeName = typeName;
         this.unsigned = unsigned;
@@ -135,5 +130,11 @@ public class DataType implements ASTNode {
     @Override
     public void accept(SQLASTVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public static enum DataTypeName {
+        BIT, TINYINT, SMALLINT, MEDIUMINT, INT, BIGINT, REAL, DOUBLE, FLOAT, DECIMAL, DATE, TIME, TIMESTAMP, DATETIME,
+        YEAR, CHAR, VARCHAR, BINARY, VARBINARY, TINYBLOB, BLOB, MEDIUMBLOB, LONGBLOB, TINYTEXT, TEXT, MEDIUMTEXT,
+        LONGTEXT, ENUM, SET
     }
 }

@@ -4,19 +4,19 @@ public class AtomAlreadyInitException extends Exception {
 
     private static final long serialVersionUID = -3907211238952987907L;
 
-    public AtomAlreadyInitException(){
+    public AtomAlreadyInitException() {
         super();
     }
 
-    public AtomAlreadyInitException(String msg){
+    public AtomAlreadyInitException(String msg) {
         super(msg);
     }
 
-    public AtomAlreadyInitException(Throwable cause){
+    public AtomAlreadyInitException(Throwable cause) {
         super(cause);
     }
 
-    public AtomAlreadyInitException(String msg, Throwable cause){
+    public AtomAlreadyInitException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }

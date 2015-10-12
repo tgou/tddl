@@ -1,9 +1,5 @@
 package com.taobao.tddl.executor.cursor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.common.DuplicateKVPair;
@@ -12,15 +8,23 @@ import com.taobao.tddl.executor.record.CloneableRecord;
 import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author mengshi.sunmengshi 2013-11-29 下午2:39:33
  * @since 5.0.0
  */
 public abstract class AbstractCursor implements Cursor {
 
-    public Cursor     cursor;
+    public Cursor cursor;
 
     protected boolean inited = false;
+
+    public AbstractCursor(Cursor cursor) {
+        this.cursor = cursor;
+    }
 
     protected void init() throws TddlException {
         inited = true;
@@ -30,10 +34,6 @@ public abstract class AbstractCursor implements Cursor {
         if (!inited) {
             throw new RuntimeException("not yet inited ");
         }
-    }
-
-    public AbstractCursor(Cursor cursor){
-        this.cursor = cursor;
     }
 
     @Override
@@ -186,7 +186,7 @@ public abstract class AbstractCursor implements Cursor {
     protected Map<CloneableRecord, DuplicateKVPair> parentCursorMgetWithDuplicate(List<CloneableRecord> keys,
                                                                                   boolean prefixMatch,
                                                                                   boolean keyFilterOrValueFilter)
-                                                                                                                 throws TddlException {
+            throws TddlException {
         return cursor.mgetWithDuplicate(keys, prefixMatch, keyFilterOrValueFilter);
     }
 
@@ -198,7 +198,7 @@ public abstract class AbstractCursor implements Cursor {
 
     protected List<DuplicateKVPair> parentCursorMgetWithDuplicateList(List<CloneableRecord> keys, boolean prefixMatch,
                                                                       boolean keyFilterOrValueFilter)
-                                                                                                     throws TddlException {
+            throws TddlException {
         return cursor.mgetWithDuplicateList(keys, prefixMatch, keyFilterOrValueFilter);
     }
 

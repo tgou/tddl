@@ -1,13 +1,12 @@
 package com.taobao.tddl.atom.utils;
 
+import com.taobao.tddl.atom.exception.AtomNotAvailableException;
+import com.taobao.tddl.common.utils.TStringUtil;
+import org.apache.commons.lang.exception.ExceptionUtils;
+
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-
-import com.taobao.tddl.atom.exception.AtomNotAvailableException;
-import com.taobao.tddl.common.utils.TStringUtil;
 
 /**
  * 应用连接限制的主要逻辑实现。
@@ -22,17 +21,17 @@ public class ConnRestrictor {
     /**
      * HASH 策略的应用连接限制, 用 Hash + 取模的方式匹配 Key 和连接槽。
      */
-    private ConnRestrictSlot[]                hashConnRestrict;
+    private ConnRestrictSlot[] hashConnRestrict;
 
     /**
      * 没有定义业务键 (null Key) 的连接限制槽。
      */
-    private ConnRestrictSlot                  nullKeyRestrictSlot;
+    private ConnRestrictSlot nullKeyRestrictSlot;
 
     /**
      * 初始化应用连接限制的数据结构, 这些数据结构只会被初始化一次。
      */
-    public ConnRestrictor(String datasourceKey, List<ConnRestrictEntry> connRestrictEntries){
+    public ConnRestrictor(String datasourceKey, List<ConnRestrictEntry> connRestrictEntries) {
         for (ConnRestrictEntry connRestrictEntry : connRestrictEntries) {
             String[] slotKeys = connRestrictEntry.getKeys();
             if (slotKeys.length == 1 && ConnRestrictEntry.isWildcard(slotKeys[0])) {
@@ -57,8 +56,8 @@ public class ConnRestrictor {
             } else {
                 // 注意, 这里多个业务键同时关联到一个槽
                 ConnRestrictSlot connRestrictSlot = new ConnRestrictSlot(datasourceKey,
-                    TStringUtil.join(slotKeys, '|'),
-                    connRestrictEntry);
+                        TStringUtil.join(slotKeys, '|'),
+                        connRestrictEntry);
                 if (mapConnRestrict == null) {
                     mapConnRestrict = new HashMap<String, ConnRestrictSlot>();
                 }
@@ -112,19 +111,19 @@ public class ConnRestrictor {
                 if (!connRestrictSlot.allocateConnection(timeoutInMillis)) {
                     // 阻塞超时
                     throw new AtomNotAvailableException("No connection available for '" + connKey
-                                                        + "' within configured blocking timeout (" + timeoutInMillis
-                                                        + "[ms])");
+                            + "' within configured blocking timeout (" + timeoutInMillis
+                            + "[ms])");
                 }
             }
         } catch (InterruptedException e) {
             throw new AtomNotAvailableException("Allocate connection for '" + connKey
-                                                + "' interrupted within configured blocking timeout ("
-                                                + timeoutInMillis + "[ms]) , caused by "
-                                                + ExceptionUtils.getFullStackTrace(e));
+                    + "' interrupted within configured blocking timeout ("
+                    + timeoutInMillis + "[ms]) , caused by "
+                    + ExceptionUtils.getFullStackTrace(e));
         } catch (RuntimeException e) {
             throw new AtomNotAvailableException("Allocate connection for '" + connKey
-                                                + "' failed: unexpected exception "
-                                                + ExceptionUtils.getFullStackTrace(e));
+                    + "' failed: unexpected exception "
+                    + ExceptionUtils.getFullStackTrace(e));
         }
         return connRestrictSlot;
     }

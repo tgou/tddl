@@ -9,23 +9,23 @@ public class ExtensionNotFoundException extends NestableRuntimeException {
 
     private static final long serialVersionUID = -654893533794556357L;
 
-    public ExtensionNotFoundException(String errorCode){
+    public ExtensionNotFoundException(String errorCode) {
         super(errorCode);
     }
 
-    public ExtensionNotFoundException(String errorCode, Throwable cause){
+    public ExtensionNotFoundException(String errorCode, Throwable cause) {
         super(errorCode, cause);
     }
 
-    public ExtensionNotFoundException(String errorCode, String errorDesc){
+    public ExtensionNotFoundException(String errorCode, String errorDesc) {
         super(errorCode + ":" + errorDesc);
     }
 
-    public ExtensionNotFoundException(String errorCode, String errorDesc, Throwable cause){
+    public ExtensionNotFoundException(String errorCode, String errorDesc, Throwable cause) {
         super(errorCode + ":" + errorDesc, cause);
     }
 
-    public ExtensionNotFoundException(Throwable cause){
+    public ExtensionNotFoundException(Throwable cause) {
         super(cause);
     }
 

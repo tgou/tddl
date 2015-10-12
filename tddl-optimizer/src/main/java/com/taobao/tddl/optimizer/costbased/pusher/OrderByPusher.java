@@ -1,11 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.pusher;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
@@ -13,51 +7,49 @@ import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
 import com.taobao.tddl.optimizer.core.ast.query.MergeNode;
 import com.taobao.tddl.optimizer.core.ast.query.QueryNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin.JoinStrategy;
 import com.taobao.tddl.optimizer.exceptions.OptimizerException;
 
+import java.util.*;
+
 /**
  * 将merge/join中的order by条件下推，包括隐式的order by条件，比如将groupBy转化为orderBy
- * 
+ * <p/>
  * <pre>
  * a. 如果orderBy中包含function，也不做下推
  * b. 如果orderBy中的的column字段来自于子节点的函数查询，也不做下推
  * c. 如果join是SortMergeJoin，会下推join列
- * 
+ *
  * 比如: tabl1.join(table2).on("table1.id=table2.id").orderBy("id")
  * 转化为：table.orderBy(id).join(table2).on("table1.id=table2.id")
- * 
+ *
  * 下推例子：
- * 1. 
+ * 1.
  *  父节点：order by c1 ,c2 ,c3
  *  子节点: order by c1, c2
  *  优化：下推c3
- * 
- * 2. 
+ *
+ * 2.
  *  父节点：order by c2 ,c3  (顺序不一致，强制下推)
  *  子节点: order by c2, c3，无limit
  *  优化：不下推
- *  
+ *
  * 3.
  *  父节点：order by c2 ,c3  (顺序不一致，因为子节点存在limit，不可下推order by)
  *  子节点: order by c2, c3，存在limit
  *  优化：不下推
- * 
- * 4. 
+ *
+ * 4.
  *  父节点：order by c1, c2 ,c3
  *  子节点: 无
  *  优化：下推c1,c2,c3
- * 
- * 5. 
+ *
+ * 5.
  *  父节点：order by count(*)  (函数不下推)
  *  子节点: 无
  *  优化：不下推
- * 
+ *
  * @author jianghang 2013-12-10 下午5:33:16
  * @since 5.0.0
  */
@@ -74,7 +66,7 @@ public class OrderByPusher {
 
     /**
      * 处理Merge节点的distinct处理，需要底下节点先做排序
-     * 
+     * <p/>
      * <pre>
      * 排序优先级：
      * groupBy > orderby > distinct
@@ -129,7 +121,7 @@ public class OrderByPusher {
 
                     // 尝试调整下distinct的order by顺序，调整不了的话，按照distinct columns顺序
                     List<IOrderBy> orderbys = getPushOrderBysCombileOrderbyColumns(distinctOrderbys,
-                        child.getOrderBys());
+                            child.getOrderBys());
                     if (orderbys.isEmpty()) {
                         child.setOrderBys(distinctOrderbys);
                     } else {
@@ -209,7 +201,7 @@ public class OrderByPusher {
                     // 2. 然后去掉子节点的group by
                     QueryTreeNode qn = (QueryTreeNode) child;
                     if (qn.getOrderBys() != null && !qn.getOrderBys().isEmpty() && qn.getGroupBys() != null
-                        && !qn.getGroupBys().isEmpty()) {
+                            && !qn.getGroupBys().isEmpty()) {
                         // 正常的shard生成的MergeNode
                         List<IOrderBy> standardOrder = qn.getImplicitOrderBys();
                         // order by不是一个group by的子集，优先使用group by
@@ -231,7 +223,7 @@ public class OrderByPusher {
             // index nested loop中的order by，可以推到左节点
             JoinNode join = (JoinNode) qtn;
             if (join.getJoinStrategy() == JoinStrategy.INDEX_NEST_LOOP
-                || join.getJoinStrategy() == JoinStrategy.NEST_LOOP_JOIN) {
+                    || join.getJoinStrategy() == JoinStrategy.NEST_LOOP_JOIN) {
                 List<IOrderBy> orders = getPushOrderBys(join, join.getImplicitOrderBys(), join.getLeftNode(), true);
                 pushJoinOrder(orders, join.getLeftNode(), join.isUedForIndexJoinPK());
             } else if (join.getJoinStrategy() == JoinStrategy.SORT_MERGE_JOIN) {
@@ -264,13 +256,13 @@ public class OrderByPusher {
                     }
 
                     leftJoinColumnOrderbys.add(ASTNodeFactory.getInstance()
-                        .createOrderBy()
-                        .setColumn(column)
-                        .setDirection(asc));
+                            .createOrderBy()
+                            .setColumn(column)
+                            .setDirection(asc));
                     rightJoinColumnOrderbys.add(ASTNodeFactory.getInstance()
-                        .createOrderBy()
-                        .setColumn(value)
-                        .setDirection(asc));
+                            .createOrderBy()
+                            .setColumn(value)
+                            .setDirection(asc));
                 }
                 // 调整下join orderBys的顺序，尽可能和原始的order by顺序一致，这样可以有利于下推
                 adjustJoinColumnByImplicitOrders(leftJoinColumnOrderbys, rightJoinColumnOrderbys, implicitOrders);
@@ -293,9 +285,9 @@ public class OrderByPusher {
                         // 尝试一下只推group by的排序，减少一层排序
                         if (join.getGroupBys() != null && !join.getGroupBys().isEmpty()) {
                             List<IOrderBy> leftImplicitOrders = getPushOrderBysCombileOrderbyColumns(join.getGroupBys(),
-                                leftJoinColumnOrderbys);
+                                    leftJoinColumnOrderbys);
                             List<IOrderBy> rightImplicitOrders = getPushOrderBysCombileOrderbyColumns(join.getGroupBys(),
-                                rightJoinColumnOrderbys);
+                                    rightJoinColumnOrderbys);
 
                             // 重置下group by的顺序
                             if (!leftImplicitOrders.isEmpty()) {
@@ -424,37 +416,37 @@ public class OrderByPusher {
 
     /**
      * 尝试对比父节点中的orderby和子节点的orderby顺序，如果前缀一致，则找出末尾的order by字段进行返回
-     * 
+     * <p/>
      * <pre>
-     * 比如 
-     * 1. 
+     * 比如
+     * 1.
      *  父节点：order by c1 ,c2 ,c3
      *  子节点: order by c1, c2
-     *  
+     *
      * 返回为c3
-     * 
-     * 2. 
-     *  父节点：order by c2 ,c3 
+     *
+     * 2.
+     *  父节点：order by c2 ,c3
      *  子节点: order by c1, c2，不存在limit
-     *  
+     *
      * 返回为c2,c3
-     * 
-     * 3. 
-     *  父节点：order by c2 ,c3 
+     *
+     * 3.
+     *  父节点：order by c2 ,c3
      *  子节点: order by c1, c2，存在limit
-     *  
+     *
      * 返回为空
-     * 
-     * 4. 
+     *
+     * 4.
      *  父节点：order by c1, c2 ,c3
      *  子节点: 无
-     *  
+     *
      * 返回为c1,c2,c3
-     * 
-     * 5. 
+     *
+     * 5.
      *  父节点：order by count(*)  (函数不下推)
      *  子节点: 无
-     * 
+     *
      * 返回空
      * </pre>
      */
@@ -486,7 +478,7 @@ public class OrderByPusher {
                 if (targetOrderBys != null && targetOrderBys.size() > i) {
                     IOrderBy targetOrder = targetOrderBys.get(i);
                     if (!(column.equals(targetOrder.getColumn()) && order.getDirection()
-                        .equals(targetOrder.getDirection()))) {
+                            .equals(targetOrder.getDirection()))) {
                         // 如果不相同
                         return new LinkedList<IOrderBy>();
                     }
@@ -511,7 +503,7 @@ public class OrderByPusher {
 
     /**
      * <pre>
-     * 1. 尝试组合group by和join列的排序字段，以join列顺序为准，重排groupBys顺序 
+     * 1. 尝试组合group by和join列的排序字段，以join列顺序为准，重排groupBys顺序
      * 2. 尝试组合order by列和distinct列的排序字段，以order列顺序为准，重排distinct顺序
      * </pre>
      */

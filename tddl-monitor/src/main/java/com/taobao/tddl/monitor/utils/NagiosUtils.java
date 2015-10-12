@@ -1,15 +1,13 @@
 package com.taobao.tddl.monitor.utils;
 
-import com.taobao.tddl.monitor.logger.LoggerInit;
-
 import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.monitor.logger.LoggerInit;
 
 public class NagiosUtils {
 
-    private static final Logger nagiosLog            = LoggerInit.TDDL_Nagios_LOG;
-
-    public static final String  KEY_DB_NOT_AVAILABLE = "DB_NOT_AVAILABLE";        // 数据库不可用,KEY前缀+dbindex
-    public static final String  KEY_SQL_PARSE_FAIL   = "SQL_PARSE_FAIL";          // 业务执行了特殊的SQL造成解析失败
+    public static final String KEY_DB_NOT_AVAILABLE = "DB_NOT_AVAILABLE";        // 数据库不可用,KEY前缀+dbindex
+    public static final String KEY_SQL_PARSE_FAIL = "SQL_PARSE_FAIL";          // 业务执行了特殊的SQL造成解析失败
+    private static final Logger nagiosLog = LoggerInit.TDDL_Nagios_LOG;
 
     public static void addNagiosLog(String key, String value) {
         key = key.replaceAll(":", "_");

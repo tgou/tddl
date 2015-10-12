@@ -4,13 +4,13 @@ import java.util.List;
 
 /**
  * boolean filter.
- * 
+ * <p/>
  * <pre>
  * 例子：
  * a. column > 100
  * b. count(id) > 100
  * </pre>
- * 
+ *
  * @author jianxing <jianxing.qx@taobao.com>
  * @author whisper
  * @author jianghang 2013-11-8 下午2:01:21

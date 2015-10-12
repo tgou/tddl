@@ -1,11 +1,5 @@
 package com.taobao.tddl.executor.cursor.test;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.executor.cursor.ISchematicCursor;
 import com.taobao.tddl.executor.cursor.MockArrayCursor;
@@ -16,6 +10,11 @@ import com.taobao.tddl.optimizer.core.datatype.DataType;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 import com.taobao.tddl.optimizer.core.expression.bean.Column;
 import com.taobao.tddl.optimizer.core.expression.bean.OrderBy;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MergeSortedCursorTest {
 
@@ -27,7 +26,7 @@ public class MergeSortedCursorTest {
         cursor.initMeta();
 
         for (Integer id : ids) {
-            cursor.addRow(new Object[] { id, "name" + id, "school" + id });
+            cursor.addRow(new Object[]{id, "name" + id, "school" + id});
 
         }
 
@@ -40,9 +39,9 @@ public class MergeSortedCursorTest {
     @Test
     public void testSortDuplicated() throws TddlException {
 
-        MockArrayCursor mockCursor1 = this.getCursor("T1", new Integer[] { 1, 3, 5, 8, 8, 9, 10 });
+        MockArrayCursor mockCursor1 = this.getCursor("T1", new Integer[]{1, 3, 5, 8, 8, 9, 10});
 
-        MockArrayCursor mockCursor2 = this.getCursor("T1", new Integer[] { 2, 2, 4, 5, 6, 7, 7, 9, 9, 10, 13 });
+        MockArrayCursor mockCursor2 = this.getCursor("T1", new Integer[]{2, 2, 4, 5, 6, 7, 7, 9, 9, 10, 13});
         IOrderBy order = new OrderBy();
         order.setColumn(new Column().setColumnName("ID").setTableName("T1").setDataType(DataType.IntegerType));
         List<IOrderBy> orderBys = new ArrayList();
@@ -53,7 +52,7 @@ public class MergeSortedCursorTest {
         cursors.add(new SchematicCursor(mockCursor1, orderBys));
         cursors.add(new SchematicCursor(mockCursor2, orderBys));
         MergeSortedCursors c = new MergeSortedCursors(cursors, true);
-        Object[] expected = new Object[] { 1, 2, 2, 3, 4, 5, 5, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 13 };
+        Object[] expected = new Object[]{1, 2, 2, 3, 4, 5, 5, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 13};
         List actual = new ArrayList();
 
         IRowSet row = null;
@@ -70,8 +69,8 @@ public class MergeSortedCursorTest {
     @Test
     public void testSortNotDuplicated() throws TddlException {
 
-        MockArrayCursor mockCursor1 = this.getCursor("T1", new Integer[] { 1, 3, 5, 8, 8, 9, 10 });
-        MockArrayCursor mockCursor2 = this.getCursor("T1", new Integer[] { 2, 2, 4, 5, 6, 7, 7, 9, 9, 10, 13 });
+        MockArrayCursor mockCursor1 = this.getCursor("T1", new Integer[]{1, 3, 5, 8, 8, 9, 10});
+        MockArrayCursor mockCursor2 = this.getCursor("T1", new Integer[]{2, 2, 4, 5, 6, 7, 7, 9, 9, 10, 13});
         IOrderBy order = new OrderBy();
         order.setColumn(new Column().setColumnName("ID").setTableName("T1").setDataType(DataType.IntegerType));
         List<IOrderBy> orderBys = new ArrayList();
@@ -82,7 +81,7 @@ public class MergeSortedCursorTest {
         cursors.add(new SchematicCursor(mockCursor1, orderBys));
         cursors.add(new SchematicCursor(mockCursor2, orderBys));
         MergeSortedCursors c = new MergeSortedCursors(cursors, false);
-        Object[] expected = new Object[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13 };
+        Object[] expected = new Object[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13};
         List actual = new ArrayList();
 
         IRowSet row = null;
@@ -99,10 +98,10 @@ public class MergeSortedCursorTest {
     @Test
     public void testSortThree() throws TddlException {
 
-        MockArrayCursor mockCursor1 = this.getCursor("T1", new Integer[] { 1, 3, 5, 8, 9, 10 });
-        MockArrayCursor mockCursor2 = this.getCursor("T1", new Integer[] { 2, 4, 6, 7, 7, 9, 10, 13 });
+        MockArrayCursor mockCursor1 = this.getCursor("T1", new Integer[]{1, 3, 5, 8, 9, 10});
+        MockArrayCursor mockCursor2 = this.getCursor("T1", new Integer[]{2, 4, 6, 7, 7, 9, 10, 13});
 
-        MockArrayCursor mockCursor3 = this.getCursor("T1", new Integer[] { 2, 5, 8, 9 });
+        MockArrayCursor mockCursor3 = this.getCursor("T1", new Integer[]{2, 5, 8, 9});
         IOrderBy order = new OrderBy();
         order.setColumn(new Column().setColumnName("ID").setTableName("T1").setDataType(DataType.IntegerType));
         List<IOrderBy> orderBys = new ArrayList();
@@ -114,7 +113,7 @@ public class MergeSortedCursorTest {
         cursors.add(new SchematicCursor(mockCursor2, orderBys));
         cursors.add(new SchematicCursor(mockCursor3, orderBys));
         MergeSortedCursors c = new MergeSortedCursors(cursors, true);
-        Object[] expected = new Object[] { 1, 2, 2, 3, 4, 5, 5, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 13 };
+        Object[] expected = new Object[]{1, 2, 2, 3, 4, 5, 5, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 13};
         List actual = new ArrayList();
 
         IRowSet row = null;
@@ -132,8 +131,8 @@ public class MergeSortedCursorTest {
     @Test
     public void testGetOrderBysBeforeNext() throws TddlException {
 
-        MockArrayCursor mockCursor1 = this.getCursor("T1", new Integer[] { 1, 3, 5, 8, 8, 9, 10 });
-        MockArrayCursor mockCursor2 = this.getCursor("T1", new Integer[] { 2, 2, 4, 5, 6, 7, 7, 9, 9, 10, 13 });
+        MockArrayCursor mockCursor1 = this.getCursor("T1", new Integer[]{1, 3, 5, 8, 8, 9, 10});
+        MockArrayCursor mockCursor2 = this.getCursor("T1", new Integer[]{2, 2, 4, 5, 6, 7, 7, 9, 9, 10, 13});
         IOrderBy order = new OrderBy();
         order.setColumn(new Column().setColumnName("ID").setTableName("T1").setDataType(DataType.IntegerType));
         List<IOrderBy> orderBys = new ArrayList();
@@ -153,8 +152,8 @@ public class MergeSortedCursorTest {
     @Test
     public void testGetOrderBysAfterNext() throws TddlException {
 
-        MockArrayCursor mockCursor1 = this.getCursor("T1", new Integer[] { 1, 3, 5, 8, 8, 9, 10 });
-        MockArrayCursor mockCursor2 = this.getCursor("T1", new Integer[] { 2, 2, 4, 5, 6, 7, 7, 9, 9, 10, 13 });
+        MockArrayCursor mockCursor1 = this.getCursor("T1", new Integer[]{1, 3, 5, 8, 8, 9, 10});
+        MockArrayCursor mockCursor2 = this.getCursor("T1", new Integer[]{2, 2, 4, 5, 6, 7, 7, 9, 9, 10, 13});
         IOrderBy order = new OrderBy();
         order.setColumn(new Column().setColumnName("ID").setTableName("T1").setDataType(DataType.IntegerType));
         List<IOrderBy> orderBys = new ArrayList();

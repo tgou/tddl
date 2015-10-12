@@ -1,9 +1,9 @@
 package com.taobao.tddl.executor.common;
 
+import com.taobao.tddl.optimizer.core.datatype.DataType;
+
 import java.util.List;
 import java.util.Map;
-
-import com.taobao.tddl.optimizer.core.datatype.DataType;
 
 /**
  * @author mengshi.sunmengshi 2013-12-2 下午4:22:43
@@ -13,7 +13,7 @@ public interface IRecord extends Comparable<IRecord> {
 
     /**
      * 塞入一个值
-     * 
+     *
      * @param key
      * @param value
      * @return
@@ -22,7 +22,7 @@ public interface IRecord extends Comparable<IRecord> {
 
     /**
      * 获取一个值
-     * 
+     *
      * @param key
      * @return
      */
@@ -30,7 +30,7 @@ public interface IRecord extends Comparable<IRecord> {
 
     /**
      * 塞入所有值
-     * 
+     *
      * @param all
      * @return
      */
@@ -38,7 +38,7 @@ public interface IRecord extends Comparable<IRecord> {
 
     /**
      * 使用index 获取值，理论上来说，效率最高，因为使用下标
-     * 
+     *
      * @param index
      * @return
      */
@@ -46,7 +46,7 @@ public interface IRecord extends Comparable<IRecord> {
 
     /**
      * 设置某个值,理论上来说效率最高
-     * 
+     *
      * @param index
      * @param val
      * @return
@@ -57,16 +57,17 @@ public interface IRecord extends Comparable<IRecord> {
 
     // IRecord putAllColumnMap(Map<String/*column name*/, Integer/*column
     // index*/> map);
+
     /**
      * 获取columnMap
-     * 
+     *
      * @return
      */
     Map<String/* column name */, Integer/* column index */> getColumnMap();
 
     /**
      * 遍历ColumnList
-     * 
+     *
      * @return
      */
     List<String> getColumnList();

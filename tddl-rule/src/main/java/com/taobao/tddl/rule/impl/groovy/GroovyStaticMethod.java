@@ -1,22 +1,22 @@
 package com.taobao.tddl.rule.impl.groovy;
 
+import com.taobao.tddl.common.utils.thread.ThreadLocalMap;
+
 import java.util.Calendar;
 import java.util.Date;
 
-import com.taobao.tddl.common.utils.thread.ThreadLocalMap;
-
 /**
  * 可直接用于groovy规则中的便捷方法
- * 
+ *
  * @author shenxun
  * @author linxuan
  */
 public class GroovyStaticMethod {
 
-    public static final String  GROOVY_STATIC_METHOD_CALENDAR = "GROOVY_STATIC_METHOD_CALENDAR";
-    private final static long[] pow10                         = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000,
+    public static final String GROOVY_STATIC_METHOD_CALENDAR = "GROOVY_STATIC_METHOD_CALENDAR";
+    private final static long[] pow10 = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000,
             100000000, 1000000000, 10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L,
-            1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L };
+            1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L};
 
     /**
      * @return 返回4位年份
@@ -181,7 +181,7 @@ public class GroovyStaticMethod {
     }
 
     /**
-     * @param bit 补齐后的长度
+     * @param bit   补齐后的长度
      * @param table 数值
      * @return 返回前面补0达到bit长度的字符串。如果table长度大于bit，则返回table的原始值
      */
@@ -212,10 +212,10 @@ public class GroovyStaticMethod {
 
     /**
      * 从左开始，取指定多的位数。默认是一个long形长度的数据，也就是bitNumber= 19
-     * 
+     *
      * @param targetID 目标id，也就是等待被decode的数据
-     * @param st 从哪儿开始取，如果想取最左边的一位那么可以输入st = 0;ed =1;
-     * @param ed 取到哪儿，如果想取最左边的两位，那么可以输入st = 0;ed = 2;
+     * @param st       从哪儿开始取，如果想取最左边的一位那么可以输入st = 0;ed =1;
+     * @param ed       取到哪儿，如果想取最左边的两位，那么可以输入st = 0;ed = 2;
      * @return
      */
     // public static long leftBetween(long targetID,int st,int ed){
@@ -266,13 +266,13 @@ public class GroovyStaticMethod {
     /**
      * 从右开始，取指定多的位数。 假如参数是1234567.那么rightBetwen(1234567,2,3) 返回的数据是 345
      * rightBetween(10000234,2,2) 返回的数据是2 rightBetween(10000234,3,2) 返回的数据是0
-     * 
-     * @param targetID 目标id，也就是等待被decode的数据
+     *
+     * @param targetID  目标id，也就是等待被decode的数据
      * @param closeFrom 从哪儿开始取，如果想取最右边的一位那么可以输入st = 0;ed =1;
-     * @param openTo 取到哪儿，如果想取最右边的两位，那么可以输入st = 0;ed = 2;
-     * @throws IllegalArgumentException 如果st+ed -1 >= 19,这时候对long来说不需要截取。
-     * 如果targetId小于st+ed，
+     * @param openTo    取到哪儿，如果想取最右边的两位，那么可以输入st = 0;ed = 2;
      * @return
+     * @throws IllegalArgumentException 如果st+ed -1 >= 19,这时候对long来说不需要截取。
+     *                                  如果targetId小于st+ed，
      */
     public static long rightCut(long targetID, int closeFrom, int openTo) {
         int sizeAll = closeFrom + openTo - 1;

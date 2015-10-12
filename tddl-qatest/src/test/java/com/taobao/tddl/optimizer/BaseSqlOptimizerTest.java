@@ -1,9 +1,5 @@
 package com.taobao.tddl.optimizer;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.Matrix;
 import com.taobao.tddl.optimizer.config.table.RepoSchemaManager;
@@ -19,21 +15,24 @@ import com.taobao.tddl.optimizer.rule.RuleIndexManager;
 import com.taobao.tddl.repo.mysql.sqlconvertor.SqlConvertor;
 import com.taobao.tddl.repo.mysql.sqlconvertor.SqlMergeNode;
 import com.taobao.tddl.rule.TddlRule;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 
 @Ignore("测试基类")
 public class BaseSqlOptimizerTest {
 
-    protected static final String       APPNAME     = "tddl";
-    protected static final String       table_file  = "matrix/mysql_schema.xml";
-    protected static final String       matrix_file = "matrix/server_topology.xml";
-    protected static final String       rule_file   = "matrix/mysql_rule.xml";
+    protected static final String APPNAME = "tddl";
+    protected static final String table_file = "matrix/mysql_schema.xml";
+    protected static final String matrix_file = "matrix/server_topology.xml";
+    protected static final String rule_file = "matrix/mysql_rule.xml";
 
-    protected static SqlParseManager    parser      = new CobarSqlParseManager();
-    protected static OptimizerRule      rule;
-    protected static RepoSchemaManager  schemaManager;
+    protected static SqlParseManager parser = new CobarSqlParseManager();
+    protected static OptimizerRule rule;
+    protected static RepoSchemaManager schemaManager;
     protected static CostBasedOptimizer optimizer;
-    protected static StatManager        statManager;
-    protected static SqlConvertor       sqlConvert  = new SqlConvertor();
+    protected static StatManager statManager;
+    protected static SqlConvertor sqlConvert = new SqlConvertor();
 
     @BeforeClass
     public static void initial() throws TddlException {
@@ -48,12 +47,12 @@ public class BaseSqlOptimizerTest {
         rule = new OptimizerRule(tddlRule);
 
         StaticSchemaManager localSchemaManager = StaticSchemaManager.parseSchema(Thread.currentThread()
-            .getContextClassLoader()
-            .getResourceAsStream(table_file));
+                .getContextClassLoader()
+                .getResourceAsStream(table_file));
 
         Matrix matrix = MatrixParser.parse(Thread.currentThread()
-            .getContextClassLoader()
-            .getResourceAsStream(matrix_file));
+                .getContextClassLoader()
+                .getResourceAsStream(matrix_file));
 
         schemaManager = new RepoSchemaManager();
         schemaManager.setLocal(localSchemaManager);

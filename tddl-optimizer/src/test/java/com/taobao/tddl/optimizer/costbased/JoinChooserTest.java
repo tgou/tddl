@@ -1,12 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
@@ -23,6 +16,12 @@ import com.taobao.tddl.optimizer.costbased.chooser.IndexChooser;
 import com.taobao.tddl.optimizer.costbased.chooser.JoinChooser;
 import com.taobao.tddl.optimizer.costbased.pusher.FilterPusher;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JoinChooserTest extends BaseOptimizerTest {
 
@@ -125,7 +124,7 @@ public class JoinChooserTest extends BaseOptimizerTest {
 
         Assert.assertTrue(((JoinNode) qn).getLeftNode() instanceof JoinNode);
         Assert.assertEquals("TABLE1.NAME = TABLE2$_NAME.NAME",
-            ((JoinNode) ((JoinNode) qn).getLeftNode()).getJoinFilter().get(0).toString());
+                ((JoinNode) ((JoinNode) qn).getLeftNode()).getJoinFilter().get(0).toString());
 
         Assert.assertTrue(((JoinNode) ((JoinNode) qn).getLeftNode()).getLeftNode() instanceof JoinNode);
         JoinNode jn = (JoinNode) ((JoinNode) ((JoinNode) qn).getLeftNode()).getLeftNode();
@@ -293,15 +292,15 @@ public class JoinChooserTest extends BaseOptimizerTest {
         Map<String, Object> extraCmd = new HashMap<String, Object>();
         extraCmd.put(ExtraCmd.CHOOSE_INDEX, true);
         IndexMeta index = IndexChooser.findBestIndex(table.getTableMeta(),
-            new ArrayList<ISelectable>(),
-            FilterUtils.toDNFNode(table.getWhereFilter()),
-            table.getTableName(),
-            extraCmd);
+                new ArrayList<ISelectable>(),
+                FilterUtils.toDNFNode(table.getWhereFilter()),
+                table.getTableName(),
+                extraCmd);
 
         table.useIndex(index);
 
         Map<FilterType, IFilter> result = FilterSpliter.splitByIndex(FilterUtils.toDNFNode(table.getWhereFilter()),
-            table);
+                table);
 
         table.setKeyFilter(result.get(FilterType.IndexQueryKeyFilter));
         table.setIndexQueryValueFilter(result.get(FilterType.IndexQueryValueFilter));

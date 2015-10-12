@@ -11,11 +11,7 @@ import com.taobao.tddl.executor.handler.HandlerCommon;
 import com.taobao.tddl.executor.record.CloneableRecord;
 import com.taobao.tddl.executor.repo.RepositoryConfig;
 import com.taobao.tddl.executor.rowset.IRowSet;
-import com.taobao.tddl.executor.spi.IDataSourceGetter;
-import com.taobao.tddl.executor.spi.IRepository;
-import com.taobao.tddl.executor.spi.ITHLog;
-import com.taobao.tddl.executor.spi.ITable;
-import com.taobao.tddl.executor.spi.ITransaction;
+import com.taobao.tddl.executor.spi.*;
 import com.taobao.tddl.monitor.Monitor;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
@@ -26,14 +22,13 @@ import com.taobao.tddl.repo.mysql.utils.MysqlRepoUtils;
 
 public abstract class PutMyHandlerCommon extends HandlerCommon {
 
-    public PutMyHandlerCommon(){
+    public Logger logger = LoggerFactory.getLogger(PutMyHandlerCommon.class);
+    protected IDataSourceGetter dsGetter;
+
+    public PutMyHandlerCommon() {
         super();
         dsGetter = new DatasourceMySQLImplement();
     }
-
-    protected IDataSourceGetter dsGetter;
-
-    public Logger               logger = LoggerFactory.getLogger(PutMyHandlerCommon.class);
 
     @Override
     public ISchematicCursor handle(IDataNodeExecutor executor, ExecutionContext executionContext) throws TddlException {

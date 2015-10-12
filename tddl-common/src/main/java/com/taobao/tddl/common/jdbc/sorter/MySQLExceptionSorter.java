@@ -30,12 +30,23 @@ import java.util.List;
  * MySQLExceptionSorter This is a basic exception sorter for the MySQL RDBMS.
  * All error codes are taken from the MySQL Connector Java 3.0.16 SQLError
  * class.
- * 
+ *
  * @author <a href="mailto:u.schroeter@mobilcom.de">Ulf Schroeter</a>
  */
 public class MySQLExceptionSorter implements ExceptionSorter, Serializable {
 
     private static final long serialVersionUID = 2375890129763721017L;
+    private static List<ExceptionSorter> externalExceptionSorters;
+
+    /**
+     * @param sorter 外部的ExceptionSorter只需判断SQLException本身即可，不需要判断其cause链
+     */
+    public static void addExceptionSorter(ExceptionSorter sorter) {
+        if (externalExceptionSorters == null) {
+            externalExceptionSorters = new LinkedList<ExceptionSorter>();
+        }
+        externalExceptionSorters.add(sorter);
+    }
 
     public boolean isExceptionFatal(SQLException e) {
         int loopCount = 20; // 防止人为失误，当两个Throwable互为对方的initCause()时，造成死循环
@@ -64,7 +75,7 @@ public class MySQLExceptionSorter implements ExceptionSorter, Serializable {
             return true;
         }
         switch (e.getErrorCode()) {
-        // Communications Errors
+            // Communications Errors
             case 1040: // ER_CON_COUNT_ERROR
             case 1042: // ER_BAD_HOST_ERROR
             case 1043: // ER_HANDSHAKE_ERROR
@@ -104,17 +115,5 @@ public class MySQLExceptionSorter implements ExceptionSorter, Serializable {
             }
         }
         return false;
-    }
-
-    private static List<ExceptionSorter> externalExceptionSorters;
-
-    /**
-     * @param sorter 外部的ExceptionSorter只需判断SQLException本身即可，不需要判断其cause链
-     */
-    public static void addExceptionSorter(ExceptionSorter sorter) {
-        if (externalExceptionSorters == null) {
-            externalExceptionSorters = new LinkedList<ExceptionSorter>();
-        }
-        externalExceptionSorters.add(sorter);
     }
 }

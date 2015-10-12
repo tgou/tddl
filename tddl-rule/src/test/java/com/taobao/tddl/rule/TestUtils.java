@@ -1,7 +1,8 @@
 package com.taobao.tddl.rule;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.taobao.tddl.rule.model.sqljep.Comparative;
+import com.taobao.tddl.rule.model.sqljep.ComparativeAND;
+import com.taobao.tddl.rule.model.sqljep.ComparativeOR;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,18 +10,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.taobao.tddl.rule.model.sqljep.Comparative;
-import com.taobao.tddl.rule.model.sqljep.ComparativeAND;
-import com.taobao.tddl.rule.model.sqljep.ComparativeOR;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestUtils {
 
-    public static final int GreaterThan        = Comparative.GreaterThan;
+    public static final int GreaterThan = Comparative.GreaterThan;
     public static final int GreaterThanOrEqual = Comparative.GreaterThanOrEqual;
-    public static final int Equivalent         = Comparative.Equivalent;
-    public static final int NotEquivalent      = Comparative.NotEquivalent;
-    public static final int LessThan           = Comparative.LessThan;
-    public static final int LessThanOrEqual    = Comparative.LessThanOrEqual;
+    public static final int Equivalent = Comparative.Equivalent;
+    public static final int NotEquivalent = Comparative.NotEquivalent;
+    public static final int LessThan = Comparative.LessThan;
+    public static final int LessThanOrEqual = Comparative.LessThanOrEqual;
 
     public static Comparative gor(Comparative parent, Comparative target) {
         if (parent == null) {
@@ -79,7 +79,7 @@ public class TestUtils {
 
         for (Object obj : target) {
             assertTrue("index:" + String.valueOf(index) + "-value:" + obj + "|set:" + beTestedSet,
-                beTestedSet.contains(obj));
+                    beTestedSet.contains(obj));
             index++;
         }
     }
@@ -116,7 +116,7 @@ public class TestUtils {
             }
 
             assertTrue("index:" + String.valueOf(index) + "-value:" + targetDateString + " target:" + sb.toString(),
-                isTrue);
+                    isTrue);
             index++;
 
         }

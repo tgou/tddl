@@ -1,29 +1,8 @@
 package com.taobao.tddl.group.jdbc;
 
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.NClob;
-import java.sql.ResultSet;
-import java.sql.SQLClientInfoException;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.sql.Struct;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import com.taobao.tddl.common.jdbc.TExceptionUtils;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.group.config.GroupIndex;
 import com.taobao.tddl.group.dbselector.DBSelector;
 import com.taobao.tddl.group.dbselector.DBSelector.AbstractDataSourceTryer;
@@ -31,8 +10,8 @@ import com.taobao.tddl.group.dbselector.DBSelector.DataSourceTryer;
 import com.taobao.tddl.group.utils.GroupHintParser;
 import com.taobao.tddl.monitor.unit.UnitDeployProtect;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.sql.*;
+import java.util.*;
 
 /**
  * 相关的JDBC规范： 1.
@@ -48,50 +27,81 @@ import com.taobao.tddl.common.utils.logger.LoggerFactory;
  * 一旦在某个库上重试成功，后续在这个TGroupConnection上执行的所有操作，都只到这个库上，不再重试，出错直接抛出异常。
  * 第一次建立真正连接的重试过程中，baseConnection有可能会发生变化被替换。一旦重试成功，baseConnection则保持不再改变。
  * 这样可以简化很多事情，但同时不会对功能造成本质影响。同时避免了对状态处理不当，可能会给用户造成的诡异现象。
- * 
+ *
  * @author linxuan
  * @author yangzhu
  */
 public class TGroupConnection implements Connection {
 
+    public static final GroupIndex DEFAULT_GROUPINDEX = new GroupIndex(DBSelector.NOT_EXIST_USER_SPECIFIED_INDEX,
+            false);
     private static final Logger log = LoggerFactory.getLogger(TGroupConnection.class);
-
-    private TGroupDataSource    tGroupDataSource;
-
+    private TGroupDataSource tGroupDataSource;
     // 虽然DataSource.getConnection(String username, String password)不常用，
     // 但为了尽量遵循jdbc规范，还是保留好。
-    private String              username;
-    private String              password;
-
-    public TGroupConnection(TGroupDataSource tGroupDataSource){
-        this.tGroupDataSource = tGroupDataSource;
-    }
-
-    public TGroupConnection(TGroupDataSource tGroupDataSource, String username, String password){
-        this(tGroupDataSource);
-        this.username = username;
-        this.password = password;
-    }
-
+    private String username;
+    private String password;
     /*
      * ========================================================================
      * 下层connection的持有，getter/setter包权限
      * ======================================================================
      */
-    private Connection             rBaseConnection;
-    private Connection             wBaseConnection;
+    private Connection rBaseConnection;
+    private Connection wBaseConnection;
     // private String rBaseDsKey; // rBaseConnection对应的数据源key
     // private String wBaseDsKey; // wBaseConnection对应的数据源key
     // private int rBaseDataSourceIndex = -2; // rBaseConnection对应的数据源Index
     // private int wBaseDataSourceIndex = -2; // wBaseConnection对应的数据源Index
-    private DataSourceWrapper      rBaseDsWrapper;
-    private DataSourceWrapper      wBaseDsWrapper;
-    private Set<TGroupStatement>   openedStatements     = new HashSet<TGroupStatement>(2);
+    private DataSourceWrapper rBaseDsWrapper;
+    private DataSourceWrapper wBaseDsWrapper;
+    private Set<TGroupStatement> openedStatements = new HashSet<TGroupStatement>(2);
     // TODO: 以后让这个值真正的起作用
-    private int                    transactionIsolation = -1;
+    private int transactionIsolation = -1;
+    /*
+     * ========================================================================
+     * 关闭逻辑
+     * ======================================================================
+     */
+    private boolean closed;
+    /*
+     * ========================================================================
+     * 创建CallableStatement逻辑。存储过程CallableStatement支持
+     * ======================================================================
+     */
+    private DataSourceTryer<CallableStatement> getCallableStatementTryer = new AbstractDataSourceTryer<CallableStatement>() {
 
-    public static final GroupIndex DEFAULT_GROUPINDEX   = new GroupIndex(DBSelector.NOT_EXIST_USER_SPECIFIED_INDEX,
-                                                            false);
+        public CallableStatement tryOnDataSource(DataSourceWrapper dsw,
+                                                 Object... args)
+                throws SQLException {
+            String sql = (String) args[0];
+            int resultSetType = (Integer) args[1];
+            int resultSetConcurrency = (Integer) args[2];
+            int resultSetHoldability = (Integer) args[3];
+            Connection conn = TGroupConnection.this.createNewConnection(dsw,
+                    false);
+            return getCallableStatement(conn,
+                    sql,
+                    resultSetType,
+                    resultSetConcurrency,
+                    resultSetHoldability);
+        }
+    };
+    /*
+     * ========================================================================
+     * JDBC事务相关的autoCommit设置、commit/rollback、TransactionIsolation等
+     * ======================================================================
+     */
+    private boolean isAutoCommit = true; // jdbc规范，新连接为true
+
+    public TGroupConnection(TGroupDataSource tGroupDataSource) {
+        this.tGroupDataSource = tGroupDataSource;
+    }
+
+    public TGroupConnection(TGroupDataSource tGroupDataSource, String username, String password) {
+        this(tGroupDataSource);
+        this.username = username;
+        this.password = password;
+    }
 
     /**
      * 获取事务中的上一个操作的链接
@@ -238,13 +248,6 @@ public class TGroupConnection implements Connection {
         }
     }
 
-    /*
-     * ========================================================================
-     * 关闭逻辑
-     * ======================================================================
-     */
-    private boolean closed;
-
     private void checkClosed() throws SQLException {
         if (closed) {
             throw new SQLException("No operations allowed after connection closed.");
@@ -319,7 +322,7 @@ public class TGroupConnection implements Connection {
     }
 
     public TGroupStatement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-                                                                                                                 throws SQLException {
+            throws SQLException {
         TGroupStatement stmt = createStatement(resultSetType, resultSetConcurrency);
         stmt.setResultSetHoldability(resultSetHoldability);
         return stmt;
@@ -338,7 +341,7 @@ public class TGroupConnection implements Connection {
     }
 
     public TGroupPreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
-                                                                                                            throws SQLException {
+            throws SQLException {
         TGroupPreparedStatement stmt = prepareStatement(sql);
         stmt.setResultSetType(resultSetType);
         stmt.setResultSetConcurrency(resultSetConcurrency);
@@ -370,33 +373,9 @@ public class TGroupConnection implements Connection {
         return stmt;
     }
 
-    /*
-     * ========================================================================
-     * 创建CallableStatement逻辑。存储过程CallableStatement支持
-     * ======================================================================
-     */
-    private DataSourceTryer<CallableStatement> getCallableStatementTryer = new AbstractDataSourceTryer<CallableStatement>() {
-
-                                                                             public CallableStatement tryOnDataSource(DataSourceWrapper dsw,
-                                                                                                                      Object... args)
-                                                                                                                                     throws SQLException {
-                                                                                 String sql = (String) args[0];
-                                                                                 int resultSetType = (Integer) args[1];
-                                                                                 int resultSetConcurrency = (Integer) args[2];
-                                                                                 int resultSetHoldability = (Integer) args[3];
-                                                                                 Connection conn = TGroupConnection.this.createNewConnection(dsw,
-                                                                                     false);
-                                                                                 return getCallableStatement(conn,
-                                                                                     sql,
-                                                                                     resultSetType,
-                                                                                     resultSetConcurrency,
-                                                                                     resultSetHoldability);
-                                                                             }
-                                                                         };
-
     private CallableStatement getCallableStatement(Connection conn, String sql, int resultSetType,
                                                    int resultSetConcurrency, int resultSetHoldability)
-                                                                                                      throws SQLException {
+            throws SQLException {
         if (resultSetType == Integer.MIN_VALUE) {
             return conn.prepareCall(sql);
         } else if (resultSetHoldability == Integer.MIN_VALUE) {
@@ -423,13 +402,13 @@ public class TGroupConnection implements Connection {
                 dataSourceIndex = ThreadLocalDataSourceIndex.getIndex();
             }
             target = tGroupDataSource.getDBSelector(false).tryExecute(null,
-                getCallableStatementTryer,
-                this.tGroupDataSource.getRetryingTimes(),
-                sql,
-                resultSetType,
-                resultSetConcurrency,
-                resultSetHoldability,
-                dataSourceIndex);
+                    getCallableStatementTryer,
+                    this.tGroupDataSource.getRetryingTimes(),
+                    sql,
+                    resultSetType,
+                    resultSetConcurrency,
+                    resultSetHoldability,
+                    dataSourceIndex);
         }
 
         TGroupCallableStatement stmt = new TGroupCallableStatement(tGroupDataSource, this, target, sql);
@@ -449,16 +428,14 @@ public class TGroupConnection implements Connection {
     }
 
     public TGroupCallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency)
-                                                                                                       throws SQLException {
+            throws SQLException {
         return prepareCall(sql, resultSetType, resultSetConcurrency, Integer.MIN_VALUE);
     }
 
-    /*
-     * ========================================================================
-     * JDBC事务相关的autoCommit设置、commit/rollback、TransactionIsolation等
-     * ======================================================================
-     */
-    private boolean isAutoCommit = true; // jdbc规范，新连接为true
+    public boolean getAutoCommit() throws SQLException {
+        checkClosed();
+        return isAutoCommit;
+    }
 
     public void setAutoCommit(boolean autoCommit0) throws SQLException {
         checkClosed();
@@ -475,11 +452,6 @@ public class TGroupConnection implements Connection {
         if (this.wBaseConnection != null) {
             this.wBaseConnection.setAutoCommit(autoCommit0);
         }
-    }
-
-    public boolean getAutoCommit() throws SQLException {
-        checkClosed();
-        return isAutoCommit;
     }
 
     public void commit() throws SQLException {
@@ -637,7 +609,7 @@ public class TGroupConnection implements Connection {
 
     /**
      * 保持可读可写
-     * 
+     *
      * @author junyu
      */
     public boolean isReadOnly() throws SQLException {
@@ -646,7 +618,7 @@ public class TGroupConnection implements Connection {
 
     /**
      * 不做任何事情
-     * 
+     *
      * @author junyu
      */
     public void setReadOnly(boolean readOnly) throws SQLException {
@@ -690,16 +662,16 @@ public class TGroupConnection implements Connection {
         throw new RuntimeException("not support exception");
     }
 
-    public void setClientInfo(Properties properties) throws SQLClientInfoException {
-        throw new RuntimeException("not support exception");
-    }
-
     public String getClientInfo(String name) throws SQLException {
         throw new SQLException("not support exception");
     }
 
     public Properties getClientInfo() throws SQLException {
         throw new SQLException("not support exception");
+    }
+
+    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+        throw new RuntimeException("not support exception");
     }
 
     public Array createArrayOf(String typeName, Object[] elements) throws SQLException {

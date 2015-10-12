@@ -1,10 +1,9 @@
 package com.taobao.tddl.qatest.matrix.basecrud;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -12,21 +11,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @RunWith(EclipseParameterized.class)
 public class DeleteTest extends BaseMatrixTestCase {
 
+    public DeleteTest(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
+
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public DeleteTest(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -44,7 +43,7 @@ public class DeleteTest extends BaseMatrixTestCase {
     @Test
     public void deleteOne() throws Exception {
         String sql = String.format("delete from %s where pk = ?", normaltblTableName);
-        executeCountAssert(sql, Arrays.asList(new Object[] { 5L }));
+        executeCountAssert(sql, Arrays.asList(new Object[]{5L}));
     }
 
     @Test
@@ -104,7 +103,7 @@ public class DeleteTest extends BaseMatrixTestCase {
         andorUpdateData(sql, null);
         mysqlUpdateData(sql, null);
         sql = String.format("delete from %s where pk =?", normaltblTableName);
-        executeCountAssert(sql, Arrays.asList(new Object[] { RANDOM_ID }));
+        executeCountAssert(sql, Arrays.asList(new Object[]{RANDOM_ID}));
     }
 
     @Test

@@ -1,42 +1,31 @@
 package com.taobao.tddl.optimizer.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.collect.Lists;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
-import com.taobao.tddl.optimizer.core.expression.IBindVal;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.exceptions.EmptyResultFilterException;
 import com.taobao.tddl.optimizer.parse.cobar.visitor.MySqlExprVisitor;
 import com.taobao.tddl.optimizer.utils.range.AndRangeProcessor;
 import com.taobao.tddl.optimizer.utils.range.OrRangeProcessor;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.*;
 
 /**
  * 用来做一些布尔表达式的转换，比如我们会将(A and B) OR C => (A and C) or (A and B)，析取范式便于做计算<br/>
  * 注意，目前处理中不是一个严格的析取范式处理，比如 A and B and C不会进行转化
- * 
+ * <p/>
  * <pre>
- * DNF析取范式: 
+ * DNF析取范式:
  *  a. http://zh.wikipedia.org/zh-cn/析取范式
  *  b. http://baike.baidu.com/view/143339.htm
- *  
+ *
  * 简单析取式: 仅由有限个文字构成的析取式，比如：p,q,p∨q
  * 析取范式：由有限个简单合取式构成的析取式，比如 (p∧q)vr
  * </pre>
- * 
+ *
  * @author Dreamond
  * @author jianghang 2013-11-13 下午1:18:53
  */
@@ -46,7 +35,7 @@ public class FilterUtils {
 
     /**
      * 将一个Bool树转换成析取形式 A（B+C）转换为AB+AC
-     * 
+     *
      * @param node
      * @return
      */
@@ -164,12 +153,12 @@ public class FilterUtils {
 
     /**
      * 将一个IFilter全部展开为一个多维数组，会做拉平处理，需要预先调用toDNF/toDNFAndFlat进行预处理转化为DNF范式
-     * 
+     * <p/>
      * <pre>
      * 比如：(A and B) or (A and C)
-     * 返回结果为： 
-     *   List- 
-     *      List 
+     * 返回结果为：
+     *   List-
+     *      List
      *         -(A , B)
      *      List
      *         -(A , C)
@@ -315,9 +304,9 @@ public class FilterUtils {
 
     /**
      * 将filter中的and/or条件中进行Range合并处理 <br/>
-     * 
+     * <p/>
      * <pre>
-     * 比如: 
+     * 比如:
      *  a. A =1 And A =2 ，永远false条件，返回EmptyResultFilterException异常
      *  b. (1 < A < 5) or (2 < A < 6)，合并为 (1 < A < 6)
      *  c. A <= 1 or A = 1，永远true条件
@@ -336,7 +325,7 @@ public class FilterUtils {
 
         DNFNodes = mergeOrDNFNodes(mergeAndDNFNodesArray(DNFNodes));
         if (DNFNodes == null || DNFNodes.isEmpty() || DNFNodes.get(0) == null || DNFNodes.get(0).isEmpty()
-            || DNFNodes.get(0).get(0) == null) {
+                || DNFNodes.get(0).get(0) == null) {
             // 返回常量true
             IBooleanFilter f = ASTNodeFactory.getInstance().createBooleanFilter();
             f.setOperation(OPERATION.CONSTANT);
@@ -355,7 +344,7 @@ public class FilterUtils {
         for (List<IFilter> DNFNode : dNFNodes) {
             for (IFilter filter : DNFNode) {
                 if (((IBooleanFilter) filter).getValue() instanceof IBindVal
-                    || ((IBooleanFilter) filter).getValue() instanceof IFunction) {
+                        || ((IBooleanFilter) filter).getValue() instanceof IFunction) {
                     return false;
                 }
             }
@@ -368,7 +357,7 @@ public class FilterUtils {
      * 合并析取式中的And重复条件
      */
     private static List<List<IFilter>> mergeAndDNFNodesArray(List<List<IFilter>> DNFNodesBeforeMerge)
-                                                                                                     throws EmptyResultFilterException {
+            throws EmptyResultFilterException {
         List<List<IFilter>> nodesAfterMerge = new LinkedList();
         for (List<IFilter> DNFNode : DNFNodesBeforeMerge) {
             // 每个合取中按照column进行归类
@@ -435,7 +424,7 @@ public class FilterUtils {
 
     /**
      * 将析取范式的数组重新构造为一个LogicFilter，使用and/or条件
-     * 
+     *
      * @param DNFNodes
      * @return
      */
@@ -454,7 +443,7 @@ public class FilterUtils {
     /**
      * 将一系列的boolean filter ，拼装成一个andFilter { boolFilter , boolFilter...}
      * 的filter..
-     * 
+     *
      * @param DNFNode
      * @return
      */

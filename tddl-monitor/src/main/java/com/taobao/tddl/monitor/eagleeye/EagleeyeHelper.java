@@ -2,7 +2,6 @@ package com.taobao.tddl.monitor.eagleeye;
 
 import com.taobao.tddl.common.model.SqlMetaData;
 import com.taobao.tddl.common.utils.extension.ExtensionLoader;
-import com.taobao.tddl.monitor.eagleeye.TddlEagleeye;
 
 /**
  * @author mengshi.sunmengshi
@@ -10,13 +9,14 @@ import com.taobao.tddl.monitor.eagleeye.TddlEagleeye;
 public class EagleeyeHelper {
 
     static TddlEagleeye eagleeye = null;
+
     static {
         eagleeye = ExtensionLoader.load(TddlEagleeye.class);
     }
 
     /**
      * execute之前写日志
-     * 
+     *
      * @param datasourceWrapper
      * @param sqlType
      * @throws Exception

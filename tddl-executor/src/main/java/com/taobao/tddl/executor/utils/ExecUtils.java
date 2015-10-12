@@ -1,15 +1,5 @@
 package com.taobao.tddl.executor.utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.common.utils.TStringUtil;
 import com.taobao.tddl.executor.common.IRowsValueScaner;
@@ -29,13 +19,15 @@ import com.taobao.tddl.optimizer.config.table.IndexMeta;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
 import com.taobao.tddl.optimizer.core.datatype.DataTypeUtil;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.bean.OrderBy;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ExecUtils {
 
@@ -249,11 +241,11 @@ public class ExecUtils {
     public static IColumn getIColumn(Object column) {
         if (column instanceof IFunction) {
             return ASTNodeFactory.getInstance()
-                .createColumn()
-                .setTableName(((IFunction) column).getTableName())
-                .setColumnName(((IFunction) column).getColumnName())
-                .setAlias(((IFunction) column).getAlias())
-                .setDataType(((IFunction) column).getDataType());
+                    .createColumn()
+                    .setTableName(((IFunction) column).getTableName())
+                    .setColumnName(((IFunction) column).getColumnName())
+                    .setAlias(((IFunction) column).getAlias())
+                    .setDataType(((IFunction) column).getDataType());
         } else if (!(column instanceof IColumn)) {
             throw new IllegalArgumentException("column :" + column + " is not a icolumn");
         }
@@ -278,9 +270,9 @@ public class ExecUtils {
         for (ColumnMeta c : meta.getKeyColumns()) {
             IColumn column = ASTNodeFactory.getInstance().createColumn();
             column.setTableName(c.getTableName())
-                .setColumnName(c.getName())
-                .setDataType(c.getDataType())
-                .setAlias(c.getAlias());
+                    .setColumnName(c.getName())
+                    .setDataType(c.getDataType())
+                    .setAlias(c.getAlias());
             IOrderBy orderBy = new OrderBy().setColumn(column).setDirection(true);
             _orderBys.add(orderBy);
         }
@@ -308,7 +300,7 @@ public class ExecUtils {
 
     /**
      * 将Wrapper实际包含的rowset中的代理去掉
-     * 
+     *
      * @param rsrs
      * @return
      */
@@ -348,7 +340,7 @@ public class ExecUtils {
 
     /**
      * 根据column meta取value
-     * 
+     *
      * @param from_kv
      * @param to_meta
      * @param icol
@@ -441,10 +433,10 @@ public class ExecUtils {
         List<ColumnMeta> _columns = new ArrayList<ColumnMeta>(columns.size());
         for (ISelectable c : columns) {
             ColumnMeta ic = new ColumnMeta(getLogicTableName(c.getTableName()),
-                c.getColumnName(),
-                c.getDataType(),
-                c.getAlias(),
-                true);
+                    c.getColumnName(),
+                    c.getDataType(),
+                    c.getAlias(),
+                    true);
             _columns.add(ic);
 
             // if (ic.getDataType() == null)
@@ -457,10 +449,10 @@ public class ExecUtils {
         List<ColumnMeta> _columns = new ArrayList<ColumnMeta>(columns.size());
         for (IOrderBy c : columns) {
             ColumnMeta ic = new ColumnMeta(getLogicTableName(c.getTableName()),
-                c.getColumnName(),
-                c.getDataType(),
-                c.getAlias(),
-                true);
+                    c.getColumnName(),
+                    c.getDataType(),
+                    c.getAlias(),
+                    true);
             _columns.add(ic);
         }
         return _columns;
@@ -512,10 +504,10 @@ public class ExecUtils {
             // .getAlias()));
             // } else { IFunction 没有table名，columnMeta里要有
             colMetas.add(new ColumnMeta(tableAlias == null ? c.getTableName() : tableAlias,
-                c.getAlias() == null ? c.getColumnName() : c.getAlias(),
-                c.getDataType(),
-                c.getAlias(),
-                true));
+                    c.getAlias() == null ? c.getColumnName() : c.getAlias(),
+                    c.getDataType(),
+                    c.getAlias(),
+                    true));
             // }
         }
         return colMetas;
@@ -524,16 +516,17 @@ public class ExecUtils {
     /**
      * 根据order by 条件，从left和right KVPair里面拿到一个列所对应的值(从key或者从value里面） 然后进行比较。
      * 相等则继续比较其他。 不相等则根据asc desc决定大小。
-     * 
+     *
      * @param orderBys
      * @return
      */
     public static Comparator<IRowSet> getComp(final List<IOrderBy> orderBys, final ICursorMeta meta) {
         return new Comparator<IRowSet>() {
 
-            public IRowsValueScaner  leftScaner;
-            public IRowsValueScaner  rightScaner;
+            public IRowsValueScaner leftScaner;
+            public IRowsValueScaner rightScaner;
             public List<ISelectable> cols;
+
             {
                 cols = new ArrayList<ISelectable>();
                 for (IOrderBy ord : orderBys) {
@@ -575,7 +568,7 @@ public class ExecUtils {
                                               final ICursorMeta rightMeta) {
         return new Comparator<IRowSet>() {
 
-            public IRowsValueScaner leftScaner  = new RowsValueScanerImp(leftMeta, left_columns);
+            public IRowsValueScaner leftScaner = new RowsValueScanerImp(leftMeta, left_columns);
             public IRowsValueScaner rightScaner = new RowsValueScanerImp(rightMeta, right_columns);
 
             /*
@@ -662,8 +655,8 @@ public class ExecUtils {
         }
         ICursorMeta iCursorMeta = null;
         List<ColumnMeta> columns = convertISelectablesToColumnMeta(query.getColumns(),
-            query.getAlias(),
-            query.isSubQuery());
+                query.getAlias(),
+                query.isSubQuery());
         iCursorMeta = CursorMetaImp.buildNew(columns, columns.size());
         return iCursorMeta;
     }
@@ -682,10 +675,10 @@ public class ExecUtils {
     private static void addNewColumnMeta(List<ColumnMeta> columnMeta, List<ColumnMeta> columns) {
         for (ColumnMeta cm : columnMeta) {
             ColumnMeta cmNew = new ColumnMeta(getLogicTableName(cm.getTableName()),
-                cm.getName(),
-                cm.getDataType(),
-                cm.getAlias(),
-                cm.isNullable());
+                    cm.getName(),
+                    cm.getDataType(),
+                    cm.getAlias(),
+                    cm.isNullable());
             columns.add(cmNew);
         }
     }

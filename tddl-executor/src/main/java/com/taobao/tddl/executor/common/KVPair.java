@@ -7,7 +7,6 @@ package com.taobao.tddl.executor.common;
 import com.taobao.tddl.executor.record.CloneableRecord;
 
 
-
 /**
  * @author jianxing <jianxing.qx@taobao.com>
  */
@@ -16,12 +15,12 @@ public class KVPair implements Comparable, Cloneable {
     private CloneableRecord key;
     private CloneableRecord value;
 
-    public KVPair(){
+    public KVPair() {
         key = CloneableRecord.getNewEmptyRecord();
         value = CloneableRecord.getNewEmptyRecord();
     }
 
-    public KVPair(CloneableRecord key, CloneableRecord value){
+    public KVPair(CloneableRecord key, CloneableRecord value) {
 
         if (key != null) {
             this.key = key;
@@ -39,12 +38,12 @@ public class KVPair implements Comparable, Cloneable {
         return key;
     }
 
-    public CloneableRecord getValue() {
-        return value;
-    }
-
     public void setKey(CloneableRecord key) {
         this.key = key;
+    }
+
+    public CloneableRecord getValue() {
+        return value;
     }
 
     public void setValue(CloneableRecord value) {

@@ -1,9 +1,5 @@
 package com.taobao.tddl.executor;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
@@ -15,6 +11,10 @@ import com.taobao.tddl.executor.spi.ITopologyExecutor;
 import com.taobao.tddl.optimizer.OptimizerContext;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
 public class TopologyExecutor extends AbstractLifecycle implements ITopologyExecutor {
 
     public String dataNode = "localhost";
@@ -22,7 +22,7 @@ public class TopologyExecutor extends AbstractLifecycle implements ITopologyExec
     @Override
     public Future<ISchematicCursor> execByExecPlanNodeFuture(final IDataNodeExecutor qc,
                                                              final ExecutionContext executionContext)
-                                                                                                     throws TddlException {
+            throws TddlException {
 
         final ExecutorContext executorContext = ExecutorContext.getContext();
         final OptimizerContext optimizerContext = OptimizerContext.getContext();
@@ -45,7 +45,7 @@ public class TopologyExecutor extends AbstractLifecycle implements ITopologyExec
 
     @Override
     public ISchematicCursor execByExecPlanNode(IDataNodeExecutor qc, ExecutionContext executionContext)
-                                                                                                       throws TddlException {
+            throws TddlException {
         return getGroupExecutor(qc, executionContext).execByExecPlanNode(qc, executionContext);
     }
 
@@ -65,15 +65,15 @@ public class TopologyExecutor extends AbstractLifecycle implements ITopologyExec
         executor = ExecutorContext.getContext().getTopologyHandler().get(group);
         if (executor == null) {
             throw new RuntimeException("cannot find executor for group:" + group + "\ngroups:\n"
-                                       + ExecutorContext.getContext().getTopologyHandler());
+                    + ExecutorContext.getContext().getTopologyHandler());
         }
 
         if (!executionContext.isAutoCommit()) {
             // sql不在同一个节点上，是跨机事务，报错。
             if (executionContext.getTransactionGroup() != null && !executionContext.getTransactionGroup().equals(group)) {
                 throw new TddlRuntimeException("transaction across group is not supported, aim group is:" + group
-                                               + ", current transaction group is:"
-                                               + executionContext.getTransactionGroup());
+                        + ", current transaction group is:"
+                        + executionContext.getTransactionGroup());
             }
         }
 

@@ -1,17 +1,17 @@
 package com.taobao.tddl.optimizer.core.datatype;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.model.BaseRowSet;
 import com.taobao.tddl.common.utils.convertor.Convertor;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
 /**
  * {@link Timestamp}类型
- * 
+ *
  * @author jianghang 2014-1-21 下午5:36:26
  * @since 5.0.0
  */
@@ -19,9 +19,9 @@ public class TimestampType extends AbstractDataType<java.sql.Timestamp> {
 
     private static final Timestamp maxTimestamp = Timestamp.valueOf("9999-12-31 23:59:59");
     private static final Timestamp minTimestamp = Timestamp.valueOf("1900-01-01 00:00:00");
-    private Convertor              longToDate   = null;
+    private Convertor longToDate = null;
 
-    public TimestampType(){
+    public TimestampType() {
         longToDate = this.getConvertor(Long.class);
     }
 

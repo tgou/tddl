@@ -4,16 +4,16 @@ import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 
 public abstract class DataNodeExecutor<RT extends IDataNodeExecutor> implements IDataNodeExecutor<RT> {
 
-    protected String  requestHostName;
-    protected Long    requestID;
+    protected String requestHostName;
+    protected Long requestID;
     protected Integer subRequestID;
-    protected String  targetNode;
+    protected String targetNode;
     protected boolean consistentRead = true;
     protected Integer thread;
-    protected Object  extra;
-    protected boolean useBIO         = false;
-    protected String  sql;
-    protected boolean streaming      = false;
+    protected Object extra;
+    protected boolean useBIO = false;
+    protected String sql;
+    protected boolean streaming = false;
 
     public RT executeOn(String targetNode) {
         this.targetNode = targetNode;

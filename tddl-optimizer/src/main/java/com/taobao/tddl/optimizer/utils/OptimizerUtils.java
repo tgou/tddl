@@ -1,28 +1,17 @@
 package com.taobao.tddl.optimizer.utils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.utils.TStringUtil;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.bean.BindVal;
 import com.taobao.tddl.optimizer.core.expression.bean.NullValue;
 import com.taobao.tddl.optimizer.parse.cobar.visitor.MySqlExprVisitor;
+
+import java.util.*;
 
 /**
  * @since 5.0.0
@@ -219,9 +208,9 @@ public class OptimizerUtils {
         for (ColumnMeta c : meta.getKeyColumns()) {
             IColumn column = ASTNodeFactory.getInstance().createColumn();
             column.setTableName(c.getTableName())
-                .setColumnName(c.getName())
-                .setDataType(c.getDataType())
-                .setAlias(c.getAlias());
+                    .setColumnName(c.getName())
+                    .setDataType(c.getDataType())
+                    .setAlias(c.getAlias());
             IOrderBy orderBy = ASTNodeFactory.getInstance().createOrderBy().setColumn(column).setDirection(true);
             _orderBys.add(orderBy);
         }
@@ -230,7 +219,7 @@ public class OptimizerUtils {
 
     /**
      * 根据column string构造{@linkplain ISelectable}对象
-     * 
+     *
      * @param columnStr
      * @return
      */
@@ -283,11 +272,11 @@ public class OptimizerUtils {
     public static IColumn getColumn(Object column) {
         if (column instanceof IFunction) {
             return ASTNodeFactory.getInstance()
-                .createColumn()
-                .setTableName(((IFunction) column).getTableName())
-                .setColumnName(((IFunction) column).getColumnName())
-                .setAlias(((IFunction) column).getAlias())
-                .setDataType(((IFunction) column).getDataType());
+                    .createColumn()
+                    .setTableName(((IFunction) column).getTableName())
+                    .setColumnName(((IFunction) column).getColumnName())
+                    .setAlias(((IFunction) column).getAlias())
+                    .setDataType(((IFunction) column).getDataType());
         } else if (!(column instanceof IColumn)) {
             throw new IllegalArgumentException("column :" + column + " is not a icolumn");
         }

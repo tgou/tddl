@@ -13,14 +13,14 @@ public interface StatMonitorMBean {
 
     /**
      * 最新统计的时间点
-     * 
+     *
      * @return
      */
     long getStatDuration();
 
     /**
      * 获取实时统计结果
-     * 
+     *
      * @param key1
      * @param key2
      * @param key3

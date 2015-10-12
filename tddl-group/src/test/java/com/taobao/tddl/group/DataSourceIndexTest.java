@@ -1,19 +1,18 @@
 package com.taobao.tddl.group;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
-import org.junit.Test;
-
 import com.taobao.diamond.mockserver.MockServer;
 import com.taobao.tddl.common.GroupDataSourceRouteHelper;
 import com.taobao.tddl.common.model.ThreadLocalString;
 import com.taobao.tddl.common.utils.thread.ThreadLocalMap;
 import com.taobao.tddl.group.jdbc.TGroupDataSource;
+import org.junit.Test;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DataSourceIndexTest extends BaseGroupTest {
 

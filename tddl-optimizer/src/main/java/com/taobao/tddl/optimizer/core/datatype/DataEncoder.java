@@ -18,18 +18,18 @@
 
 package com.taobao.tddl.optimizer.core.datatype;
 
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NOT_NULL_BYTE_HIGH;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NULL_BYTE_HIGH;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NOT_NULL_BYTE_HIGH;
+import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NULL_BYTE_HIGH;
+
 /**
  * A very low-level class that supports encoding of primitive data. For encoding
  * data into keys, see {@link KeyEncoder}.
- * 
+ *
  * @author Brian S O'Neill
  * @see DataDecoder
  */
@@ -40,9 +40,9 @@ public class DataEncoder {
 
     /**
      * Encodes the given signed integer into exactly 4 bytes.
-     * 
-     * @param value signed integer value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     signed integer value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(int value, byte[] dst, int dstOffset) {
@@ -57,9 +57,9 @@ public class DataEncoder {
      * Encodes the given signed Integer object into exactly 1 or 5 bytes. If the
      * Integer object is never expected to be null, consider encoding as an int
      * primitive.
-     * 
-     * @param value optional signed Integer value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional signed Integer value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -76,9 +76,9 @@ public class DataEncoder {
 
     /**
      * Encodes the given signed long into exactly 8 bytes.
-     * 
-     * @param value signed long value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     signed long value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(long value, byte[] dst, int dstOffset) {
@@ -98,9 +98,9 @@ public class DataEncoder {
      * Encodes the given signed Long object into exactly 1 or 9 bytes. If the
      * Long object is never expected to be null, consider encoding as a long
      * primitive.
-     * 
-     * @param value optional signed Long value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional signed Long value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -117,9 +117,9 @@ public class DataEncoder {
 
     /**
      * Encodes the given signed byte into exactly 1 byte.
-     * 
-     * @param value signed byte value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     signed byte value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(byte value, byte[] dst, int dstOffset) {
@@ -130,9 +130,9 @@ public class DataEncoder {
      * Encodes the given signed Byte object into exactly 1 or 2 bytes. If the
      * Byte object is never expected to be null, consider encoding as a byte
      * primitive.
-     * 
-     * @param value optional signed Byte value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional signed Byte value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -149,9 +149,9 @@ public class DataEncoder {
 
     /**
      * Encodes the given signed short into exactly 2 bytes.
-     * 
-     * @param value signed short value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     signed short value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(short value, byte[] dst, int dstOffset) {
@@ -164,9 +164,9 @@ public class DataEncoder {
      * Encodes the given signed Short object into exactly 1 or 3 bytes. If the
      * Short object is never expected to be null, consider encoding as a short
      * primitive.
-     * 
-     * @param value optional signed Short value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional signed Short value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -183,9 +183,9 @@ public class DataEncoder {
 
     /**
      * Encodes the given character into exactly 2 bytes.
-     * 
-     * @param value character value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     character value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(char value, byte[] dst, int dstOffset) {
@@ -197,9 +197,9 @@ public class DataEncoder {
      * Encodes the given Character object into exactly 1 or 3 bytes. If the
      * Character object is never expected to be null, consider encoding as a
      * char primitive.
-     * 
-     * @param value optional Character value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional Character value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -216,9 +216,9 @@ public class DataEncoder {
 
     /**
      * Encodes the given boolean into exactly 1 byte.
-     * 
-     * @param value boolean value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     boolean value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(boolean value, byte[] dst, int dstOffset) {
@@ -227,9 +227,9 @@ public class DataEncoder {
 
     /**
      * Encodes the given Boolean object into exactly 1 byte.
-     * 
-     * @param value optional Boolean value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional Boolean value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(Boolean value, byte[] dst, int dstOffset) {
@@ -242,9 +242,9 @@ public class DataEncoder {
 
     /**
      * Encodes the given float into exactly 4 bytes.
-     * 
-     * @param value float value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     float value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(float value, byte[] dst, int dstOffset) {
@@ -259,9 +259,9 @@ public class DataEncoder {
     /**
      * Encodes the given Float object into exactly 4 bytes. A non-canonical NaN
      * value is used to represent null.
-     * 
-     * @param value optional Float value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional Float value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(Float value, byte[] dst, int dstOffset) {
@@ -274,9 +274,9 @@ public class DataEncoder {
 
     /**
      * Encodes the given double into exactly 8 bytes.
-     * 
-     * @param value double value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     double value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(double value, byte[] dst, int dstOffset) {
@@ -297,9 +297,9 @@ public class DataEncoder {
     /**
      * Encodes the given Double object into exactly 8 bytes. A non-canonical NaN
      * value is used to represent null.
-     * 
-     * @param value optional Double value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional Double value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encode(Double value, byte[] dst, int dstOffset) {
@@ -314,9 +314,9 @@ public class DataEncoder {
      * Encodes the given optional BigInteger into a variable amount of bytes. If
      * the BigInteger is null, exactly 1 byte is written. Otherwise, the amount
      * written can be determined by calling calculateEncodedLength.
-     * 
-     * @param value BigInteger value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     BigInteger value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      * @since 1.2
@@ -340,7 +340,7 @@ public class DataEncoder {
 
     /**
      * Returns the amount of bytes required to encode the given BigInteger.
-     * 
+     *
      * @param value BigInteger value to encode, may be null
      * @return amount of bytes needed to encode
      * @since 1.2
@@ -357,9 +357,9 @@ public class DataEncoder {
      * Encodes the given optional BigDecimal into a variable amount of bytes. If
      * the BigDecimal is null, exactly 1 byte is written. Otherwise, the amount
      * written can be determined by calling calculateEncodedLength.
-     * 
-     * @param value BigDecimal value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     BigDecimal value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      * @since 1.2
@@ -375,7 +375,7 @@ public class DataEncoder {
 
     /**
      * Returns the amount of bytes required to encode the given BigDecimal.
-     * 
+     *
      * @param value BigDecimal value to encode, may be null
      * @return amount of bytes needed to encode
      * @since 1.2
@@ -391,9 +391,9 @@ public class DataEncoder {
      * Encodes the given optional byte array into a variable amount of bytes. If
      * the byte array is null, exactly 1 byte is written. Otherwise, the amount
      * written can be determined by calling calculateEncodedLength.
-     * 
-     * @param value byte array value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     byte array value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -409,12 +409,12 @@ public class DataEncoder {
      * Encodes the given optional byte array into a variable amount of bytes. If
      * the byte array is null, exactly 1 byte is written. Otherwise, the amount
      * written can be determined by calling calculateEncodedLength.
-     * 
-     * @param value byte array value to encode, may be null
+     *
+     * @param value       byte array value to encode, may be null
      * @param valueOffset offset into byte array
      * @param valueLength length of data in byte array
-     * @param dst destination for encoded bytes
-     * @param dstOffset offset into destination array
+     * @param dst         destination for encoded bytes
+     * @param dstOffset   offset into destination array
      * @return amount of bytes written
      */
     public static int encode(byte[] value, int valueOffset, int valueLength, byte[] dst, int dstOffset) {
@@ -434,7 +434,7 @@ public class DataEncoder {
 
     /**
      * Returns the amount of bytes required to encode the given byte array.
-     * 
+     *
      * @param value byte array value to encode, may be null
      * @return amount of bytes needed to encode
      */
@@ -444,8 +444,8 @@ public class DataEncoder {
 
     /**
      * Returns the amount of bytes required to encode the given byte array.
-     * 
-     * @param value byte array value to encode, may be null
+     *
+     * @param value       byte array value to encode, may be null
      * @param valueOffset offset into byte array
      * @param valueLength length of data in byte array
      * @return amount of bytes needed to encode
@@ -457,13 +457,13 @@ public class DataEncoder {
     /**
      * Encodes the given optional String into a variable amount of bytes. The
      * amount written can be determined by calling calculateEncodedStringLength.
-     * <p>
+     * <p/>
      * Strings are encoded in a fashion similar to UTF-8, in that ASCII
      * characters are written in one byte. This encoding is more efficient than
      * UTF-8, but it isn't compatible with UTF-8.
-     * 
-     * @param value String value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     String value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -509,7 +509,7 @@ public class DataEncoder {
 
     /**
      * Returns the amount of bytes required to encode the given String.
-     * 
+     *
      * @param value String to encode, may be null
      */
     public static int calculateEncodedStringLength(String value) {
@@ -608,7 +608,7 @@ public class DataEncoder {
 
     /**
      * Writes a positive length value in up to five bytes.
-     * 
+     *
      * @return number of bytes written
      * @since 1.2
      */
@@ -645,11 +645,11 @@ public class DataEncoder {
      * Encodes the given byte array for use when there is only a single
      * property, whose type is a byte array. The original byte array is returned
      * if the padding lengths are zero.
-     * 
+     *
      * @param prefixPadding amount of extra bytes to allocate at start of
-     * encoded byte array
+     *                      encoded byte array
      * @param suffixPadding amount of extra bytes to allocate at end of encoded
-     * byte array
+     *                      byte array
      */
     public static byte[] encodeSingle(byte[] value, int prefixPadding, int suffixPadding) {
         if (prefixPadding <= 0 && suffixPadding <= 0) {
@@ -672,21 +672,21 @@ public class DataEncoder {
     /**
      * Encodes the given byte array for use when there is only a single nullable
      * property, whose type is a byte array.
-     * 
+     *
      * @param prefixPadding amount of extra bytes to allocate at start of
-     * encoded byte array
+     *                      encoded byte array
      * @param suffixPadding amount of extra bytes to allocate at end of encoded
-     * byte array
+     *                      byte array
      */
     public static byte[] encodeSingleNullable(byte[] value, int prefixPadding, int suffixPadding) {
         if (prefixPadding <= 0 && suffixPadding <= 0) {
             if (value == null) {
-                return new byte[] { NULL_BYTE_HIGH };
+                return new byte[]{NULL_BYTE_HIGH};
             }
 
             int length = value.length;
             if (length == 0) {
-                return new byte[] { NOT_NULL_BYTE_HIGH };
+                return new byte[]{NOT_NULL_BYTE_HIGH};
             }
 
             byte[] dst = new byte[1 + length];

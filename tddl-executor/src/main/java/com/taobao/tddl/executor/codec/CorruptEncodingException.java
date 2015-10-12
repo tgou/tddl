@@ -6,15 +6,15 @@ public class CorruptEncodingException extends TddlException {
 
     private static final long serialVersionUID = -7798002309588878953L;
 
-    public CorruptEncodingException(String message){
+    public CorruptEncodingException(String message) {
         super(message);
     }
 
-    public CorruptEncodingException(String message, Throwable cause){
+    public CorruptEncodingException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public CorruptEncodingException(Throwable cause){
+    public CorruptEncodingException(Throwable cause) {
         super(cause);
     }
 }

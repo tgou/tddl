@@ -1,10 +1,5 @@
 package com.taobao.tddl.repo.bdb.spi;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.sleepycat.je.Transaction;
 import com.sleepycat.je.TransactionConfig;
 import com.sleepycat.je.rep.ReplicaWriteException;
@@ -15,18 +10,23 @@ import com.taobao.tddl.executor.cursor.Cursor;
 import com.taobao.tddl.executor.spi.ITHLog;
 import com.taobao.tddl.executor.spi.ITransaction;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * @author jianxing <jianxing.qx@taobao.com>
  */
 public class JE_Transaction implements ITransaction {
 
     final AtomicReference<ITHLog> historyLog;
-    Transaction                   txn;
-    TransactionConfig             config;
-    List<Cursor>                  openedCursors = new LinkedList<Cursor>();
+    Transaction txn;
+    TransactionConfig config;
+    List<Cursor> openedCursors = new LinkedList<Cursor>();
 
     public JE_Transaction(com.sleepycat.je.Transaction txn, com.sleepycat.je.TransactionConfig config,
-                          AtomicReference<ITHLog> historyLog){
+                          AtomicReference<ITHLog> historyLog) {
         this.txn = txn;
         this.config = config;
         this.historyLog = historyLog;
@@ -112,11 +112,11 @@ public class JE_Transaction implements ITransaction {
     }
 
     @Override
-    public void close() {
-        throw new IllegalArgumentException("not supported yet");
+    public void setAutoCommit(boolean autoCommit) {
     }
 
     @Override
-    public void setAutoCommit(boolean autoCommit) {
+    public void close() {
+        throw new IllegalArgumentException("not supported yet");
     }
 }

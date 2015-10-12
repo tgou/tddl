@@ -1,12 +1,11 @@
 package com.taobao.tddl.rule.virtualnode;
 
-import java.util.Map;
-
+import com.google.common.collect.Maps;
+import com.taobao.tddl.common.exception.TddlException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.google.common.collect.Maps;
-import com.taobao.tddl.common.exception.TddlException;
+import java.util.Map;
 
 public class TableSlotMapTest {
 

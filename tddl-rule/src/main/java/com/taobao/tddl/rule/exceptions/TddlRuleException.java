@@ -6,23 +6,23 @@ public class TddlRuleException extends TddlRuntimeException {
 
     private static final long serialVersionUID = 4403809817705460724L;
 
-    public TddlRuleException(String errorCode, String errorDesc, Throwable cause){
+    public TddlRuleException(String errorCode, String errorDesc, Throwable cause) {
         super(errorCode, errorDesc, cause);
     }
 
-    public TddlRuleException(String errorCode, String errorDesc){
+    public TddlRuleException(String errorCode, String errorDesc) {
         super(errorCode, errorDesc);
     }
 
-    public TddlRuleException(String errorCode, Throwable cause){
+    public TddlRuleException(String errorCode, Throwable cause) {
         super(errorCode, cause);
     }
 
-    public TddlRuleException(String errorCode){
+    public TddlRuleException(String errorCode) {
         super(errorCode);
     }
 
-    public TddlRuleException(Throwable cause){
+    public TddlRuleException(Throwable cause) {
         super(cause);
     }
 

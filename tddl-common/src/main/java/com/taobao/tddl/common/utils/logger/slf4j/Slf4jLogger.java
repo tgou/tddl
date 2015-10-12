@@ -1,16 +1,16 @@
 package com.taobao.tddl.common.utils.logger.slf4j;
 
-import java.io.Serializable;
-
 import com.taobao.tddl.common.utils.logger.Logger;
+
+import java.io.Serializable;
 
 public class Slf4jLogger implements Logger, Serializable {
 
-    private static final long      serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private final org.slf4j.Logger logger;
 
-    public Slf4jLogger(org.slf4j.Logger logger){
+    public Slf4jLogger(org.slf4j.Logger logger) {
         this.logger = logger;
     }
 

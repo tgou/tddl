@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.after;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.IPut;
@@ -9,16 +7,18 @@ import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 
+import java.util.Map;
+
 /**
  * 防止死锁的thread 号选择器。 每层会独立指定一个thread进行执行。这样就算是A->B->A 也不会出现死锁的问题。
  * 出现死锁的主要原因是请求是blocking状态的，所以导致后面的流数据无法处理，死锁。
  * 如果要修复这个问题，必须将请求发送和请求回收处理，逻辑上分开。变成发送流和接受流。才能解决，目前的方案是权宜方案 不会改变结构
- * 
+ *
  * @author Whisper
  */
 public class ChooseTreadOptimizer implements QueryPlanOptimizer {
 
-    public ChooseTreadOptimizer(){
+    public ChooseTreadOptimizer() {
     }
 
     @Override
@@ -26,7 +26,7 @@ public class ChooseTreadOptimizer implements QueryPlanOptimizer {
                                       Map<String, Object> extraCmd) {
 
         if (extraCmd != null && extraCmd.get("initThread") != null) this.allocThread(dne,
-            (Integer) extraCmd.get("initThread"));
+                (Integer) extraCmd.get("initThread"));
         else {
             this.allocThread(dne, 0);
         }

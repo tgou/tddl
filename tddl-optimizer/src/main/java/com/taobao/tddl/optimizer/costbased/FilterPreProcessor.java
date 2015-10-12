@@ -1,46 +1,41 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
 import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.exceptions.EmptyResultFilterException;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 预先处理filter条件
- * 
+ * <p/>
  * <pre>
  * 1. 判断永真/永假式,短化路径
  * 如： false or a = 1，优化为 a = 1
  * 如： true or a = 1，优化为true
  * 如： false or false，优化为{@linkplain EmptyResultFilterException}异常
- * 
+ *
  * 2. 调整下1 = id的列信息，优化为id = 1
- * 如：1 < a，调整为 a > 1 
+ * 如：1 < a，调整为 a > 1
  * 如：1 <= a，调整为 a >= 1
  * 如：1 > a，调整为 a < 1
  * 如：1 >= a，调整为 a <= 1
  * 其他情况，仅仅是交换下位置
- * 
+ *
  * 3. 根据column列，调整下value的类型
  * 如：a = 1，如果a是LONG型，会将文本1转化为Long. (sql解析后都会是纯文本信息)
  * </pre>
@@ -63,7 +58,7 @@ public class FilterPreProcessor {
         qtn.setResultFilter(processFilter(qtn.getResultFilter(), typeConvert));
         if (qtn instanceof TableNode) {
             ((TableNode) qtn).setIndexQueryValueFilter(processFilter(((TableNode) qtn).getIndexQueryValueFilter(),
-                typeConvert));
+                    typeConvert));
         }
 
         if (qtn instanceof JoinNode) {
@@ -223,7 +218,7 @@ public class FilterPreProcessor {
             if (bf.getColumn() instanceof IColumn) {
                 for (int i = 0; i < bf.getValues().size(); i++) {
                     bf.getValues().set(i,
-                        OptimizerUtils.convertType(bf.getValues().get(i), ((IColumn) bf.getColumn()).getDataType()));
+                            OptimizerUtils.convertType(bf.getValues().get(i), ((IColumn) bf.getColumn()).getDataType()));
                 }
             }
         } else {

@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast.build;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
@@ -13,12 +10,15 @@ import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
 import com.taobao.tddl.optimizer.core.expression.IFunction;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @since 5.0.0
  */
 public class QueryNodeBuilder extends QueryTreeNodeBuilder {
 
-    public QueryNodeBuilder(QueryNode queryNode){
+    public QueryNodeBuilder(QueryNode queryNode) {
         this.setNode(queryNode);
     }
 
@@ -62,8 +62,8 @@ public class QueryNodeBuilder extends QueryTreeNodeBuilder {
     private void buildSelectedFromSelectableObject() {
         if (this.getNode().getColumnsSelected().isEmpty()) {
             this.getNode()
-                .getColumnsSelected()
-                .add(ASTNodeFactory.getInstance().createColumn().setColumnName(IColumn.STAR));
+                    .getColumnsSelected()
+                    .add(ASTNodeFactory.getInstance().createColumn().setColumnName(IColumn.STAR));
         }
 
         // 如果有 * ，最后需要把*删掉
@@ -86,7 +86,7 @@ public class QueryNodeBuilder extends QueryTreeNodeBuilder {
 
             for (ISelectable selectedFromChild : child.getColumnsSelected()) {
                 if (selected.getTableName() != null
-                    && !selected.getTableName().equals(selectedFromChild.getTableName())) {
+                        && !selected.getTableName().equals(selectedFromChild.getTableName())) {
                     break;
                 }
 

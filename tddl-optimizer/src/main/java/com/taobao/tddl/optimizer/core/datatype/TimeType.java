@@ -1,27 +1,27 @@
 package com.taobao.tddl.optimizer.core.datatype;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Time;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.model.BaseRowSet;
 import com.taobao.tddl.common.utils.convertor.Convertor;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+
 /**
  * {@link Time}类型
- * 
+ *
  * @author jianghang 2014-1-21 下午5:33:07
  * @since 5.0.0
  */
 public class TimeType extends AbstractDataType<java.sql.Time> {
 
-    private static final Time maxTime    = Time.valueOf("23:59:59");
-    private static final Time minTime    = Time.valueOf("00:00:00");
-    private Convertor         longToDate = null;
+    private static final Time maxTime = Time.valueOf("23:59:59");
+    private static final Time minTime = Time.valueOf("00:00:00");
+    private Convertor longToDate = null;
 
-    public TimeType(){
+    public TimeType() {
         longToDate = this.getConvertor(Long.class);
     }
 

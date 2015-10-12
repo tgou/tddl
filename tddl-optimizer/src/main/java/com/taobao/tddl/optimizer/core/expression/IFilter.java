@@ -2,11 +2,15 @@ package com.taobao.tddl.optimizer.core.expression;
 
 /**
  * 条件表达式
- * 
+ *
  * @author jianghang 2013-11-8 下午1:55:54
  * @since 5.0.0
  */
 public interface IFilter<RT extends IFilter> extends IFunction<RT> {
+
+    public OPERATION getOperation();
+
+    public RT setOperation(OPERATION operation);
 
     public enum OPERATION {
 
@@ -16,7 +20,7 @@ public interface IFilter<RT extends IFilter> extends IFunction<RT> {
 
         private final int i;
 
-        OPERATION(int i){
+        OPERATION(int i) {
             this.i = i;
         }
 
@@ -79,9 +83,5 @@ public interface IFilter<RT extends IFilter> extends IFunction<RT> {
             }
         }
     }
-
-    public RT setOperation(OPERATION operation);
-
-    public OPERATION getOperation();
 
 }

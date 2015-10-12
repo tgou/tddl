@@ -1,31 +1,31 @@
 package com.taobao.tddl.rule.utils;
 
+import com.taobao.tddl.rule.model.MatcherResult;
+import com.taobao.tddl.rule.model.TargetDB;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.taobao.tddl.rule.model.MatcherResult;
-import com.taobao.tddl.rule.model.TargetDB;
-
 /**
  * 有些乱七八糟的oriDb/oriTable比较，我也没想明白具体的应用场景<br/>
  * 猜测应该和动态迁移有关，比如指定某个库/表完成了迁移，就单独开放这个表写入权限
- * 
+ *
  * @author <a href="junyu@taobao.com">junyu</a>
  * @author <a href="jianghang.loujh@taobao.com">jianghang</a>
  * @version 1.0
- * @since 1.6
  * @date 2011-4-22 12:49:53
+ * @since 1.6
  */
 public class MatchResultCompare {
 
     /**
      * 新旧matcherResult对比
-     * 
+     *
      * @param resultNew
      * @param resultOld
-     * @return 如果库表完全相同返回true,否则返回false
+     * @return 如果库表完全相同返回true, 否则返回false
      */
     public static boolean matchResultCompare(MatcherResult resultNew, MatcherResult resultOld) {
         return matchResultCompare(resultNew, resultOld, null, null);
@@ -33,7 +33,7 @@ public class MatchResultCompare {
 
     /**
      * 新旧MatchResult对比,如果不同,对比当前库表是否和新规则计算结果一致
-     * 
+     *
      * @param resultNew
      * @param resultOld
      * @param oriDb
@@ -49,7 +49,7 @@ public class MatchResultCompare {
 
     /**
      * 确定取数据的库表是否在规则计算的结果之内.
-     * 
+     *
      * @param resultNew
      * @param oriDb
      * @param oriTable
@@ -62,10 +62,10 @@ public class MatchResultCompare {
 
     /**
      * 新旧TargetDB对比
-     * 
+     *
      * @param targetNew
      * @param targetOld
-     * @return 如果库表完全相同返回true,否则返回false
+     * @return 如果库表完全相同返回true, 否则返回false
      */
     public static boolean targetDbCompare(List<TargetDB> targetNew, List<TargetDB> targetOld) {
         return targetDbCompare(targetNew, targetOld, null, null);
@@ -73,7 +73,7 @@ public class MatchResultCompare {
 
     /**
      * 新旧TargetDB对比,如果不同,对比当前库表是否和新规则计算结果一致
-     * 
+     *
      * @param targetNew
      * @param targetOld
      * @param oriDb
@@ -87,7 +87,7 @@ public class MatchResultCompare {
 
     /**
      * 确定取数据的库表是否在规则计算的结果之内.
-     * 
+     *
      * @param resultNew
      * @param oriDb
      * @param oriTable
@@ -192,7 +192,7 @@ public class MatchResultCompare {
 
     /**
      * 将数据转化为map结构
-     * 
+     *
      * @param targetDbs
      * @return
      */

@@ -8,11 +8,11 @@ import com.taobao.tddl.optimizer.config.table.TableMeta;
  */
 public abstract class AbstractTable implements ITable {
 
-    protected TableMeta   schema;
+    protected TableMeta schema;
 
     protected IRepository repo;
 
-    public AbstractTable(TableMeta schema, IRepository repo){
+    public AbstractTable(TableMeta schema, IRepository repo) {
         this.schema = schema;
         this.repo = repo;
         // todo:根据shema中二级索引信息，生成trigger.

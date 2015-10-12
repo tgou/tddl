@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * 一个简单的有名字的占位符替换器 类似java.text.MessageFormat, 只是占位符是{name1} {name2} 而不是{0} {2}
- * 
+ *
  * @author linxuan
  */
 public class SimpleNamedMessageFormat {
@@ -14,31 +14,20 @@ public class SimpleNamedMessageFormat {
     private static final String DEFAULT_PLACEHOLDER_PREFIX = "{";
     private static final String DEFAULT_PLACEHOLDER_SUFFIX = "}";
 
-    private final String        pattern;
-    private final String        placeholderPrefix;
-    private final String        placeholderSuffix;
+    private final String pattern;
+    private final String placeholderPrefix;
+    private final String placeholderSuffix;
 
-    private volatile boolean    parsed;
+    private volatile boolean parsed;
     private volatile List<Frag> frags;
 
-    private static class Frag {
-
-        public final String  value;
-        public final boolean isPlaceHolderName;
-
-        public Frag(String piece, boolean isPlaceHolderName){
-            this.value = piece;
-            this.isPlaceHolderName = isPlaceHolderName;
-        }
-    }
-
-    public SimpleNamedMessageFormat(String pattern){
+    public SimpleNamedMessageFormat(String pattern) {
         this.pattern = pattern;
         this.placeholderPrefix = DEFAULT_PLACEHOLDER_PREFIX;
         this.placeholderSuffix = DEFAULT_PLACEHOLDER_SUFFIX;
     }
 
-    public SimpleNamedMessageFormat(String pattern, String placeholderPrefix, String placeholderSuffix){
+    public SimpleNamedMessageFormat(String pattern, String placeholderPrefix, String placeholderSuffix) {
         this.pattern = pattern;
         this.placeholderPrefix = placeholderPrefix;
         this.placeholderSuffix = placeholderSuffix;
@@ -89,5 +78,16 @@ public class SimpleNamedMessageFormat {
         this.frags = initfrags;
         this.parsed = true;
         return buildByParsedFrags(args);
+    }
+
+    private static class Frag {
+
+        public final String value;
+        public final boolean isPlaceHolderName;
+
+        public Frag(String piece, boolean isPlaceHolderName) {
+            this.value = piece;
+            this.isPlaceHolderName = isPlaceHolderName;
+        }
     }
 }

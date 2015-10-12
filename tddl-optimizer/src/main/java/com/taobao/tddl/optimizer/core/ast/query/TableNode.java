@@ -1,17 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast.query;
 
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendField;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendln;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.printFilterString;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
@@ -25,21 +13,22 @@ import com.taobao.tddl.optimizer.core.ast.dml.DeleteNode;
 import com.taobao.tddl.optimizer.core.ast.dml.InsertNode;
 import com.taobao.tddl.optimizer.core.ast.dml.PutNode;
 import com.taobao.tddl.optimizer.core.ast.dml.UpdateNode;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin.JoinStrategy;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.*;
+
+import static com.taobao.tddl.optimizer.utils.OptimizerToString.*;
 
 /**
  * 查询某个具体的真实表的Node 允许使用这个node，根据查询条件进行树的构建
- * 
+ *
  * @author Dreamond
  * @author whisper
  * @author <a href="jianghang.loujh@taobao.com">jianghang</a>
@@ -48,18 +37,18 @@ import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 public class TableNode extends QueryTreeNode {
 
     private final TableNodeBuilder builder;
-    private String                 tableName;
-    private String                 actualTableName;              // 比如存在水平分表时，tableName代表逻辑表名,actualTableName代表物理表名
-    private IFilter                indexQueryValueFilter = null;
-    private TableMeta              tableMeta;
-    private IndexMeta              indexUsed             = null; // 当前逻辑表的使用index
-    private boolean                fullTableScan         = false; // 是否需要全表扫描
+    private String tableName;
+    private String actualTableName;              // 比如存在水平分表时，tableName代表逻辑表名,actualTableName代表物理表名
+    private IFilter indexQueryValueFilter = null;
+    private TableMeta tableMeta;
+    private IndexMeta indexUsed = null; // 当前逻辑表的使用index
+    private boolean fullTableScan = false; // 是否需要全表扫描
 
-    public TableNode(){
+    public TableNode() {
         this(null);
     }
 
-    public TableNode(String tableName){
+    public TableNode(String tableName) {
         this.tableName = tableName;
         builder = new TableNodeBuilder(this);
     }
@@ -86,7 +75,7 @@ public class TableNode extends QueryTreeNode {
 
     /**
      * 根据索引信息构建查询树，可能需要进行主键join
-     * 
+     * <p/>
      * <pre>
      * 分支：
      * 1. 没选择索引，直接按照主键进行全表扫描
@@ -94,7 +83,7 @@ public class TableNode extends QueryTreeNode {
      *      a. 选择的是主键索引，直接按照主键构造查询
      *      b. 选择的是非主键索引，需要考虑做主键二次join查询
      *          i. 如果索引信息里包含了所有的选择字段，直接基于主键查询返回，一次查询就够了
-     *          ii. 包含了非索引中的字段，需要做回表查询. 
+     *          ii. 包含了非索引中的字段，需要做回表查询.
      *              先根据索引信息查询到主键，再根据主键查询出所需的其他字段，对应的join条件即为主键字段
      * </pre>
      */
@@ -112,10 +101,10 @@ public class TableNode extends QueryTreeNode {
             keyIndexQuery.setOrderBys(OptimizerUtils.copyOrderBys(this.getOrderBys(), keyIndexQuery.getAlias()));
             keyIndexQuery.having(OptimizerUtils.copyFilter(this.getHavingFilter(), keyIndexQuery.getAlias()));
             keyIndexQuery.setOtherJoinOnFilter(OptimizerUtils.copyFilter(this.getOtherJoinOnFilter(),
-                keyIndexQuery.getAlias()));
+                    keyIndexQuery.getAlias()));
             keyIndexQuery.keyQuery(OptimizerUtils.copyFilter(this.getKeyFilter(), keyIndexQuery.getAlias()));
             keyIndexQuery.valueQuery(FilterUtils.and(OptimizerUtils.copyFilter(this.getIndexQueryValueFilter(),
-                keyIndexQuery.getAlias()), OptimizerUtils.copyFilter(this.getResultFilter(), keyIndexQuery.getAlias())));
+                    keyIndexQuery.getAlias()), OptimizerUtils.copyFilter(this.getResultFilter(), keyIndexQuery.getAlias())));
             keyIndexQuery.executeOn(this.getDataNode());
             keyIndexQuery.setSubQuery(this.isSubQuery());
             keyIndexQuery.setFullTableScan(this.isFullTableScan());
@@ -139,8 +128,8 @@ public class TableNode extends QueryTreeNode {
                     isIndexCover = false;
                 } else {
                     indexQuerySelected.add(ASTNodeFactory.getInstance()
-                        .createColumn()
-                        .setColumnName(selected.getColumnName()));
+                            .createColumn()
+                            .setColumnName(selected.getColumnName()));
                 }
             }
             indexQuery.select(indexQuerySelected);
@@ -158,9 +147,9 @@ public class TableNode extends QueryTreeNode {
                 indexQuery.setSubQuery(this.isSubQuery());
                 indexQuery.having(OptimizerUtils.copyFilter(this.getHavingFilter(), indexQuery.getAlias()));
                 indexQuery.valueQuery(FilterUtils.and(OptimizerUtils.copyFilter(this.getIndexQueryValueFilter(),
-                    indexQuery.getAlias()), OptimizerUtils.copyFilter(this.getResultFilter(), indexQuery.getAlias())));
+                        indexQuery.getAlias()), OptimizerUtils.copyFilter(this.getResultFilter(), indexQuery.getAlias())));
                 indexQuery.setOtherJoinOnFilter(OptimizerUtils.copyFilter(this.getOtherJoinOnFilter(),
-                    indexQuery.getAlias()));
+                        indexQuery.getAlias()));
                 indexQuery.build();
                 return indexQuery;
             } else {
@@ -182,11 +171,11 @@ public class TableNode extends QueryTreeNode {
 
                     if (!has) {// 不存在索引字段
                         allColumnsRefered.add(ASTNodeFactory.getInstance()
-                            .createColumn()
-                            .setColumnName(keyColumn.getName()));
+                                .createColumn()
+                                .setColumnName(keyColumn.getName()));
                         indexQuery.addColumnsSelected(ASTNodeFactory.getInstance()
-                            .createColumn()
-                            .setColumnName(keyColumn.getName()));
+                                .createColumn()
+                                .setColumnName(keyColumn.getName()));
                     }
                 }
 
@@ -200,8 +189,8 @@ public class TableNode extends QueryTreeNode {
                     }
 
                     keyQuerySelected.add(ASTNodeFactory.getInstance()
-                        .createColumn()
-                        .setColumnName(selected.getColumnName()));
+                            .createColumn()
+                            .setColumnName(selected.getColumnName()));
                 }
                 keyQuery.select(keyQuerySelected);
                 // mengshi 如果valueFilter中有index中的列，实际应该在indexQuery中做
@@ -213,13 +202,13 @@ public class TableNode extends QueryTreeNode {
                     IBooleanFilter eq = ASTNodeFactory.getInstance().createBooleanFilter();
                     eq.setOperation(OPERATION.EQ);
                     eq.setColumn(ASTNodeFactory.getInstance()
-                        .createColumn()
-                        .setColumnName(keyColumn.getName())
-                        .setTableName(indexUsed.getName()));
+                            .createColumn()
+                            .setColumnName(keyColumn.getName())
+                            .setTableName(indexUsed.getName()));
                     eq.setValue(ASTNodeFactory.getInstance()
-                        .createColumn()
-                        .setColumnName(keyColumn.getName())
-                        .setTableName(pk.getName()));
+                            .createColumn()
+                            .setColumnName(keyColumn.getName())
+                            .setTableName(pk.getName()));
                     join.addJoinFilter(eq);
                 }
 
@@ -288,15 +277,8 @@ public class TableNode extends QueryTreeNode {
         }
 
         return this.getBuilder()
-            .getSelectableFromChild(ASTNodeFactory.getInstance().createColumn().setColumnName(name));
+                .getSelectableFromChild(ASTNodeFactory.getInstance().createColumn().setColumnName(name));
     }
-
-    public TableNode setIndexUsed(IndexMeta indexUsed) {
-        this.indexUsed = indexUsed;
-        return this;
-    }
-
-    // ============= insert/update/delete/put==================
 
     public InsertNode insert(List<ISelectable> columns, List<Object> values) {
         InsertNode insert = new InsertNode(this);
@@ -306,9 +288,11 @@ public class TableNode extends QueryTreeNode {
         return insert;
     }
 
+    // ============= insert/update/delete/put==================
+
     public InsertNode insert(String columns, Comparable values[]) {
         if (columns == null || columns.isEmpty()) {
-            return this.insert(new String[] {}, values);
+            return this.insert(new String[]{}, values);
         }
         return this.insert(columns.split(" "), values);
     }
@@ -327,8 +311,8 @@ public class TableNode extends QueryTreeNode {
     public PutNode put(List<ISelectable> columns, List<Object> values) {
         if (columns.size() != values.size()) {
             throw new IllegalArgumentException("The size of the columns and values is not matched."
-                                               + " columns' size is " + columns.size() + ". values' size is "
-                                               + values.size());
+                    + " columns' size is " + columns.size() + ". values' size is "
+                    + values.size());
         }
 
         PutNode put = new PutNode(this);
@@ -356,8 +340,8 @@ public class TableNode extends QueryTreeNode {
 
         if (columns.size() != values.size()) {
             throw new IllegalArgumentException("The size of the columns and values is not matched."
-                                               + " columns' size is " + columns.size() + ". values' size is "
-                                               + values.size());
+                    + " columns' size is " + columns.size() + ". values' size is "
+                    + values.size());
         }
 
         UpdateNode update = new UpdateNode(this);
@@ -425,11 +409,11 @@ public class TableNode extends QueryTreeNode {
         toTable.useIndex(this.getIndexUsed());
     }
 
-    // ============== setter / getter==================
-
     public boolean isFullTableScan() {
         return this.fullTableScan;
     }
+
+    // ============== setter / getter==================
 
     public void setFullTableScan(boolean fullTableScan) {
         this.fullTableScan = fullTableScan;
@@ -437,6 +421,11 @@ public class TableNode extends QueryTreeNode {
 
     public IndexMeta getIndexUsed() {
         return indexUsed;
+    }
+
+    public TableNode setIndexUsed(IndexMeta indexUsed) {
+        this.indexUsed = indexUsed;
+        return this;
     }
 
     public TableNode useIndex(IndexMeta index) {
@@ -450,6 +439,10 @@ public class TableNode extends QueryTreeNode {
 
     public String getTableName() {
         return this.tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
     public TableMeta getTableMeta() {
@@ -466,10 +459,6 @@ public class TableNode extends QueryTreeNode {
 
     public void setIndexQueryValueFilter(IFilter indexValueFilter) {
         this.indexQueryValueFilter = indexValueFilter;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
     }
 
     public String getActualTableName() {
@@ -497,16 +486,16 @@ public class TableNode extends QueryTreeNode {
         appendField(sb, "resultFilter", printFilterString(this.getResultFilter(), inden + 2), tabContent);
         appendField(sb, "whereFilter", printFilterString(this.getWhereFilter(), inden + 2), tabContent);
         appendField(sb,
-            "indexQueryValueFilter",
-            printFilterString(this.getIndexQueryValueFilter(), inden + 2),
-            tabContent);
+                "indexQueryValueFilter",
+                printFilterString(this.getIndexQueryValueFilter(), inden + 2),
+                tabContent);
         appendField(sb, "otherJoinOnFilter", printFilterString(this.getOtherJoinOnFilter(), inden + 2), tabContent);
         appendField(sb, "having", printFilterString(this.getHavingFilter(), inden + 2), tabContent);
         if (this.getIndexUsed() != null) {
             appendField(sb, "indexUsed", "\n" + this.getIndexUsed().toStringWithInden(inden + 2), tabContent);
         }
         if (!(this.getLimitFrom() != null && this.getLimitFrom().equals(0L) && this.getLimitTo() != null && this.getLimitTo()
-            .equals(0L))) {
+                .equals(0L))) {
             appendField(sb, "limitFrom", this.getLimitFrom(), tabContent);
             appendField(sb, "limitTo", this.getLimitTo(), tabContent);
         }

@@ -1,8 +1,5 @@
 package com.taobao.tddl.executor.function;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.executor.utils.ExecUtils;
@@ -13,10 +10,13 @@ import com.taobao.tddl.optimizer.core.expression.IFunction.FunctionType;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.exceptions.FunctionException;
 
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class ExtraFunction implements IExtraFunction {
 
     protected IFunction function;
-    protected Object    result;
+    protected Object result;
 
     @Override
     public void setFunction(IFunction function) {
@@ -25,7 +25,7 @@ public abstract class ExtraFunction implements IExtraFunction {
 
     /**
      * 如果可以用db的函数，那就直接使用
-     * 
+     *
      * @param function
      */
     protected abstract String getDbFunction();
@@ -42,21 +42,21 @@ public abstract class ExtraFunction implements IExtraFunction {
 
     /**
      * 用于标记数据应该在server端进行计算。
-     * 
+     * <p/>
      * <pre>
-     * 因为server有分发的过程，所以这里也模拟了分发过程。 
+     * 因为server有分发的过程，所以这里也模拟了分发过程。
      * 比如：
      * 1. sum会先map到所有相关的机器上
      * 2. reduce方法内做合并
-     * 
+     *
      * 比较特殊的是avg
      * 1. 首先它在map的时候，需要下面的节点统计count + sum.
      * 2. reduce则是进行avg计算的地方，进行count/sum处理
-     * 
+     *
      * 因为有map/reduce模型，所有带有函数计算的执行计划都被设定为： merge { query } 结构，也就是merge下面挂query的模型，
-     * 
+     *
      * </pre>
-     * 
+     *
      * @param args
      * @throws FunctionException
      */
@@ -64,21 +64,21 @@ public abstract class ExtraFunction implements IExtraFunction {
 
     /**
      * 用于标记数据应该在server端进行计算。
-     * 
+     * <p/>
      * <pre>
-     * 因为server有分发的过程，所以这里也模拟了分发过程。 
+     * 因为server有分发的过程，所以这里也模拟了分发过程。
      * 比如：
      * 1. sum会先map到所有相关的机器上
      * 2. reduce方法内做合并
-     * 
+     *
      * 比较特殊的是avg
      * 1. 首先它在map的时候，需要下面的节点统计count + sum.
      * 2. reduce则是进行avg计算的地方，进行count/sum处理
-     * 
+     *
      * 因为有map/reduce模型，所有带有函数计算的执行计划都被设定为： merge { query } 结构，也就是merge下面挂query的模型，
-     * 
+     *
      * </pre>
-     * 
+     *
      * @param args
      * @throws FunctionException
      */
@@ -86,7 +86,7 @@ public abstract class ExtraFunction implements IExtraFunction {
 
     /**
      * 外部执行器传递ResultSet中的row记录，进行function的map计算
-     * 
+     *
      * @param kvPair
      * @throws Exception
      */
@@ -126,7 +126,7 @@ public abstract class ExtraFunction implements IExtraFunction {
 
     /**
      * 外部执行器传递ResultSet中的row记录，进行function的reduce计算
-     * 
+     *
      * @param kvPair
      * @throws Exception
      */
@@ -169,13 +169,13 @@ public abstract class ExtraFunction implements IExtraFunction {
         }
     }
 
-    public void setResult(Object result) {
-        this.result = result;
-    }
-
     @Override
     public Object getResult() {
         return result;
+    }
+
+    public void setResult(Object result) {
+        this.result = result;
     }
 
     @Override

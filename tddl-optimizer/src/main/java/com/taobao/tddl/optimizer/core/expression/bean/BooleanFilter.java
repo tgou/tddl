@@ -1,9 +1,5 @@
 package com.taobao.tddl.optimizer.core.expression.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.utils.TStringUtil;
@@ -13,6 +9,10 @@ import com.taobao.tddl.optimizer.core.expression.IBindVal;
 import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
 import com.taobao.tddl.optimizer.utils.OptimizerToString;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @since 5.0.0
  */
@@ -20,7 +20,7 @@ public class BooleanFilter extends Function<IBooleanFilter> implements IBooleanF
 
     protected OPERATION operation;
 
-    public BooleanFilter(){
+    public BooleanFilter() {
         this.args.add(null);
         this.args.add(null);
     }

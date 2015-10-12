@@ -1,25 +1,24 @@
 package com.taobao.tddl.config.impl;
 
-import java.util.List;
-import java.util.concurrent.Executor;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.TStringUtil;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.config.ConfigDataListener;
 import com.taobao.tddl.config.impl.holder.ConfigHolderFactory;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
  * 使用delegate模式，引入Preheat机制，允许预先构建cache，加速请求处理
- * 
+ *
  * @author jianghang 2013-10-28 下午7:36:03
  * @since 5.0.0
  */
 public class PreheatDataHandler extends UnitConfigDataHandler {
 
-    private static final Logger   logger = LoggerFactory.getLogger(PreheatDataHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(PreheatDataHandler.class);
     private UnitConfigDataHandler delagate;
 
     @Override

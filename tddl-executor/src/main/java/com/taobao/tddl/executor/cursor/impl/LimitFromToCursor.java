@@ -10,24 +10,23 @@ import com.taobao.tddl.executor.utils.ExecUtils;
 
 /**
  * 用于做limit操作
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-3 上午10:56:23
  * @since 5.0.0
  */
 public class LimitFromToCursor extends SchematicCursor implements ILimitFromToCursor {
 
-    public LimitFromToCursor(ISchematicCursor cursor, Long limitFrom, Long offset){
-        super(cursor, null, cursor.getOrderBy());
-        this.limitFrom = limitFrom;
-        this.offset = offset;
-    }
-
     private Long limitFrom = null;
     /**
      * fixed by shenxun: 实际含义是偏移量。非limit to的概念，所以改了名字
      */
-    private Long offset    = null;
-    private int  count     = 0;
+    private Long offset = null;
+    private int count = 0;
+    public LimitFromToCursor(ISchematicCursor cursor, Long limitFrom, Long offset) {
+        super(cursor, null, cursor.getOrderBy());
+        this.limitFrom = limitFrom;
+        this.offset = offset;
+    }
 
     @Override
     protected void init() throws TddlException {
@@ -54,7 +53,7 @@ public class LimitFromToCursor extends SchematicCursor implements ILimitFromToCu
             if (offset == 0l) {// limit To == 0 表示没有限制。
                 return super.next();
             } else if (offset != null && count > offset) {// 表示当前已经取出的值>limit
-                                                          // to限定
+                // to限定
                 return null;
             } else {// 表示当前已经取出的值<limit to限定。
                 return super.next();

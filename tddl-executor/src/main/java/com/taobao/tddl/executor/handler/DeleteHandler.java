@@ -1,8 +1,5 @@
 package com.taobao.tddl.executor.handler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.codec.CodecFactory;
@@ -19,28 +16,31 @@ import com.taobao.tddl.optimizer.config.table.IndexMeta;
 import com.taobao.tddl.optimizer.core.plan.IPut;
 import com.taobao.tddl.optimizer.core.plan.IPut.PUT_TYPE;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DeleteHandler extends PutHandlerCommon {
 
-    public DeleteHandler(){
+    public DeleteHandler() {
         super();
     }
 
     @SuppressWarnings("rawtypes")
     @Override
     protected int executePut(ExecutionContext executionContext, IPut put, ITable table, IndexMeta meta)
-                                                                                                       throws Exception {
+            throws Exception {
         ITransaction transaction = executionContext.getTransaction();
         int affect_rows = 0;
         IPut delete = put;
         ISchematicCursor conditionCursor = null;
         IRowSet rowSet = null;
         CloneableRecord key = CodecFactory.getInstance(CodecFactory.FIXED_LENGTH)
-            .getCodec(meta.getKeyColumns())
-            .newEmptyRecord();
+                .getCodec(meta.getKeyColumns())
+                .newEmptyRecord();
         try {
             conditionCursor = ExecutorContext.getContext()
-                .getTopologyExecutor()
-                .execByExecPlanNode(delete.getQueryTree(), executionContext);
+                    .getTopologyExecutor()
+                    .execByExecPlanNode(delete.getQueryTree(), executionContext);
             while ((rowSet = conditionCursor.next()) != null) {
                 affect_rows++;
                 for (ColumnMeta cm : meta.getKeyColumns()) {

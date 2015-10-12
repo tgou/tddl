@@ -1,10 +1,9 @@
 package com.taobao.tddl.optimizer.utils;
 
-import java.util.List;
-
+import com.taobao.tddl.optimizer.core.expression.IFunction;
 import org.junit.Test;
 
-import com.taobao.tddl.optimizer.core.expression.IFunction;
+import java.util.List;
 
 /**
  * @author jianghang 2013-11-8 下午8:05:42

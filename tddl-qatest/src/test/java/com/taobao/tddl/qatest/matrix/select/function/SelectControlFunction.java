@@ -1,30 +1,29 @@
 package com.taobao.tddl.qatest.matrix.select.function;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
-import com.taobao.tddl.qatest.ExecuteTableName;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @RunWith(EclipseParameterized.class)
 public class SelectControlFunction extends BaseMatrixTestCase {
 
+    public SelectControlFunction(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
+
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectControlFunction(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -42,7 +41,7 @@ public class SelectControlFunction extends BaseMatrixTestCase {
     @Test
     public void ifTest() throws Exception {
         String sql = String.format("select if(pk<=id,id,pk) as m from %s", normaltblTableName);
-        String[] columnParam = { "m" };
+        String[] columnParam = {"m"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
 
         sql = String.format("select sum(if(pk=id,id,pk)) as m from %s", normaltblTableName);

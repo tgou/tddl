@@ -1,18 +1,15 @@
 package com.taobao.tddl.group.jdbc;
 
-import javax.sql.DataSource;
-
+import com.taobao.tddl.common.GroupDataSourceRouteHelper;
+import com.taobao.tddl.common.mock.MockDataSource;
+import com.taobao.tddl.common.model.DBType;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.taobao.tddl.common.GroupDataSourceRouteHelper;
-import com.taobao.tddl.common.mock.MockDataSource;
-import com.taobao.tddl.common.model.DBType;
-import com.taobao.tddl.group.jdbc.DataSourceFetcher;
-import com.taobao.tddl.group.jdbc.TGroupDataSource;
+import javax.sql.DataSource;
 
 /**
  * @author linxuan
@@ -56,13 +53,13 @@ public class ThreadLocalDataSourceIndexTest {
 
         MockDataSource.clearTrace();
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-        jt.query("select 1 from dual", new Object[] {}, new ColumnMapRowMapper());
+        jt.query("select 1 from dual", new Object[]{}, new ColumnMapRowMapper());
         MockDataSource.showTrace();
         Assert.assertTrue(MockDataSource.hasTrace("", "ds1", "select 1 from dual"));
 
         MockDataSource.clearTrace();
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-        jt.query("select 1 from dual", new Object[] {}, new ColumnMapRowMapper());
+        jt.query("select 1 from dual", new Object[]{}, new ColumnMapRowMapper());
         MockDataSource.showTrace();
         Assert.assertTrue(MockDataSource.hasTrace("", "ds2", "select 1 from dual"));
     }
@@ -73,7 +70,7 @@ public class ThreadLocalDataSourceIndexTest {
 
         MockDataSource.clearTrace();
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-        jt.query("select 1 from dual", new Object[] {}, new ColumnMapRowMapper());
+        jt.query("select 1 from dual", new Object[]{}, new ColumnMapRowMapper());
         MockDataSource.showTrace();
         Assert.assertTrue(MockDataSource.hasTrace("", "ds1", "select 1 from dual"));
     }
@@ -84,13 +81,13 @@ public class ThreadLocalDataSourceIndexTest {
 
         MockDataSource.clearTrace();
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(6);
-        jt.query("select 1 from dual", new Object[] {}, new ColumnMapRowMapper());
+        jt.query("select 1 from dual", new Object[]{}, new ColumnMapRowMapper());
         MockDataSource.showTrace();
         Assert.assertTrue(MockDataSource.hasTrace("", "ds1", "select 1 from dual"));
 
         MockDataSource.clearTrace();
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(8);
-        jt.query("select 1 from dual", new Object[] {}, new ColumnMapRowMapper());
+        jt.query("select 1 from dual", new Object[]{}, new ColumnMapRowMapper());
         MockDataSource.showTrace();
         Assert.assertTrue(MockDataSource.hasTrace("", "ds3", "select 1 from dual"));
     }
@@ -101,13 +98,13 @@ public class ThreadLocalDataSourceIndexTest {
 
         MockDataSource.clearTrace();
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-        jt.query("select 1 from dual", new Object[] {}, new ColumnMapRowMapper());
+        jt.query("select 1 from dual", new Object[]{}, new ColumnMapRowMapper());
         MockDataSource.showTrace();
         Assert.assertTrue(MockDataSource.hasTrace("", "ds0", "select") || MockDataSource.hasTrace("", "ds1", "select"));
 
         MockDataSource.clearTrace();
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-        jt.query("select 1 from dual", new Object[] {}, new ColumnMapRowMapper());
+        jt.query("select 1 from dual", new Object[]{}, new ColumnMapRowMapper());
         MockDataSource.showTrace();
         Assert.assertTrue(MockDataSource.hasTrace("", "ds2", "select") || MockDataSource.hasTrace("", "ds3", "select"));
     }
@@ -118,19 +115,19 @@ public class ThreadLocalDataSourceIndexTest {
 
         MockDataSource.clearTrace();
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-        jt.query("select 1 from dual", new Object[] {}, new ColumnMapRowMapper());
+        jt.query("select 1 from dual", new Object[]{}, new ColumnMapRowMapper());
         MockDataSource.showTrace();
         Assert.assertTrue(MockDataSource.hasTrace("", "ds0", "select") || MockDataSource.hasTrace("", "ds1", "select"));
 
         MockDataSource.clearTrace();
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-        jt.query("select 1 from dual", new Object[] {}, new ColumnMapRowMapper());
+        jt.query("select 1 from dual", new Object[]{}, new ColumnMapRowMapper());
         MockDataSource.showTrace();
         Assert.assertTrue(MockDataSource.hasTrace("", "ds1", "select") || MockDataSource.hasTrace("", "ds2", "select"));
 
         MockDataSource.clearTrace();
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(3);
-        jt.query("select 1 from dual", new Object[] {}, new ColumnMapRowMapper());
+        jt.query("select 1 from dual", new Object[]{}, new ColumnMapRowMapper());
         MockDataSource.showTrace();
         Assert.assertTrue(MockDataSource.hasTrace("", "ds3", "select") || MockDataSource.hasTrace("", "ds4", "select"));
     }

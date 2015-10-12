@@ -1,14 +1,14 @@
 package com.taobao.tddl.executor.rowset;
 
+import com.taobao.tddl.executor.cursor.ICursorMeta;
+import com.taobao.tddl.optimizer.config.table.ColumnMeta;
+import com.taobao.tddl.optimizer.core.datatype.DataType;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
-
-import com.taobao.tddl.executor.cursor.ICursorMeta;
-import com.taobao.tddl.optimizer.config.table.ColumnMeta;
-import com.taobao.tddl.optimizer.core.datatype.DataType;
 
 /**
  * @author mengshi.sunmengshi 2013-12-3 上午11:06:04
@@ -18,7 +18,7 @@ public abstract class AbstractRowSet implements IRowSet {
 
     private final ICursorMeta iCursorMeta;
 
-    public AbstractRowSet(ICursorMeta iCursorMeta){
+    public AbstractRowSet(ICursorMeta iCursorMeta) {
         super();
         this.iCursorMeta = iCursorMeta;
     }

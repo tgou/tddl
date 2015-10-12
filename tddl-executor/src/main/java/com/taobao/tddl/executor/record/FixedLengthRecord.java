@@ -1,17 +1,13 @@
 package com.taobao.tddl.executor.record;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.executor.common.IRecord;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @author mengshi.sunmengshi 2013-12-3 下午1:51:05
@@ -19,17 +15,17 @@ import com.taobao.tddl.optimizer.core.datatype.DataType;
  */
 public class FixedLengthRecord extends CloneableRecord {
 
-    private final static Logger    logger = LoggerFactory.getLogger(FixedLengthRecord.class);
-    protected Object[]             values;
+    private final static Logger logger = LoggerFactory.getLogger(FixedLengthRecord.class);
+    protected Object[] values;
 
     protected Map<String, Integer> index;
 
-    public FixedLengthRecord(Map<String, Integer> index, int mapSizeCache){
+    public FixedLengthRecord(Map<String, Integer> index, int mapSizeCache) {
         this.index = index;
         this.values = new Object[index.size()];
     }
 
-    public FixedLengthRecord(List<ColumnMeta> keys){
+    public FixedLengthRecord(List<ColumnMeta> keys) {
         this.index = new HashMap(keys.size());
         for (ColumnMeta key : keys) {
             if (!index.containsKey(key.getName())) {
@@ -135,7 +131,7 @@ public class FixedLengthRecord extends CloneableRecord {
         return ret;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public int compareTo(IRecord o) {
         List<Object> values1 = null;

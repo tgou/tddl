@@ -11,7 +11,7 @@ import com.taobao.tddl.optimizer.exceptions.FunctionException;
  */
 public class Max extends AggregateFunction {
 
-    public Max(){
+    public Max() {
     }
 
     @Override

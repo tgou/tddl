@@ -1,36 +1,34 @@
 package com.taobao.tddl.common.exception;
 
+import org.apache.commons.lang.exception.Nestable;
+import org.apache.commons.lang.exception.NestableDelegate;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
-import org.apache.commons.lang.exception.Nestable;
-import org.apache.commons.lang.exception.NestableDelegate;
-
 /**
  * Tddl nestabled {@link SQLException}
- * 
+ *
  * @author jianghang 2013-10-24 下午2:54:56
  * @since 5.0.0
  */
 public class TddlSQLException extends SQLException implements Nestable {
 
     private static final long serialVersionUID = -4558269080286141706L;
+    protected final SQLException cause;
+    protected NestableDelegate delegate = new NestableDelegate(this);
 
-    public TddlSQLException(SQLException cause){
+    public TddlSQLException(SQLException cause) {
         this(null, cause);
     }
-
-    public TddlSQLException(String message, SQLException cause){
+    public TddlSQLException(String message, SQLException cause) {
         super(message);
         if (cause == null) {
             throw new IllegalArgumentException("必须填入SQLException");
         }
         this.cause = cause;
     }
-
-    protected NestableDelegate   delegate = new NestableDelegate(this);
-    protected final SQLException cause;
 
     /**
      * {@inheritDoc}

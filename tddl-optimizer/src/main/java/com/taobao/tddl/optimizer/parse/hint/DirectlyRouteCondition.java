@@ -1,15 +1,10 @@
 package com.taobao.tddl.optimizer.parse.hint;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class DirectlyRouteCondition extends ExtraCmdRouteCondition implements RouteCondition {
 
-    protected String      dbId;                           // 目标库的id
+    protected String dbId;                           // 目标库的id
     protected Set<String> tables = new HashSet<String>(2); // 目标表的id
 
     public Set<String> getTables() {

@@ -1,18 +1,17 @@
 package com.taobao.tddl.qatest.matrix.select;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author zhuoxue.yll 2013.01.23
@@ -20,15 +19,15 @@ import com.taobao.tddl.qatest.util.EclipseParameterized;
 @RunWith(EclipseParameterized.class)
 public class SelectWithNullTest extends BaseMatrixTestCase {
 
-    String[] columnParam = { "PK", "NAME", "ID" };
+    String[] columnParam = {"PK", "NAME", "ID"};
+
+    public SelectWithNullTest(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
 
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectWithNullTest(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -64,7 +63,7 @@ public class SelectWithNullTest extends BaseMatrixTestCase {
 
     public void quoteNullTest() throws Exception {
         String sql = "select QUOTE(?) a from " + normaltblTableName;
-        String[] columnParam = { "a" };
+        String[] columnParam = {"a"};
         List<Object> param = new ArrayList<Object>();
         param.add(null);
         selectContentSameAssert(sql, columnParam, param);
@@ -77,7 +76,7 @@ public class SelectWithNullTest extends BaseMatrixTestCase {
     public void asciiNULLTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = String.format("select ASCII(name) as a from %s", normaltblTableName);
-            String[] columnParam = { "a" };
+            String[] columnParam = {"a"};
             selectContentSameAssert(sql, columnParam, null);
         }
     }

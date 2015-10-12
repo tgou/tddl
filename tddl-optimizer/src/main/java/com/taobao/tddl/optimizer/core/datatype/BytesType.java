@@ -1,16 +1,16 @@
 package com.taobao.tddl.optimizer.core.datatype;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.google.common.primitives.Bytes;
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.model.BaseRowSet;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  * {@link Bytes} 类型
- * 
+ *
  * @author mengshi.sunmengshi 2014年1月21日 下午5:16:00
  * @since 5.0.0
  */
@@ -58,12 +58,12 @@ public class BytesType extends AbstractDataType<byte[]> {
 
     @Override
     public byte[] getMaxValue() {
-        return new byte[] { Byte.MAX_VALUE };
+        return new byte[]{Byte.MAX_VALUE};
     }
 
     @Override
     public byte[] getMinValue() {
-        return new byte[] { Byte.MIN_VALUE };
+        return new byte[]{Byte.MIN_VALUE};
     }
 
     @Override

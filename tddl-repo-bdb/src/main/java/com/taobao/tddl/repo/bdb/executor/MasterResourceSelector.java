@@ -1,24 +1,23 @@
 package com.taobao.tddl.repo.bdb.executor;
 
+import com.taobao.tddl.common.exception.TddlException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.taobao.tddl.common.exception.TddlException;
-
 public class MasterResourceSelector extends CommonResourceSelector {
 
-    private static final Log    logger         = LogFactory.getLog(MasterResourceSelector.class);
+    private static final Log logger = LogFactory.getLog(MasterResourceSelector.class);
     // private final AtomicInteger masterIndex = new AtomicInteger(0);
 
     private final AtomicInteger masterExecutor = new AtomicInteger(0);
-    private final Random        random         = new Random();
+    private final Random random = new Random();
 
-    public MasterResourceSelector(Integer index){
+    public MasterResourceSelector(Integer index) {
         super(index);
         if (index == 0) {
             throw new IllegalArgumentException("executor list size is 0");

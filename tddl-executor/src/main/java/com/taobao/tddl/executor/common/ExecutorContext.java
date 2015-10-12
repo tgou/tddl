@@ -12,10 +12,10 @@ public class ExecutorContext {
 
     private static final String EXECUTOR_CONTEXT_KEY = "_executor_context_";
 
-    private RepositoryHolder    repositoryHolder     = new RepositoryHolder();
+    private RepositoryHolder repositoryHolder = new RepositoryHolder();
 
-    private TopologyHandler     topologyHandler      = null;
-    private ITopologyExecutor   topologyExecutor     = null;
+    private TopologyHandler topologyHandler = null;
+    private ITopologyExecutor topologyExecutor = null;
 
     public static ExecutorContext getContext() {
         return (ExecutorContext) ThreadLocalMap.get(EXECUTOR_CONTEXT_KEY);

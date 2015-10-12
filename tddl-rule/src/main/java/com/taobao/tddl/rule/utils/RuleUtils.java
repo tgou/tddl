@@ -1,14 +1,14 @@
 package com.taobao.tddl.rule.utils;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import com.taobao.tddl.rule.enumerator.Enumerator;
 import com.taobao.tddl.rule.enumerator.EnumeratorImp;
 import com.taobao.tddl.rule.model.AdvancedParameter;
 import com.taobao.tddl.rule.model.sqljep.Comparative;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class RuleUtils {
 
@@ -38,7 +38,7 @@ public class RuleUtils {
 
     /**
      * 返回对应column的枚举值
-     * 
+     *
      * @param argumentsMap
      * @param param
      * @return
@@ -53,9 +53,9 @@ public class RuleUtils {
             try {
                 if (argumentsMap.containsKey(key)) {
                     Set<Object> samplingField = enumerator.getEnumeratedValue(argumentsMap.get(key),
-                        entry.cumulativeTimes,
-                        entry.atomicIncreateValue,
-                        entry.needMergeValueInCloseInterval);
+                            entry.cumulativeTimes,
+                            entry.atomicIncreateValue,
+                            entry.needMergeValueInCloseInterval);
                     enumeratedMap.put(key, samplingField);
                 } else {
                     // 如果sql中不存在，则进行全表扫

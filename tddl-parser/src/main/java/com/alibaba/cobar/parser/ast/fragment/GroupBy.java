@@ -18,23 +18,41 @@
  */
 package com.alibaba.cobar.parser.ast.fragment;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.alibaba.cobar.parser.ast.ASTNode;
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.util.Pair;
 import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class GroupBy implements ASTNode {
 
-    /** might be {@link LinkedList} */
+    /**
+     * might be {@link LinkedList}
+     */
     private final List<Pair<Expression, SortOrder>> orderByList;
-    private boolean                                 withRollup = false;
+    private boolean withRollup = false;
+
+    /**
+     * performance tip: expect to have only 1 order item
+     */
+    public GroupBy(Expression expr, SortOrder order, boolean withRollup) {
+        this.orderByList = new ArrayList<Pair<Expression, SortOrder>>(1);
+        this.orderByList.add(new Pair<Expression, SortOrder>(expr, order));
+        this.withRollup = withRollup;
+    }
+
+    /**
+     * performance tip: linked list is used
+     */
+    public GroupBy() {
+        this.orderByList = new LinkedList<Pair<Expression, SortOrder>>();
+    }
 
     public boolean isWithRollup() {
         return withRollup;
@@ -45,22 +63,6 @@ public class GroupBy implements ASTNode {
      */
     public List<Pair<Expression, SortOrder>> getOrderByList() {
         return orderByList;
-    }
-
-    /**
-     * performance tip: expect to have only 1 order item
-     */
-    public GroupBy(Expression expr, SortOrder order, boolean withRollup){
-        this.orderByList = new ArrayList<Pair<Expression, SortOrder>>(1);
-        this.orderByList.add(new Pair<Expression, SortOrder>(expr, order));
-        this.withRollup = withRollup;
-    }
-
-    /**
-     * performance tip: linked list is used
-     */
-    public GroupBy(){
-        this.orderByList = new LinkedList<Pair<Expression, SortOrder>>();
     }
 
     public GroupBy setWithRollup() {

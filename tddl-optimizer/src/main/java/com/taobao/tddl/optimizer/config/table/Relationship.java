@@ -3,7 +3,7 @@ package com.taobao.tddl.optimizer.config.table;
 /**
  * Defines the relationship between instances of the entity class and the
  * secondary keys.
- * 
+ *
  * @author jianxing <jianxing.qx@taobao.com>
  */
 public enum Relationship {

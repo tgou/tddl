@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.parse.cobar.visitor;
 
-import java.util.List;
-
 import com.alibaba.cobar.parser.ast.expression.primary.Identifier;
 import com.alibaba.cobar.parser.ast.expression.primary.RowExpression;
 import com.alibaba.cobar.parser.ast.stmt.dml.DMLReplaceStatement;
@@ -10,9 +8,11 @@ import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.optimizer.core.ast.dml.PutNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
 
+import java.util.List;
+
 /**
  * replace处理
- * 
+ *
  * @since 5.0.0
  */
 public class MySqlReplaceIntoVisitor extends EmptySQLASTVisitor {

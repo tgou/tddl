@@ -1,18 +1,17 @@
 package com.taobao.tddl.rule.utils;
 
-import java.util.Calendar;
-import java.util.Date;
-
+import com.taobao.tddl.rule.model.sqljep.Comparative;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.taobao.tddl.rule.model.sqljep.Comparative;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @author <a href="junyu@taobao.com">junyu</a>
  * @version 1.0
- * @since 1.6
  * @date 2011-9-16 11:00:47
+ * @since 1.6
  */
 public class ComparativeStringAnalyserUnitTest {
 

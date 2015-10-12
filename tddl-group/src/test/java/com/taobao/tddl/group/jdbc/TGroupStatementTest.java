@@ -1,8 +1,8 @@
 package com.taobao.tddl.group.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.taobao.tddl.common.mock.MockDataSource;
+import com.taobao.tddl.common.model.DBType;
+import org.junit.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,23 +12,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.taobao.tddl.common.mock.MockDataSource;
-import com.taobao.tddl.common.model.DBType;
-import com.taobao.tddl.group.jdbc.DataSourceWrapper;
-import com.taobao.tddl.group.jdbc.TGroupConnection;
-import com.taobao.tddl.group.jdbc.TGroupDataSource;
+import static org.junit.Assert.*;
 
 public class TGroupStatementTest {
 
     private static TGroupDataSource tgds;
-    private static MockDataSource   db1 = new MockDataSource("db", "db1");
-    private static MockDataSource   db2 = new MockDataSource("db", "db2");
+    private static MockDataSource db1 = new MockDataSource("db", "db1");
+    private static MockDataSource db2 = new MockDataSource("db", "db2");
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -69,8 +59,8 @@ public class TGroupStatementTest {
             assertTrue(stmt.execute(selectSQL));
             assertTrue(stmt.execute(showSQL));
             assertFalse(stmt.execute(insertSQL, Statement.RETURN_GENERATED_KEYS));
-            assertFalse(stmt.execute(insertSQL, new int[] { 1 }));
-            assertFalse(stmt.execute(insertSQL, new String[] { "col" }));
+            assertFalse(stmt.execute(insertSQL, new int[]{1}));
+            assertFalse(stmt.execute(insertSQL, new String[]{"col"}));
 
             stmt.addBatch(insertSQL);
             stmt.addBatch(updateSQL);
@@ -81,8 +71,8 @@ public class TGroupStatementTest {
             assertTrue(stmt.executeQuery(selectSQL).next());
             assertEquals(stmt.executeUpdate(insertSQL), 1);
             assertEquals(stmt.executeUpdate(insertSQL, Statement.RETURN_GENERATED_KEYS), 1);
-            assertEquals(stmt.executeUpdate(insertSQL, new int[] { 1 }), 1);
-            assertEquals(stmt.executeUpdate(insertSQL, new String[] { "col" }), 1);
+            assertEquals(stmt.executeUpdate(insertSQL, new int[]{1}), 1);
+            assertEquals(stmt.executeUpdate(insertSQL, new String[]{"col"}), 1);
         } finally {
             if (conn != null) {
                 try {

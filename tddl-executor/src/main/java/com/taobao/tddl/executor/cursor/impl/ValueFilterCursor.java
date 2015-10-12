@@ -1,13 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.common.utils.TStringUtil;
@@ -22,29 +14,32 @@ import com.taobao.tddl.executor.record.CloneableRecord;
 import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.core.datatype.DataTypeUtil;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
 import com.taobao.tddl.optimizer.core.expression.IFunction.FunctionType;
-import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 用于做没法走索引的条件过滤
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-3 上午11:01:53
  * @since 5.0.0
  */
 public class ValueFilterCursor extends SchematicCursor implements IValueFilterCursor {
 
-    protected IFilter          filter;
-    Pattern                    pattern;
-    String                     tarCache;
+    protected IFilter filter;
     protected ExecutionContext executionContext;
+    Pattern pattern;
+    String tarCache;
 
-    public ValueFilterCursor(ISchematicCursor cursor, IFilter filter, ExecutionContext executionContext){
+    public ValueFilterCursor(ISchematicCursor cursor, IFilter filter, ExecutionContext executionContext) {
 
         super(cursor, cursor == null ? null : null, cursor == null ? null : cursor.getOrderBy());
         // 将filter中的函数用规则引擎里的，带实际
@@ -115,7 +110,7 @@ public class ValueFilterCursor extends SchematicCursor implements IValueFilterCu
                 try {
 
                     if (((ISelectable) col).getAlias() == null && col instanceof IFunction
-                        && ((IFunction) col).getFunctionType().equals(FunctionType.Scalar)) {
+                            && ((IFunction) col).getFunctionType().equals(FunctionType.Scalar)) {
                         column_value = processFunction(iRowSet, col);
 
                     } else {
@@ -239,7 +234,8 @@ public class ValueFilterCursor extends SchematicCursor implements IValueFilterCu
     private Object processFunction(IRowSet iRowSet, Object c) throws TddlException {
         Object v = null;
         // 在Filter里面是不能出现聚合函数的
-        if (((IFunction) c).getFunctionType().equals(FunctionType.Aggregate)) throw new RuntimeException("Invalid use of group function");
+        if (((IFunction) c).getFunctionType().equals(FunctionType.Aggregate))
+            throw new RuntimeException("Invalid use of group function");
         ((ExtraFunction) ((IFunction) c).getExtraFunction()).serverMap(iRowSet);
 
         v = ((IFunction) c).getExtraFunction().getResult();

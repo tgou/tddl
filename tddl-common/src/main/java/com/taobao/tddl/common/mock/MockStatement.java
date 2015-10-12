@@ -1,40 +1,63 @@
 package com.taobao.tddl.common.mock;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.mock.MockDataSource.ExecuteInfo;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MockStatement implements Statement {
 
-    private static final Logger logger                  = LoggerFactory.getLogger(MockStatement.class);
-    protected MockDataSource    mds;
-    protected String            sql;
-    protected List<String>      sqls                    = new ArrayList<String>();
-    protected int               queryTimeout;
-    protected int               fetchSize;
-    protected int               maxRows;
-    private boolean             isClosed;
-    private int                 closeInvokingTimes      = 0;
-    private boolean             success                 = true;
-    private int                 executeSqlInvokingTimes = 0;
+    private static final Logger logger = LoggerFactory.getLogger(MockStatement.class);
+    protected MockDataSource mds;
+    protected String sql;
+    protected List<String> sqls = new ArrayList<String>();
+    protected int queryTimeout;
+    protected int fetchSize;
+    protected int maxRows;
+    private boolean isClosed;
+    private int closeInvokingTimes = 0;
+    private boolean success = true;
+    private int executeSqlInvokingTimes = 0;
+    protected ExecuteHandler executerHandler = new ExecuteHandler() {
 
-    public MockStatement(String method, MockDataSource mockDataSource, String sql){
+        public ResultSet execute(String method, String tsql) {
+            sql = tsql;
+            executeSqlInvokingTimes++;
+            logger.warn("[executerHandler]" + sql);
+            MockDataSource.record(new ExecuteInfo(MockStatement.this.mds,
+                    method,
+                    MockStatement.this.sql,
+                    null));
+            return new MockResultSet(mds, MockDataSource.popPreData());
+        }
+
+        public boolean executeSql(String method, String tsql) {
+            sql = tsql;
+            executeSqlInvokingTimes++;
+            logger.warn("[executerHandler]" + sql);
+            MockDataSource.record(new ExecuteInfo(MockStatement.this.mds,
+                    method,
+                    MockStatement.this.sql,
+                    null));
+            return true;
+        }
+
+        ;
+
+    };
+    private long insertSleepTime = 0;
+
+    public MockStatement(String method, MockDataSource mockDataSource, String sql) {
         this.sql = sql;
         this.mds = mockDataSource;
         MockDataSource.record(new ExecuteInfo(this.mds, method, null, null));
     }
 
-    public MockStatement(String method, MockDataSource mockDataSource){
+    public MockStatement(String method, MockDataSource mockDataSource) {
         this.mds = mockDataSource;
         MockDataSource.record(new ExecuteInfo(this.mds, method, null, null));
     }
@@ -87,32 +110,6 @@ public class MockStatement implements Statement {
         return success;
     }
 
-    protected ExecuteHandler executerHandler = new ExecuteHandler() {
-
-                                                 public ResultSet execute(String method, String tsql) {
-                                                     sql = tsql;
-                                                     executeSqlInvokingTimes++;
-                                                     logger.warn("[executerHandler]" + sql);
-                                                     MockDataSource.record(new ExecuteInfo(MockStatement.this.mds,
-                                                         method,
-                                                         MockStatement.this.sql,
-                                                         null));
-                                                     return new MockResultSet(mds, MockDataSource.popPreData());
-                                                 }
-
-                                                 public boolean executeSql(String method, String tsql) {
-                                                     sql = tsql;
-                                                     executeSqlInvokingTimes++;
-                                                     logger.warn("[executerHandler]" + sql);
-                                                     MockDataSource.record(new ExecuteInfo(MockStatement.this.mds,
-                                                         method,
-                                                         MockStatement.this.sql,
-                                                         null));
-                                                     return true;
-                                                 };
-
-                                             };
-
     public boolean execute(String sql, int[] columnIndexes) throws SQLException {
         mds.checkState();
         return executerHandler.executeSql("execute#sql_int[", sql);
@@ -127,7 +124,7 @@ public class MockStatement implements Statement {
         mds.checkState();
         logger.warn("[executeBatch]" + sql);
         MockDataSource.record(new ExecuteInfo(this.mds, "executeBatch", this.sql, null));
-        return new int[] { -1, -1 };
+        return new int[]{-1, -1};
     }
 
     public ResultSet executeQuery(String sql) throws SQLException {
@@ -152,8 +149,6 @@ public class MockStatement implements Statement {
         return updateInternal("executeUpdate", sql);
     }
 
-    private long insertSleepTime = 0;
-
     public int executeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
         mds.checkState();
         return updateInternal("executeUpdate#sql_int", sql);
@@ -177,8 +172,16 @@ public class MockStatement implements Statement {
         throw new NotSupportException("");
     }
 
+    public void setFetchDirection(int direction) throws SQLException {
+        throw new NotSupportException("");
+    }
+
     public int getFetchSize() throws SQLException {
         return this.fetchSize;
+    }
+
+    public void setFetchSize(int rows) throws SQLException {
+        this.fetchSize = rows;
     }
 
     public ResultSet getGeneratedKeys() throws SQLException {
@@ -189,8 +192,16 @@ public class MockStatement implements Statement {
         throw new NotSupportException("");
     }
 
+    public void setMaxFieldSize(int max) throws SQLException {
+        throw new NotSupportException("");
+    }
+
     public int getMaxRows() throws SQLException {
         return this.maxRows;
+    }
+
+    public void setMaxRows(int max) throws SQLException {
+        this.maxRows = max;
     }
 
     public boolean getMoreResults() throws SQLException {
@@ -203,6 +214,10 @@ public class MockStatement implements Statement {
 
     public int getQueryTimeout() throws SQLException {
         return this.queryTimeout;
+    }
+
+    public void setQueryTimeout(int seconds) throws SQLException {
+        this.queryTimeout = seconds;
     }
 
     public ResultSet getResultSet() throws SQLException {
@@ -238,26 +253,6 @@ public class MockStatement implements Statement {
     public void setEscapeProcessing(boolean enable) throws SQLException {
         throw new NotSupportException("");
 
-    }
-
-    public void setFetchDirection(int direction) throws SQLException {
-        throw new NotSupportException("");
-    }
-
-    public void setFetchSize(int rows) throws SQLException {
-        this.fetchSize = rows;
-    }
-
-    public void setMaxFieldSize(int max) throws SQLException {
-        throw new NotSupportException("");
-    }
-
-    public void setMaxRows(int max) throws SQLException {
-        this.maxRows = max;
-    }
-
-    public void setQueryTimeout(int seconds) throws SQLException {
-        this.queryTimeout = seconds;
     }
 
     public String getSql() {
@@ -324,11 +319,11 @@ public class MockStatement implements Statement {
         return false;
     }
 
-    public void setPoolable(boolean poolable) throws SQLException {
-    }
-
     public boolean isPoolable() throws SQLException {
         return false;
+    }
+
+    public void setPoolable(boolean poolable) throws SQLException {
     }
 
 }

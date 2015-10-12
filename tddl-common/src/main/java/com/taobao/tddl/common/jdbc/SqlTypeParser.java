@@ -1,14 +1,14 @@
 package com.taobao.tddl.common.jdbc;
 
-import java.util.regex.Pattern;
-
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.model.SqlType;
 import com.taobao.tddl.common.utils.TStringUtil;
 
+import java.util.regex.Pattern;
+
 /**
  * 简单解析sql类型
- * 
+ *
  * @author jianghang 2013-10-24 下午4:18:42
  * @since 5.0.0
  */
@@ -18,17 +18,17 @@ public class SqlTypeParser {
      * 用于判断是否是一个select ... for update的sql
      */
     private static final Pattern SELECT_FOR_UPDATE_PATTERN = Pattern.compile("^select\\s+.*\\s+for\\s+update.*$",
-                                                               Pattern.CASE_INSENSITIVE);
+            Pattern.CASE_INSENSITIVE);
 
     public static boolean isQuerySql(String sql) {
         SqlType sqlType = getSqlType(sql);
         if (sqlType == SqlType.SELECT || sqlType == SqlType.SELECT_FOR_UPDATE || sqlType == SqlType.SHOW
-            || sqlType == SqlType.DUMP || sqlType == SqlType.DEBUG || sqlType == SqlType.EXPLAIN) {
+                || sqlType == SqlType.DUMP || sqlType == SqlType.DEBUG || sqlType == SqlType.EXPLAIN) {
             return true;
         } else if (sqlType == SqlType.INSERT || sqlType == SqlType.UPDATE || sqlType == SqlType.DELETE
-                   || sqlType == SqlType.REPLACE || sqlType == SqlType.TRUNCATE || sqlType == SqlType.CREATE
-                   || sqlType == SqlType.DROP || sqlType == SqlType.LOAD || sqlType == SqlType.MERGE
-                   || sqlType == SqlType.ALTER || sqlType == SqlType.RENAME) {
+                || sqlType == SqlType.REPLACE || sqlType == SqlType.TRUNCATE || sqlType == SqlType.CREATE
+                || sqlType == SqlType.DROP || sqlType == SqlType.LOAD || sqlType == SqlType.MERGE
+                || sqlType == SqlType.ALTER || sqlType == SqlType.RENAME) {
             return false;
         } else {
             return throwNotSupportSqlTypeException();
@@ -37,7 +37,7 @@ public class SqlTypeParser {
 
     /**
      * 获得SQL语句种类
-     * 
+     *
      * @param sql SQL语句
      * @throws 当SQL语句不是SELECT、INSERT、UPDATE、DELETE语句时，抛出异常。
      */
@@ -60,7 +60,7 @@ public class SqlTypeParser {
             // performance,so
             // first judge this sql whether have ' for ' string.
             if (noCommentsSql.toLowerCase().contains(" for ")
-                && SELECT_FOR_UPDATE_PATTERN.matcher(noCommentsSql).matches()) {
+                    && SELECT_FOR_UPDATE_PATTERN.matcher(noCommentsSql).matches()) {
                 sqlType = SqlType.SELECT_FOR_UPDATE;
             } else {
                 sqlType = SqlType.SELECT;

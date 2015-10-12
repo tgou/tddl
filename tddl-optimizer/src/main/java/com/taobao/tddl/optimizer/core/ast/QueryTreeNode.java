@@ -1,11 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.build.QueryTreeNodeBuilder;
@@ -13,13 +7,8 @@ import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
 import com.taobao.tddl.optimizer.core.ast.query.MergeNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
-import com.taobao.tddl.optimizer.core.expression.IBindVal;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree.LOCK_MODEL;
 import com.taobao.tddl.optimizer.core.plan.query.IParallelizableQueryTree.QUERY_CONCURRENCY;
@@ -27,121 +16,89 @@ import com.taobao.tddl.optimizer.exceptions.QueryException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 
+import java.util.*;
+
 /**
  * 一个抽象的公共查询树实现 可能是一个真正的queryNode,也可以是个join，或者merge实现 这是个核心的公共实现方法。
- * 
+ *
  * @author Dreamond
  * @author jianghang 2013-11-8 下午2:33:51
  * @since 5.0.0
  */
 public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
 
-    public static enum FilterType {
-        /**
-         * 如果有索引，就是索引上的keyFilter，如果没索引，就是主表上的KeyFilter
-         */
-        IndexQueryKeyFilter,
-        /**
-         * 在主表上的ValueFilter
-         */
-        ResultFilter,
-
-        /**
-         * 在索引表上的ValueFilter
-         */
-        IndexQueryValueFilter;
-    }
-
-    protected IFilter           resultFilter;
-    protected IFilter           keyFilter;
-
+    protected IFilter resultFilter;
+    protected IFilter keyFilter;
     /**
      * 包含所有子节点的filter，用于拼sql
      */
-    protected IFilter           allWhereFilter   = null;
-
+    protected IFilter allWhereFilter = null;
     /**
      * select查询中的列
      */
-    protected List<ISelectable> columnsSelected  = new ArrayList<ISelectable>();
-
+    protected List<ISelectable> columnsSelected = new ArrayList<ISelectable>();
     /**
      * 依赖的所有列，可以理解为columnsSelected + implicitSelectable的总合
      */
-    protected List<ISelectable> columnsRefered   = new ArrayList<ISelectable>();
-
+    protected List<ISelectable> columnsRefered = new ArrayList<ISelectable>();
     /**
      * 显式的由查询接口指定的orderBy，注意需要保证顺序
      */
-    protected List<IOrderBy>    orderBys         = new LinkedList<IOrderBy>();
-
+    protected List<IOrderBy> orderBys = new LinkedList<IOrderBy>();
     /**
      * 显式的由查询接口指定的group by，注意需要保证顺序
      */
-    protected List<IOrderBy>    groups           = new LinkedList<IOrderBy>();
-
+    protected List<IOrderBy> groups = new LinkedList<IOrderBy>();
     /**
      * having条件
      */
-    protected IFilter           havingFilter;
-
+    protected IFilter havingFilter;
     /**
      * 上一层父节点，比如子查询会依赖父节点的字段信息
      * http://dev.mysql.com/doc/refman/5.0/en/correlated-subqueries.html
      */
-    protected ASTNode           parent           = null;
-
+    protected ASTNode parent = null;
     /**
      * join的子节点
      */
-    protected List<ASTNode>     children         = new ArrayList<ASTNode>(2);
-
+    protected List<ASTNode> children = new ArrayList<ASTNode>(2);
     /**
      * 从哪里开始
      */
-    protected Comparable        limitFrom        = null;
-
+    protected Comparable limitFrom = null;
     /**
      * 到哪里结束
      */
-    protected Comparable        limitTo          = null;
-
+    protected Comparable limitTo = null;
     /**
      * filter in where
      */
-    protected IFilter           whereFilter      = null;
-
+    protected IFilter whereFilter = null;
     /**
      * 非column=column的join列
      */
-    protected IFilter           otherJoinOnFilter;
-
+    protected IFilter otherJoinOnFilter;
     /**
      * 当前qn的别名，用于进行join等操作的时候辨别到底这一行是从哪个subNode来的。
      */
-    protected String            alias;
-
+    protected String alias;
     /**
      * 如果出现subQuery，内外都存在别名时，内部的别名为subAlias，外部使用的别名为alias
      */
-    protected String            subAlias;
-
-    protected boolean           consistent       = true;
-
-    protected LOCK_MODEL        lockModel        = LOCK_MODEL.SHARED_LOCK;
-
+    protected String subAlias;
+    protected boolean consistent = true;
+    protected LOCK_MODEL lockModel = LOCK_MODEL.SHARED_LOCK;
     /**
      * 当前节点是否为子查询
      */
-    protected boolean           subQuery         = false;
-    protected boolean           needBuild        = true;
+    protected boolean subQuery = false;
+    protected boolean needBuild = true;
     protected QUERY_CONCURRENCY queryConcurrency;
-
     /**
      * 是否为存在聚合信息，比如出现limit/group by/count/max等，此节点就会被标记为true，不允许进行join merge
      * join的展开优化
      */
-    protected boolean           isExistAggregate = false;
+    protected boolean isExistAggregate = false;
 
     /**
      * 获取完整的order by列信息(包括隐藏，比如group by会转化为order by)
@@ -195,18 +152,12 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
         }
     }
 
-    // =================== build / copy =========================
-
-    protected void setNeedBuild(boolean needBuild) {
-        this.needBuild = needBuild;
-    }
-
     @Override
     public String toString() {
         return this.toString(0);
     }
 
-    // ======================= setter / getter ======================
+    // =================== build / copy =========================
 
     public Comparable getLimitFrom() {
         return limitFrom;
@@ -220,6 +171,8 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
         this.limitFrom = limitFrom;
         return this;
     }
+
+    // ======================= setter / getter ======================
 
     public Comparable getLimitTo() {
         return limitTo;
@@ -257,6 +210,14 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
 
     public String getAlias() {
         return alias;
+    }
+
+    /**
+     * 设置别名，表级别
+     */
+    public QueryTreeNode setAlias(String string) {
+        this.alias(string);
+        return this;
     }
 
     public QueryTreeNode alias(String alias) {
@@ -409,7 +370,7 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
 
     /**
      * 列的tablename会设为表别名
-     * 
+     *
      * @return
      */
     public List<ISelectable> getColumnsSelectedForParent() {
@@ -431,7 +392,7 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
 
     /**
      * 列的tablename会设为表别名
-     * 
+     *
      * @return
      */
     public List<ISelectable> getColumnsReferedForParent() {
@@ -457,7 +418,7 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
 
     /**
      * 列的tablename会设为表别名
-     * 
+     *
      * @return
      */
     public boolean containsColumnsReferedForParent(ISelectable c) {
@@ -472,7 +433,7 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
 
     /**
      * join 其他节点
-     * 
+     *
      * @param o
      * @return
      */
@@ -585,12 +546,8 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
         return this.query(where).select(select);
     }
 
-    /**
-     * 设置别名，表级别
-     */
-    public QueryTreeNode setAlias(String string) {
-        this.alias(string);
-        return this;
+    public String getSubAlias() {
+        return subAlias;
     }
 
     /**
@@ -599,10 +556,6 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
     public QueryTreeNode setSubAlias(String string) {
         this.subAlias(string);
         return this;
-    }
-
-    public String getSubAlias() {
-        return subAlias;
     }
 
     public boolean isSubQuery() {
@@ -632,13 +585,17 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
         return false;
     }
 
-    public QueryTreeNode setConsistent(boolean b) {
-        this.consistent = b;
-        return this;
+    protected void setNeedBuild(boolean needBuild) {
+        this.needBuild = needBuild;
     }
 
     public boolean getConsistent() {
         return this.consistent;
+    }
+
+    public QueryTreeNode setConsistent(boolean b) {
+        this.consistent = b;
+        return this;
     }
 
     public QUERY_CONCURRENCY getQueryConcurrency() {
@@ -699,12 +656,10 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
         return this;
     }
 
-    // ==================== helper method =================
-
     /**
      * <pre>
      * distinct和group by的字段顺序打乱的计算结果是等价的，所以可以对此做一些优化
-     * 
+     *
      * 1. order by和group by同时存在时，并且group by包含了order by所有的字段，调整groupBy的字段顺序符合order by的顺序，多余的字段并下推到order by
      * 如: group by c1 c2 c3 order by c2 c1，可优化为：group by c2 c1 c3 order by c2 c1 c3，同时可将order by下推
      * 2. 只存在group by，复制group by字段到order by
@@ -752,6 +707,8 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
         }
 
     }
+
+    // ==================== helper method =================
 
     /**
      * 尝试查找一个同名的排序字段
@@ -812,6 +769,22 @@ public abstract class QueryTreeNode extends ASTNode<QueryTreeNode> {
         to.setSubQuery(this.isSubQuery());
         to.setNeedBuild(this.isNeedBuild());
         to.setExistAggregate(isExistAggregate);
+    }
+
+    public static enum FilterType {
+        /**
+         * 如果有索引，就是索引上的keyFilter，如果没索引，就是主表上的KeyFilter
+         */
+        IndexQueryKeyFilter,
+        /**
+         * 在主表上的ValueFilter
+         */
+        ResultFilter,
+
+        /**
+         * 在索引表上的ValueFilter
+         */
+        IndexQueryValueFilter;
     }
 
 }

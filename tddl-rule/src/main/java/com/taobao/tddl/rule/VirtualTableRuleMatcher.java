@@ -1,14 +1,5 @@
 package com.taobao.tddl.rule;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.taobao.tddl.rule.Rule.RuleColumn;
 import com.taobao.tddl.rule.impl.VirtualNodeGroovyRule;
 import com.taobao.tddl.rule.model.AdvancedParameter;
@@ -21,17 +12,19 @@ import com.taobao.tddl.rule.utils.RuleUtils;
 import com.taobao.tddl.rule.utils.sample.Samples;
 import com.taobao.tddl.rule.utils.sample.SamplesCtx;
 
+import java.util.*;
+
 /**
  * <pre>
  * 1.在分库列和分表列没有交集的情况下，各自计算，结果做笛卡尔组合。
- * 
+ *
  * 2.在分库列和分表列有交集，公共列的附加参数完全相同的情况下，公共列库表规则的描点总是相同的。
  *   表的描点要经过库规则计算后按库分类，在每个库内，只对产生该库的描点值进行表规则计算来确定表
  *   否则可能会产生不在本库的表。例如库%2表%8：
  *       id%2=0--db0：t0,t2,t4,t6
  *       id%2=1--db1: t1,t3,t5,t7
  *   表的描点0-7需要先经过库规则计算，按库结果分成两类db0:0,2,4,6和db1:1,3,5,7再分表进行表规则计算
- * 
+ *
  * 3.在分库列和分表列 列名相同 类型不同 的情况下，各自描点取并集，再按2的方式计算。比如库1_month 表1_day，
  *   单月db0，双月db1；一天一张表。则time in（2月5日 3月8日 4月20日）正确结果应该是：
  *       db0: t_5,t_20
@@ -42,7 +35,7 @@ import com.taobao.tddl.rule.utils.sample.SamplesCtx;
  *       db1: t_31
  *   上述列子是表的描点多于库，同时包含了库的描点。表的描点必须经过库规则分类再计算。
  *   对于表的描点不包含全部库描点的情况，例如：库描点a,b,c表描点b,c,d ....
- *   
+ *
  * 4.不考虑库表规则的公共列（参数）在类型相同的情况下，迭代次数的不同。
  *   列名和类型相同，配不同的迭代次数是意义不大的，例如库%2表%8，计算库的时候2个描点，计算表需要8个描点，
  *   但是由于是同一个列，表的8个描点需要全部走一遍库规则，进行按库分离聚合再计算表，才能保证结果的正确：
@@ -50,38 +43,245 @@ import com.taobao.tddl.rule.utils.sample.SamplesCtx;
  *       DB0:t0,t1,t2; DB1:t0,t1,t2
  *   忽略这种情况，所以公共列（参数）在类型相同时，要求应用按最大迭代次数配成一致。
  * </pre>
- * 
+ *
  * @author linxuan
  */
 public class VirtualTableRuleMatcher {
 
     private static final boolean isCrossInto;
+
     static {
         // 提供一个可配置的机会，但是在绝大多数默认的情况下，不想影响接口层次和代码结构
         String str = System.getProperty("com.taobao.tddl.rule.isCrossIntoCalculate", "false");
         isCrossInto = Boolean.parseBoolean(str);
     }
 
+    private static void addToTopology(String dbIndex, String tbName, Map<String, Set<String>> topology) {
+        Set<String> tbNames = topology.get(dbIndex);
+        if (tbNames == null) {
+            tbNames = new HashSet<String>();
+            topology.put(dbIndex, tbNames);
+        }
+        tbNames.add(tbName);
+    }
+
+    private static void addToTopologyWithSource(String dbIndex, String tbName,
+                                                Map<String, Map<String, Field>> topology, Map<String, Object> tbSample,
+                                                Set<AdvancedParameter> tbParams) {
+        Map<String, Field> tbNames = topology.get(dbIndex);
+        if (tbNames == null) {
+            tbNames = new HashMap<String, Field>();
+            topology.put(dbIndex, tbNames);
+        }
+        Field f = tbNames.get(tbName);
+        if (f == null) {
+            f = new Field(tbParams.size());
+            tbNames.put(tbName, f);
+        }
+        for (AdvancedParameter ap : tbParams) {
+            Set<Object> set = f.getSourceKeys().get(ap.key);
+            if (set == null) {
+                set = new HashSet<Object>();
+            }
+            set.add(tbSample.get(ap.key));
+        }
+    }
+
+    private static <T> Rule<T> findMatchedRule(Map<String, Comparative> allRuleColumnArgs, List<Rule<T>> shardRules,
+                                               Map<String, Comparative> matchArgs, ComparativeMapChoicer choicer,
+                                               List<Object> args, VirtualTableRule<String, String> rule) {
+        Rule<T> matchedRule = null;
+        if (shardRules != null && shardRules.size() != 0) {
+            matchedRule = findMatchedRule(allRuleColumnArgs, shardRules, matchArgs, choicer, args);
+            if (matchedRule == null) {
+                // 有分库或分表规则，但是没有匹配到，是否执行全部扫描
+                if (!rule.isAllowFullTableScan()) {
+                    List<Set<String>> shardColumns = new LinkedList<Set<String>>();
+                    for (Rule<T> r : shardRules) {
+                        Set<String> columnSet = new LinkedHashSet<String>();
+                        for (RuleColumn rc : r.getRuleColumnSet()) {
+                            columnSet.add(rc.key);
+                        }
+                        shardColumns.add(columnSet);
+                    }
+                    throw new IllegalArgumentException("sql contain no sharding column:" + shardColumns);
+                }
+            }
+        }
+        return matchedRule;
+    }
+
+    /**
+     * @return 返回两个规则的公共列
+     */
+    private static Set<String> getCommonColumnSet(Rule<String> matchedDbRule, Rule<String> matchedTbRule) {
+        Set<String> res = null;
+        for (String key : matchedDbRule.getRuleColumns().keySet()) {
+            if (matchedTbRule.getRuleColumns().containsKey(key)) {
+                if (res == null) {
+                    res = new HashSet<String>(1);
+                }
+                res.add(key);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * <pre>
+     * 1.  dbRule中和tbRule中存在相同的列，并且当前处于optional状态
+     * 2.  tbRule中和dbRule列名相同而自增类型不用的AdvancedParameter对象
+     * </pre>
+     *
+     * @return
+     */
+    private static Set<AdvancedParameter> diffTypeOrOptionalInCommon(Rule<String> dbRule, Rule<String> tbRule,
+                                                                     String[] commonColumn,
+                                                                     Map<String, Comparative> matchedDbRuleArgs,
+                                                                     Map<String, Comparative> matchedTbRuleArgs) {
+        Set<AdvancedParameter> mergeInCommon = null;
+        for (String common : commonColumn) {
+            AdvancedParameter dbap = (AdvancedParameter) dbRule.getRuleColumns().get(common);
+            AdvancedParameter tbap = (AdvancedParameter) tbRule.getRuleColumns().get(common);
+            boolean isOptional = matchedDbRuleArgs.containsKey(common) == false
+                    && matchedTbRuleArgs.containsKey(common) == false;
+            if (dbap.atomicIncreateType != tbap.atomicIncreateType || isOptional) {
+                if (mergeInCommon == null) {
+                    mergeInCommon = new HashSet<AdvancedParameter>(0);
+                }
+                mergeInCommon.add(tbap);
+            }
+        }
+        return mergeInCommon;
+    }
+
+    /**
+     * <pre>
+     * 规则一：#a# #b?#
+     * 规则二：#a# #c?#
+     * 规则三：#b?# #d?#
+     *
+     * 参数为(a，c)，则选规则二;
+     * 参数为(a，d)则选规则一;
+     * 参数为(b) 则选规则三
+     * </pre>
+     *
+     * @param <T>
+     * @param allRuleColumnArgs
+     * @param rules
+     * @param matchArgs
+     * @return
+     */
+    private static <T> Rule<T> findMatchedRule(Map<String, Comparative> allRuleColumnArgs, List<Rule<T>> rules,
+                                               Map<String, Comparative> matchArgs, ComparativeMapChoicer choicer,
+                                               List<Object> args) {
+        // 优先匹配必选列
+        for (Rule<T> r : rules) {
+            matchArgs.clear();
+            for (RuleColumn ruleColumn : r.getRuleColumns().values()) {
+                Comparative comparative = getComparative(ruleColumn.key, allRuleColumnArgs, choicer, args);
+                if (comparative == null) {
+                    break;
+                }
+                matchArgs.put(ruleColumn.key, comparative);
+            }
+            if (matchArgs.size() == r.getRuleColumns().size()) {
+                return r; // 完全匹配
+            }
+        }
+
+        // 匹配必选列 + 可选列
+        for (Rule<T> r : rules) {
+            matchArgs.clear();
+            int mandatoryColumnCount = 0;
+            for (RuleColumn ruleColumn : r.getRuleColumns().values()) {
+                if (ruleColumn.optional) {
+                    continue;
+                }
+
+                mandatoryColumnCount++;
+                Comparative comparative = getComparative(ruleColumn.key, allRuleColumnArgs, choicer, args);
+                if (comparative == null) {
+                    break;
+                }
+                matchArgs.put(ruleColumn.key, comparative);
+            }
+
+            if (mandatoryColumnCount != 0 && matchArgs.size() == mandatoryColumnCount) {
+                return r; // 必选列匹配
+            }
+        }
+
+        // 针对没有必选列的规则如：rule=..#a?#..#b?#.. 并且只有a或者b列在sql中有
+        for (Rule<T> r : rules) {
+            matchArgs.clear();
+            for (RuleColumn ruleColumn : r.getRuleColumns().values()) {
+                if (!ruleColumn.optional) {
+                    break; // 如果当前规则有必选项，直接跳过,因为走到这里必选列已经不匹配了
+                }
+
+                Comparative comparative = getComparative(ruleColumn.key, allRuleColumnArgs, choicer, args);
+                if (comparative != null) {
+                    matchArgs.put(ruleColumn.key, allRuleColumnArgs.get(ruleColumn.key));
+                }
+            }
+
+            if (matchArgs.size() != 0) {
+                return r; // 第一个全是可选列的规则，并且args包含该规则的部分可选列
+            }
+        }
+
+        // add by jianghang at 2013-11-18
+        // 如果还没有匹配规则，则可能一种情况就是所有的Rule都不满足，最后再查找一次规则中所有列都为可选的进行返回，按规则顺序返回第一个
+        boolean isAllOptional = true;
+        for (Rule<T> r : rules) {
+            for (RuleColumn ruleColumn : r.getRuleColumns().values()) {
+                if (!ruleColumn.optional) {
+                    isAllOptional = false;
+                    break;// 如果当前规则有必选项，直接跳过,因为走到这里必选列已经不匹配了
+                }
+            }
+
+            if (isAllOptional) {
+                return r;
+            }
+        }
+
+        return null;
+    }
+
+    private static Comparative getComparative(String colName, Map<String, Comparative> allRuleColumnArgs,
+                                              ComparativeMapChoicer comparativeMapChoicer, List<Object> args) {
+        Comparative comparative = allRuleColumnArgs.get(colName); // 先从缓存中获取
+        if (comparative == null) {
+            comparative = comparativeMapChoicer.getColumnComparative(args, colName);
+            if (comparative != null) {
+                allRuleColumnArgs.put(colName, comparative); // 放入缓存
+            }
+        }
+        return comparative;
+    }
+
     /**
      * <pre>
      * 基本思路：
-     * 1. 根据参数，选择匹配的{@linkplain Rule}. 
+     * 1. 根据参数，选择匹配的{@linkplain Rule}.
      *    a. 如果同时匹配多个，优先返回第一个
      *    b. 如果没有匹配，检查是否允许全表扫描
      * 2. 根据db和table rule的情况进行计算
      *    a. db rule不存在或者不匹配，单独计算table后 +　所有db
      *    b. tb rule不存在或者不匹配，单独计算db后　+ 所有table
      *    c. db/tb都存在
-     *      i.　rule中不存在交集字段，单独计算db + 单独计算table. 
+     *      i.　rule中不存在交集字段，单独计算db + 单独计算table.
      *          (遇上virtual node，根据虚拟table节点，转化为实际table表，再根据db和实际table的映射，提取实际db)
      *      ii. rule中存在交集字段
      *          1. 提取交集字段，将db+tb的枚举值采取merge，优先计算出db
      *          2. 遍历db的枚举结果，将db+tb的枚举值采取replace，即以db的枚举值为准，计算出tb
      * </pre>
-     * 
+     *
      * @param comparativeMapChoicer
-     * @param args sql的参数列表
-     * @param rule sql中虚拟表名对应的规则
+     * @param args                  sql的参数列表
+     * @param rule                  sql中虚拟表名对应的规则
      * @return
      */
     public MatcherResult match(ComparativeMapChoicer choicer, List<Object> args, VirtualTableRule<String, String> rule,
@@ -278,10 +478,10 @@ public class VirtualTableRuleMatcher {
         SamplesCtx dbRuleCtx = null;
         // 对于表规则中与库规则列名相同而自增类型不同的列，将其表枚举结果加入库规则的枚举集
         Set<AdvancedParameter> mergeInCommon = diffTypeOrOptionalInCommon(matchedDbRule,
-            matchedTbRule,
-            commonColumn,
-            matchedDbRuleArgs,
-            matchedTbRuleArgs);
+                matchedTbRule,
+                commonColumn,
+                matchedDbRuleArgs,
+                matchedTbRuleArgs);
         if (mergeInCommon != null && !mergeInCommon.isEmpty()) {
             // 公共列包含有枚举类型不同的列，例如库是1_month，表示1_day
             Map<String, Set<Object>> tbTypes = RuleUtils.getSamplingField(matchedTbRuleArgs, mergeInCommon);
@@ -304,10 +504,10 @@ public class VirtualTableRuleMatcher {
                                                                 String[] commonColumn, Object outerCtx) {
         SamplesCtx dbRuleCtx = null; // 对于表规则中与库规则列名相同而自增类型不同的列，将其表枚举结果加入库规则的枚举集
         Set<AdvancedParameter> mergeInCommon = diffTypeOrOptionalInCommon(matchedDbRule,
-            matchedTbRule,
-            commonColumn,
-            matchedDbRuleArgs,
-            matchedTbRuleArgs);
+                matchedTbRule,
+                commonColumn,
+                matchedDbRuleArgs,
+                matchedTbRuleArgs);
         if (mergeInCommon != null && !mergeInCommon.isEmpty()) {
             // 公共列包含有枚举类型不同的列，例如库是1_month，表示1_day
             Map<String, Set<Object>> tbTypes = RuleUtils.getSamplingField(matchedTbRuleArgs, mergeInCommon);
@@ -318,8 +518,8 @@ public class VirtualTableRuleMatcher {
         for (Map.Entry<String, Samples> e : dbValues.entrySet()) {
             SamplesCtx tbRuleCtx = new SamplesCtx(e.getValue().subSamples(commonColumn), SamplesCtx.replace);
             Map<String, Samples> tbValues = RuleUtils.cast(matchedTbRule.calculate(matchedTbRuleArgs,
-                tbRuleCtx,
-                outerCtx));
+                    tbRuleCtx,
+                    outerCtx));
             topology.put(e.getKey(), toMapField(tbValues));
         }
         return topology;
@@ -336,10 +536,10 @@ public class VirtualTableRuleMatcher {
         Set<AdvancedParameter> tbParams = RuleUtils.cast(matchedTbRule.getRuleColumnSet());
         Map<String, Set<Object>> dbEnumerates = RuleUtils.getSamplingField(matchedDbRuleArgs, dbParams);
         Set<AdvancedParameter> mergeInCommon = diffTypeOrOptionalInCommon(matchedDbRule,
-            matchedTbRule,
-            commonColumn,
-            matchedDbRuleArgs,
-            matchedTbRuleArgs);
+                matchedTbRule,
+                commonColumn,
+                matchedDbRuleArgs,
+                matchedTbRuleArgs);
         if (mergeInCommon != null && !mergeInCommon.isEmpty()) {
             // 将自增类型不同的公共列的表枚举值加入库枚举值中
             Map<String, Set<Object>> diifTypeTbEnumerates = RuleUtils.getSamplingField(matchedTbRuleArgs, mergeInCommon);
@@ -391,10 +591,10 @@ public class VirtualTableRuleMatcher {
         Set<AdvancedParameter> tbParams = RuleUtils.cast(matchedTbRule.getRuleColumnSet());
         Map<String, Set<Object>> dbEnumerates = RuleUtils.getSamplingField(matchedDbRuleArgs, dbParams);
         Set<AdvancedParameter> mergeInCommon = diffTypeOrOptionalInCommon(matchedDbRule,
-            matchedTbRule,
-            commonColumn,
-            matchedDbRuleArgs,
-            matchedTbRuleArgs);
+                matchedTbRule,
+                commonColumn,
+                matchedDbRuleArgs,
+                matchedTbRuleArgs);
         if (mergeInCommon != null && !mergeInCommon.isEmpty()) {
             // 将自增类型不同的公共列的表枚举值加入库枚举值中
             Map<String, Set<Object>> diifTypeTbEnumerates = RuleUtils.getSamplingField(matchedTbRuleArgs, mergeInCommon);
@@ -433,37 +633,6 @@ public class VirtualTableRuleMatcher {
             }
         }
         return topology;
-    }
-
-    private static void addToTopology(String dbIndex, String tbName, Map<String, Set<String>> topology) {
-        Set<String> tbNames = topology.get(dbIndex);
-        if (tbNames == null) {
-            tbNames = new HashSet<String>();
-            topology.put(dbIndex, tbNames);
-        }
-        tbNames.add(tbName);
-    }
-
-    private static void addToTopologyWithSource(String dbIndex, String tbName,
-                                                Map<String, Map<String, Field>> topology, Map<String, Object> tbSample,
-                                                Set<AdvancedParameter> tbParams) {
-        Map<String, Field> tbNames = topology.get(dbIndex);
-        if (tbNames == null) {
-            tbNames = new HashMap<String, Field>();
-            topology.put(dbIndex, tbNames);
-        }
-        Field f = tbNames.get(tbName);
-        if (f == null) {
-            f = new Field(tbParams.size());
-            tbNames.put(tbName, f);
-        }
-        for (AdvancedParameter ap : tbParams) {
-            Set<Object> set = f.getSourceKeys().get(ap.key);
-            if (set == null) {
-                set = new HashSet<Object>();
-            }
-            set.add(tbSample.get(ap.key));
-        }
     }
 
     private Map<String, Field> toMapField(Map<String/* rule计算结果 */, Samples/* 得到该结果的样本 */> values) {
@@ -509,181 +678,6 @@ public class VirtualTableRuleMatcher {
             targetDbList.add(db);
         }
         return targetDbList;
-    }
-
-    private static <T> Rule<T> findMatchedRule(Map<String, Comparative> allRuleColumnArgs, List<Rule<T>> shardRules,
-                                               Map<String, Comparative> matchArgs, ComparativeMapChoicer choicer,
-                                               List<Object> args, VirtualTableRule<String, String> rule) {
-        Rule<T> matchedRule = null;
-        if (shardRules != null && shardRules.size() != 0) {
-            matchedRule = findMatchedRule(allRuleColumnArgs, shardRules, matchArgs, choicer, args);
-            if (matchedRule == null) {
-                // 有分库或分表规则，但是没有匹配到，是否执行全部扫描
-                if (!rule.isAllowFullTableScan()) {
-                    List<Set<String>> shardColumns = new LinkedList<Set<String>>();
-                    for (Rule<T> r : shardRules) {
-                        Set<String> columnSet = new LinkedHashSet<String>();
-                        for (RuleColumn rc : r.getRuleColumnSet()) {
-                            columnSet.add(rc.key);
-                        }
-                        shardColumns.add(columnSet);
-                    }
-                    throw new IllegalArgumentException("sql contain no sharding column:" + shardColumns);
-                }
-            }
-        }
-        return matchedRule;
-    }
-
-    /**
-     * @return 返回两个规则的公共列
-     */
-    private static Set<String> getCommonColumnSet(Rule<String> matchedDbRule, Rule<String> matchedTbRule) {
-        Set<String> res = null;
-        for (String key : matchedDbRule.getRuleColumns().keySet()) {
-            if (matchedTbRule.getRuleColumns().containsKey(key)) {
-                if (res == null) {
-                    res = new HashSet<String>(1);
-                }
-                res.add(key);
-            }
-        }
-        return res;
-    }
-
-    /**
-     * <pre>
-     * 1.  dbRule中和tbRule中存在相同的列，并且当前处于optional状态
-     * 2.  tbRule中和dbRule列名相同而自增类型不用的AdvancedParameter对象
-     * </pre>
-     * 
-     * @return
-     */
-    private static Set<AdvancedParameter> diffTypeOrOptionalInCommon(Rule<String> dbRule, Rule<String> tbRule,
-                                                                     String[] commonColumn,
-                                                                     Map<String, Comparative> matchedDbRuleArgs,
-                                                                     Map<String, Comparative> matchedTbRuleArgs) {
-        Set<AdvancedParameter> mergeInCommon = null;
-        for (String common : commonColumn) {
-            AdvancedParameter dbap = (AdvancedParameter) dbRule.getRuleColumns().get(common);
-            AdvancedParameter tbap = (AdvancedParameter) tbRule.getRuleColumns().get(common);
-            boolean isOptional = matchedDbRuleArgs.containsKey(common) == false
-                                 && matchedTbRuleArgs.containsKey(common) == false;
-            if (dbap.atomicIncreateType != tbap.atomicIncreateType || isOptional) {
-                if (mergeInCommon == null) {
-                    mergeInCommon = new HashSet<AdvancedParameter>(0);
-                }
-                mergeInCommon.add(tbap);
-            }
-        }
-        return mergeInCommon;
-    }
-
-    /**
-     * <pre>
-     * 规则一：#a# #b?# 
-     * 规则二：#a# #c?# 
-     * 规则三：#b?# #d?# 
-     * 
-     * 参数为(a，c)，则选规则二; 
-     * 参数为(a，d)则选规则一;
-     * 参数为(b) 则选规则三
-     * </pre>
-     * 
-     * @param <T>
-     * @param allRuleColumnArgs
-     * @param rules
-     * @param matchArgs
-     * @return
-     */
-    private static <T> Rule<T> findMatchedRule(Map<String, Comparative> allRuleColumnArgs, List<Rule<T>> rules,
-                                               Map<String, Comparative> matchArgs, ComparativeMapChoicer choicer,
-                                               List<Object> args) {
-        // 优先匹配必选列
-        for (Rule<T> r : rules) {
-            matchArgs.clear();
-            for (RuleColumn ruleColumn : r.getRuleColumns().values()) {
-                Comparative comparative = getComparative(ruleColumn.key, allRuleColumnArgs, choicer, args);
-                if (comparative == null) {
-                    break;
-                }
-                matchArgs.put(ruleColumn.key, comparative);
-            }
-            if (matchArgs.size() == r.getRuleColumns().size()) {
-                return r; // 完全匹配
-            }
-        }
-
-        // 匹配必选列 + 可选列
-        for (Rule<T> r : rules) {
-            matchArgs.clear();
-            int mandatoryColumnCount = 0;
-            for (RuleColumn ruleColumn : r.getRuleColumns().values()) {
-                if (ruleColumn.optional) {
-                    continue;
-                }
-
-                mandatoryColumnCount++;
-                Comparative comparative = getComparative(ruleColumn.key, allRuleColumnArgs, choicer, args);
-                if (comparative == null) {
-                    break;
-                }
-                matchArgs.put(ruleColumn.key, comparative);
-            }
-
-            if (mandatoryColumnCount != 0 && matchArgs.size() == mandatoryColumnCount) {
-                return r; // 必选列匹配
-            }
-        }
-
-        // 针对没有必选列的规则如：rule=..#a?#..#b?#.. 并且只有a或者b列在sql中有
-        for (Rule<T> r : rules) {
-            matchArgs.clear();
-            for (RuleColumn ruleColumn : r.getRuleColumns().values()) {
-                if (!ruleColumn.optional) {
-                    break; // 如果当前规则有必选项，直接跳过,因为走到这里必选列已经不匹配了
-                }
-
-                Comparative comparative = getComparative(ruleColumn.key, allRuleColumnArgs, choicer, args);
-                if (comparative != null) {
-                    matchArgs.put(ruleColumn.key, allRuleColumnArgs.get(ruleColumn.key));
-                }
-            }
-
-            if (matchArgs.size() != 0) {
-                return r; // 第一个全是可选列的规则，并且args包含该规则的部分可选列
-            }
-        }
-
-        // add by jianghang at 2013-11-18
-        // 如果还没有匹配规则，则可能一种情况就是所有的Rule都不满足，最后再查找一次规则中所有列都为可选的进行返回，按规则顺序返回第一个
-        boolean isAllOptional = true;
-        for (Rule<T> r : rules) {
-            for (RuleColumn ruleColumn : r.getRuleColumns().values()) {
-                if (!ruleColumn.optional) {
-                    isAllOptional = false;
-                    break;// 如果当前规则有必选项，直接跳过,因为走到这里必选列已经不匹配了
-                }
-            }
-
-            if (isAllOptional) {
-                return r;
-            }
-        }
-
-        return null;
-    }
-
-    private static Comparative getComparative(String colName, Map<String, Comparative> allRuleColumnArgs,
-                                              ComparativeMapChoicer comparativeMapChoicer, List<Object> args) {
-        Comparative comparative = allRuleColumnArgs.get(colName); // 先从缓存中获取
-        if (comparative == null) {
-            comparative = comparativeMapChoicer.getColumnComparative(args, colName);
-            if (comparative != null) {
-                allRuleColumnArgs.put(colName, comparative); // 放入缓存
-            }
-        }
-        return comparative;
     }
 
 }

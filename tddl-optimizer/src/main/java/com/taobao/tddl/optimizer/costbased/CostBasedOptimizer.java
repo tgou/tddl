@@ -1,18 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.alibaba.cobar.parser.ast.stmt.SQLStatement;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -44,14 +31,7 @@ import com.taobao.tddl.optimizer.core.ast.query.QueryNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
-import com.taobao.tddl.optimizer.costbased.after.ChooseTreadOptimizer;
-import com.taobao.tddl.optimizer.costbased.after.FillRequestIDAndSubRequestID;
-import com.taobao.tddl.optimizer.costbased.after.FuckAvgOptimizer;
-import com.taobao.tddl.optimizer.costbased.after.LimitOptimizer;
-import com.taobao.tddl.optimizer.costbased.after.MergeConcurrentOptimizer;
-import com.taobao.tddl.optimizer.costbased.after.MergeJoinMergeOptimizer;
-import com.taobao.tddl.optimizer.costbased.after.QueryPlanOptimizer;
-import com.taobao.tddl.optimizer.costbased.after.StreamingOptimizer;
+import com.taobao.tddl.optimizer.costbased.after.*;
 import com.taobao.tddl.optimizer.costbased.chooser.DataNodeChooser;
 import com.taobao.tddl.optimizer.costbased.chooser.JoinChooser;
 import com.taobao.tddl.optimizer.costbased.pusher.FilterPusher;
@@ -68,64 +48,70 @@ import com.taobao.tddl.optimizer.parse.hint.RouteCondition;
 import com.taobao.tddl.optimizer.parse.hint.RuleRouteCondition;
 import com.taobao.tddl.optimizer.parse.hint.SimpleHintParser;
 import com.taobao.tddl.rule.model.TargetDB;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <pre>
- * 此优化器是根据开销进行优化的，主要优化流程在public IQueryCommon optimize(QueryTreeNode qn)中 
+ * 此优化器是根据开销进行优化的，主要优化流程在public IQueryCommon optimize(QueryTreeNode qn)中
  * 分为两部分进行
- * a. 第一部分，对关系查询树的优化，包含以下几个步骤： 
+ * a. 第一部分，对关系查询树的优化，包含以下几个步骤：
  *  s1.将SELECT提前，放到叶子节点进行 SELECT列提前进行可以减少数据量
  *      由于一些列是作为连接列的，他们不在最后的SELECT中
  *          (比如SELECT table1.id from table1 join table2 on table1.name=table2.name table1.name和table2.name作为连接列)
  *      在对table1与table2的查询中应该保存，同时在执行执行结束后，需要将table1.name与table2.name去除.
- *      所以在执行这一步的时候，需要保存中间需要的临时列. 在生成执行计划后，需要将这些列从最后的节点中删除。 
+ *      所以在执行这一步的时候，需要保存中间需要的临时列. 在生成执行计划后，需要将这些列从最后的节点中删除。
  *  效果是：
  *      原SQL：table1.join(table2).addJoinColumns("id","id").select("table1.id table2.id")
  *      转换为：table1.select("table1.id").join(tabl2.select("table2.id")).addJoinColumns("id","id")
- *              
- *  s2.将Join中连接列上的约束条件复制到另一边 
+ *
+ *  s2.将Join中连接列上的约束条件复制到另一边
  *      比如SELECT * from table1 join table2 on table1.id=table2.id where table1.id = 1
  *      因为Join是在table1.id与table2.id上的，所以table2.id上同样存在约束table2.id=1,此步就是需要发现这些条件，并将它复制。
  *  效果是：
  *      原SQL: table1.query("id=1").join(table2).addJoinColumns("id","id")
  *      转换为：table1.query("id=1").join(table2.query("id=2")).addJoinColumns("id","id")
- * 
- * s3.将约束条件提前，约束条件提前进行可以减少结果集的行数，并且可以合并QueryNode 
+ *
+ * s3.将约束条件提前，约束条件提前进行可以减少结果集的行数，并且可以合并QueryNode
  *   效果是：
  *       原SQL:  table1.join(table2).addJoinColumns("id","id").query("table1.name=1")
  *       转换为: table1.query("table1.name=1").join(table2).addJoinColumns("id","id")
- * 
- * s4.找到并遍历每种个子查询，调整其Join顺序，并为其选择Join策略 
- * 
+ *
+ * s4.找到并遍历每种个子查询，调整其Join顺序，并为其选择Join策略
+ *
  * s5.所有子查询优化之后，再调整这个查询树的Join顺序
- *      对Join顺序调整的依据是通过计算开销，开销主要包括两种: 
+ *      对Join顺序调整的依据是通过计算开销，开销主要包括两种:
  *          1. 磁盘IO与网络传输 详细计算方式请参见CostEstimater实现类的相关注释
  *          2. 对Join顺序的遍历使用的是最左树 在此步中，还会对同一列的约束条件进行合并等操作
- *      选取策略见JoinChooser的注释 
- * 
+ *      选取策略见JoinChooser的注释
+ *
  * s6.将s1中生成的临时列删除
- * 
- * s7.将查询树转换为原始的执行计划树 
- * 
- * 第二部分，对执行计划树的优化，包含以下几个步骤： 
+ *
+ * s7.将查询树转换为原始的执行计划树
+ *
+ * 第二部分，对执行计划树的优化，包含以下几个步骤：
  * s8.为执行计划的每个节点选择执行的GroupNode
- *      这一步是根据TDDL的规则进行分库 在Join，Merge的执行节点选择上，遵循的原则是尽量减少网络传输 
- *  
+ *      这一步是根据TDDL的规则进行分库 在Join，Merge的执行节点选择上，遵循的原则是尽量减少网络传输
+ *
  * s9.调整分库后的Join节点
  *      由于分库后，一个Query节点可能会变成一个Merge节点，需要对包含这样子节点的Join节点进行调整，详细见splitJoinAfterChooseDataNode的注释
  * </pre>
- * 
+ *
  * @since 5.0.0
  */
 public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
 
-    private static final String            _DIRECT         = "_DIRECT_";
-    private static final Logger            logger          = LoggerFactory.getLogger(CostBasedOptimizer.class);
-    private int                            cacheSize       = 1000;
-    private long                           expireTime      = TddlConstants.DEFAULT_OPTIMIZER_EXPIRE_TIME;
-    private SqlParseManager                sqlParseManager;
-    private Cache<String, OptimizeResult>  optimizedResults;
+    private static final String _DIRECT = "_DIRECT_";
+    private static final Logger logger = LoggerFactory.getLogger(CostBasedOptimizer.class);
     private final List<QueryPlanOptimizer> afterOptimizers = new ArrayList<QueryPlanOptimizer>();
+    private int cacheSize = 1000;
+    private long expireTime = TddlConstants.DEFAULT_OPTIMIZER_EXPIRE_TIME;
+    private SqlParseManager sqlParseManager;
+    private Cache<String, OptimizeResult> optimizedResults;
 
     @Override
     protected void doInit() throws TddlException {
@@ -150,21 +136,15 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
         }
 
         optimizedResults = CacheBuilder.newBuilder()
-            .maximumSize(1000)
-            .expireAfterWrite(expireTime, TimeUnit.MILLISECONDS)
-            .build();
+                .maximumSize(1000)
+                .expireAfterWrite(expireTime, TimeUnit.MILLISECONDS)
+                .build();
     }
 
     @Override
     protected void doDestory() throws TddlException {
         optimizedResults.invalidateAll();
         sqlParseManager.destory();
-    }
-
-    private class OptimizeResult {
-
-        public ASTNode        optimized = null;
-        public QueryException ex        = null;
     }
 
     @Override
@@ -176,7 +156,7 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
     @Override
     public IDataNodeExecutor optimizeAndAssignment(String sql, Map<Integer, ParameterContext> parameterSettings,
                                                    Map<String, Object> extraCmd, boolean cached) throws QueryException,
-                                                                                                SqlParserException {
+            SqlParserException {
         // 处理sql hint
         RouteCondition routeCondition = SimpleHintParser.convertHint2RouteCondition(sql, parameterSettings);
         if (routeCondition != null && !routeCondition.getExtraCmds().isEmpty()) {
@@ -189,7 +169,7 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
         }
 
         if (routeCondition != null
-            && (routeCondition instanceof DirectlyRouteCondition || routeCondition instanceof RuleRouteCondition)) {
+                && (routeCondition instanceof DirectlyRouteCondition || routeCondition instanceof RuleRouteCondition)) {
             sql = SimpleHintParser.removeHint(sql, parameterSettings);
             return optimizerHint(sql, cached, routeCondition, parameterSettings, extraCmd);
         } else {
@@ -209,9 +189,9 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
             if (!drc.getTables().isEmpty()) {
                 SqlAnalysisResult result = sqlParseManager.parse(sql, cached);
                 Map<String, String> sqls = buildDirectSqls(result,
-                    drc.getVirtualTableName(),
-                    drc.getTables(),
-                    groupHint);
+                        drc.getVirtualTableName(),
+                        drc.getTables(),
+                        groupHint);
                 qc = buildDirectPlan(result.getSqlType(), drc.getDbId(), sqls);
             } else {
                 // 直接下推sql时，不做任何sql解析
@@ -224,8 +204,8 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
             SqlAnalysisResult result = sqlParseManager.parse(sql, cached);
             boolean isWrite = (result.getSqlType() != SqlType.SELECT && result.getSqlType() != SqlType.SELECT_FOR_UPDATE);
             List<TargetDB> targetDBs = OptimizerContext.getContext()
-                .getRule()
-                .shard(rrc.getVirtualTableName(), rrc.getCompMapChoicer(), isWrite);
+                    .getRule()
+                    .shard(rrc.getVirtualTableName(), rrc.getCompMapChoicer(), isWrite);
             // 考虑表名可能有重复
             Set<String> tables = new HashSet<String>();
             for (TargetDB target : targetDBs) {
@@ -246,9 +226,9 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
         }
 
         time = Monitor.monitorAndRenewTime(Monitor.KEY1,
-            Monitor.AndOrExecutorOptimize,
-            Monitor.Key3Success,
-            System.currentTimeMillis() - time);
+                Monitor.AndOrExecutorOptimize,
+                Monitor.Key3Success,
+                System.currentTimeMillis() - time);
         return qc;
     }
 
@@ -302,7 +282,7 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
             // 绑定变量后，再做一次
             if (optimized instanceof DMLNode) {
                 ((DMLNode) optimized).setNode((TableNode) FilterPreProcessor.optimize(((DMLNode) optimized).getNode(),
-                    false));
+                        false));
             } else {
                 optimized = FilterPreProcessor.optimize(((QueryTreeNode) optimized), false);
             }
@@ -334,14 +314,14 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
         }
 
         time = Monitor.monitorAndRenewTime(Monitor.KEY1,
-            Monitor.AndOrExecutorOptimize,
-            Monitor.Key3Success,
-            System.currentTimeMillis() - time);
+                Monitor.AndOrExecutorOptimize,
+                Monitor.Key3Success,
+                System.currentTimeMillis() - time);
         return qc;
     }
 
     public ASTNode optimize(ASTNode node, Map<Integer, ParameterContext> parameterSettings, Map<String, Object> extraCmd)
-                                                                                                                         throws QueryException {
+            throws QueryException {
         // 先调用一次build，完成select字段信息的推导
         node.build();
         ASTNode optimized = null;
@@ -351,17 +331,11 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
 
         if (node instanceof InsertNode) {
             optimized = this.optimizeInsert((InsertNode) node, extraCmd);
-        }
-
-        else if (node instanceof DeleteNode) {
+        } else if (node instanceof DeleteNode) {
             optimized = this.optimizeDelete((DeleteNode) node, extraCmd);
-        }
-
-        else if (node instanceof UpdateNode) {
+        } else if (node instanceof UpdateNode) {
             optimized = this.optimizeUpdate((UpdateNode) node, extraCmd);
-        }
-
-        else if (node instanceof PutNode) {
+        } else if (node instanceof PutNode) {
             optimized = this.optimizePut((PutNode) node, extraCmd);
         }
 
@@ -418,8 +392,6 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
         return put;
     }
 
-    // ============= helper method =============
-
     /**
      * 通过visitor替换表名生成sql
      */
@@ -447,8 +419,8 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
                     logicTable2RealTable.put(v, rtabs[i++]);
                 }
                 MysqlOutputVisitor sqlVisitor = new MysqlOutputVisitor(new StringBuilder(groupHint),
-                    singleNode,
-                    logicTable2RealTable);
+                        singleNode,
+                        logicTable2RealTable);
                 statement.accept(sqlVisitor);
                 sqls.put(realTable, sqlVisitor.getSql());
             }
@@ -458,6 +430,8 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
         }
         return sqls;
     }
+
+    // ============= helper method =============
 
     /**
      * 根据规则生成对应的执行计划
@@ -574,6 +548,12 @@ public class CostBasedOptimizer extends AbstractLifecycle implements Optimizer {
 
     public void setSqlParseManager(SqlParseManager sqlParseManager) {
         this.sqlParseManager = sqlParseManager;
+    }
+
+    private class OptimizeResult {
+
+        public ASTNode optimized = null;
+        public QueryException ex = null;
     }
 
 }

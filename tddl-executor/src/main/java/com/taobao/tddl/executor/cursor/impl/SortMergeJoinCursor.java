@@ -1,11 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.cursor.IMergeSortJoinCursor;
@@ -16,14 +10,16 @@ import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 
+import java.util.*;
+
 /**
  * <pre>
- * sort merge join. 
+ * sort merge join.
  * 实现 支持inner join，left join，right join，outter join
- * 要求两边均按照join列完全有序 
+ * 要求两边均按照join列完全有序
  * <a>http://en.wikipedia.org/wiki/Sort-merge_join</a>
- * 
- * 
+ *
+ *
  *  function sortMerge(relation left, relation right, attribute a)
  *      var relation output
  *      var list left_sorted := sort(left, a) // Relation left sorted on attribute a
@@ -42,7 +38,7 @@ import com.taobao.tddl.optimizer.core.plan.query.IJoin;
  *          else // left_key > right_key
  *             advance(right_subset, right_sorted, right_key, a)
  *      return output
- * 
+ *
  *  // Remove tuples from sorted to subset until the sorted[1].a value changes
  *  function advance(subset out, sorted inout, key out, a in)
  *      key := sorted[1].a
@@ -51,33 +47,33 @@ import com.taobao.tddl.optimizer.core.plan.query.IJoin;
  *          insert sorted[1] into subset
  *          remove sorted[1]
  * </pre>
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-18 下午2:13:29
  * @since 5.0.0
  */
 @SuppressWarnings("rawtypes")
 public class SortMergeJoinCursor extends JoinSchematicCursor implements IMergeSortJoinCursor {
 
-    protected IRowSet            current;
+    protected IRowSet current;
 
-    private Iterator<IRowSet>    resultsIter      = null;
+    private Iterator<IRowSet> resultsIter = null;
 
-    private IRowSet              left_key;
+    private IRowSet left_key;
 
-    private IRowSet              right_key;
+    private IRowSet right_key;
 
-    private boolean              needAdvanceLeft  = true;
+    private boolean needAdvanceLeft = true;
 
-    private boolean              needAdvanceRight = true;
+    private boolean needAdvanceRight = true;
 
-    private List                 leftSubSet;
+    private List leftSubSet;
 
-    private List                 rightSubSet;
+    private List rightSubSet;
 
     private List<List<IOrderBy>> joinOrderbys;
 
     public SortMergeJoinCursor(ISchematicCursor left_cursor, ISchematicCursor right_cursor, List leftJoinOnColumns,
-                               List rightJoinOnColumns) throws TddlException{
+                               List rightJoinOnColumns) throws TddlException {
         super(left_cursor, right_cursor, leftJoinOnColumns, rightJoinOnColumns);
         this.left_cursor = left_cursor;
         this.right_cursor = right_cursor;
@@ -90,7 +86,7 @@ public class SortMergeJoinCursor extends JoinSchematicCursor implements IMergeSo
     }
 
     public SortMergeJoinCursor(ISchematicCursor left_cursor, ISchematicCursor right_cursor, List leftJoinOnColumns,
-                               List rightJoinOnColumns, IJoin join) throws TddlException{
+                               List rightJoinOnColumns, IJoin join) throws TddlException {
         this(left_cursor, right_cursor, leftJoinOnColumns, rightJoinOnColumns);
         setLeftRightJoin(join);
     }
@@ -134,7 +130,7 @@ public class SortMergeJoinCursor extends JoinSchematicCursor implements IMergeSo
                     if (this.isLeftOutJoin()) {
                         this.needAdvanceLeft = true;
                         List<IRowSet> results = acrossProduct(leftSubSet,
-                            getNullSubSet(right_cursor.getReturnColumns()));
+                                getNullSubSet(right_cursor.getReturnColumns()));
                         resultsIter = results.iterator();
                         this.current = resultsIter.next();
                         return this.current;
@@ -144,7 +140,7 @@ public class SortMergeJoinCursor extends JoinSchematicCursor implements IMergeSo
                     if (this.isRightOutJoin()) {
                         this.needAdvanceRight = true;
                         List<IRowSet> results = acrossProduct(getNullSubSet(left_cursor.getReturnColumns()),
-                            rightSubSet);
+                                rightSubSet);
                         resultsIter = results.iterator();
                         this.current = resultsIter.next();
                         return this.current;
@@ -192,7 +188,7 @@ public class SortMergeJoinCursor extends JoinSchematicCursor implements IMergeSo
 
     /**
      * 两边做笛卡尔积，返回
-     * 
+     *
      * @param leftSubSet
      * @param rightSubSet
      * @return
@@ -212,9 +208,9 @@ public class SortMergeJoinCursor extends JoinSchematicCursor implements IMergeSo
 
     private int compare(IRowSet row1, IRowSet row2, List columns1, List columns2) {
         Comparator kvPairComparator = ExecUtils.getComp(columns1,
-            columns2,
-            row1.getParentCursorMeta(),
-            row2.getParentCursorMeta());
+                columns2,
+                row1.getParentCursorMeta(),
+                row2.getParentCursorMeta());
         return kvPairComparator.compare(row1, row2);
     }
 

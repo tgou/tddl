@@ -10,33 +10,33 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 多线程执行器模板代码，otter中好多地方都写多线程，比较多的都是重复的逻辑代码，抽象一下做个模板把
- * 
+ * <p/>
  * <pre>
  * 示例代码：
  * ExecutorTemplate template = new ExecutorTemplate(executor);
- * ... 
+ * ...
  * try {
  *    for ( ....) {
  *       template.submit(new Runnable() {})
  *    }
- *    
+ *
  *    List<?> result = template.waitForResult();
- *    // do result 
+ *    // do result
  * } finally {
  *    template.clear();
  * }
- * 
+ *
  * 注意：该模板工程，不支持多业务并发调用，会出现数据混乱
  * </pre>
- * 
+ *
  * @author jianghang 2013-2-26 下午10:46:43
  */
 public class ExecutorTemplate {
 
     private volatile ExecutorCompletionService completionService = null;
-    private volatile List<Future>              futures           = null;
+    private volatile List<Future> futures = null;
 
-    public ExecutorTemplate(ThreadPoolExecutor executor){
+    public ExecutorTemplate(ThreadPoolExecutor executor) {
         completionService = new ExecutorCompletionService(executor);
         futures = Collections.synchronizedList(new ArrayList<Future>());
     }

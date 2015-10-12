@@ -1,24 +1,19 @@
 package com.taobao.tddl.qatest;
 
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import com.taobao.diamond.mockserver.MockServer;
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.matrix.jdbc.TDataSource;
 import com.taobao.tddl.qatest.util.LoadPropsUtil;
 import com.taobao.tddl.qatest.util.PrepareData;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.junit.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 基本测试类
@@ -28,19 +23,17 @@ import com.taobao.tddl.qatest.util.PrepareData;
 @Ignore(value = "提供初始化环境的实际方法")
 public class BaseMatrixTestCase extends PrepareData {
 
-    protected static final ExecutorService pool                = Executors.newCachedThreadPool();
-    private static String                  ruleFile            = "V0#classpath:matrix/";
-    private static String                  rule                = "rule.xml";
-
-    private static String                  schemaFile          = "matrix/";
-    private static String                  schema              = "schema.xml";
+    protected static final ExecutorService pool = Executors.newCachedThreadPool();
     // dbType为mysql运行mysql测试，bdb值为bdb运行bdb测试，如果为空则运行bdb和mysql测试
-    protected static String                dbType              = null;
+    protected static String dbType = null;
+    protected static boolean needPerparedData = true;
+    private static String ruleFile = "V0#classpath:matrix/";
+    private static String rule = "rule.xml";
+    private static String schemaFile = "matrix/";
+    private static String schema = "schema.xml";
+    private static String machineTapologyFile = "matrix/server_topology.xml";
 
-    protected static boolean               needPerparedData    = true;
-    private static String                  machineTapologyFile = "matrix/server_topology.xml";
-
-    private static String                  typeFile            = "db_type.properties";
+    private static String typeFile = "db_type.properties";
 
     static {
         dbType = LoadPropsUtil.loadProps(typeFile).getProperty("dbType");
@@ -58,17 +51,6 @@ public class BaseMatrixTestCase extends PrepareData {
                 JDBCClient(dbType, false);
             }
         }
-    }
-
-    @Before
-    public void prepareConnection() throws SQLException {
-        con = getConnection();
-        andorCon = us.getConnection();
-    }
-
-    @After
-    public void clearDate() throws Exception {
-        psConRcRsClose(rc, rs);
     }
 
     public static void JDBCClient(String dbType) throws Exception {
@@ -112,6 +94,17 @@ public class BaseMatrixTestCase extends PrepareData {
     public static JdbcTemplate JdbcTemplateClient(String dbType) throws Exception {
         IEnvInit();
         return new JdbcTemplate(us);
+    }
+
+    @Before
+    public void prepareConnection() throws SQLException {
+        con = getConnection();
+        andorCon = us.getConnection();
+    }
+
+    @After
+    public void clearDate() throws Exception {
+        psConRcRsClose(rc, rs);
     }
 
 }

@@ -4,30 +4,16 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
 public class ResultSetRemeberIfClosed implements ResultSet {
 
     private ResultSet rs;
-    private boolean   isClosed = false;
+    private boolean isClosed = false;
 
-    public ResultSetRemeberIfClosed(ResultSet rs){
+    public ResultSetRemeberIfClosed(ResultSet rs) {
         this.rs = rs;
     }
 
@@ -197,8 +183,16 @@ public class ResultSetRemeberIfClosed implements ResultSet {
         return rs.getFetchDirection();
     }
 
+    public void setFetchDirection(int direction) throws SQLException {
+        rs.setFetchDirection(direction);
+    }
+
     public int getFetchSize() throws SQLException {
         return rs.getFetchSize();
+    }
+
+    public void setFetchSize(int rows) throws SQLException {
+        rs.setFetchSize(rows);
     }
 
     public float getFloat(int columnIndex) throws SQLException {
@@ -445,14 +439,6 @@ public class ResultSetRemeberIfClosed implements ResultSet {
 
     public boolean rowUpdated() throws SQLException {
         return rs.rowUpdated();
-    }
-
-    public void setFetchDirection(int direction) throws SQLException {
-        rs.setFetchDirection(direction);
-    }
-
-    public void setFetchSize(int rows) throws SQLException {
-        rs.setFetchSize(rows);
     }
 
     public <T> T unwrap(Class<T> arg0) throws SQLException {

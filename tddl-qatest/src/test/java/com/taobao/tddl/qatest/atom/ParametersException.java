@@ -1,13 +1,7 @@
 package com.taobao.tddl.qatest.atom;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.taobao.tddl.atom.TAtomDataSource;
+import org.junit.*;
 
 public class ParametersException extends AtomTestCase {
 

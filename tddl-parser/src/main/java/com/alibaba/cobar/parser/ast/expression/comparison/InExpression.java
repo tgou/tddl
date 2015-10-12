@@ -27,17 +27,18 @@ import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
 
 /**
  * <code>higherPreExpr (NOT)? IN ( '(' expr (',' expr)* ')' | subquery )</code>
- * 
+ *
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class InExpression extends BinaryOperatorExpression implements ReplacableExpression {
 
     private final boolean not;
+    private Expression replaceExpr;
 
     /**
      * @param rightOprand {@link QueryExpression} or {@link InExpressionList}
      */
-    public InExpression(boolean not, Expression leftOprand, Expression rightOprand){
+    public InExpression(boolean not, Expression leftOprand, Expression rightOprand) {
         super(leftOprand, rightOprand, PRECEDENCE_COMPARISION);
         this.not = not;
     }
@@ -64,8 +65,6 @@ public class InExpression extends BinaryOperatorExpression implements Replacable
     public String getOperator() {
         return not ? "NOT IN" : "IN";
     }
-
-    private Expression replaceExpr;
 
     @Override
     public void setReplaceExpr(Expression replaceExpr) {

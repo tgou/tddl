@@ -25,13 +25,9 @@ import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
  */
 public class ShowEngine extends DALShowStatement {
 
-    public static enum Type {
-        INNODB_STATUS, INNODB_MUTEX, PERFORMANCE_SCHEMA_STATUS
-    }
-
     private final Type type;
 
-    public ShowEngine(Type type){
+    public ShowEngine(Type type) {
         this.type = type;
     }
 
@@ -42,5 +38,9 @@ public class ShowEngine extends DALShowStatement {
     @Override
     public void accept(SQLASTVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public static enum Type {
+        INNODB_STATUS, INNODB_MUTEX, PERFORMANCE_SCHEMA_STATUS
     }
 }

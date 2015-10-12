@@ -1,13 +1,13 @@
 package com.taobao.tddl.executor.rowset;
 
+import com.taobao.tddl.executor.cursor.ICursorMeta;
+
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.taobao.tddl.executor.cursor.ICursorMeta;
 
 /**
  * @author mengshi.sunmengshi 2013-12-3 上午11:06:10
@@ -17,7 +17,7 @@ public class ResultSetRowSet extends AbstractRowSet implements IRowSet {
 
     ResultSet rs = null;
 
-    public ResultSetRowSet(ICursorMeta meta, ResultSet rs){
+    public ResultSetRowSet(ICursorMeta meta, ResultSet rs) {
         super(meta);
         this.rs = rs;
     }

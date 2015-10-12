@@ -1,19 +1,19 @@
 package com.taobao.tddl.atom.jdbc;
 
+import com.taobao.tddl.common.model.SqlMetaData;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.taobao.tddl.common.model.SqlMetaData;
-
 public class SqlMetaDataImpl implements SqlMetaData {
 
-    private StringBuilder sqlBuilder  = new StringBuilder();
+    private StringBuilder sqlBuilder = new StringBuilder();
 
-    private List<String>  logicTables = new ArrayList<String>();
+    private List<String> logicTables = new ArrayList<String>();
 
-    private String        oriSql      = null;
+    private String oriSql = null;
 
-    private boolean       parsed      = false;
+    private boolean parsed = false;
 
     public StringBuilder getSqlBuilder() {
         return sqlBuilder;
@@ -29,13 +29,13 @@ public class SqlMetaDataImpl implements SqlMetaData {
         }
     }
 
-    public void setOriSql(String oriSql) {
-        this.oriSql = oriSql;
-    }
-
     @Override
     public String getOriSql() {
         return this.oriSql;
+    }
+
+    public void setOriSql(String oriSql) {
+        this.oriSql = oriSql;
     }
 
     @Override

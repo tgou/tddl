@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast.build;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.taobao.tddl.optimizer.OptimizerContext;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
@@ -14,12 +11,15 @@ import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.exceptions.OptimizerException;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @since 5.0.0
  */
 public class KVIndexNodeBuilder extends QueryTreeNodeBuilder {
 
-    public KVIndexNodeBuilder(KVIndexNode node){
+    public KVIndexNodeBuilder(KVIndexNode node) {
         this.setNode(node);
     }
 
@@ -38,7 +38,7 @@ public class KVIndexNodeBuilder extends QueryTreeNodeBuilder {
 
     /**
      * 構建列信息
-     * 
+     *
      * @param indexNode
      */
     public void buildSelected() {
@@ -48,8 +48,8 @@ public class KVIndexNodeBuilder extends QueryTreeNodeBuilder {
     private void buildSelectedFromSelectableObject() {
         if (this.getNode().getColumnsSelected().isEmpty()) {
             this.getNode()
-                .getColumnsSelected()
-                .add(ASTNodeFactory.getInstance().createColumn().setColumnName(IColumn.STAR));
+                    .getColumnsSelected()
+                    .add(ASTNodeFactory.getInstance().createColumn().setColumnName(IColumn.STAR));
         }
 
         // 如果有 * ，最后需要把*删掉
@@ -68,14 +68,14 @@ public class KVIndexNodeBuilder extends QueryTreeNodeBuilder {
             // select *,id这样的语法最后会有两个id列，mysql是这样的
             for (ColumnMeta cm : this.getNode().getIndex().getKeyColumns()) {
                 this.getNode()
-                    .getColumnsSelected()
-                    .add(OptimizerUtils.columnMetaToIColumn(cm, this.getNode().getIndexName()));
+                        .getColumnsSelected()
+                        .add(OptimizerUtils.columnMetaToIColumn(cm, this.getNode().getIndexName()));
             }
 
             for (ColumnMeta cm : this.getNode().getIndex().getValueColumns()) {
                 this.getNode()
-                    .getColumnsSelected()
-                    .add(OptimizerUtils.columnMetaToIColumn(cm, this.getNode().getIndexName()));
+                        .getColumnsSelected()
+                        .add(OptimizerUtils.columnMetaToIColumn(cm, this.getNode().getIndexName()));
             }
         }
 
@@ -86,7 +86,7 @@ public class KVIndexNodeBuilder extends QueryTreeNodeBuilder {
 
     /**
      * 构建索引信息
-     * 
+     *
      * @param getNode ()
      */
     public void buildIndex() {
@@ -108,7 +108,7 @@ public class KVIndexNodeBuilder extends QueryTreeNodeBuilder {
     public ISelectable getSelectableFromChild(ISelectable c) {
         if (c.getTableName() != null) {
             if ((!c.getTableName().equals(this.getNode().getIndexName()))
-                && (!c.getTableName().equals(this.getNode().getAlias()))) {
+                    && (!c.getTableName().equals(this.getNode().getAlias()))) {
                 return null;
             }
         }

@@ -1,8 +1,7 @@
 package com.taobao.tddl.optimizer.costbased.esitimater.stat;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import com.taobao.tddl.common.utils.TddlToStringStyle;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * @author danchen
@@ -12,7 +11,7 @@ public class TableStat {
     // 表名
     private String tableName;
     // 表的全部行数
-    private long   tableRows;
+    private long tableRows;
 
     public long getTableRows() {
         return tableRows;

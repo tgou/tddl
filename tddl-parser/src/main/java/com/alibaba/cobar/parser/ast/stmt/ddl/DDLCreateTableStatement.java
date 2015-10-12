@@ -18,9 +18,6 @@
  */
 package com.alibaba.cobar.parser.ast.stmt.ddl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.ast.expression.primary.Identifier;
 import com.alibaba.cobar.parser.ast.fragment.ddl.ColumnDefinition;
@@ -30,31 +27,29 @@ import com.alibaba.cobar.parser.ast.stmt.dml.DMLSelectStatement;
 import com.alibaba.cobar.parser.util.Pair;
 import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * NOT FULL AST: foreign key, ... not supported
- * 
+ *
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class DDLCreateTableStatement implements DDLStatement {
 
-    public static enum SelectOption {
-        IGNORED, REPLACE
-    }
-
-    private final boolean                                  temporary;
-    private final boolean                                  ifNotExists;
-    private final Identifier                               table;
+    private final boolean temporary;
+    private final boolean ifNotExists;
+    private final Identifier table;
     private final List<Pair<Identifier, ColumnDefinition>> colDefs;
-    private IndexDefinition                                primaryKey;
-    private final List<Pair<Identifier, IndexDefinition>>  uniqueKeys;
-    private final List<Pair<Identifier, IndexDefinition>>  keys;
-    private final List<Pair<Identifier, IndexDefinition>>  fullTextKeys;
-    private final List<Pair<Identifier, IndexDefinition>>  spatialKeys;
-    private final List<Expression>                         checks;
-    private TableOptions                                   tableOptions;
-    private Pair<SelectOption, DMLSelectStatement>         select;
-
-    public DDLCreateTableStatement(boolean temporary, boolean ifNotExists, Identifier table){
+    private final List<Pair<Identifier, IndexDefinition>> uniqueKeys;
+    private final List<Pair<Identifier, IndexDefinition>> keys;
+    private final List<Pair<Identifier, IndexDefinition>> fullTextKeys;
+    private final List<Pair<Identifier, IndexDefinition>> spatialKeys;
+    private final List<Expression> checks;
+    private IndexDefinition primaryKey;
+    private TableOptions tableOptions;
+    private Pair<SelectOption, DMLSelectStatement> select;
+    public DDLCreateTableStatement(boolean temporary, boolean ifNotExists, Identifier table) {
         this.table = table;
         this.temporary = temporary;
         this.ifNotExists = ifNotExists;
@@ -66,18 +61,8 @@ public class DDLCreateTableStatement implements DDLStatement {
         this.checks = new ArrayList<Expression>(1);
     }
 
-    public DDLCreateTableStatement setTableOptions(TableOptions tableOptions) {
-        this.tableOptions = tableOptions;
-        return this;
-    }
-
     public DDLCreateTableStatement addColumnDefinition(Identifier colname, ColumnDefinition def) {
         colDefs.add(new Pair<Identifier, ColumnDefinition>(colname, def));
-        return this;
-    }
-
-    public DDLCreateTableStatement setPrimaryKey(IndexDefinition def) {
-        primaryKey = def;
         return this;
     }
 
@@ -108,6 +93,11 @@ public class DDLCreateTableStatement implements DDLStatement {
 
     public TableOptions getTableOptions() {
         return tableOptions;
+    }
+
+    public DDLCreateTableStatement setTableOptions(TableOptions tableOptions) {
+        this.tableOptions = tableOptions;
+        return this;
     }
 
     public Pair<SelectOption, DMLSelectStatement> getSelect() {
@@ -141,6 +131,11 @@ public class DDLCreateTableStatement implements DDLStatement {
         return primaryKey;
     }
 
+    public DDLCreateTableStatement setPrimaryKey(IndexDefinition def) {
+        primaryKey = def;
+        return this;
+    }
+
     public List<Pair<Identifier, IndexDefinition>> getUniqueKeys() {
         return uniqueKeys;
     }
@@ -164,5 +159,9 @@ public class DDLCreateTableStatement implements DDLStatement {
     @Override
     public void accept(SQLASTVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public static enum SelectOption {
+        IGNORED, REPLACE
     }
 }

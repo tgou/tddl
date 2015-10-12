@@ -10,7 +10,7 @@ import com.taobao.tddl.optimizer.exceptions.QueryException;
 
 public class DeleteNode extends DMLNode<DeleteNode> {
 
-    public DeleteNode(TableNode table){
+    public DeleteNode(TableNode table) {
         super(table);
     }
 

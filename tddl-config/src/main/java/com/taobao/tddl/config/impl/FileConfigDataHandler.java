@@ -1,5 +1,12 @@
 package com.taobao.tddl.config.impl;
 
+import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
+import com.taobao.tddl.common.utils.GeneralUtil;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import com.taobao.tddl.config.ConfigDataHandler;
+import com.taobao.tddl.config.ConfigDataListener;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,27 +16,19 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
-import com.taobao.tddl.common.utils.GeneralUtil;
-import com.taobao.tddl.config.ConfigDataHandler;
-import com.taobao.tddl.config.ConfigDataListener;
-
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
-
 public class FileConfigDataHandler extends AbstractLifecycle implements ConfigDataHandler {
 
-    private static final Logger           logger              = LoggerFactory.getLogger(FileConfigDataHandler.class);
-    private final AtomicReference<String> data                = new AtomicReference<String>();
-    private String                        pattern;
-    private String                        directory;
-    private String                        dataId;
-    private String                        appName;
-    private List<ConfigDataListener>      configDataListeners = new ArrayList<ConfigDataListener>();
-    private Executor                      executor;
+    private static final Logger logger = LoggerFactory.getLogger(FileConfigDataHandler.class);
+    private final AtomicReference<String> data = new AtomicReference<String>();
+    private String pattern;
+    private String directory;
+    private String dataId;
+    private String appName;
+    private List<ConfigDataListener> configDataListeners = new ArrayList<ConfigDataListener>();
+    private Executor executor;
 
     public FileConfigDataHandler(String appName, Executor executor, String pattern, String directory, String dataId,
-                                 ConfigDataListener configDataListener){
+                                 ConfigDataListener configDataListener) {
         super();
 
         this.pattern = pattern;
@@ -47,66 +46,8 @@ public class FileConfigDataHandler extends AbstractLifecycle implements ConfigDa
         this.executor.execute(new CheckerTask(data, pattern, directory, dataId, configDataListeners, appName));
     }
 
-    // TODO shenxun :这个不知道被谁注释掉了。目前不支持文件的重载了
-    public static class CheckerTask implements Runnable {
-
-        private AtomicReference<String>  data;
-        private String                   pattern;
-        private String                   directory;
-        private List<ConfigDataListener> configDataListeners;
-        private String                   appName;
-        private String                   dataId;
-
-        public CheckerTask(AtomicReference<String> data, String pattern, String directory, String dataId,
-                           List<ConfigDataListener> configDataListeners, String appName){
-            super();
-            this.dataId = dataId;
-            this.data = data;
-            this.pattern = pattern;
-            this.directory = directory;
-            this.dataId = dataId;
-            this.appName = appName;
-            this.configDataListeners = configDataListeners;
-        }
-
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    StringBuilder dataNew = getNewProperties(directory, dataId, pattern, appName);
-                    if (!dataNew.toString().equalsIgnoreCase(data.get())) {// 配置变更啦
-                        this.data.set(dataNew.toString());
-                        for (ConfigDataListener cdl : configDataListeners) {
-                            cdl.onDataRecieved(dataId, data.get());
-                        }
-                    }
-                    try {
-                        Thread.sleep(20000);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
-                } catch (IOException e) {
-                    logger.error(e);
-                }
-            }
-
-        }
-
-    }
-
-    @Override
-    public String getData(long timeout, String strategy) {
-        try {
-            StringBuilder dataNew = getNewProperties(directory, dataId, pattern, appName);
-            this.data.set(dataNew.toString());
-            return data.get();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private static StringBuilder getNewProperties(String directory, String key, String pattern, String appName)
-                                                                                                               throws IOException {
+            throws IOException {
         StringBuilder dataNew = new StringBuilder();
         StringBuilder url = getUrlWithoutDiamondPattern(directory, key);
         InputStream in = null;
@@ -124,7 +65,7 @@ public class FileConfigDataHandler extends AbstractLifecycle implements ConfigDa
         }
         if (in == null) {
             throw new IllegalArgumentException("can't find file on " + url + " . or on "
-                                               + getUrlWithDiamondPattern(directory, key, pattern, appName).toString());
+                    + getUrlWithDiamondPattern(directory, key, pattern, appName).toString());
         }
         BufferedReader bf = new BufferedReader(new InputStreamReader(in));
         String temp;
@@ -160,6 +101,17 @@ public class FileConfigDataHandler extends AbstractLifecycle implements ConfigDa
     }
 
     @Override
+    public String getData(long timeout, String strategy) {
+        try {
+            StringBuilder dataNew = getNewProperties(directory, dataId, pattern, appName);
+            this.data.set(dataNew.toString());
+            return data.get();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public String getNullableData(long timeout, String strategy) {
         return this.getData(timeout, strategy);
     }
@@ -177,6 +129,53 @@ public class FileConfigDataHandler extends AbstractLifecycle implements ConfigDa
         for (ConfigDataListener l : configDataListenerList) {
             this.addListener(l, executor);
         }
+    }
+
+    // TODO shenxun :这个不知道被谁注释掉了。目前不支持文件的重载了
+    public static class CheckerTask implements Runnable {
+
+        private AtomicReference<String> data;
+        private String pattern;
+        private String directory;
+        private List<ConfigDataListener> configDataListeners;
+        private String appName;
+        private String dataId;
+
+        public CheckerTask(AtomicReference<String> data, String pattern, String directory, String dataId,
+                           List<ConfigDataListener> configDataListeners, String appName) {
+            super();
+            this.dataId = dataId;
+            this.data = data;
+            this.pattern = pattern;
+            this.directory = directory;
+            this.dataId = dataId;
+            this.appName = appName;
+            this.configDataListeners = configDataListeners;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    StringBuilder dataNew = getNewProperties(directory, dataId, pattern, appName);
+                    if (!dataNew.toString().equalsIgnoreCase(data.get())) {// 配置变更啦
+                        this.data.set(dataNew.toString());
+                        for (ConfigDataListener cdl : configDataListeners) {
+                            cdl.onDataRecieved(dataId, data.get());
+                        }
+                    }
+                    try {
+                        Thread.sleep(20000);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                } catch (IOException e) {
+                    logger.error(e);
+                }
+            }
+
+        }
+
     }
 
 }

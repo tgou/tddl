@@ -1,32 +1,21 @@
 package com.taobao.tddl.group.jdbc;
 
+import com.taobao.tddl.common.jdbc.Parameters;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLXML;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
-
-import com.taobao.tddl.common.jdbc.Parameters;
 
 public class TGroupCallableStatement extends TGroupPreparedStatement implements CallableStatement {
 
     private CallableStatement targetStatement;
 
     public TGroupCallableStatement(TGroupDataSource groupDataSource, TGroupConnection groupConnection,
-                                   CallableStatement targetStatement, String sql){
+                                   CallableStatement targetStatement, String sql) {
         super(groupDataSource, groupConnection, sql);
         this.targetStatement = targetStatement;
     }

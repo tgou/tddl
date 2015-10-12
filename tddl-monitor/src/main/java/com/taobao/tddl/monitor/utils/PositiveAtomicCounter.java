@@ -4,15 +4,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 正数的原子递增器，主要用于实现轮询
- * 
+ *
  * @author apple
  */
 public class PositiveAtomicCounter {
 
+    private static final int mask = 0x7FFFFFFF;
     private final AtomicInteger atom;
-    private static final int    mask = 0x7FFFFFFF;
 
-    public PositiveAtomicCounter(){
+    public PositiveAtomicCounter() {
         atom = new AtomicInteger(0);
     }
 

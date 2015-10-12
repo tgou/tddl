@@ -1,12 +1,11 @@
 package com.taobao.tddl.repo.bdb.executor;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.taobao.tddl.common.utils.ExceptionErrorCodeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.taobao.tddl.common.utils.ExceptionErrorCodeUtils;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class CommonExceptionSorter<T> implements ExceptionSorter<T> {
 

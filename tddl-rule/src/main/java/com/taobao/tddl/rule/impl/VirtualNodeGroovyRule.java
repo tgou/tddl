@@ -5,19 +5,19 @@ import com.taobao.tddl.rule.virtualnode.VirtualNodeMap;
 /**
  * @author <a href="junyu@taobao.com">junyu</a>
  * @version 1.0
- * @since 1.6
  * @date 2011-7-14 02:08:56
+ * @since 1.6
  */
 public abstract class VirtualNodeGroovyRule extends GroovyRule<String> {
 
     private final VirtualNodeMap vNodeMap;
 
-    public VirtualNodeGroovyRule(String expression, VirtualNodeMap vNodeMap){
+    public VirtualNodeGroovyRule(String expression, VirtualNodeMap vNodeMap) {
         super(expression);
         this.vNodeMap = vNodeMap;
     }
 
-    public VirtualNodeGroovyRule(String expression, VirtualNodeMap vNodeMap, String extraPackagesStr){
+    public VirtualNodeGroovyRule(String expression, VirtualNodeMap vNodeMap, String extraPackagesStr) {
         super(expression, extraPackagesStr);
         this.vNodeMap = vNodeMap;
     }

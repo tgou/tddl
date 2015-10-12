@@ -1,10 +1,10 @@
 package com.taobao.tddl.executor.rowset;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.taobao.tddl.executor.cursor.ICursorMeta;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author mengshi.sunmengshi 2013-12-3 上午11:05:48
@@ -12,11 +12,11 @@ import com.taobao.tddl.optimizer.config.table.ColumnMeta;
  */
 public class JoinRowSet extends AbstractRowSet implements IRowSet {
 
-    private int     rightCursorOffset;
+    private int rightCursorOffset;
     private IRowSet leftRowSet;
     private IRowSet rightRowSet;
 
-    public JoinRowSet(int rightCursorOffset, IRowSet leftRowSet, IRowSet rightRowSet, ICursorMeta iCursorMeta){
+    public JoinRowSet(int rightCursorOffset, IRowSet leftRowSet, IRowSet rightRowSet, ICursorMeta iCursorMeta) {
         super(iCursorMeta);
         this.rightCursorOffset = rightCursorOffset;
         this.leftRowSet = leftRowSet;

@@ -6,7 +6,7 @@ public class EnumeratorUtils {
 
     /**
      * 将BigDecimal转换为long或者double
-     * 
+     *
      * @param big
      * @return
      */

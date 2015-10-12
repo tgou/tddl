@@ -1,18 +1,17 @@
 package com.taobao.tddl.qatest.matrix.select;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 在缓存情况下，执行计划是否正确
@@ -22,15 +21,15 @@ import com.taobao.tddl.qatest.util.EclipseParameterized;
 @RunWith(EclipseParameterized.class)
 public class SelectCacheTest extends BaseMatrixTestCase {
 
-    String[] columnParam = { "PK", "NAME", "ID", "gmt_create", "GMT_TIMESTAMP", "GMT_DATETIME", "floatCol" };
+    String[] columnParam = {"PK", "NAME", "ID", "gmt_create", "GMT_TIMESTAMP", "GMT_DATETIME", "floatCol"};
+
+    public SelectCacheTest(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
 
     @Parameters(name = "{index}:table1={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectCacheTest(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -58,7 +57,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
                 selectContentSameAssert(sql, columnParam, param);
 
                 sql = "/* ANDOR ALLOW_TEMPORARY_TABLE=True */ select * from " + normaltblTableName
-                      + " where id=? or pk =?";
+                        + " where id=? or pk =?";
                 param.clear();
                 param.add(i);
                 param.add(Long.parseLong(i + 1 + ""));
@@ -94,7 +93,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
 
     @Test
     public void selectLimitTest() throws Exception {
-        String[] stringName = { name, newName, name1 };
+        String[] stringName = {name, newName, name1};
         for (int i = 0; i < stringName.length; i++) {
             String sql = "select * from " + normaltblTableName + " where name= ? order by id limit 2";
             List<Object> param = new ArrayList<Object>();
@@ -108,11 +107,11 @@ public class SelectCacheTest extends BaseMatrixTestCase {
 
     @Test
     public void selectLGroupTest() throws Exception {
-        String[] stringName = { name, newName, name1 };
-        String[] columnParam = { "gmt_timestamp", "count(pk)" };
+        String[] stringName = {name, newName, name1};
+        String[] columnParam = {"gmt_timestamp", "count(pk)"};
         for (int i = 0; i < stringName.length; i++) {
             String sql = "/* ANDOR ALLOW_TEMPORARY_TABLE=True */ select gmt_timestamp,count(pk) from "
-                         + normaltblTableName + " where name=? group by gmt_timestamp  order by count(pk)";
+                    + normaltblTableName + " where name=? group by gmt_timestamp  order by count(pk)";
             List<Object> param = new ArrayList<Object>();
             param.add(stringName[i]);
             selectContentSameAssert(sql, columnParam, param);
@@ -145,7 +144,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
             selectContentSameAssert(sql, columnParam, param);
 
             sql = "/* ANDOR ALLOW_TEMPORARY_TABLE=True */ select * from " + normaltblTableName
-                  + " where id between ? and ? order by name";
+                    + " where id between ? and ? order by name";
             param.clear();
             param.add(i - 3);
             param.add(i + 4);
@@ -155,7 +154,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
 
     @Test
     public void selectLikeTest() throws Exception {
-        String[] stringName = { name, newName, name1 };
+        String[] stringName = {name, newName, name1};
         for (int i = 0; i < stringName.length; i++) {
             String sql = "select * from " + normaltblTableName + " where name like ?";
             List<Object> param = new ArrayList<Object>();
@@ -173,7 +172,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
         mysqlUpdateData("delete from  " + normaltblTableName, null);
         for (long i = 0; i < 4; i++) {
             String sql = "insert into " + normaltblTableName
-                         + " (pk,floatCol,gmt_create,gmt_timestamp,gmt_datetime)values(?,?,?,?,?)";
+                    + " (pk,floatCol,gmt_create,gmt_timestamp,gmt_datetime)values(?,?,?,?,?)";
             List<Object> param = new ArrayList<Object>();
             param.add(i);
             param.add(fl);
@@ -184,7 +183,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
             sql = "select * from " + normaltblTableName + " where pk= ?";
             param.clear();
             param.add(i);
-            String[] columnParam = { "PK", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME", "FLOATCOL" };
+            String[] columnParam = {"PK", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME", "FLOATCOL"};
             selectOrderAssert(sql, columnParam, param);
         }
     }
@@ -195,7 +194,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
         mysqlUpdateData("delete from  " + normaltblTableName, null);
         for (long i = 0; i < 4; i++) {
             String sql = "replace into " + normaltblTableName
-                         + " (pk,floatCol,gmt_create,gmt_timestamp,gmt_datetime)values(?,?,?,?,?)";
+                    + " (pk,floatCol,gmt_create,gmt_timestamp,gmt_datetime)values(?,?,?,?,?)";
             List<Object> param = new ArrayList<Object>();
             param.add(i);
             param.add(fl);
@@ -206,7 +205,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
             sql = "select * from " + normaltblTableName + " where pk= ?";
             param.clear();
             param.add(i);
-            String[] columnParam = { "PK", "GMT_CREATE", "FLOATCOL", "GMT_DATETIME", "FLOATCOL" };
+            String[] columnParam = {"PK", "GMT_CREATE", "FLOATCOL", "GMT_DATETIME", "FLOATCOL"};
             selectOrderAssert(sql, columnParam, param);
         }
     }
@@ -216,7 +215,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
         if (!normaltblTableName.startsWith("ob")) {
             for (long i = 0; i < 4; i++) {
                 String sql = "UPDATE " + normaltblTableName
-                             + " SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk=?";
+                        + " SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk=?";
                 List<Object> param = new ArrayList<Object>();
                 param.add(rand.nextInt());
                 param.add(gmt);
@@ -230,7 +229,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
                 sql = "SELECT * FROM " + normaltblTableName + " WHERE pk=?";
                 param.clear();
                 param.add(i);
-                String[] columnParam = { "ID", "GMT_CREATE", "GMT_DATETIME", "FLOATCOL", "NAME", "FLOATCOL" };
+                String[] columnParam = {"ID", "GMT_CREATE", "GMT_DATETIME", "FLOATCOL", "NAME", "FLOATCOL"};
                 selectOrderAssert(sql, columnParam, param);
             }
         }
@@ -244,7 +243,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
         if (!normaltblTableName.startsWith("ob")) {
             for (long i = 0; i < 4; i++) {
                 String sql = "UPDATE " + normaltblTableName
-                             + " SET id=id+?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk=?";
+                        + " SET id=id+?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk=?";
                 List<Object> param = new ArrayList<Object>();
                 param.add(rand.nextInt());
                 param.add(gmt);
@@ -258,7 +257,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
                 sql = "SELECT * FROM " + normaltblTableName + " WHERE pk=?";
                 param.clear();
                 param.add(i);
-                String[] columnParam = { "ID", "GMT_CREATE", "GMT_DATETIME", "FLOATCOL", "NAME", "FLOATCOL" };
+                String[] columnParam = {"ID", "GMT_CREATE", "GMT_DATETIME", "FLOATCOL", "NAME", "FLOATCOL"};
                 selectOrderAssert(sql, columnParam, param);
             }
         }
@@ -270,7 +269,7 @@ public class SelectCacheTest extends BaseMatrixTestCase {
             String sql = "DELETE FROM " + normaltblTableName + " WHERE pk = ?";
             List<Object> param = new ArrayList<Object>();
             param.add(i);
-            executeCountAssert(sql, Arrays.asList(new Object[] { i }));
+            executeCountAssert(sql, Arrays.asList(new Object[]{i}));
         }
     }
 

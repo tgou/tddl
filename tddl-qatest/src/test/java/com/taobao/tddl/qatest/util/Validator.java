@@ -1,33 +1,28 @@
 package com.taobao.tddl.qatest.util;
 
+import com.taobao.tddl.common.exception.TddlRuntimeException;
+import com.taobao.tddl.matrix.jdbc.TDataSource;
+import org.junit.Assert;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Assert;
-
-import com.taobao.tddl.common.exception.TddlRuntimeException;
-import com.taobao.tddl.matrix.jdbc.TDataSource;
-
 public class Validator {
 
-    public TDataSource       us;
-    public Connection        con;
-    public Connection        andorCon;
+    public TDataSource us;
+    public Connection con;
+    public Connection andorCon;
     public PreparedStatement ps;
     public PreparedStatement andorPs;
 
     /**
      * mysql查询数据
-     * 
+     *
      * @param sql
      * @param param
      * @return
@@ -56,7 +51,7 @@ public class Validator {
 
     /**
      * mysql查询数据
-     * 
+     *
      * @param sql
      * @param param
      * @return
@@ -88,7 +83,7 @@ public class Validator {
 
     /**
      * 返回结果集的条数
-     * 
+     *
      * @param rs
      * @return
      * @throws SQLException
@@ -103,7 +98,7 @@ public class Validator {
 
     /**
      * 验证andor和mysql数据的结果集包含的内容相同，不保证顺序
-     * 
+     *
      * @param rs
      * @param ret
      * @param columnParam
@@ -152,7 +147,7 @@ public class Validator {
 
     /**
      * 验证andor和mysql数据的结果集包含的内容相同，不保证顺序
-     * 
+     *
      * @param rs
      * @param ret
      * @param columnParam
@@ -195,7 +190,7 @@ public class Validator {
 
     /**
      * 验证andor和mysql数据的结果集包含的内容相同，保证顺序
-     * 
+     *
      * @param rs
      * @param ret
      * @param columnParam
@@ -223,14 +218,14 @@ public class Validator {
 
     /**
      * 验证andor和mysql 中orderBy中的字段不是主键，验证对应的字段保持一致
-     * 
+     *
      * @param rs
      * @param ret
      * @param columnParam
      * @throws Exception
      */
     public void assertOrderNotKeyCloumn(ResultSet rs, ResultSet ret, String[] columnParam, String notKeyCloumn)
-                                                                                                               throws Exception {
+            throws Exception {
         try {
             boolean same = false;
             Object orderClounmValue = null;
@@ -288,7 +283,7 @@ public class Validator {
 
     /**
      * 验证andor和mysql数据的结果集包含的内容相同，保证顺序(事物特殊处理，最后不关闭数据库连接)
-     * 
+     *
      * @param rs
      * @param ret
      * @param columnParam
@@ -313,42 +308,6 @@ public class Validator {
             }
             Assert.assertFalse(ret.next());
         } finally {
-        }
-    }
-
-    public static class MyNumber {
-
-        BigDecimal number;
-
-        public MyNumber(BigDecimal number){
-            super();
-            this.number = number;
-        }
-
-        @Override
-        public String toString() {
-            return this.number == null ? null : this.number.toString();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) {
-                throw new RuntimeException("类型不一致" + this.getClass() + "  " + obj.getClass());
-            }
-            MyNumber other = (MyNumber) obj;
-            if (number == null) {
-                if (other.number != null) return false;
-            } else {
-                BigDecimal o = this.number;
-                BigDecimal o2 = other.number;
-
-                if (o.subtract(o2).abs().compareTo(new BigDecimal(0.1)) < 0) {
-                    return true;
-                } else return false;
-            }
-            return true;
         }
     }
 
@@ -382,7 +341,7 @@ public class Validator {
 
     /**
      * mysql更新数据
-     * 
+     *
      * @param sql
      * @param param
      * @return
@@ -418,7 +377,7 @@ public class Validator {
 
     /**
      * mysql事物更新数据
-     * 
+     *
      * @param sql
      * @param param
      * @return
@@ -451,7 +410,7 @@ public class Validator {
 
     /**
      * Andor更新数据
-     * 
+     *
      * @param sql
      * @param param
      * @return
@@ -479,7 +438,7 @@ public class Validator {
 
     /**
      * Andor事物更新数据
-     * 
+     *
      * @param sql
      * @param param
      * @return
@@ -507,7 +466,7 @@ public class Validator {
 
     /**
      * 通过msyql和andor操作数据，验证最终数据影响条数一致
-     * 
+     *
      * @param sql
      * @param param
      * @throws Exception
@@ -520,7 +479,7 @@ public class Validator {
 
     /**
      * msyql和andor同时操作数据
-     * 
+     *
      * @param sql
      * @param param
      * @throws Exception
@@ -532,7 +491,7 @@ public class Validator {
 
     /**
      * msyql和andor同时查询数据，验证andor的最终结果和msyql的最终结果顺序一致
-     * 
+     *
      * @param sql
      * @param columnParam
      * @param param
@@ -546,14 +505,14 @@ public class Validator {
 
     /**
      * mysql和andor同时查询数据，orderBy中的字段不是主键，验证对应的字段保持一致
-     * 
+     *
      * @param sql
      * @param columnParam
      * @param param
      * @throws Exception
      */
     public void selectOrderAssertNotKeyCloumn(String sql, String[] columnParam, List<Object> param, String notKeyCloumn)
-                                                                                                                        throws Exception {
+            throws Exception {
         ResultSet rs = mysqlQueryData(sql, param);
         ResultSet rc = andorQueryData(sql, param);
         assertOrderNotKeyCloumn(rs, rc, columnParam, notKeyCloumn);
@@ -562,7 +521,7 @@ public class Validator {
 
     /**
      * msyql和andor同时查询数据，验证andor的最终结果和msyql的最终结果顺序一致
-     * 
+     *
      * @param sql
      * @param columnParam
      * @param param
@@ -576,7 +535,7 @@ public class Validator {
 
     /**
      * msyql和andor同时查询数据，验证andor的最终结果和msyql的最终结果集是一致的，不用保证顺序
-     * 
+     *
      * @param sql
      * @param columnParam
      * @param param
@@ -595,7 +554,7 @@ public class Validator {
 
     /**
      * msyql和andor同时查询数据，验证andor的最终结果和msyql的最终结果集是一致的，不用保证顺序
-     * 
+     *
      * @param sql
      * @param columnParam
      * @param param
@@ -615,7 +574,7 @@ public class Validator {
 
     /**
      * rc,rs结果集的关闭
-     * 
+     *
      * @param rs
      * @param rc
      * @throws SQLException
@@ -634,7 +593,7 @@ public class Validator {
 
     /**
      * msyql和andor同时查询数据，验证取出的数据条数一致（一般用于limit验证中）
-     * 
+     *
      * @param sql
      * @param param
      * @throws Exception
@@ -654,7 +613,7 @@ public class Validator {
 
     /**
      * 在有别名情况下的验证
-     * 
+     *
      * @param sql
      * @param columnParam
      * @param tabelName
@@ -687,7 +646,7 @@ public class Validator {
 
     /**
      * ps,con,rc,rs的关闭
-     * 
+     *
      * @param rc
      * @param ps
      * @param con
@@ -724,7 +683,7 @@ public class Validator {
 
     /**
      * 日期比较函数
-     * 
+     *
      * @param cal
      * @param cal1
      */
@@ -737,7 +696,7 @@ public class Validator {
 
     /**
      * ResultCursor ,ResultSet的关闭
-     * 
+     *
      * @throws Exception
      * @throws SQLException
      */
@@ -755,7 +714,7 @@ public class Validator {
 
     /**
      * 建立mysql连接
-     * 
+     *
      * @return
      */
     public Connection getConnection() {
@@ -770,5 +729,41 @@ public class Validator {
             e.printStackTrace();
         }
         return conn;
+    }
+
+    public static class MyNumber {
+
+        BigDecimal number;
+
+        public MyNumber(BigDecimal number) {
+            super();
+            this.number = number;
+        }
+
+        @Override
+        public String toString() {
+            return this.number == null ? null : this.number.toString();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) {
+                throw new RuntimeException("类型不一致" + this.getClass() + "  " + obj.getClass());
+            }
+            MyNumber other = (MyNumber) obj;
+            if (number == null) {
+                if (other.number != null) return false;
+            } else {
+                BigDecimal o = this.number;
+                BigDecimal o2 = other.number;
+
+                if (o.subtract(o2).abs().compareTo(new BigDecimal(0.1)) < 0) {
+                    return true;
+                } else return false;
+            }
+            return true;
+        }
     }
 }

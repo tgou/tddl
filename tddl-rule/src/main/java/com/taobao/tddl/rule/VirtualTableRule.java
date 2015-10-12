@@ -1,17 +1,17 @@
 package com.taobao.tddl.rule;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.taobao.tddl.common.model.DBType;
 import com.taobao.tddl.rule.virtualnode.DBTableMap;
 import com.taobao.tddl.rule.virtualnode.TableSlotMap;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * 对应月tddl中的一张逻辑表，每张逻辑表上存在db/tb的{@linkplain Rule}<br/>
  * 基于该静态Rule(利用枚举步长和次数)可简单推算出数据库拓扑结构
- * 
+ *
  * @author linxuan
  */
 public interface VirtualTableRule<D, T> {
@@ -28,7 +28,7 @@ public interface VirtualTableRule<D, T> {
 
     /**
      * 返回本规则实际对应的全部库表拓扑结构
-     * 
+     *
      * @return key:dbIndex; value:实际物理表名的集合
      */
     Map<String, Set<String>> getActualTopology();

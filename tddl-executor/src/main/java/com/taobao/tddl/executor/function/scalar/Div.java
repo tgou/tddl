@@ -7,17 +7,17 @@ import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
 /**
  * 对应mysql的DIV函数，区别于/的出发
- * 
+ * <p/>
  * <pre>
  * Integer division. Similar to FLOOR(), but is safe with BIGINT values.
- * In MySQL 5.6, if either operand has a noninteger type, 
- * the operands are converted to DECIMAL and divided using DECIMAL arithmetic before converting the result to BIGINT. 
+ * In MySQL 5.6, if either operand has a noninteger type,
+ * the operands are converted to DECIMAL and divided using DECIMAL arithmetic before converting the result to BIGINT.
  * If the result exceeds BIGINT range, an error occurs.
- * 
+ *
  * mysql> SELECT 5 DIV 2;
  *         -> 2
  * </pre>
- * 
+ *
  * @author jianghang 2014-2-13 上午11:55:29
  * @since 5.0.0
  */

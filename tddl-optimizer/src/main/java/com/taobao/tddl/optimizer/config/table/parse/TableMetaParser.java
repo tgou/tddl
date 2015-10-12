@@ -1,12 +1,9 @@
 package com.taobao.tddl.optimizer.config.table.parse;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.sql.Types;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.Lists;
+import com.taobao.tddl.common.utils.XmlHelper;
+import com.taobao.tddl.optimizer.config.table.*;
+import com.taobao.tddl.optimizer.core.datatype.DataType;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
@@ -14,18 +11,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.collect.Lists;
-import com.taobao.tddl.common.utils.XmlHelper;
-import com.taobao.tddl.optimizer.config.table.ColumnMeta;
-import com.taobao.tddl.optimizer.config.table.IndexMeta;
-import com.taobao.tddl.optimizer.config.table.IndexType;
-import com.taobao.tddl.optimizer.config.table.Relationship;
-import com.taobao.tddl.optimizer.config.table.TableMeta;
-import com.taobao.tddl.optimizer.core.datatype.DataType;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.sql.Types;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 基于xml定义{@linkplain TableMeta}，对应的解析器
- * 
+ *
  * @author jianghang 2013-11-12 下午6:11:17
  * @since 5.0.0
  */
@@ -35,13 +30,13 @@ public class TableMetaParser {
 
     /**
      * 基于数据流创建TableMeta对象
-     * 
+     *
      * @param in
      * @return
      */
     public static List<TableMeta> parse(InputStream in) {
         Document doc = XmlHelper.createDocument(in,
-            Thread.currentThread().getContextClassLoader().getResourceAsStream(XSD_SCHEMA));
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(XSD_SCHEMA));
         Element root = doc.getDocumentElement();
         NodeList tableNodeList = root.getElementsByTagName("table");
         List<TableMeta> tables = Lists.newArrayList();
@@ -54,7 +49,7 @@ public class TableMetaParser {
 
     /**
      * 基于string的data文本创建TableMeta对象
-     * 
+     *
      * @param data
      * @return
      */
@@ -127,13 +122,13 @@ public class TableMetaParser {
         }
 
         IndexMeta primaryIndex = new IndexMeta(tableName,
-            toColumnMeta(primaryKeys, columnMetas, tableName),
-            toColumnMeta(primaryValues, columnMetas, tableName),
-            IndexType.BTREE,
-            Relationship.NONE,
-            strongConsistent,
-            true,
-            toColumnMeta(partitionColumns, columnMetas, tableName));
+                toColumnMeta(primaryKeys, columnMetas, tableName),
+                toColumnMeta(primaryValues, columnMetas, tableName),
+                IndexType.BTREE,
+                Relationship.NONE,
+                strongConsistent,
+                true,
+                toColumnMeta(partitionColumns, columnMetas, tableName));
 
         return new TableMeta(tableName, columns, primaryIndex, indexs);
     }
@@ -203,13 +198,13 @@ public class TableMetaParser {
         }
 
         return new IndexMeta(tableName,
-            toColumnMeta(keys, columnMetas, tableName),
-            toColumnMeta(values, columnMetas, tableName),
-            getIndexType(type),
-            getRelationship(rel),
-            strongConsistent,
-            false,
-            toColumnMeta(partitionColumns, columnMetas, tableName));
+                toColumnMeta(keys, columnMetas, tableName),
+                toColumnMeta(values, columnMetas, tableName),
+                getIndexType(type),
+                getRelationship(rel),
+                strongConsistent,
+                false,
+                toColumnMeta(partitionColumns, columnMetas, tableName));
     }
 
     private static List<ColumnMeta> toColumnMeta(String[] columns, Map<String, ColumnMeta> columnMetas, String tableName) {

@@ -1,12 +1,5 @@
 package com.taobao.tddl.optimizer.parse.hint;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
@@ -15,21 +8,26 @@ import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.utils.TStringUtil;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.rule.model.sqljep.Comparative;
 import com.taobao.tddl.rule.model.sqljep.ComparativeAND;
 import com.taobao.tddl.rule.model.sqljep.ComparativeBaseList;
 import com.taobao.tddl.rule.model.sqljep.ComparativeOR;
 import com.taobao.tddl.rule.utils.ComparativeStringAnalyser;
+import org.apache.commons.lang.StringUtils;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * 简单hint解析
- * 
+ * <p/>
  * <pre>
  * 完整的例子：
- * 
+ *
  *  \/*+TDDL({"type":"condition","vtab":"vtabxxx","params":[{"relation":"and","expr":["pk>4","pk:long<10"],"paramtype":"int"}],"extra":"{"ALLOW_TEMPORARY_TABLE"="TRUE"})*\/
  * 1. type取值是condition和direct
  * 2. vtab取值是rule规则中的逻辑表名
@@ -38,30 +36,30 @@ import com.taobao.tddl.common.utils.logger.LoggerFactory;
  *    b. expr对应为分库条件
  *    c. paramtype对应分库子段类型
  * 4. extra取值是针对{@linkplain ExtraCmd}中定义的扩展参数，比如ALLOW_TEMPORARY_TABLE=true代表开启临时表
- * 
+ *
  * type为direct时
  * a. \/*+TDDL({"type":"direct","vtab":"real_tab","dbid":"xxx_group","realtabs":["real_tab_0","real_tab_1"]})*\/select * from real_tab;
  * 绕过解析器, 进行表名替换,然后在对应group ds上执行
  * b. \/*+TDDL({"type":"direct","dbid":"xxx_group"})*\/select * from real_table_0;
  * 直接将sql在对应group ds上执行
  * </pre>
- * 
+ *
  * @author jianghang 2014-1-13 下午6:16:31
  * @since 5.0.0
  */
 public class SimpleHintParser {
 
-    private static final Logger logger    = LoggerFactory.getLogger(SimpleHintParser.class);
-    private static final String OR        = "or";
-    private static final String AND       = "and";
-    private static final String RELATION  = "relation";
+    private static final Logger logger = LoggerFactory.getLogger(SimpleHintParser.class);
+    private static final String OR = "or";
+    private static final String AND = "and";
+    private static final String RELATION = "relation";
     private static final String PARAMTYPE = "paramtype";
-    private static final String EXPR      = "expr";
-    private static final String PARAMS    = "params";
-    private static final String VTAB      = "vtab";
-    private static final String DBID      = "dbid";
-    private static final String REALTABS  = "realtabs";
-    private static final String EXTRACMD  = "extra";
+    private static final String EXPR = "expr";
+    private static final String PARAMS = "params";
+    private static final String VTAB = "vtab";
+    private static final String DBID = "dbid";
+    private static final String REALTABS = "realtabs";
+    private static final String EXTRACMD = "extra";
 
     public static RouteCondition convertHint2RouteCondition(String sql, Map<Integer, ParameterContext> parameterSettings) {
         String tddlHint = extractHint(sql, parameterSettings);
@@ -168,7 +166,7 @@ public class SimpleHintParser {
                         String key = null;
                         for (int j = 0; j < exprs.size(); j++) {
                             Comparative comparative = ComparativeStringAnalyser.decodeComparative(exprs.getString(j),
-                                paramtype);
+                                    paramtype);
                             comList.addComparative(comparative);
 
                             String temp = ComparativeStringAnalyser.decodeComparativeKey(exprs.getString(j));
@@ -176,7 +174,7 @@ public class SimpleHintParser {
                                 key = temp;
                             } else if (!temp.equals(key)) {
                                 throw new TddlRuntimeException("decodeCondition not support one relation with multi key,the relation is:["
-                                                               + relation + "],expr list is:[" + exprs.toString());
+                                        + relation + "],expr list is:[" + exprs.toString());
                             }
                         }
                         sc.put(key, comList);
@@ -184,7 +182,7 @@ public class SimpleHintParser {
                         if (exprs.size() == 1) {
                             String key = ComparativeStringAnalyser.decodeComparativeKey(exprs.getString(0));
                             Comparative comparative = ComparativeStringAnalyser.decodeComparative(exprs.getString(0),
-                                paramtype);
+                                    paramtype);
                             sc.put(key, comparative);
                         } else {
                             throw new TddlRuntimeException("relation neither 'and' nor 'or',but expr size is not 1");
@@ -199,7 +197,7 @@ public class SimpleHintParser {
 
     /**
      * 从sql中解出hint,并且将hint里面的?替换为参数的String形式
-     * 
+     *
      * @param sql
      * @param parameterSettings
      * @return

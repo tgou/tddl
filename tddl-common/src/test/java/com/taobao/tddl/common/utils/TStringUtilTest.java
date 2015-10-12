@@ -1,13 +1,13 @@
 package com.taobao.tddl.common.utils;
 
-import java.util.Arrays;
-
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 /**
  * 各种不同实现的比较测试
- * 
+ *
  * @author linxuan
  */
 public class TStringUtilTest {
@@ -33,10 +33,10 @@ public class TStringUtilTest {
 
     @Test
     public void testTwoPartSplit() {
-        Assert.assertArrayEquals(TStringUtil.twoPartSplit("abc:bc:bc", ":"), new String[] { "abc", "bc:bc" });
-        Assert.assertArrayEquals(TStringUtil.twoPartSplit(null, "a"), new String[] { null });
-        Assert.assertArrayEquals(TStringUtil.twoPartSplit("abc:bc", "d"), new String[] { "abc:bc" });
-        Assert.assertArrayEquals(TStringUtil.twoPartSplit("abc:bc", ";"), new String[] { "abc:bc" });
+        Assert.assertArrayEquals(TStringUtil.twoPartSplit("abc:bc:bc", ":"), new String[]{"abc", "bc:bc"});
+        Assert.assertArrayEquals(TStringUtil.twoPartSplit(null, "a"), new String[]{null});
+        Assert.assertArrayEquals(TStringUtil.twoPartSplit("abc:bc", "d"), new String[]{"abc:bc"});
+        Assert.assertArrayEquals(TStringUtil.twoPartSplit("abc:bc", ";"), new String[]{"abc:bc"});
     }
 
     @Test

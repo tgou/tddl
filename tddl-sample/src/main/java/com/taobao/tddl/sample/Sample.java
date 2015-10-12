@@ -1,14 +1,14 @@
 package com.taobao.tddl.sample;
 
+import com.taobao.tddl.common.exception.TddlException;
+import com.taobao.tddl.matrix.jdbc.TDataSource;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.taobao.tddl.common.exception.TddlException;
-import com.taobao.tddl.matrix.jdbc.TDataSource;
 
 public class Sample {
 

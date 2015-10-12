@@ -1,12 +1,12 @@
 package com.taobao.tddl.repo.bdb.spi;
 
-import java.util.Set;
-
 import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.SecondaryDatabase;
 import com.sleepycat.je.SecondaryKeyCreator;
 import com.sleepycat.je.SecondaryMultiKeyCreator;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
+
+import java.util.Set;
 
 /**
  * @author jianxing <jianxing.qx@taobao.com>
@@ -18,7 +18,7 @@ public class IndexKeyCreator implements SecondaryKeyCreator, SecondaryMultiKeyCr
 
     // SecondaryKeyGen keygen;
 
-    public IndexKeyCreator(IndexMeta primaryMeta, IndexMeta secondaryMeta){
+    public IndexKeyCreator(IndexMeta primaryMeta, IndexMeta secondaryMeta) {
         this.primaryMeta = primaryMeta;
         this.secondaryMeta = secondaryMeta;
         // this.keygen = new SecondaryKeyGen(primaryMeta,secondaryMeta);

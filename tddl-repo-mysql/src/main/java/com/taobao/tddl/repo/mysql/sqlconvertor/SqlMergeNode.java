@@ -1,42 +1,38 @@
 package com.taobao.tddl.repo.mysql.sqlconvertor;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
+
+import java.util.*;
 
 public class SqlMergeNode {
 
     /**
      * order by 条件
      */
-    protected List<IOrderBy>              orderBy  = Collections.emptyList();
+    protected List<IOrderBy> orderBy = Collections.emptyList();
 
     /**
      * 进行合并后，是否要丢弃某些数据
      */
-    protected Long                        limitFrom;
+    protected Long limitFrom;
 
     /**
      * 进行合并后，取多少条记录
      */
-    protected Long                        limitTo;
+    protected Long limitTo;
 
     /**
      * group by 什么条件
      */
-    protected List<IOrderBy>              groupBys = Collections.emptyList();
+    protected List<IOrderBy> groupBys = Collections.emptyList();
 
     /**
      * 返回列的情况。可能是函数，可能是其他操作，也可能是嵌套的函数 请参见
      * com.taobao.ustore.common.inner.bean.IFunction
      * com.taobao.ustore.common.inner.bean.IColumn
      */
-    protected List<ISelectable>           columns;
+    protected List<ISelectable> columns;
 
     protected Map<String/* 执行节点 */, Sqls> subQuerys;
 

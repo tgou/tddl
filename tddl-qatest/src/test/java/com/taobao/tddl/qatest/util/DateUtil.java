@@ -1,18 +1,13 @@
 package com.taobao.tddl.qatest.util;
 
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Comment for DateUtil
@@ -21,48 +16,71 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DateUtil {
 
-    // logger
-    private static Log                        log                 = LogFactory.getLog(DateUtil.class);
-
-    /** yyyy/MM/dd HH:mm:ss */
-    public static final String                DATETIME_FULLSLASH  = "yyyy/MM/dd HH:mm:ss";                                                      // 19
-    /** yyyy-MM-dd HH:mm:ss */
-    public static final String                DATETIME_FULLHYPHEN = "yyyy-MM-dd HH:mm:ss";
-    /** yyyy/MM/dd HH:mm */
-    public static final String                DATETIME_HM_SLASH   = "yyyy/MM/dd HH:mm";                                                         // 16
-    /** yyyy-MM-dd HH:mm */
-    public static final String                DATETIME_HM_HYPHEN  = "yyyy-MM-dd HH:mm";
-    /** yyyy/MM/dd */
-    public static final String                DATE_FULLSLASH      = "yyyy/MM/dd";                                                               // 10
-    /** yyyy-MM-dd */
-    public static final String                DATE_FULLHYPHEN     = "yyyy-MM-dd";
-    /** yyyy/MM */
-    public static final String                DATE_YM_SLASH       = "yyyy/MM";                                                                  // 7
-    /** yyyy-MM */
-    public static final String                DATE_YM_HYPHEN      = "yyyy-MM";
-    /** HH:mm:ss */
-    public static final String                TIME_HMS_HYPHEN     = "HH:mm:ss";
-    /** ������ʽ:yyyy/MM/dd HH:mm:ss ���� yyyy-MM-dd HH:mm:ss */
-    private static final String               V_DATETIME_FULL     = "[0-9]{4}[\\/-]{1}[0-9]{2}[\\/-]{1}[0-9]{2} [0-9]{2}\\:[0-9]{2}\\:[0-9]{2}"; // 19
-    /** ������ʽ:yyyy/MM/dd HH:mm ���� yyyy-MM-dd HH:mm */
-    private static final String               V_DATETIME_HM_FULL  = "[0-9]{4}[\\/-]{1}[0-9]{2}[\\/-]{1}[0-9]{2} [0-9]{2}\\:[0-9]{2}";           // 13
-    /** ������ʽ:yyyy/MM/dd ���� yyyy-MM-dd */
-    private static final String               V_DATE_FULL         = "[0-9]{4}[\\/-]{1}[0-9]{2}[\\/-]{1}[0-9]{2}";                               // 10
-    /** ������ʽ:yyyy/MM ���� yyyy-MM */
-    private static final String               V_DATE_YM           = "[0-9]{4}[\\/-]{1}[0-9]{2}";                                                // 7
-
-    private static final Map<Integer, String> VALIDATE_MAP        = Collections.synchronizedMap(new HashMap<Integer, String>());
-
+    /**
+     * yyyy/MM/dd HH:mm:ss
+     */
+    public static final String DATETIME_FULLSLASH = "yyyy/MM/dd HH:mm:ss";                                                      // 19
+    /**
+     * yyyy-MM-dd HH:mm:ss
+     */
+    public static final String DATETIME_FULLHYPHEN = "yyyy-MM-dd HH:mm:ss";
+    /**
+     * yyyy/MM/dd HH:mm
+     */
+    public static final String DATETIME_HM_SLASH = "yyyy/MM/dd HH:mm";                                                         // 16
+    /**
+     * yyyy-MM-dd HH:mm
+     */
+    public static final String DATETIME_HM_HYPHEN = "yyyy-MM-dd HH:mm";
+    /**
+     * yyyy/MM/dd
+     */
+    public static final String DATE_FULLSLASH = "yyyy/MM/dd";                                                               // 10
+    /**
+     * yyyy-MM-dd
+     */
+    public static final String DATE_FULLHYPHEN = "yyyy-MM-dd";
+    /**
+     * yyyy/MM
+     */
+    public static final String DATE_YM_SLASH = "yyyy/MM";                                                                  // 7
+    /**
+     * yyyy-MM
+     */
+    public static final String DATE_YM_HYPHEN = "yyyy-MM";
+    /**
+     * HH:mm:ss
+     */
+    public static final String TIME_HMS_HYPHEN = "HH:mm:ss";
+    /**
+     * ������ʽ:yyyy/MM/dd HH:mm:ss ���� yyyy-MM-dd HH:mm:ss
+     */
+    private static final String V_DATETIME_FULL = "[0-9]{4}[\\/-]{1}[0-9]{2}[\\/-]{1}[0-9]{2} [0-9]{2}\\:[0-9]{2}\\:[0-9]{2}"; // 19
+    /**
+     * ������ʽ:yyyy/MM/dd HH:mm ���� yyyy-MM-dd HH:mm
+     */
+    private static final String V_DATETIME_HM_FULL = "[0-9]{4}[\\/-]{1}[0-9]{2}[\\/-]{1}[0-9]{2} [0-9]{2}\\:[0-9]{2}";           // 13
+    /**
+     * ������ʽ:yyyy/MM/dd ���� yyyy-MM-dd
+     */
+    private static final String V_DATE_FULL = "[0-9]{4}[\\/-]{1}[0-9]{2}[\\/-]{1}[0-9]{2}";                               // 10
+    /**
+     * ������ʽ:yyyy/MM ���� yyyy-MM
+     */
+    private static final String V_DATE_YM = "[0-9]{4}[\\/-]{1}[0-9]{2}";                                                // 7
+    private static final Map<Integer, String> VALIDATE_MAP = Collections.synchronizedMap(new HashMap<Integer, String>());
     static {
         VALIDATE_MAP.put(DATETIME_FULLHYPHEN.length(), V_DATETIME_FULL);
         VALIDATE_MAP.put(DATETIME_HM_HYPHEN.length(), V_DATETIME_HM_FULL);
         VALIDATE_MAP.put(DATE_FULLHYPHEN.length(), V_DATE_FULL);
         VALIDATE_MAP.put(DATE_YM_HYPHEN.length(), V_DATE_YM);
     }
+    // logger
+    private static Log log = LogFactory.getLog(DateUtil.class);
 
     /**
      * ������ת����ָ����ʽ���ַ�
-     * 
+     *
      * @param date
      * @param pattern
      * @return
@@ -81,7 +99,7 @@ public class DateUtil {
 
     /**
      * ���ض���ʽ���ַ�ת��������
-     * 
+     *
      * @param inDate
      * @return
      */
@@ -108,7 +126,7 @@ public class DateUtil {
 
     /**
      * ��Date������ת����Calendar
-     * 
+     *
      * @param date
      * @return
      */
@@ -123,7 +141,7 @@ public class DateUtil {
 
     /**
      * ��Calendar������ת����Date
-     * 
+     *
      * @param cal
      * @return
      */
@@ -137,7 +155,7 @@ public class DateUtil {
 
     /**
      * ���ڼ���
-     * 
+     *
      * @param inData
      * @return
      */
@@ -155,7 +173,7 @@ public class DateUtil {
 
     /**
      * ���ص������һ����ַ�����
-     * 
+     *
      * @param date
      * @return
      */
@@ -168,7 +186,7 @@ public class DateUtil {
 
     /**
      * ��time��ճ�00:00:00
-     * 
+     *
      * @param date
      * @return
      */
@@ -182,7 +200,7 @@ public class DateUtil {
 
     /**
      * �ж��Ƿ�Ϊ����
-     * 
+     *
      * @param year
      * @return
      */
@@ -201,7 +219,7 @@ public class DateUtil {
 
     /**
      * �������/���
-     * 
+     *
      * @param Date date
      * @param Date date1
      * @return ��������������
@@ -212,7 +230,7 @@ public class DateUtil {
 
     /**
      * �������/���
-     * 
+     *
      * @param Calendar date
      * @param Calendar date1
      * @return ��������������
@@ -223,7 +241,7 @@ public class DateUtil {
 
     /**
      * �������/���
-     * 
+     *
      * @param intervals
      * @param format
      * @return
@@ -237,7 +255,7 @@ public class DateUtil {
 
     /**
      * �������/���
-     * 
+     *
      * @param calendar
      * @param offset
      * @return
@@ -249,7 +267,7 @@ public class DateUtil {
 
     /**
      * �������/���
-     * 
+     *
      * @param intervals
      * @return
      */
@@ -262,7 +280,7 @@ public class DateUtil {
 
     /**
      * �������/���
-     * 
+     *
      * @param intervals
      * @return
      */
@@ -274,7 +292,7 @@ public class DateUtil {
 
     /**
      * �����һ������
-     * 
+     *
      * @param date
      * @return
      */
@@ -287,7 +305,7 @@ public class DateUtil {
 
     /**
      * ������������
-     * 
+     *
      * @param date
      * @return
      */
@@ -300,7 +318,7 @@ public class DateUtil {
 
     /**
      * �ж����������Ƿ���ͬһ��
-     * 
+     *
      * @param date1
      * @param date2
      * @return
@@ -315,32 +333,8 @@ public class DateUtil {
     }
 
     /**
-     * �ж����������Ƿ���ͬһ��
-     * 
-     * @param date1
-     * @param date2
-     * @return
-     */
-    boolean isSameWeekDates2(Date date1, Date date2) {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.setTime(date1);
-        cal2.setTime(date2);
-        int subYear = cal1.get(Calendar.YEAR) - cal2.get(Calendar.YEAR);
-        if (0 == subYear) {
-            if (cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR)) return true;
-        } else if (1 == subYear && 11 == cal2.get(Calendar.MONTH)) {
-            // ���12�µ����һ�ܺ�������һ�ܵĻ������һ�ܼ���������ĵ�һ��
-            if (cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR)) return true;
-        } else if (-1 == subYear && 11 == cal1.get(Calendar.MONTH)) {
-            if (cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR)) return true;
-        }
-        return false;
-    }
-
-    /**
      * ������
-     * 
+     *
      * @param d1
      * @param d2
      * @param freeDays
@@ -355,7 +349,7 @@ public class DateUtil {
 
     /**
      * ��Ϣ��
-     * 
+     *
      * @param date
      * @param dNum
      * @param freeDays
@@ -378,31 +372,31 @@ public class DateUtil {
 
     /**
      * ������
-     * 
+     *
      * @param d1
      * @param d2
      * @return
      */
     public static int getWorkDay(Date d1, Date d2) {
-        int[] freeDays = { 0, 6 };//default: Sunday and Saturday are the free days.
+        int[] freeDays = {0, 6};//default: Sunday and Saturday are the free days.
         return getWorkDay(d1, d2, freeDays);
     }
 
     /**
      * ��Ϣ��
-     * 
+     *
      * @param date
      * @param dNum
      * @return
      */
     public static int getFreeDay(Date date, int dNum) {
-        int[] freeDays = { 0, 6 };//default: Sunday and Saturday are the free days.
+        int[] freeDays = {0, 6};//default: Sunday and Saturday are the free days.
         return getFreeDay(date, dNum, freeDays);
     }
 
     /**
      * ����������
-     * 
+     *
      * @return
      */
     public static String getSeqWeek() {
@@ -415,7 +409,7 @@ public class DateUtil {
 
     /**
      * �������
-     * 
+     *
      * @param date
      * @return
      */
@@ -427,7 +421,7 @@ public class DateUtil {
 
     /**
      * �����·�
-     * 
+     *
      * @param date
      * @return
      */
@@ -439,7 +433,7 @@ public class DateUtil {
 
     /**
      * �����շ�
-     * 
+     *
      * @param date
      * @return
      */
@@ -451,7 +445,7 @@ public class DateUtil {
 
     /**
      * ����Сʱ
-     * 
+     *
      * @param date
      * @return
      */
@@ -463,7 +457,7 @@ public class DateUtil {
 
     /**
      * ���ط���
-     * 
+     *
      * @param date
      * @return
      */
@@ -475,7 +469,7 @@ public class DateUtil {
 
     /**
      * ��������
-     * 
+     *
      * @param date
      * @return
      */
@@ -487,7 +481,7 @@ public class DateUtil {
 
     /**
      * ���غ���
-     * 
+     *
      * @param date
      * @return
      */
@@ -499,7 +493,7 @@ public class DateUtil {
 
     /**
      * ����java.sql.Date
-     * 
+     *
      * @param date
      * @return
      */
@@ -510,7 +504,7 @@ public class DateUtil {
 
     /**
      * ����java.sql.Date
-     * 
+     *
      * @param dateStr
      * @param format
      * @return
@@ -522,12 +516,36 @@ public class DateUtil {
 
     /**
      * ����java.sql.Date
-     * 
+     *
      * @param dateStr
      * @return
      */
     public static java.sql.Date parseSqlDate(String dateStr) {
         return parseSqlDate(dateStr, "yyyy/MM/dd");
+    }
+
+    /**
+     * �ж����������Ƿ���ͬһ��
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
+    boolean isSameWeekDates2(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(date1);
+        cal2.setTime(date2);
+        int subYear = cal1.get(Calendar.YEAR) - cal2.get(Calendar.YEAR);
+        if (0 == subYear) {
+            if (cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR)) return true;
+        } else if (1 == subYear && 11 == cal2.get(Calendar.MONTH)) {
+            // ���12�µ����һ�ܺ�������һ�ܵĻ������һ�ܼ���������ĵ�һ��
+            if (cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR)) return true;
+        } else if (-1 == subYear && 11 == cal1.get(Calendar.MONTH)) {
+            if (cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR)) return true;
+        }
+        return false;
     }
 
 }

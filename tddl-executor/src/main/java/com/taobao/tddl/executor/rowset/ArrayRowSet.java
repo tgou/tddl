@@ -1,25 +1,25 @@
 package com.taobao.tddl.executor.rowset;
 
+import com.taobao.tddl.executor.cursor.ICursorMeta;
+
 import java.util.Arrays;
 import java.util.List;
 
-import com.taobao.tddl.executor.cursor.ICursorMeta;
-
 /**
  * 基于数组的结果集。是最基本的一行数据的形式，效率最快。
- * 
+ *
  * @author Whisper
  */
 public class ArrayRowSet extends AbstractRowSet implements IRowSet {
 
-    public ArrayRowSet(int capacity, ICursorMeta iCursorMeta){
+    Object[] row;
+
+    public ArrayRowSet(int capacity, ICursorMeta iCursorMeta) {
         super(iCursorMeta);
         row = new Object[capacity];
     }
 
-    Object[] row;
-
-    public ArrayRowSet(ICursorMeta iCursorMeta, Object[] row){
+    public ArrayRowSet(ICursorMeta iCursorMeta, Object[] row) {
         super(iCursorMeta);
         this.row = row;
     }

@@ -1,48 +1,40 @@
 package com.taobao.tddl.common.mock;
 
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.NClob;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLClientInfoException;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.sql.Struct;
-import java.util.Map;
-import java.util.Properties;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.mock.MockDataSource.ExecuteInfo;
+
+import java.sql.*;
+import java.util.Map;
+import java.util.Properties;
 
 public class MockConnection implements Connection {
 
     private MockDataSource mockDataSource;
 
-    private long           timeToClose              = 0;
-    private int            closeInvokingTimes       = 0;
-    private boolean        isClosed                 = false;
-    private boolean        autoCommit               = true;
-    private int            commitInvokingTimes      = 0;
-    private int            getMetadataInvokingTimes = 0;
-    private int            transactionIsolation     = -1;
-    private boolean        isReadOnly;
-    private int            rollbackInvotingTimes    = 0;
+    private long timeToClose = 0;
+    private int closeInvokingTimes = 0;
+    private boolean isClosed = false;
+    private boolean autoCommit = true;
+    private int commitInvokingTimes = 0;
+    private int getMetadataInvokingTimes = 0;
+    private int transactionIsolation = -1;
+    private boolean isReadOnly;
+    private int rollbackInvotingTimes = 0;
+
+    public MockConnection(String method, MockDataSource mockDataSource) {
+        this.mockDataSource = mockDataSource;
+        MockDataSource.record(new ExecuteInfo(this.mockDataSource, method, null, null));
+    }
+
+    private static void checkPreException(String name) throws SQLException {
+        SQLException e = MockDataSource.popPreException(name);
+        if (e != null) {
+            throw e;
+        }
+    }
 
     public void clearWarnings() throws SQLException {
         throw new NotSupportException("");
-    }
-
-    public MockConnection(String method, MockDataSource mockDataSource){
-        this.mockDataSource = mockDataSource;
-        MockDataSource.record(new ExecuteInfo(this.mockDataSource, method, null, null));
     }
 
     public void close() throws SQLException {
@@ -67,13 +59,6 @@ public class MockConnection implements Connection {
         commitInvokingTimes++;
     }
 
-    private static void checkPreException(String name) throws SQLException {
-        SQLException e = MockDataSource.popPreException(name);
-        if (e != null) {
-            throw e;
-        }
-    }
-
     public Statement createStatement() throws SQLException {
         mockDataSource.checkState();
         checkPreException(MockDataSource.m_createStatement);
@@ -87,7 +72,7 @@ public class MockConnection implements Connection {
     }
 
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-                                                                                                           throws SQLException {
+            throws SQLException {
         mockDataSource.checkState();
         checkPreException(MockDataSource.m_createStatement);
         return new MockStatement("createStatement#int_int_int", this.mockDataSource);
@@ -99,12 +84,27 @@ public class MockConnection implements Connection {
         return autoCommit;
     }
 
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+        mockDataSource.checkState();
+        checkClose();
+        MockDataSource.record(new ExecuteInfo(mockDataSource, "setAutoCommit", null, new Object[]{autoCommit}));
+        this.autoCommit = autoCommit;
+    }
+
     public String getCatalog() throws SQLException {
+        throw new NotSupportException("");
+    }
+
+    public void setCatalog(String catalog) throws SQLException {
         throw new NotSupportException("");
     }
 
     public int getHoldability() throws SQLException {
         return ResultSet.CLOSE_CURSORS_AT_COMMIT;
+    }
+
+    public void setHoldability(int holdability) throws SQLException {
+        throw new NotSupportException("");
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
@@ -121,7 +121,16 @@ public class MockConnection implements Connection {
         return transactionIsolation;
     }
 
+    public void setTransactionIsolation(int level) throws SQLException {
+        mockDataSource.checkState();
+        this.transactionIsolation = level;
+    }
+
     public Map<String, Class<?>> getTypeMap() throws SQLException {
+        throw new NotSupportException("");
+    }
+
+    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
         throw new NotSupportException("");
     }
 
@@ -137,6 +146,11 @@ public class MockConnection implements Connection {
     public boolean isReadOnly() throws SQLException {
         mockDataSource.checkState();
         return isReadOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) throws SQLException {
+        mockDataSource.checkState();
+        this.isReadOnly = true;
     }
 
     public String nativeSQL(String sql) throws SQLException {
@@ -181,7 +195,7 @@ public class MockConnection implements Connection {
     }
 
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
-                                                                                                      throws SQLException {
+            throws SQLException {
         mockDataSource.checkState();
         checkPreException(MockDataSource.m_prepareStatement);
         return new MockPreparedStatement("prepareStatement#string_int_int", this.mockDataSource, sql);
@@ -208,33 +222,8 @@ public class MockConnection implements Connection {
     public void rollback(Savepoint savepoint) throws SQLException {
         mockDataSource.checkState();
         checkClose();
-        MockDataSource.record(new ExecuteInfo(mockDataSource, "rollback#savepoint", null, new Object[] { savepoint }));
+        MockDataSource.record(new ExecuteInfo(mockDataSource, "rollback#savepoint", null, new Object[]{savepoint}));
         rollbackInvotingTimes++;
-    }
-
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-        mockDataSource.checkState();
-        checkClose();
-        MockDataSource.record(new ExecuteInfo(mockDataSource, "setAutoCommit", null, new Object[] { autoCommit }));
-        this.autoCommit = autoCommit;
-    }
-
-    public void setCatalog(String catalog) throws SQLException {
-        throw new NotSupportException("");
-    }
-
-    public void setHoldability(int holdability) throws SQLException {
-        throw new NotSupportException("");
-    }
-
-    public void setReadOnly(boolean readOnly) throws SQLException {
-        mockDataSource.checkState();
-        this.isReadOnly = true;
-    }
-
-    public void setTransactionIsolation(int level) throws SQLException {
-        mockDataSource.checkState();
-        this.transactionIsolation = level;
     }
 
     public Savepoint setSavepoint() throws SQLException {
@@ -242,10 +231,6 @@ public class MockConnection implements Connection {
     }
 
     public Savepoint setSavepoint(String name) throws SQLException {
-        throw new NotSupportException("");
-    }
-
-    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
         throw new NotSupportException("");
     }
 
@@ -281,15 +266,15 @@ public class MockConnection implements Connection {
     public void setClientInfo(String name, String value) throws SQLClientInfoException {
     }
 
-    public void setClientInfo(Properties properties) throws SQLClientInfoException {
-    }
-
     public String getClientInfo(String name) throws SQLException {
         return null;
     }
 
     public Properties getClientInfo() throws SQLException {
         return null;
+    }
+
+    public void setClientInfo(Properties properties) throws SQLClientInfoException {
     }
 
     public Array createArrayOf(String typeName, Object[] elements) throws SQLException {

@@ -1,18 +1,17 @@
 package com.taobao.tddl.qatest.matrix.select;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
-import com.taobao.tddl.qatest.ExecuteTableName;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * or去重的测试
@@ -22,13 +21,13 @@ import com.taobao.tddl.qatest.ExecuteTableName;
 @RunWith(EclipseParameterized.class)
 public class SelectRemoveDuplicatesTest extends BaseMatrixTestCase {
 
+    public SelectRemoveDuplicatesTest(String normaltblTableName) {
+        BaseTestCase.normaltblTableName = normaltblTableName;
+    }
+
     @Parameters(name = "{index}:table1={0}")
     public static List<String[]> prepare() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectRemoveDuplicatesTest(String normaltblTableName){
-        BaseTestCase.normaltblTableName = normaltblTableName;
     }
 
     @Before
@@ -45,7 +44,7 @@ public class SelectRemoveDuplicatesTest extends BaseMatrixTestCase {
         List<Object> param = new ArrayList<Object>();
         param.add(start);
         param.add(end);
-        String[] columnParam = { "PK", "NAME", "ID", "GMT_CREATE", "GMT_DATETIME", "FLOATCOL" };
+        String[] columnParam = {"PK", "NAME", "ID", "GMT_CREATE", "GMT_DATETIME", "FLOATCOL"};
         selectContentSameAssert(sql, columnParam, param);
     }
 

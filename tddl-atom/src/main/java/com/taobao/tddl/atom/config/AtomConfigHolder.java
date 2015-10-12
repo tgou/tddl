@@ -1,28 +1,23 @@
 package com.taobao.tddl.atom.config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.atom.common.TAtomConstants;
 import com.taobao.tddl.common.model.Atom;
 import com.taobao.tddl.common.utils.extension.Activate;
 import com.taobao.tddl.config.impl.holder.AbstractConfigDataHolder;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.*;
 
 @Activate(name = "ATOM_CONFIG_HOLDER", order = 1)
 public class AtomConfigHolder extends AbstractConfigDataHolder {
 
-    private final String     appName;
+    private final String appName;
 
     private final List<Atom> atoms;
 
-    private final String     unitName;
+    private final String unitName;
 
-    public AtomConfigHolder(String appName, List<Atom> atoms, String unitName){
+    public AtomConfigHolder(String appName, List<Atom> atoms, String unitName) {
         this.appName = appName;
         this.atoms = atoms;
         this.unitName = unitName;
@@ -50,7 +45,7 @@ public class AtomConfigHolder extends AbstractConfigDataHolder {
             String globalValue = globalResults.get(TAtomConstants.getGlobalDataId(atomKey));
             if (StringUtils.isEmpty(globalValue)) {
                 throw new IllegalArgumentException("Global Config Is Null, AppName >> " + appName + " ## UnitName >> "
-                                                   + unitName + " ## AtomKey >> " + atomKey);
+                        + unitName + " ## AtomKey >> " + atomKey);
             }
             Properties globalProperties = TAtomConfParser.parserConfStr2Properties(globalValue);
             String dbName = globalProperties.getProperty(TAtomConfParser.GLOBA_DB_NAME_KEY);
@@ -59,7 +54,7 @@ public class AtomConfigHolder extends AbstractConfigDataHolder {
             String appValue = appKeyResults.get(TAtomConstants.getAppDataId(appName, atomKey));
             if (StringUtils.isEmpty(appValue)) {
                 throw new IllegalArgumentException("App Config Is Null, AppName >> " + appName + " ## UnitName >> "
-                                                   + unitName + " ## AtomKey >> " + atomKey);
+                        + unitName + " ## AtomKey >> " + atomKey);
             }
             Properties dbKeyProperties = TAtomConfParser.parserConfStr2Properties(appValue);
             String userName = dbKeyProperties.getProperty(TAtomConfParser.APP_USER_NAME_KEY);

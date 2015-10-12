@@ -1,11 +1,5 @@
 package com.taobao.tddl.executor.handler;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.utils.GeneralUtil;
@@ -31,9 +25,15 @@ import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.core.plan.query.IParallelizableQueryTree.QUERY_CONCURRENCY;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 public class MergeHandler extends QueryHandlerCommon {
 
-    public MergeHandler(){
+    public MergeHandler() {
         super();
     }
 
@@ -66,7 +66,7 @@ public class MergeHandler extends QueryHandlerCommon {
             ICursorMeta iCursorMetaTemp = ExecUtils.convertToICursorMeta(ide);
 
             // ColumnMeta[] keyColumns = indexMeta.getKeyColumns();
-            ColumnMeta[] keyColumns = new ColumnMeta[] {};
+            ColumnMeta[] keyColumns = new ColumnMeta[]{};
 
             List<IOrderBy> tempOrderBy = new LinkedList<IOrderBy>();
             for (ColumnMeta cm : keyColumns) {
@@ -75,10 +75,10 @@ public class MergeHandler extends QueryHandlerCommon {
                 tempOrderBy.add(ob);
             }
             cursor = repo.getCursorFactory().mergeCursor(executionContext,
-                subCursors,
-                iCursorMetaTemp,
-                subNodes.get(0),
-                tempOrderBy);
+                    subCursors,
+                    iCursorMetaTemp,
+                    subNodes.get(0),
+                    tempOrderBy);
             return cursor;
         } else {
             if (QUERY_CONCURRENCY.CONCURRENT == merge.getQueryConcurrency()) {
@@ -117,11 +117,11 @@ public class MergeHandler extends QueryHandlerCommon {
 
     private void executeSubNodes(ISchematicCursor cursor, ExecutionContext executionContext,
                                  List<IDataNodeExecutor> subNodes, List<ISchematicCursor> subCursors)
-                                                                                                     throws TddlException {
+            throws TddlException {
         for (IDataNodeExecutor q : subNodes) {
             ISchematicCursor rc = ExecutorContext.getContext()
-                .getTopologyExecutor()
-                .execByExecPlanNode(q, executionContext);
+                    .getTopologyExecutor()
+                    .execByExecPlanNode(q, executionContext);
             subCursors.add(rc);
         }
     }
@@ -129,7 +129,7 @@ public class MergeHandler extends QueryHandlerCommon {
     @SuppressWarnings("rawtypes")
     private void executeSubNodesFuture(ISchematicCursor cursor, ExecutionContext executionContext,
                                        List<IDataNodeExecutor> subNodes, List<ISchematicCursor> subCursors)
-                                                                                                           throws TddlException {
+            throws TddlException {
 
         executionContext.getExtraCmds().put(ExtraCmd.EXECUTE_QUERY_WHEN_CREATED, "True");
         List<Future<ISchematicCursor>> futureCursors = new LinkedList<Future<ISchematicCursor>>();
@@ -148,7 +148,7 @@ public class MergeHandler extends QueryHandlerCommon {
 
     /**
      * 先进行合并，然后进行aggregats
-     * 
+     *
      * @param cursor
      * @param context
      * @param executor
@@ -180,10 +180,10 @@ public class MergeHandler extends QueryHandlerCommon {
                     }
 
                     cursor = this.processOrderBy(cursor,
-                        getOrderBy(columns),
-                        executionContext,
-                        (IQueryTree) executor,
-                        true);
+                            getOrderBy(columns),
+                            executionContext,
+                            (IQueryTree) executor,
+                            true);
                     cursor = new DistinctCursor(cursor, getOrderBy(columns));
                     break;
                 }
@@ -191,11 +191,11 @@ public class MergeHandler extends QueryHandlerCommon {
 
             if ((aggregates != null && !aggregates.isEmpty()) || (groupBycols != null && !groupBycols.isEmpty())) {
                 cursor = repo.getCursorFactory().aggregateCursor(executionContext,
-                    cursor,
-                    aggregates,
-                    groupBycols,
-                    _retColumns,
-                    true);
+                        cursor,
+                        aggregates,
+                        groupBycols,
+                        _retColumns,
+                        true);
             }
         }
         return cursor;
@@ -205,7 +205,7 @@ public class MergeHandler extends QueryHandlerCommon {
     protected ISchematicCursor executeAgg(ISchematicCursor cursor, IDataNodeExecutor executor,
                                           boolean closeResultCursor, IRepository repo, List<IFunction> aggregates,
                                           List<IOrderBy> groupBycols, ExecutionContext executionContext)
-                                                                                                        throws TddlException {
+            throws TddlException {
         return this.executeMergeAgg(cursor, executor, closeResultCursor, repo, groupBycols, executionContext);
     }
 
@@ -243,10 +243,10 @@ public class MergeHandler extends QueryHandlerCommon {
             } else if (tempOBR == OrderByResult.temporaryTable || tempOBR == OrderByResult.reverseCursor) {
 
                 cursor = repo.getCursorFactory().tempTableSortCursor(executionContext,
-                    cursor,
-                    ordersInRequest,
-                    true,
-                    query.getRequestID());
+                        cursor,
+                        ordersInRequest,
+                        true,
+                        query.getRequestID());
 
             } else {
                 throw new IllegalArgumentException("shoult not be here:" + tempOBR);
@@ -264,7 +264,7 @@ public class MergeHandler extends QueryHandlerCommon {
 
     private ISchematicCursor buildMergeSortCursor(ExecutionContext executionContext, IRepository repo,
                                                   List<ISchematicCursor> cursors, boolean duplicated)
-                                                                                                     throws TddlException {
+            throws TddlException {
         ISchematicCursor cursor;
         cursor = repo.getCursorFactory().mergeSortedCursor(executionContext, cursors, duplicated);
         return cursor;

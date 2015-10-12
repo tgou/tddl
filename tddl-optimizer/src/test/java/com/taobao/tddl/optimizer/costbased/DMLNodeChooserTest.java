@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
 import com.taobao.tddl.optimizer.core.ast.dml.DeleteNode;
@@ -15,6 +12,8 @@ import com.taobao.tddl.optimizer.core.plan.IPut;
 import com.taobao.tddl.optimizer.core.plan.dml.IInsert;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author Dreamond
@@ -24,7 +23,7 @@ public class DMLNodeChooserTest extends BaseOptimizerTest {
     @Test
     public void testUpdate() throws QueryException {
         TableNode table = new TableNode("TABLE1");
-        String values[] = { "NAME" };
+        String values[] = {"NAME"};
         UpdateNode update = ((TableNode) table.query("ID>=5 AND ID<=100")).update("NAME", values);
         IDataNodeExecutor plan = optimizer.optimizeAndAssignment(update, null, null);
         Assert.assertTrue(plan instanceof IMerge);
@@ -38,7 +37,7 @@ public class DMLNodeChooserTest extends BaseOptimizerTest {
 
     public void testUpdate_范围更新生成merge() throws QueryException {
         TableNode table = new TableNode("TABLE1");
-        String values[] = { "NAME" };
+        String values[] = {"NAME"};
         UpdateNode update = ((TableNode) table.query("ID>=5")).update("NAME", values);
         IDataNodeExecutor plan = optimizer.optimizeAndAssignment(update, null, null);
         Assert.assertTrue(plan instanceof IMerge);
@@ -53,7 +52,7 @@ public class DMLNodeChooserTest extends BaseOptimizerTest {
     @Test
     public void testPut() throws QueryException {
         TableNode table = new TableNode("TABLE1");
-        Comparable values[] = { 2 };
+        Comparable values[] = {2};
         PutNode update = ((TableNode) table).put("ID", values);
         IDataNodeExecutor plan = optimizer.optimizeAndAssignment(update, null, null);
         Assert.assertTrue(plan instanceof IPut);
@@ -66,7 +65,7 @@ public class DMLNodeChooserTest extends BaseOptimizerTest {
     @Test
     public void testPut_全字段() throws QueryException {
         TableNode table = new TableNode("TABLE1");
-        Comparable values[] = { 2, "sysu", "sun" };
+        Comparable values[] = {2, "sysu", "sun"};
         PutNode put = table.put("ID SCHOOL NAME", values);
         IDataNodeExecutor plan = optimizer.optimizeAndAssignment(put, null, null);
         Assert.assertTrue(plan instanceof IPut);
@@ -109,7 +108,7 @@ public class DMLNodeChooserTest extends BaseOptimizerTest {
     @Test
     public void testInsert() throws QueryException {
         TableNode table = new TableNode("TABLE1");
-        Comparable values[] = { 2 };
+        Comparable values[] = {2};
         InsertNode insert = table.insert("ID", values);
         IDataNodeExecutor plan = optimizer.optimizeAndAssignment(insert, null, null);
         Assert.assertTrue(plan instanceof IInsert);
@@ -122,7 +121,7 @@ public class DMLNodeChooserTest extends BaseOptimizerTest {
     @Test
     public void testInsert_全字段() throws QueryException {
         TableNode table = new TableNode("TABLE1");
-        Comparable values[] = { 2, "sysu", "sun" };
+        Comparable values[] = {2, "sysu", "sun"};
         InsertNode insert = table.insert("ID SCHOOL NAME", values);
         IDataNodeExecutor plan = optimizer.optimizeAndAssignment(insert, null, null);
         Assert.assertTrue(plan instanceof IInsert);

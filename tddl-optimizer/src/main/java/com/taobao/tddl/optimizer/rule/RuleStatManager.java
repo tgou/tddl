@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.rule;
 
-import java.util.concurrent.ExecutionException;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -9,28 +7,26 @@ import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.Group;
 import com.taobao.tddl.common.model.Matrix;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
-import com.taobao.tddl.optimizer.costbased.esitimater.stat.KVIndexStat;
-import com.taobao.tddl.optimizer.costbased.esitimater.stat.LocalStatManager;
-import com.taobao.tddl.optimizer.costbased.esitimater.stat.RepoStatManager;
-import com.taobao.tddl.optimizer.costbased.esitimater.stat.StatManager;
-import com.taobao.tddl.optimizer.costbased.esitimater.stat.TableStat;
+import com.taobao.tddl.optimizer.costbased.esitimater.stat.*;
 import com.taobao.tddl.optimizer.exceptions.OptimizerException;
 import com.taobao.tddl.rule.model.TargetDB;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * 基于Rule获取到物理的group进行查找
- * 
+ *
  * @since 5.0.0
  */
 public class RuleStatManager extends AbstractLifecycle implements StatManager {
 
-    private OptimizerRule                        rule;
-    private Matrix                               matrix;
-    private LocalStatManager                     local;
-    private boolean                              useCache;
+    private OptimizerRule rule;
+    private Matrix matrix;
+    private LocalStatManager local;
+    private boolean useCache;
     private LoadingCache<Group, RepoStatManager> repos = null;
 
-    public RuleStatManager(OptimizerRule rule, Matrix matrix){
+    public RuleStatManager(OptimizerRule rule, Matrix matrix) {
         this.rule = rule;
         this.matrix = matrix;
     }

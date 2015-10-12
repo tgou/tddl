@@ -1,9 +1,5 @@
 package com.taobao.tddl.repo.mysql.spi;
 
-import java.util.concurrent.ExecutionException;
-
-import javax.sql.DataSource;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -14,28 +10,25 @@ import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.common.utils.ExceptionErrorCodeUtils;
 import com.taobao.tddl.executor.common.TransactionConfig;
 import com.taobao.tddl.executor.repo.RepositoryConfig;
-import com.taobao.tddl.executor.spi.ICommandHandlerFactory;
-import com.taobao.tddl.executor.spi.ICursorFactory;
-import com.taobao.tddl.executor.spi.IDataSourceGetter;
-import com.taobao.tddl.executor.spi.IGroupExecutor;
-import com.taobao.tddl.executor.spi.IRepository;
-import com.taobao.tddl.executor.spi.ITable;
-import com.taobao.tddl.executor.spi.ITransaction;
+import com.taobao.tddl.executor.spi.*;
 import com.taobao.tddl.group.jdbc.TGroupDataSource;
 import com.taobao.tddl.optimizer.config.table.TableMeta;
 import com.taobao.tddl.optimizer.core.PlanVisitor;
 import com.taobao.tddl.repo.mysql.executor.TddlGroupExecutor;
 import com.taobao.tddl.repo.mysql.handler.CommandHandlerFactoryMyImp;
 
+import javax.sql.DataSource;
+import java.util.concurrent.ExecutionException;
+
 public class My_Repository extends AbstractLifecycle implements IRepository {
 
     protected LoadingCache<String, LoadingCache<TableMeta, ITable>> tables;
-    protected LoadingCache<Group, IGroupExecutor>                   executors;
-    protected RepositoryConfig                                      config;
-    protected CursorFactoryMyImpl                                   cfm;
-    protected ICommandHandlerFactory                                cef      = null;
-    protected IDataSourceGetter                                     dsGetter = new DatasourceMySQLImplement();
-    protected PlanVisitor                                           planVisitor;
+    protected LoadingCache<Group, IGroupExecutor> executors;
+    protected RepositoryConfig config;
+    protected CursorFactoryMyImpl cfm;
+    protected ICommandHandlerFactory cef = null;
+    protected IDataSourceGetter dsGetter = new DatasourceMySQLImplement();
+    protected PlanVisitor planVisitor;
 
     @Override
     public void doInit() {

@@ -1,19 +1,19 @@
 package com.taobao.tddl.config.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
-
 import com.taobao.tddl.config.ConfigDataHandler;
 import com.taobao.tddl.config.ConfigDataHandlerFactory;
 import com.taobao.tddl.config.ConfigDataListener;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
+
 public class LocalFirstConfigDataHandlerFactory implements ConfigDataHandlerFactory {
 
-    ConfigDataHandlerFactory    delegateFactory = null;
-    private Map<String, String> localValues     = null;
+    ConfigDataHandlerFactory delegateFactory = null;
+    private Map<String, String> localValues = null;
 
-    public LocalFirstConfigDataHandlerFactory(ConfigDataHandlerFactory delegateFactory, Map<String, String> localValues){
+    public LocalFirstConfigDataHandlerFactory(ConfigDataHandlerFactory delegateFactory, Map<String, String> localValues) {
         this.delegateFactory = delegateFactory;
         this.localValues = localValues;
     }

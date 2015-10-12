@@ -7,11 +7,11 @@ package com.taobao.tddl.common.utils;
  * 所谓运行时配置信息，是指运行时被实时读取，并且影响运行时行为的配置信息。
  * 运行时配置信息动态修改时，协助使用者完成copyonwrite实现：
  * 。。。
- * 
+ *
  * </pre>
- * 
- * @author linxuan
+ *
  * @param <T> 包含运行时配置信息的对象的类型
+ * @author linxuan
  */
 public class RuntimeConfigHolder<T> {
 

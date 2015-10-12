@@ -1,25 +1,20 @@
 package com.taobao.tddl.group.jdbc;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.taobao.tddl.atom.jdbc.SqlMetaDataFactory;
 import com.taobao.tddl.atom.jdbc.TStatement;
 import com.taobao.tddl.common.jdbc.SqlTypeParser;
 import com.taobao.tddl.common.model.SqlMetaData;
 import com.taobao.tddl.common.model.SqlType;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.group.config.GroupIndex;
 import com.taobao.tddl.group.dbselector.DBSelector.AbstractDataSourceTryer;
 import com.taobao.tddl.group.dbselector.DBSelector.DataSourceTryer;
 import com.taobao.tddl.group.utils.GroupHintParser;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author linxuan
@@ -29,27 +24,102 @@ public class TGroupStatement implements TStatement {
 
     private static final Logger log = LoggerFactory.getLogger(TGroupStatement.class);
 
-    protected TGroupConnection  tGroupConnection;
-    protected TGroupDataSource  tGroupDataSource;
-    protected int               retryingTimes;
+    protected TGroupConnection tGroupConnection;
+    protected TGroupDataSource tGroupDataSource;
+    protected int retryingTimes;
+    /**
+     * query time out . 超时时间，如果超时时间不为0。那么超时应该被set到真正的query中。
+     */
+    protected int queryTimeout = 0;
+    protected int fetchSize;
+    protected int maxRows;
+    /**
+     * 经过计算后的结果集，允许使用 getResult函数调用. 一个statement只允许有一个结果集
+     */
+    protected ResultSet currentResultSet;
+    /**
+     * 更新计数，如果执行了多次，那么这个值只会返回最后一次执行的结果。 如果是一个query，那么返回的数据应该是-1
+     */
+    protected int updateCount;
+    protected int resultSetType = ResultSet.TYPE_FORWARD_ONLY;
+    protected int resultSetConcurrency = ResultSet.CONCUR_READ_ONLY;
+    // jdbc规范中未指明resultSetHoldability的默认值，要设成ResultSet.CLOSE_CURSORS_AT_COMMIT吗?
+    // TODO 统一设成-1吗?
+    protected int resultSetHoldability = -1;
+    /**
+     * sql元信息持有
+     */
+    protected SqlMetaData sqlMetaData = null;
+    ;
+    /*
+     * ========================================================================
+     * executeBatch
+     * ======================================================================
+     */
+    protected List<String> batchedArgs;
+    /*
+     * ========================================================================
+     * 关闭逻辑
+     * ======================================================================
+     */
+    protected boolean closed; // 当前statment 是否是关闭的
+    protected DataSourceTryer<ResultSet> executeQueryTryer = new AbstractDataSourceTryer<ResultSet>() {
 
-    public TGroupStatement(TGroupDataSource tGroupDataSource, TGroupConnection tGroupConnection){
-        this.tGroupDataSource = tGroupDataSource;
-        this.tGroupConnection = tGroupConnection;
-
-        this.retryingTimes = tGroupDataSource.getRetryingTimes();
-    }
-
+        public ResultSet tryOnDataSource(DataSourceWrapper dsw,
+                                         Object... args)
+                throws SQLException {
+            String sql = (String) args[0];
+            Connection conn = TGroupStatement.this.tGroupConnection.createNewConnection(dsw,
+                    true);
+            return executeQueryOnConnection(conn, sql);
+        }
+    };
+    /**
+     * 貌似是只有存储过程中会出现多结果集 因此不支持
+     */
+    protected boolean moreResults;
     /*
      * ========================================================================
      * 下层(有可能不是真正的)Statement的持有，getter/setter包权限
      * ======================================================================
      */
     private Statement baseStatement;
+    private DataSourceTryer<Integer> executeUpdateTryer = new AbstractDataSourceTryer<Integer>() {
+
+        public Integer tryOnDataSource(DataSourceWrapper dsw,
+                                       Object... args)
+                throws SQLException {
+            Connection conn = TGroupStatement.this.tGroupConnection.createNewConnection(dsw,
+                    false);
+            return executeUpdateOnConnection(conn,
+                    (String) args[0],
+                    (Integer) args[1],
+                    (int[]) args[2],
+                    (String[]) args[3]);
+        }
+    };
+    private DataSourceTryer<int[]> executeBatchTryer = new AbstractDataSourceTryer<int[]>() {
+
+        public int[] tryOnDataSource(DataSourceWrapper dsw,
+                                     Object... args)
+                throws SQLException {
+            Connection conn = TGroupStatement.this.tGroupConnection.createNewConnection(dsw,
+                    false);
+            return executeBatchOnConnection(conn,
+                    TGroupStatement.this.batchedArgs);
+        }
+    };
+
+    public TGroupStatement(TGroupDataSource tGroupDataSource, TGroupConnection tGroupConnection) {
+        this.tGroupDataSource = tGroupDataSource;
+        this.tGroupConnection = tGroupConnection;
+
+        this.retryingTimes = tGroupDataSource.getRetryingTimes();
+    }
 
     /**
      * 设置在底层执行的具体的Statement 如果前面的baseStatement未关，则先关闭
-     * 
+     *
      * @param baseStatement
      */
     void setBaseStatement(Statement baseStatement) {
@@ -62,36 +132,6 @@ public class TGroupStatement implements TStatement {
         }
         this.baseStatement = baseStatement;
     }
-
-    /**
-     * query time out . 超时时间，如果超时时间不为0。那么超时应该被set到真正的query中。
-     */
-    protected int         queryTimeout         = 0;
-
-    protected int         fetchSize;
-
-    protected int         maxRows;
-
-    /**
-     * 经过计算后的结果集，允许使用 getResult函数调用. 一个statement只允许有一个结果集
-     */
-    protected ResultSet   currentResultSet;
-    /**
-     * 更新计数，如果执行了多次，那么这个值只会返回最后一次执行的结果。 如果是一个query，那么返回的数据应该是-1
-     */
-    protected int         updateCount;
-
-    protected int         resultSetType        = ResultSet.TYPE_FORWARD_ONLY; ;
-    protected int         resultSetConcurrency = ResultSet.CONCUR_READ_ONLY;
-
-    // jdbc规范中未指明resultSetHoldability的默认值，要设成ResultSet.CLOSE_CURSORS_AT_COMMIT吗?
-    // TODO 统一设成-1吗?
-    protected int         resultSetHoldability = -1;
-
-    /**
-     * sql元信息持有
-     */
-    protected SqlMetaData sqlMetaData          = null;
 
     public boolean execute(String sql) throws SQLException {
         return executeInternal(sql, -1, null, null);
@@ -111,7 +151,7 @@ public class TGroupStatement implements TStatement {
 
     // jdbc规范: 返回true表示executeQuery，false表示executeUpdate
     private boolean executeInternal(String sql, int autoGeneratedKeys, int[] columnIndexes, String[] columnNames)
-                                                                                                                 throws SQLException {
+            throws SQLException {
         if (SqlTypeParser.isQuerySql(sql)) {
             executeQuery(sql);
             return true;
@@ -154,7 +194,7 @@ public class TGroupStatement implements TStatement {
     }
 
     private int executeUpdateInternal(String sql, int autoGeneratedKeys, int[] columnIndexes, String[] columnNames)
-                                                                                                                   throws SQLException {
+            throws SQLException {
         checkClosed();
         ensureResultSetIsEmpty();
 
@@ -171,13 +211,13 @@ public class TGroupStatement implements TStatement {
                 dataSourceIndex = ThreadLocalDataSourceIndex.getIndex();
             }
             this.updateCount = this.tGroupDataSource.getDBSelector(false).tryExecute(null,
-                executeUpdateTryer,
-                retryingTimes,
-                sql,
-                autoGeneratedKeys,
-                columnIndexes,
-                columnNames,
-                dataSourceIndex);
+                    executeUpdateTryer,
+                    retryingTimes,
+                    sql,
+                    autoGeneratedKeys,
+                    columnIndexes,
+                    columnNames,
+                    dataSourceIndex);
             return this.updateCount;
         }
     }
@@ -198,21 +238,6 @@ public class TGroupStatement implements TStatement {
             return stmt.executeUpdate(sql);
         }
     }
-
-    private DataSourceTryer<Integer> executeUpdateTryer = new AbstractDataSourceTryer<Integer>() {
-
-                                                            public Integer tryOnDataSource(DataSourceWrapper dsw,
-                                                                                           Object... args)
-                                                                                                          throws SQLException {
-                                                                Connection conn = TGroupStatement.this.tGroupConnection.createNewConnection(dsw,
-                                                                    false);
-                                                                return executeUpdateOnConnection(conn,
-                                                                    (String) args[0],
-                                                                    (Integer) args[1],
-                                                                    (int[]) args[2],
-                                                                    (String[]) args[3]);
-                                                            }
-                                                        };
 
     /**
      * 会调用setBaseStatement以关闭已有的Statement
@@ -237,13 +262,6 @@ public class TGroupStatement implements TStatement {
         fillSqlMetaData(stmt, sql);
         return stmt;
     }
-
-    /*
-     * ========================================================================
-     * executeBatch
-     * ======================================================================
-     */
-    protected List<String> batchedArgs;
 
     public void addBatch(String sql) throws SQLException {
         checkClosed();
@@ -287,18 +305,6 @@ public class TGroupStatement implements TStatement {
         }
     }
 
-    private DataSourceTryer<int[]> executeBatchTryer = new AbstractDataSourceTryer<int[]>() {
-
-                                                         public int[] tryOnDataSource(DataSourceWrapper dsw,
-                                                                                      Object... args)
-                                                                                                     throws SQLException {
-                                                             Connection conn = TGroupStatement.this.tGroupConnection.createNewConnection(dsw,
-                                                                 false);
-                                                             return executeBatchOnConnection(conn,
-                                                                 TGroupStatement.this.batchedArgs);
-                                                         }
-                                                     };
-
     private int[] executeBatchOnConnection(Connection conn, List<String> batchedSqls) throws SQLException {
         Statement stmt = createStatementInternal(conn, batchedSqls.get(0), true);
         for (String sql : batchedSqls) {
@@ -306,13 +312,6 @@ public class TGroupStatement implements TStatement {
         }
         return stmt.executeBatch();
     }
-
-    /*
-     * ========================================================================
-     * 关闭逻辑
-     * ======================================================================
-     */
-    protected boolean closed; // 当前statment 是否是关闭的
 
     public void close() throws SQLException {
         close(true);
@@ -354,7 +353,7 @@ public class TGroupStatement implements TStatement {
 
     /**
      * 如果新建了查询，那么上一次查询的结果集应该被显示的关闭掉。这才是符合jdbc规范的
-     * 
+     *
      * @throws SQLException
      */
     protected void ensureResultSetIsEmpty() throws SQLException {
@@ -396,9 +395,9 @@ public class TGroupStatement implements TStatement {
                 dataSourceIndex = ThreadLocalDataSourceIndex.getIndex();
             }
             return this.tGroupDataSource.getDBSelector(gotoRead).tryExecute(executeQueryTryer,
-                retryingTimes,
-                sql,
-                dataSourceIndex);
+                    retryingTimes,
+                    sql,
+                    dataSourceIndex);
         }
     }
 
@@ -408,27 +407,10 @@ public class TGroupStatement implements TStatement {
         return this.currentResultSet;
     }
 
-    protected DataSourceTryer<ResultSet> executeQueryTryer = new AbstractDataSourceTryer<ResultSet>() {
-
-                                                               public ResultSet tryOnDataSource(DataSourceWrapper dsw,
-                                                                                                Object... args)
-                                                                                                               throws SQLException {
-                                                                   String sql = (String) args[0];
-                                                                   Connection conn = TGroupStatement.this.tGroupConnection.createNewConnection(dsw,
-                                                                       true);
-                                                                   return executeQueryOnConnection(conn, sql);
-                                                               }
-                                                           };
-
     public SQLWarning getWarnings() throws SQLException {
         checkClosed();
         if (baseStatement != null) return baseStatement.getWarnings();
         return null;
-    }
-
-    public void clearWarnings() throws SQLException {
-        checkClosed();
-        if (baseStatement != null) baseStatement.clearWarnings();
     }
 
     /*
@@ -436,10 +418,11 @@ public class TGroupStatement implements TStatement {
      * 以下为简单支持的方法
      * ======================================================================
      */
-    /**
-     * 貌似是只有存储过程中会出现多结果集 因此不支持
-     */
-    protected boolean moreResults;
+
+    public void clearWarnings() throws SQLException {
+        checkClosed();
+        if (baseStatement != null) baseStatement.clearWarnings();
+    }
 
     public boolean getMoreResults() throws SQLException {
         return moreResults;
@@ -465,8 +448,16 @@ public class TGroupStatement implements TStatement {
         return resultSetConcurrency;
     }
 
+    public void setResultSetConcurrency(int resultSetConcurrency) {
+        this.resultSetConcurrency = resultSetConcurrency;
+    }
+
     public int getResultSetHoldability() throws SQLException {
         return resultSetHoldability;
+    }
+
+    public void setResultSetHoldability(int resultSetHoldability) {
+        this.resultSetHoldability = resultSetHoldability;
     }
 
     public int getResultSetType() throws SQLException {
@@ -475,14 +466,6 @@ public class TGroupStatement implements TStatement {
 
     public void setResultSetType(int resultSetType) {
         this.resultSetType = resultSetType;
-    }
-
-    public void setResultSetConcurrency(int resultSetConcurrency) {
-        this.resultSetConcurrency = resultSetConcurrency;
-    }
-
-    public void setResultSetHoldability(int resultSetHoldability) {
-        this.resultSetHoldability = resultSetHoldability;
     }
 
     public Connection getConnection() throws SQLException {
@@ -504,16 +487,32 @@ public class TGroupStatement implements TStatement {
         throw new UnsupportedOperationException("getFetchDirection");
     }
 
+    public void setFetchDirection(int fetchDirection) throws SQLException {
+        throw new UnsupportedOperationException("setFetchDirection");
+    }
+
     public int getFetchSize() throws SQLException {
         return this.fetchSize;
+    }
+
+    public void setFetchSize(int fetchSize) throws SQLException {
+        this.fetchSize = fetchSize;
     }
 
     public int getMaxFieldSize() throws SQLException {
         throw new UnsupportedOperationException("getMaxFieldSize");
     }
 
+    public void setMaxFieldSize(int maxFieldSize) throws SQLException {
+        throw new UnsupportedOperationException("setMaxFieldSize");
+    }
+
     public int getMaxRows() throws SQLException {
         return this.maxRows;
+    }
+
+    public void setMaxRows(int maxRows) throws SQLException {
+        this.maxRows = maxRows;
     }
 
     public void setCursorName(String cursorName) throws SQLException {
@@ -526,22 +525,6 @@ public class TGroupStatement implements TStatement {
 
     public boolean getMoreResults(int current) throws SQLException {
         throw new UnsupportedOperationException("getMoreResults");
-    }
-
-    public void setFetchDirection(int fetchDirection) throws SQLException {
-        throw new UnsupportedOperationException("setFetchDirection");
-    }
-
-    public void setFetchSize(int fetchSize) throws SQLException {
-        this.fetchSize = fetchSize;
-    }
-
-    public void setMaxFieldSize(int maxFieldSize) throws SQLException {
-        throw new UnsupportedOperationException("setMaxFieldSize");
-    }
-
-    public void setMaxRows(int maxRows) throws SQLException {
-        this.maxRows = maxRows;
     }
 
     public ResultSet getGeneratedKeys() throws SQLException {
@@ -570,11 +553,11 @@ public class TGroupStatement implements TStatement {
         throw new SQLException("not support exception");
     }
 
-    public void setPoolable(boolean poolable) throws SQLException {
+    public boolean isPoolable() throws SQLException {
         throw new SQLException("not support exception");
     }
 
-    public boolean isPoolable() throws SQLException {
+    public void setPoolable(boolean poolable) throws SQLException {
         throw new SQLException("not support exception");
     }
 

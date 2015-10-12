@@ -1,12 +1,5 @@
 package com.taobao.tddl.optimizer.core.plan.bean;
 
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendField;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendln;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.PlanVisitor;
@@ -20,20 +13,27 @@ import com.taobao.tddl.optimizer.core.plan.dml.IReplace;
 import com.taobao.tddl.optimizer.core.plan.dml.IUpdate;
 import com.taobao.tddl.optimizer.utils.OptimizerToString;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendField;
+import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendln;
+
 public class Put<RT extends IPut> extends DataNodeExecutor<RT> implements IPut<RT> {
 
-    protected IQueryTree                     queryTree;
-    protected List<ISelectable>              columns;
-    protected List<Object>                   values;
-    protected PUT_TYPE                       putType;
-    protected String                         tableName;        // 真实表名
-    protected String                         indexName;        // 逻辑索引信息
-    protected boolean                        ignore = false;
-    protected List<List<Object>>             multiValues;
-    protected boolean                        isMutiValues;
+    protected IQueryTree queryTree;
+    protected List<ISelectable> columns;
+    protected List<Object> values;
+    protected PUT_TYPE putType;
+    protected String tableName;        // 真实表名
+    protected String indexName;        // 逻辑索引信息
+    protected boolean ignore = false;
+    protected List<List<Object>> multiValues;
+    protected boolean isMutiValues;
     protected Map<Integer, ParameterContext> parameterSettings;
 
-    public Put(){
+    public Put() {
         putType = PUT_TYPE.REPLACE;
     }
 

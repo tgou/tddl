@@ -1,12 +1,12 @@
 package com.taobao.tddl.repo.bdb.spi;
 
+import com.taobao.tddl.common.utils.GeneralUtil;
+import com.taobao.tddl.executor.repo.RepositoryConfig;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Properties;
-
-import com.taobao.tddl.common.utils.GeneralUtil;
-import com.taobao.tddl.executor.repo.RepositoryConfig;
 
 /**
  * @author mengshi.sunmengshi 2013-12-19 下午3:08:18
@@ -15,72 +15,118 @@ import com.taobao.tddl.executor.repo.RepositoryConfig;
 public class BDBConfig extends RepositoryConfig {
 
     public static final String BDB_REPO_CONFIG_FILE_PATH = "BDB_REPO_CONFIG_FILE_PATH";
-    // 项目根目录
-    private String             root_dir;
-    // 序列化/编码
-    private String             codec_name;
-    // 数据目录
-    private String             repo_dir                  = ".";
-
-    // 提交时同步刷到文件系统
-    private boolean            commit_sync               = true;
-
-    // 用作缓存的内存的百分比
-    private int                cache_percent             = 60;
+    /**
+     * 清理县城count
+     */
+    public int cleaner_thread_count;
+    /**
+     * 清理者
+     */
+    public int cleaner_batch_file_count;
+    public String cleaner_min_utilization = "50";
+    public boolean auto_clean;
+    public String cleanerLazyMigration = "FALSE";
 
     // 表定义文件
     // public String schema_file;
     // 机器拓扑
     // public String machineTopology;
-
+    // defalut transaction isolation
+    // degree:{READ_UNCOMMITTED|READ_COMMITTED|REPEATABLE_READ|SERIALIZABLE}
+    public String default_txn_isolation;
+    // 最大并发请求数
+    public int max_concurrent_request = 100000;
+    /**
+     * 在diamond中的appName,用来拉配置,appName如果存在，则schema_file和machine_topology都无效。互斥的。
+     */
+    protected String app;
+    /**
+     * 秒级，事务超时时间
+     */
+    protected int txnTimeout;
+    /**
+     * 秒级，结果集超时时间
+     */
+    protected int resultTimeout;
+    /**
+     * 是否允许在非本机执行query
+     */
+    protected boolean allowExecuteOversea = true;
+    /**
+     * app文件
+     */
+    protected String appRuleFile;
+    /**
+     * 机器拓扑
+     */
+    protected String machineTopology;
+    /**
+     * 表文件
+     */
+    protected String schemaFile;
+    // 事务
+    protected boolean transactional = true;
+    /**
+     * 如果本机提供服务，那么应该会对外提供port
+     */
+    protected int port = 100020;
+    protected Integer monitorServerPort = null;
+    /**
+     * 内部使用，性能测试的时候，屏蔽真正渎取和写入。
+     */
+    protected boolean isPerfTest = false;
+    protected boolean sendJingWei = false;
+    // 项目根目录
+    private String root_dir;
+    // 精卫的topic
+    // 序列化/编码
+    private String codec_name;
+    // 数据目录
+    private String repo_dir = ".";
+    // 提交时同步刷到文件系统
+    private boolean commit_sync = true;
+    // 用作缓存的内存的百分比
+    private int cache_percent = 60;
     // tddl-rule的配置文件
     // 执行引擎线程数
-    private int                execThreadCount           = 50;
-    private int                maxThreadCount            = execThreadCount;
-    private int                keepAliveTime             = 5000;
+    private int execThreadCount = 50;
+    private int maxThreadCount = execThreadCount;
+    private int keepAliveTime = 5000;
     // 是否使用bdb ha
-    private boolean            ha                        = false;
+    private boolean ha = false;
     // ha group name
-    private String             group_name;
+    private String group_name;
     // ha group node name
-    private String             node_name;
-
+    private String node_name;
     // ha leader选举优先级
-    private int                priority                  = 1;
+    private int priority = 1;
     // group中的所有节点
-    private String             group_nodes;
+    private String group_nodes;
     // rpc 连接权限
-    private String             userName;
-    private String             password;
+    private String userName;
+    private String password;
     // 持久化策略
-    private String[]           durability;
-
-    private int                transactionDelayTime;
-
-    private int                resultDelayTime;
+    private String[] durability;
+    private int transactionDelayTime;
+    private int resultDelayTime;
     // 走mysql
-    private boolean            useMysql;
-    private String             mysqlDB;
-    // 精卫的topic
-
-    private String             metaTopic;
+    private boolean useMysql;
+    private String mysqlDB;
+    private String metaTopic;
     // 精卫映射表
-    private String             jingweiMap;
+    private String jingweiMap;
 
-    /**
-     * 清理县城count
-     */
-    public int                 cleaner_thread_count;
+    public BDBConfig() {
+    }
 
-    /**
-     * 清理者
-     */
-    public int                 cleaner_batch_file_count;
+    public BDBConfig(String file) throws IOException {
+        InputStream in = GeneralUtil.getInputStream(file);
+        load(in);
+    }
 
-    public String              cleaner_min_utilization   = "50";
-    public boolean             auto_clean;
-
-    public String              cleanerLazyMigration      = "FALSE";
+    public BDBConfig(InputStream in) throws IOException {
+        load(in);
+    }
 
     public String getJingweiMap() {
         return jingweiMap;
@@ -168,18 +214,6 @@ public class BDBConfig extends RepositoryConfig {
 
     public int getCachePercent() {
         return cache_percent;
-    }
-
-    public BDBConfig(){
-    }
-
-    public BDBConfig(String file) throws IOException{
-        InputStream in = GeneralUtil.getInputStream(file);
-        load(in);
-    }
-
-    public BDBConfig(InputStream in) throws IOException{
-        load(in);
     }
 
     private void load(InputStream in) throws IOException {
@@ -274,12 +308,12 @@ public class BDBConfig extends RepositoryConfig {
         return codec_name;
     }
 
-    public String getRepoDir() {
-        return repo_dir;
-    }
-
     public void setCodecName(String codecName) {
         this.codec_name = codecName;
+    }
+
+    public String getRepoDir() {
+        return repo_dir;
     }
 
     public void setRepoDir(String repo_dir) {
@@ -369,67 +403,13 @@ public class BDBConfig extends RepositoryConfig {
     @Override
     public String toString() {
         return "ServerConfig [root_dir=" + root_dir + ", codec_name=" + codec_name + ", repo_dir=" + repo_dir
-               + ", commit_sync=" + commit_sync + ", cache_percent=" + cache_percent + ", execThreadCount="
-               + execThreadCount + ", maxThreadCount=" + maxThreadCount + ", keepAliveTime=" + keepAliveTime + ", ha="
-               + ha + ", group_name=" + group_name + ", node_name=" + node_name + ", priority=" + priority
-               + ", group_nodes=" + group_nodes + ", userName=" + userName + ", password=" + password + ", durability="
-               + Arrays.toString(durability) + ", transactionDelayTime=" + transactionDelayTime + ", resultDelayTime="
-               + resultDelayTime + "]";
+                + ", commit_sync=" + commit_sync + ", cache_percent=" + cache_percent + ", execThreadCount="
+                + execThreadCount + ", maxThreadCount=" + maxThreadCount + ", keepAliveTime=" + keepAliveTime + ", ha="
+                + ha + ", group_name=" + group_name + ", node_name=" + node_name + ", priority=" + priority
+                + ", group_nodes=" + group_nodes + ", userName=" + userName + ", password=" + password + ", durability="
+                + Arrays.toString(durability) + ", transactionDelayTime=" + transactionDelayTime + ", resultDelayTime="
+                + resultDelayTime + "]";
     }
-
-    /**
-     * 在diamond中的appName,用来拉配置,appName如果存在，则schema_file和machine_topology都无效。互斥的。
-     */
-    protected String  app;
-    /**
-     * 秒级，事务超时时间
-     */
-    protected int     txnTimeout;
-    /**
-     * 秒级，结果集超时时间
-     */
-    protected int     resultTimeout;
-    /**
-     * 是否允许在非本机执行query
-     */
-    protected boolean allowExecuteOversea    = true;
-
-    /**
-     * app文件
-     */
-    protected String  appRuleFile;
-
-    /**
-     * 机器拓扑
-     */
-    protected String  machineTopology;
-
-    /**
-     * 表文件
-     */
-    protected String  schemaFile;
-
-    // 事务
-    protected boolean transactional          = true;
-    // defalut transaction isolation
-    // degree:{READ_UNCOMMITTED|READ_COMMITTED|REPEATABLE_READ|SERIALIZABLE}
-    public String     default_txn_isolation;
-
-    /**
-     * 如果本机提供服务，那么应该会对外提供port
-     */
-    protected int     port                   = 100020;
-
-    protected Integer monitorServerPort      = null;
-
-    /**
-     * 内部使用，性能测试的时候，屏蔽真正渎取和写入。
-     */
-    protected boolean isPerfTest             = false;
-
-    protected boolean sendJingWei            = false;
-    // 最大并发请求数
-    public int        max_concurrent_request = 100000;
 
     public String getDefaultTnxIsolation() {
         return default_txn_isolation;
@@ -459,16 +439,16 @@ public class BDBConfig extends RepositoryConfig {
         return resultTimeout;
     }
 
+    public void setResultTimeout(int resultTimeout) {
+        this.resultTimeout = resultTimeout;
+    }
+
     public Integer getMonitorServerPort() {
         return monitorServerPort;
     }
 
     public void setMonitorServerPort(Integer monitorServerPort) {
         this.monitorServerPort = monitorServerPort;
-    }
-
-    public void setResultTimeout(int resultTimeout) {
-        this.resultTimeout = resultTimeout;
     }
 
     public boolean isAllowExecuteOversea() {

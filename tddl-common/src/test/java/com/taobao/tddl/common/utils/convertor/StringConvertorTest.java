@@ -1,16 +1,16 @@
 package com.taobao.tddl.common.utils.convertor;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 /**
  * convertor相关的单元测试
- * 
+ *
  * @author jianghang 2011-5-26 上午11:17:36
  */
 public class StringConvertorTest {
@@ -44,11 +44,11 @@ public class StringConvertorTest {
         Assert.assertEquals(doubleValue, Double.valueOf((double) value));
 
         Object bigIntegerValue = helper.getConvertor(String.class, BigInteger.class)
-            .convert(strValue, BigInteger.class);
+                .convert(strValue, BigInteger.class);
         Assert.assertEquals(bigIntegerValue, BigInteger.valueOf(value));
 
         Object bigDecimalValue = helper.getConvertor(String.class, BigDecimal.class)
-            .convert(strValue, BigDecimal.class);
+                .convert(strValue, BigDecimal.class);
         Assert.assertEquals(bigDecimalValue, BigDecimal.valueOf(value));
 
         Object boolValue = helper.getConvertor(String.class, boolean.class).convert(strValue, boolean.class);

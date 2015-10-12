@@ -1,24 +1,24 @@
 package com.taobao.tddl.rule.enumerator.handler;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Set;
-
 import com.taobao.tddl.common.utils.thread.ThreadLocalMap;
 import com.taobao.tddl.rule.model.DateEnumerationParameter;
 import com.taobao.tddl.rule.model.sqljep.Comparative;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Set;
+
 /**
  * 基于时间类型的枚举器
- * 
+ *
  * @author jianghang 2013-10-29 下午5:23:01
  * @since 5.0.0
  */
 public class DatePartDiscontinousRangeEnumerator extends PartDiscontinousRangeEnumerator {
 
-    private static final long   LIMIT_UNIT_OF_DATE        = 1L;
-    private static final String DATE_ENUMERATOR           = "DATE_ENUMERATOR";
-    private static final int    DEFAULT_DATE_ATOMIC_VALUE = 1;
+    private static final long LIMIT_UNIT_OF_DATE = 1L;
+    private static final String DATE_ENUMERATOR = "DATE_ENUMERATOR";
+    private static final int DEFAULT_DATE_ATOMIC_VALUE = 1;
 
     @Override
     protected Comparative changeGreater2GreaterOrEq(Comparative from) {
@@ -50,7 +50,7 @@ public class DatePartDiscontinousRangeEnumerator extends PartDiscontinousRangeEn
         return cal.getTime();
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     protected boolean inputCloseRangeGreaterThanMaxFieldOfDifination(Comparable from, Comparable to,
                                                                      Integer cumulativeTimes,
@@ -105,7 +105,7 @@ public class DatePartDiscontinousRangeEnumerator extends PartDiscontinousRangeEn
             retValue.add(cal.getTime());
             for (int i = 0; i < cumulativeTimes - 1; i++) {
                 cal.add(dateEnumerationParameter.calendarFieldType, -1
-                                                                    * dateEnumerationParameter.atomicIncreatementNumber);
+                        * dateEnumerationParameter.atomicIncreatementNumber);
                 retValue.add(cal.getTime());
             }
         }

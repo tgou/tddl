@@ -1,20 +1,13 @@
 package com.taobao.tddl.rule.utils.sample;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 一个描点集合的抽象。支持线程不安全的笛卡尔积迭代遍历。<br/>
  * 一个Sample表示一个笛卡尔积抽样，将多列独立的枚举值，用特殊的遍历方法，转换为笛卡尔积抽样（即不同列值的组合）
  * 一个Sample用一个Map<String, Object>表示，key包含了各列，value对应每列的一个取值
- * 
+ * <p/>
  * <pre>
  * 算法介绍：
  * 1. 构建多个列的Iterator
@@ -23,22 +16,28 @@ import java.util.Set;
  *   a. 从当前Iterator进行遍历，该列所有值遍历完成后，往前退到上一个列
  *   b. 上一列移动到下一个值，移动完成后进入下一个列进行遍历，如果无法移动，继续a的操作
  * </pre>
- * 
+ *
  * @author linxuan
  */
 public class Samples implements Iterable<Map<String/* 列名 */, Object/* 列值 */>>, Iterator<Map<String, Object>> {
 
     private final Map<String, Set<Object>> columnEnumerates;
-    private final String[]                 subColums;       // 使用哪几列，便于做sub
-    private final Set<String>              subColumSet;     // 与subColums保持一致，便于判,只读
+    private final String[] subColums;       // 使用哪几列，便于做sub
+    private final Set<String> subColumSet;     // 与subColums保持一致，便于判,只读
+    /**
+     * 下面是笛卡尔积迭代遍历的实现
+     */
+    private Map<String, Object> currentCartesianSample; // currentCartesianProduct当前的笛卡尔值
+    private Iterator<Object>[] iterators;             // 这种方式尾端iterator要反复重新打开，KeyIterator对象会创建比较多。考虑用Object[]加游标
+    private int cursor;
 
-    public Samples(Map<String, Set<Object>> columnEnumerates){
+    public Samples(Map<String, Set<Object>> columnEnumerates) {
         this.columnEnumerates = columnEnumerates;
         this.subColums = columnEnumerates.keySet().toArray(new String[columnEnumerates.size()]);
         this.subColumSet = columnEnumerates.keySet();// subColumSet只读，这样应该没问题
     }
 
-    public Samples(Map<String, Set<Object>> columnEnumerates, String[] subColumns){
+    public Samples(Map<String, Set<Object>> columnEnumerates, String[] subColumns) {
         this.columnEnumerates = columnEnumerates;
         this.subColums = subColumns;
         this.subColumSet = new HashSet<String>();
@@ -48,7 +47,7 @@ public class Samples implements Iterable<Map<String/* 列名 */, Object/* 列值
         }
     }
 
-    public Samples(Set<String> columnNames){
+    public Samples(Set<String> columnNames) {
         this.columnEnumerates = new HashMap<String, Set<Object>>();
         for (String name : columnNames) {
             this.columnEnumerates.put(name, new HashSet<Object>(1));
@@ -56,6 +55,8 @@ public class Samples implements Iterable<Map<String/* 列名 */, Object/* 列值
         this.subColums = columnNames.toArray(new String[columnEnumerates.size()]);
         this.subColumSet = Collections.unmodifiableSet(columnNames);// subColumSet只读
     }
+
+    // ======================== 笛卡尔积迭代遍历的相关操作方法 ===========================
 
     /**
      * @param columns 如果columns包含本对象columnEnumerates中不存在的key，后果不可预期
@@ -89,15 +90,6 @@ public class Samples implements Iterable<Map<String/* 列名 */, Object/* 列值
     public int size() {
         return this.subColums.length;
     }
-
-    // ======================== 笛卡尔积迭代遍历的相关操作方法 ===========================
-
-    /**
-     * 下面是笛卡尔积迭代遍历的实现
-     */
-    private Map<String, Object> currentCartesianSample; // currentCartesianProduct当前的笛卡尔值
-    private Iterator<Object>[]  iterators;             // 这种方式尾端iterator要反复重新打开，KeyIterator对象会创建比较多。考虑用Object[]加游标
-    private int                 cursor;
 
     /**
      * 向一个列添加枚举值
@@ -144,7 +136,7 @@ public class Samples implements Iterable<Map<String/* 列名 */, Object/* 列值
      * 返回结果只能读取。如若修改后果不可预期。 columnSamples每个列的枚举值集合必须至少有一个元素。
      */
     public Map<String, Object> next() {
-        for (;;) {
+        for (; ; ) {
             if (iterators[cursor].hasNext()) {
                 currentCartesianSample.put(subColums[cursor], iterators[cursor].next());
                 if (cursor == subColums.length - 1) {

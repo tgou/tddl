@@ -18,33 +18,28 @@
  */
 package com.alibaba.cobar.parser.ast.stmt.dml;
 
-import java.util.List;
-
 import com.alibaba.cobar.parser.ast.expression.misc.QueryExpression;
 import com.alibaba.cobar.parser.ast.expression.primary.Identifier;
 import com.alibaba.cobar.parser.ast.expression.primary.RowExpression;
 import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class DMLReplaceStatement extends DMLInsertReplaceStatement {
 
-    public static enum ReplaceMode {
-        /** default */
-        UNDEF, LOW, DELAY
-    }
-
     private final ReplaceMode mode;
 
     public DMLReplaceStatement(ReplaceMode mode, Identifier table, List<Identifier> columnNameList,
-                               List<RowExpression> rowList){
+                               List<RowExpression> rowList) {
         super(table, columnNameList, rowList);
         this.mode = mode;
     }
 
     public DMLReplaceStatement(ReplaceMode mode, Identifier table, List<Identifier> columnNameList,
-                               QueryExpression select){
+                               QueryExpression select) {
         super(table, columnNameList, select);
         this.mode = mode;
     }
@@ -56,5 +51,12 @@ public class DMLReplaceStatement extends DMLInsertReplaceStatement {
     @Override
     public void accept(SQLASTVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public static enum ReplaceMode {
+        /**
+         * default
+         */
+        UNDEF, LOW, DELAY
     }
 }

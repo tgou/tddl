@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.esitimater;
 
-import java.util.List;
-
 import com.taobao.tddl.optimizer.OptimizerContext;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
@@ -13,6 +11,8 @@ import com.taobao.tddl.optimizer.costbased.esitimater.stat.KVIndexStat;
 import com.taobao.tddl.optimizer.costbased.esitimater.stat.TableStat;
 import com.taobao.tddl.optimizer.exceptions.StatisticsUnavailableException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
+
+import java.util.List;
 
 /**
  * @author Dreamond
@@ -42,8 +42,8 @@ public class QueryNodeCostEstimater implements QueryTreeCostEstimater {
             isOnfly = false;
             index = ((TableNode) query).getIndexUsed();
             TableStat stat = OptimizerContext.getContext()
-                .getStatManager()
-                .getTable(((TableNode) query).getTableMeta().getTableName());
+                    .getStatManager()
+                    .getTable(((TableNode) query).getTableMeta().getTableName());
             indexStat = OptimizerContext.getContext().getStatManager().getKVIndex(index.getName());
             if (stat != null) {
                 initRowCount = stat.getTableRows();
@@ -62,10 +62,10 @@ public class QueryNodeCostEstimater implements QueryTreeCostEstimater {
             rowCount = 1;
             scanRowCount = 1;
         } else if (query.getLimitFrom() != null
-                   && (query.getLimitFrom() instanceof Long || query.getLimitFrom() instanceof Long)
-                   && (Long) query.getLimitFrom() != 0 && query.getLimitTo() != null
-                   && (query.getLimitTo() instanceof Long || query.getLimitTo() instanceof Long)
-                   && (Long) query.getLimitTo() != 0) {
+                && (query.getLimitFrom() instanceof Long || query.getLimitFrom() instanceof Long)
+                && (Long) query.getLimitFrom() != 0 && query.getLimitTo() != null
+                && (query.getLimitTo() instanceof Long || query.getLimitTo() instanceof Long)
+                && (Long) query.getLimitTo() != 0) {
             // 对于包含limit的查询，使用limit提供的结果
             rowCount = (Long) query.getLimitTo() - (Long) query.getLimitFrom();
             scanRowCount = CostEsitimaterFactory.estimateRowCount(initRowCount, keyFilters, index, indexStat);
@@ -84,7 +84,7 @@ public class QueryNodeCostEstimater implements QueryTreeCostEstimater {
         // step2.估计网络开销
         if (isOnfly) {
             if (query.getDataNode() == null
-                || (query.getDataNode().equals(((QueryNode) query).getChild().getDataNode()))) {
+                    || (query.getDataNode().equals(((QueryNode) query).getChild().getDataNode()))) {
                 // 如果当前的查询和子查询在一台机器上执行，则网络开销为0
                 networkCost = 0;
             } else {

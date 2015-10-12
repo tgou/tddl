@@ -1,24 +1,23 @@
 package com.taobao.tddl.qatest.matrix.hint;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class DirectHintTest extends BaseMatrixTestCase {
 
     private JdbcTemplate jdbcTemplate;
-    private Date         time = new Date();
+    private Date time = new Date();
 
-    public DirectHintTest(){
+    public DirectHintTest() {
         BaseTestCase.normaltblTableName = "mysql_normaltbl_oneGroup_oneAtom";
         jdbcTemplate = new JdbcTemplate(us);
     }
@@ -103,7 +102,7 @@ public class DirectHintTest extends BaseMatrixTestCase {
         // 多表名替换时，用逗号分隔
         sql = "/*+TDDL({\"type\":\"direct\",\"dbid\":\"andor_mysql_group_oneAtom\",\"vtab\":\"tablea,tableb\",\"realtabs\":[\"mysql_normaltbl_onegroup_mutilatom_00,mysql_normaltbl_onegroup_mutilatom_01\"]})*/";
         sql += "select a.gmt_timestamp as atime,b.gmt_timestamp as btime from tablea a inner join tableb b on a.pk = b.pk where a.pk="
-               + RANDOM_ID;
+                + RANDOM_ID;
         Map re = jdbcTemplate.queryForMap(sql);
         Assert.assertEquals(time.getTime() / 1000, ((Date) re.get("ATIME")).getTime() / 1000);
         Assert.assertEquals(time.getTime() / 1000, ((Date) re.get("BTIME")).getTime() / 1000);
@@ -138,15 +137,15 @@ public class DirectHintTest extends BaseMatrixTestCase {
         // 分别查询两个库
         sql = "/*+TDDL({\"type\":\"direct\",\"dbid\":\"?\",\"vtab\":\"?\",\"realtabs\":[\"?\"]})*/ ";
         sql += "select gmt_timestamp from mysql_normaltbl_oneGroup_oneAtom where pk=" + RANDOM_ID;
-        Object args0[] = { "andor_mysql_group_oneAtom", "mysql_normaltbl_oneGroup_oneAtom",
-                "mysql_normaltbl_onegroup_mutilatom_00" };
+        Object args0[] = {"andor_mysql_group_oneAtom", "mysql_normaltbl_oneGroup_oneAtom",
+                "mysql_normaltbl_onegroup_mutilatom_00"};
         Map re = jdbcTemplate.queryForMap(sql, args0);
         Assert.assertEquals(time.getTime() / 1000, ((Date) re.get("GMT_TIMESTAMP")).getTime() / 1000);
 
         sql = "/*+TDDL({\"type\":\"direct\",\"dbid\":\"?\",\"vtab\":\"?\",\"realtabs\":[\"?\"]})*/ ";
         sql += "select gmt_timestamp from mysql_normaltbl_oneGroup_oneAtom where pk=" + RANDOM_ID;
-        Object args1[] = { "andor_mysql_group_oneAtom", "mysql_normaltbl_oneGroup_oneAtom",
-                "mysql_normaltbl_onegroup_mutilatom_01" };
+        Object args1[] = {"andor_mysql_group_oneAtom", "mysql_normaltbl_oneGroup_oneAtom",
+                "mysql_normaltbl_onegroup_mutilatom_01"};
         re = jdbcTemplate.queryForMap(sql, args1);
         Assert.assertEquals(time.getTime() / 1000, ((Date) re.get("GMT_TIMESTAMP")).getTime() / 1000);
 

@@ -8,7 +8,7 @@ import com.taobao.tddl.common.exception.TddlException;
  */
 public class AbstractLifecycle implements Lifecycle {
 
-    private final Object       lock     = new Object();
+    private final Object lock = new Object();
     protected volatile boolean isInited = false;
 
     public void init() throws TddlException {

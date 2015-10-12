@@ -1,9 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.after;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.expression.IFunction;
 import com.taobao.tddl.optimizer.core.expression.IFunction.FunctionType;
@@ -14,14 +10,18 @@ import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * avg变成count + sum 要改变columns结构
- * 
+ *
  * @author Whisper
  */
 public class FuckAvgOptimizer implements QueryPlanOptimizer {
 
-    public FuckAvgOptimizer(){
+    public FuckAvgOptimizer() {
     }
 
     /**
@@ -101,7 +101,7 @@ public class FuckAvgOptimizer implements QueryPlanOptimizer {
                         // 目前这个只能上层来进行计算
                         // 可能的风险：还未支持的Function计算
                         if (FunctionType.Scalar.equals(((IFunction) s).getFunctionType())
-                            && hasArgsAvgFunction((IFunction) s)) {
+                                && hasArgsAvgFunction((IFunction) s)) {
                             remove.add(s);
                         }
                     }

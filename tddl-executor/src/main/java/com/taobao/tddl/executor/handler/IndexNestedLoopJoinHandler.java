@@ -1,8 +1,5 @@
 package com.taobao.tddl.executor.handler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.common.ExecutionContext;
@@ -13,9 +10,12 @@ import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class IndexNestedLoopJoinHandler extends QueryHandlerCommon {
 
-    public IndexNestedLoopJoinHandler(){
+    public IndexNestedLoopJoinHandler() {
         super();
     }
 
@@ -40,12 +40,12 @@ public class IndexNestedLoopJoinHandler extends QueryHandlerCommon {
         try {
 
             cursor_left = ExecutorContext.getContext()
-                .getTopologyExecutor()
-                .execByExecPlanNode(leftQuery, executionContext);
+                    .getTopologyExecutor()
+                    .execByExecPlanNode(leftQuery, executionContext);
 
             cursor_right = ExecutorContext.getContext()
-                .getTopologyExecutor()
-                .execByExecPlanNode(join.getRightNode(), executionContext);
+                    .getTopologyExecutor()
+                    .execByExecPlanNode(join.getRightNode(), executionContext);
 
         } catch (RuntimeException e) {
             List<TddlException> exs = new ArrayList();
@@ -64,13 +64,13 @@ public class IndexNestedLoopJoinHandler extends QueryHandlerCommon {
         }
 
         cursor = repo.getCursorFactory().indexNestLoopCursor(executionContext,
-            cursor_left,
-            cursor_right,
-            join.getLeftJoinOnColumns(),
-            join.getRightJoinOnColumns(),
-            join.getColumns(),
-            false,
-            (IJoin) executor);
+                cursor_left,
+                cursor_right,
+                join.getLeftJoinOnColumns(),
+                join.getRightJoinOnColumns(),
+                join.getColumns(),
+                false,
+                (IJoin) executor);
         return cursor;
     }
 }

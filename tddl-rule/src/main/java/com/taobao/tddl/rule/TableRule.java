@@ -1,16 +1,5 @@
 package com.taobao.tddl.rule;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import com.taobao.tddl.common.model.DBType;
 import com.taobao.tddl.rule.Rule.RuleColumn;
 import com.taobao.tddl.rule.impl.EnumerativeRule;
@@ -20,36 +9,38 @@ import com.taobao.tddl.rule.utils.sample.Samples;
 import com.taobao.tddl.rule.virtualnode.DBTableMap;
 import com.taobao.tddl.rule.virtualnode.TableSlotMap;
 
+import java.util.*;
+
 /**
  * 类名取名兼容老的rule代码<br/>
  * 描述一个逻辑表怎样分库分表，允许指定逻辑表名和db/table的{@linkplain Rule}规则
- * 
+ * <p/>
  * <pre>
- *   一个配置事例： 
+ *   一个配置事例：
  *   -----------
  *   <!-- 按照user_id取模划分64张表,表明具体为'user_0000'-'user_0063'，
  *   'user_0000'-'user_0031' 在'TDDL_0000_GROUP'中，
  *   'user_0032'-'user_0063' 在'TDDL_0001_GROUP'中 -->
  *   <bean id="user_bean" class="com.taobao.tddl.rule.VirtualTable">
  *     <!-- groupKey格式框架，{}中的数将会被dbRuleArray的值替代，并保持位数 -->
- *     <property name="dbNamePattern" value="TDDL_{0000}_GROUP"/> 
+ *     <property name="dbNamePattern" value="TDDL_{0000}_GROUP"/>
  *     <!-- 具体的分库规则 -->
- *     <property name="dbRuleArray"> 
+ *     <property name="dbRuleArray">
  *       <!-- 按照user_id取模划分64张表，结果除以32后分到两个库中 -->
- *       <value>(#user_id,1,64#.longValue() % 64).intdiv(32)</value> 
+ *       <value>(#user_id,1,64#.longValue() % 64).intdiv(32)</value>
  *     </property>
  *     <!-- 具体表名格式框架，{}中的数将会被tbRuleArray的值替代，并保持位数 -->
- *     <property name="tbNamePattern" value="user_{0000}"></property> 
+ *     <property name="tbNamePattern" value="user_{0000}"></property>
  *     <!-- 具体的分表规则 -->
- *     <property name="tbRuleArray"> 
+ *     <property name="tbRuleArray">
  *       <!-- 按照user_id取模划分64张表 -->
- *       <value>#user_id,1,64#.longValue() % 64</value> 
+ *       <value>#user_id,1,64#.longValue() % 64</value>
  *     </property>
  *     <!-- 全表扫描开关，默认关闭，是否允许应用端在没有给定分表键值的情况下查询全表 -->
- *     <property name="allowFullTableScan" value="true"/> 
+ *     <property name="allowFullTableScan" value="true"/>
  *   </bean>
  * </pre>
- * 
+ *
  * @author linxuan
  * @author jianghang 2013-11-4 下午5:33:51
  * @since 5.0.0
@@ -58,40 +49,44 @@ public class TableRule extends VirtualTableSupport implements VirtualTableRule {
 
     /** =================================================== **/
     /** == 原始的配置字符串 == **/
-    /** =================================================== **/
-    protected String             dbNamePattern;               // item_{0000}_dbkey
-    protected String             tbNamePattern;               // item_{0000}
-    protected String[]           dbRules;                     // rule配置字符串
-    protected String[]           tbRules;                     // rule配置字符串
-    protected List<String>       extraPackages;               // 自定义用户包
+    /**
+     * =================================================== *
+     */
+    protected String dbNamePattern;               // item_{0000}_dbkey
+    protected String tbNamePattern;               // item_{0000}
+    protected String[] dbRules;                     // rule配置字符串
+    protected String[] tbRules;                     // rule配置字符串
+    protected List<String> extraPackages;               // 自定义用户包
 
-    protected boolean            allowReverseOutput;          // 是否允许反向输出
-    protected boolean            allowFullTableScan   = false; // 是否允许全表扫描
-    protected boolean            disableFullTableScan = true; // 是否关闭全表扫描
+    protected boolean allowReverseOutput;          // 是否允许反向输出
+    protected boolean allowFullTableScan = false; // 是否允许全表扫描
+    protected boolean disableFullTableScan = true; // 是否关闭全表扫描
 
     /**
      * 虚拟节点映射
      */
-    protected TableSlotMap       tableSlotMap;
-    protected DBTableMap         dbTableMap;
-    protected String             tableSlotKeyFormat;
+    protected TableSlotMap tableSlotMap;
+    protected DBTableMap dbTableMap;
+    protected String tableSlotKeyFormat;
 
-    /** ============ 运行时变量 ================= **/
+    /**
+     * ============ 运行时变量 ================= *
+     */
 
     protected List<Rule<String>> dbShardRules;
     protected List<Rule<String>> tbShardRules;
-    protected List<String>       shardColumns;                // 分库字段
-    protected Object             outerContext;
+    protected List<String> shardColumns;                // 分库字段
+    protected Object outerContext;
 
     /**
      * 是否是个广播表，optimizer模块需要用他来标记某个表是否需要进行复制
      */
-    protected boolean            broadcast            = false;
+    protected boolean broadcast = false;
 
     /**
      * 相同的join group 应该具有相同的切分规则
      */
-    protected String             joinGroup            = null;
+    protected String joinGroup = null;
 
     public void doInit() {
         // 初始化虚拟节点
@@ -343,7 +338,7 @@ public class TableRule extends VirtualTableSupport implements VirtualTableRule {
         if (this.dbRules == null) {
             // 优先级比dbRuleArray低
             // this.dbRules = dbRules.split("\\|");
-            this.dbRules = new String[] { dbRules.trim() }; // 废掉|分隔符，没人用且容易造成混乱
+            this.dbRules = new String[]{dbRules.trim()}; // 废掉|分隔符，没人用且容易造成混乱
         }
     }
 
@@ -351,7 +346,7 @@ public class TableRule extends VirtualTableSupport implements VirtualTableRule {
         if (this.tbRules == null) {
             // 优先级比tbRuleArray低
             // this.tbRules = tbRules.split("\\|");
-            this.tbRules = new String[] { tbRules.trim() }; // 废掉|分隔符，没人用且容易造成混乱
+            this.tbRules = new String[]{tbRules.trim()}; // 废掉|分隔符，没人用且容易造成混乱
         }
     }
 
@@ -364,24 +359,8 @@ public class TableRule extends VirtualTableSupport implements VirtualTableRule {
         }
     }
 
-    public void setDbNamePattern(String dbKeyPattern) {
-        this.dbNamePattern = dbKeyPattern;
-    }
-
-    public void setTbNamePattern(String tbKeyPattern) {
-        this.tbNamePattern = tbKeyPattern;
-    }
-
     public void setExtraPackages(List<String> extraPackages) {
         this.extraPackages = extraPackages;
-    }
-
-    public void setOuterContext(Object outerContext) {
-        this.outerContext = outerContext;
-    }
-
-    public void setAllowReverseOutput(boolean allowReverseOutput) {
-        this.allowReverseOutput = allowReverseOutput;
     }
 
     public boolean isDisableFullTableScan() {
@@ -392,60 +371,84 @@ public class TableRule extends VirtualTableSupport implements VirtualTableRule {
         this.disableFullTableScan = disableFullTableScan;
     }
 
-    public void setAllowFullTableScan(boolean allowFullTableScan) {
-        this.allowFullTableScan = allowFullTableScan;
+    public DBType getDbType() {
+        return dbType;
     }
 
     public void setDbType(DBType dbType) {
         this.dbType = dbType;
     }
 
-    public void setDbShardRules(List<Rule<String>> dbShardRules) {
-        this.dbShardRules = dbShardRules;
-    }
-
-    public void setTbShardRules(List<Rule<String>> tbShardRules) {
-        this.tbShardRules = tbShardRules;
-    }
-
-    public DBType getDbType() {
-        return dbType;
-    }
-
     public List getDbShardRules() {
         return dbShardRules;
+    }
+
+    public void setDbShardRules(List<Rule<String>> dbShardRules) {
+        this.dbShardRules = dbShardRules;
     }
 
     public List getTbShardRules() {
         return tbShardRules;
     }
 
+    public void setTbShardRules(List<Rule<String>> tbShardRules) {
+        this.tbShardRules = tbShardRules;
+    }
+
     public Object getOuterContext() {
         return outerContext;
+    }
+
+    public void setOuterContext(Object outerContext) {
+        this.outerContext = outerContext;
     }
 
     public TableSlotMap getTableSlotMap() {
         return tableSlotMap;
     }
 
+    public void setTableSlotMap(TableSlotMap tableSlotMap) {
+        this.tableSlotMap = tableSlotMap;
+    }
+
     public DBTableMap getDbTableMap() {
         return dbTableMap;
+    }
+
+    public void setDbTableMap(DBTableMap dbTableMap) {
+        this.dbTableMap = dbTableMap;
     }
 
     public boolean isAllowReverseOutput() {
         return allowReverseOutput;
     }
 
+    public void setAllowReverseOutput(boolean allowReverseOutput) {
+        this.allowReverseOutput = allowReverseOutput;
+    }
+
     public boolean isAllowFullTableScan() {
         return allowFullTableScan;
+    }
+
+    public void setAllowFullTableScan(boolean allowFullTableScan) {
+        this.allowFullTableScan = allowFullTableScan;
     }
 
     public String getTbNamePattern() {
         return tbNamePattern;
     }
 
+    public void setTbNamePattern(String tbKeyPattern) {
+        this.tbNamePattern = tbKeyPattern;
+    }
+
     public String getDbNamePattern() {
         return dbNamePattern;
+    }
+
+    public void setDbNamePattern(String dbKeyPattern) {
+        this.dbNamePattern = dbKeyPattern;
     }
 
     public String[] getDbRuleStrs() {
@@ -454,14 +457,6 @@ public class TableRule extends VirtualTableSupport implements VirtualTableRule {
 
     public String[] getTbRulesStrs() {
         return tbRules;
-    }
-
-    public void setDbTableMap(DBTableMap dbTableMap) {
-        this.dbTableMap = dbTableMap;
-    }
-
-    public void setTableSlotMap(TableSlotMap tableSlotMap) {
-        this.tableSlotMap = tableSlotMap;
     }
 
     public void setTableSlotKeyFormat(String tableSlotKeyFormat) {

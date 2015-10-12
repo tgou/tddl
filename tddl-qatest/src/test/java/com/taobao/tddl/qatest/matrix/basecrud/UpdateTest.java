@@ -1,31 +1,30 @@
 package com.taobao.tddl.qatest.matrix.basecrud;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @RunWith(EclipseParameterized.class)
 public class UpdateTest extends BaseMatrixTestCase {
 
+    public UpdateTest(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
+
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public UpdateTest(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -41,7 +40,7 @@ public class UpdateTest extends BaseMatrixTestCase {
             return;
         }
         String sql = "UPDATE " + normaltblTableName
-                     + " SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=?";
+                + " SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=?";
         List<Object> param = new ArrayList<Object>();
         param.add(9999);
         param.add(gmtDay);
@@ -52,7 +51,7 @@ public class UpdateTest extends BaseMatrixTestCase {
         executeCountAssert(sql, param);
 
         sql = "SELECT * FROM " + normaltblTableName;
-        String[] columnParam = { "ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME" };
+        String[] columnParam = {"ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -60,7 +59,7 @@ public class UpdateTest extends BaseMatrixTestCase {
     public void updateOne() throws Exception {
         long pk = 5;
         String sql = "UPDATE " + normaltblTableName
-                     + " SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk=?";
+                + " SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk=?";
         List<Object> param = new ArrayList<Object>();
         param.add(rand.nextInt());
         param.add(gmtDay);
@@ -72,7 +71,7 @@ public class UpdateTest extends BaseMatrixTestCase {
         executeCountAssert(sql, param);
 
         sql = "SELECT * FROM " + normaltblTableName + " WHERE pk=" + pk;
-        String[] columnParam = { "ID", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME", "NAME", "FLOATCOL" };
+        String[] columnParam = {"ID", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME", "NAME", "FLOATCOL"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -83,8 +82,8 @@ public class UpdateTest extends BaseMatrixTestCase {
             return;
         }
         String sql = "UPDATE "
-                     + normaltblTableName
-                     + "  SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk BETWEEN 3 AND 7";
+                + normaltblTableName
+                + "  SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk BETWEEN 3 AND 7";
         List<Object> param = new ArrayList<Object>();
         param.add(rand.nextInt());
         param.add(gmtDay);
@@ -95,7 +94,7 @@ public class UpdateTest extends BaseMatrixTestCase {
         executeCountAssert(sql, param);
 
         sql = "SELECT * FROM " + normaltblTableName + "  WHERE pk BETWEEN 3 AND 7";
-        String[] columnParam = { "ID", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME", "NAME", "FLOATCOL" };
+        String[] columnParam = {"ID", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME", "NAME", "FLOATCOL"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -106,7 +105,7 @@ public class UpdateTest extends BaseMatrixTestCase {
             return;
         }
         String sql = "UPDATE " + normaltblTableName
-                     + "  SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk > 7";
+                + "  SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk > 7";
         List<Object> param = new ArrayList<Object>();
         param.add(rand.nextInt());
         param.add(gmtDay);
@@ -117,7 +116,7 @@ public class UpdateTest extends BaseMatrixTestCase {
         executeCountAssert(sql, param);
 
         sql = "SELECT * FROM " + normaltblTableName + "  WHERE pk > 7";
-        String[] columnParam = { "ID", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME", "NAME", "FLOATCOL" };
+        String[] columnParam = {"ID", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME", "NAME", "FLOATCOL"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -128,7 +127,7 @@ public class UpdateTest extends BaseMatrixTestCase {
             return;
         }
         String sql = "UPDATE " + normaltblTableName
-                     + "  SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk < 7";
+                + "  SET id=?,gmt_create=?,gmt_timestamp=?,gmt_datetime=?,name=?,floatCol=? WHERE pk < 7";
         List<Object> param = new ArrayList<Object>();
         param.add(rand.nextInt());
         param.add(gmtDay);
@@ -139,7 +138,7 @@ public class UpdateTest extends BaseMatrixTestCase {
         executeCountAssert(sql, param);
 
         sql = "SELECT * FROM " + normaltblTableName + "  WHERE pk < 7";
-        String[] columnParam = { "ID", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME", "NAME", "FLOATCOL" };
+        String[] columnParam = {"ID", "GMT_CREATE", "GMT_TIMESTAMP", "GMT_DATETIME", "NAME", "FLOATCOL"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -158,7 +157,7 @@ public class UpdateTest extends BaseMatrixTestCase {
         executeCountAssert(sql, param);
 
         sql = "SELECT * FROM " + normaltblTableName + "  WHERE pk >= 7";
-        String[] columnParam = { "ID", "GMT_CREATE", "NAME", "FLOATCOL" };
+        String[] columnParam = {"ID", "GMT_CREATE", "NAME", "FLOATCOL"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -177,7 +176,7 @@ public class UpdateTest extends BaseMatrixTestCase {
         executeCountAssert(sql, param);
 
         sql = "SELECT * FROM " + normaltblTableName + "  WHERE pk <= 7";
-        String[] columnParam = { "ID", "GMT_CREATE", "NAME", "FLOATCOL" };
+        String[] columnParam = {"ID", "GMT_CREATE", "NAME", "FLOATCOL"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -189,7 +188,7 @@ public class UpdateTest extends BaseMatrixTestCase {
             return;
         }
         String sql = "update " + normaltblTableName
-                     + " set  gmt_create= now(),gmt_timestamp= now(),gmt_datetime=now() where pk=1";
+                + " set  gmt_create= now(),gmt_timestamp= now(),gmt_datetime=now() where pk=1";
         int mysqlRow = mysqlUpdateData(sql, null);
         int row = andorUpdateData(sql, null);
         Assert.assertEquals(mysqlRow, row);
@@ -197,13 +196,13 @@ public class UpdateTest extends BaseMatrixTestCase {
         sql = "select * from " + normaltblTableName + " where pk = 1";
         rs = mysqlQueryData(sql, null);
         rc = andorQueryData(sql, null);
-        String[] columnParam = { "gmt_create", "gmt_timestamp", "gmt_datetime" };
+        String[] columnParam = {"gmt_create", "gmt_timestamp", "gmt_datetime"};
         assertOrder(rs, rc, columnParam);
     }
 
     /**
      * 更新的条件中带&&和||条件
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -213,7 +212,7 @@ public class UpdateTest extends BaseMatrixTestCase {
             return;
         }
         String sql = "update " + normaltblTableName
-                     + " set floatCol= ? where name= ? and ((?-id>100)||(?<id && ?-id >200))";
+                + " set floatCol= ? where name= ? and ((?-id>100)||(?<id && ?-id >200))";
         List<Object> param = new ArrayList<Object>();
         param.add(1.2);
         param.add(name);
@@ -243,7 +242,7 @@ public class UpdateTest extends BaseMatrixTestCase {
         param.clear();
         param.add(200);
         param.add(name);
-        String[] columnParam = { "floatCol" };
+        String[] columnParam = {"floatCol"};
         selectOrderAssert(sql, columnParam, param);
     }
 

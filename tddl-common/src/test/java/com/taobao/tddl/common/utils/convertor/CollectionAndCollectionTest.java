@@ -1,18 +1,11 @@
 package com.taobao.tddl.common.utils.convertor;
 
+import junit.framework.TestCase;
+import org.junit.Test;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-
-import junit.framework.TestCase;
-
-import org.junit.Test;
+import java.util.*;
 
 /**
  * @author jianghang 2011-6-21 下午09:43:46
@@ -26,8 +19,8 @@ public class CollectionAndCollectionTest extends TestCase {
         Convertor intList = helper.getConvertor(int[].class, List.class);
         Convertor integerList = helper.getConvertor(Integer[].class, List.class);
 
-        int[] intArray = new int[] { 1, 2 };
-        Integer[] integerArray = new Integer[] { 1, 2 };
+        int[] intArray = new int[]{1, 2};
+        Integer[] integerArray = new Integer[]{1, 2};
         List intListValue = (List) intList.convert(intArray, List.class);
         List integerListValue = (List) integerList.convert(integerArray, List.class);
         assertEquals(intListValue.size(), intArray.length);
@@ -37,8 +30,8 @@ public class CollectionAndCollectionTest extends TestCase {
         // 测试不同类型转化, common对象
         List<BigInteger> intListValueOther = (List) intList.convertCollection(intArray, List.class, BigInteger.class); // int强制转为BigInteger
         List<BigDecimal> integerListValueOther = (List) intList.convertCollection(intArray,
-            List.class,
-            BigDecimal.class); // int强制转为BigDecimal
+                List.class,
+                BigDecimal.class); // int强制转为BigDecimal
         assertEquals(intListValueOther.size(), intArray.length);
         assertEquals(intListValueOther.get(0).intValue(), intArray[0]);
         assertEquals(integerListValueOther.size(), integerArray.length);
@@ -48,8 +41,8 @@ public class CollectionAndCollectionTest extends TestCase {
         Convertor bigDecimalList = helper.getConvertor(BigDecimal[].class, ArrayList.class);
         Convertor bigIntegerList = helper.getConvertor(BigInteger[].class, Vector.class);
 
-        BigDecimal[] bigDecimalArray = new BigDecimal[] { BigDecimal.ZERO, BigDecimal.ONE };
-        BigInteger[] bigIntegerArray = new BigInteger[] { BigInteger.ZERO, BigInteger.ONE };
+        BigDecimal[] bigDecimalArray = new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ONE};
+        BigInteger[] bigIntegerArray = new BigInteger[]{BigInteger.ZERO, BigInteger.ONE};
         List bigDecimalListValue = (List) bigDecimalList.convert(bigDecimalArray, ArrayList.class);
         List bigIntegerListValue = (List) bigIntegerList.convert(bigIntegerArray, Vector.class);
         assertEquals(bigDecimalListValue.size(), bigDecimalArray.length);
@@ -64,8 +57,8 @@ public class CollectionAndCollectionTest extends TestCase {
         Convertor intSet = helper.getConvertor(int[].class, Set.class);
         Convertor integerSet = helper.getConvertor(Integer[].class, Set.class);
 
-        int[] intArray = new int[] { 1, 2 };
-        Integer[] integerArray = new Integer[] { 1, 2 };
+        int[] intArray = new int[]{1, 2};
+        Integer[] integerArray = new Integer[]{1, 2};
         Set intSetValue = (Set) intSet.convert(intArray, Set.class);
         Set integerSetValue = (Set) integerSet.convert(integerArray, Set.class);
         assertEquals(intSetValue.size(), intArray.length);
@@ -83,8 +76,8 @@ public class CollectionAndCollectionTest extends TestCase {
         Convertor bigDecimalSet = helper.getConvertor(BigDecimal[].class, HashSet.class);
         Convertor bigIntegerSet = helper.getConvertor(BigInteger[].class, LinkedHashSet.class);
 
-        BigDecimal[] bigDecimalArray = new BigDecimal[] { BigDecimal.ZERO, BigDecimal.ONE };
-        BigInteger[] bigIntegerArray = new BigInteger[] { BigInteger.ZERO, BigInteger.ONE };
+        BigDecimal[] bigDecimalArray = new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ONE};
+        BigInteger[] bigIntegerArray = new BigInteger[]{BigInteger.ZERO, BigInteger.ONE};
         Set bigDecimalSetValue = (Set) bigDecimalSet.convert(bigDecimalArray, HashSet.class);
         Set bigIntegerSetValue = (Set) bigIntegerSet.convert(bigIntegerArray, LinkedHashSet.class);
         assertEquals(bigDecimalSetValue.size(), bigDecimalArray.length);
@@ -109,11 +102,11 @@ public class CollectionAndCollectionTest extends TestCase {
         assertEquals(intListValue.get(0), integerArray[0]);
         // 测试不同类型转化, common对象
         BigInteger[] bigIntegerValueOther = (BigInteger[]) intList.convertCollection(intListValue,
-            BigInteger[].class,
-            BigInteger.class); // int强制转为BigInteger
+                BigInteger[].class,
+                BigInteger.class); // int强制转为BigInteger
         BigDecimal[] bigDecimalValueOther = (BigDecimal[]) intList.convertCollection(intListValue,
-            BigDecimal[].class,
-            BigDecimal.class); // int强制转为BigDecimal
+                BigDecimal[].class,
+                BigDecimal.class); // int强制转为BigDecimal
         assertEquals(bigIntegerValueOther.length, intListValue.size());
         assertEquals(bigIntegerValueOther[0].intValue(), intListValue.get(0).intValue());
         assertEquals(bigDecimalValueOther.length, intListValue.size());

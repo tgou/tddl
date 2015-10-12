@@ -1,11 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.chooser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
 import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
@@ -17,24 +11,26 @@ import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.utils.PermutationGenerator;
 
+import java.util.*;
+
 /**
  * 对于inner join的所有节点生成一个全排列
- * 
+ *
  * @author Dreamond
  */
 public final class JoinPermutationGenerator {
 
-    private PermutationGenerator                               pg                   = null;
-    private List<IOrderBy>                                     orderBys;
-    private IFilter                                            valueFilter;
-    private Comparable                                         limitFrom;
-    private Comparable                                         limitTo;
-    private List<IOrderBy>                                     groupBys;
+    private PermutationGenerator pg = null;
+    private List<IOrderBy> orderBys;
+    private IFilter valueFilter;
+    private Comparable limitFrom;
+    private Comparable limitTo;
+    private List<IOrderBy> groupBys;
 
     /**
      * A join B on A.id = B.id 转变为 {A.id-> {B.id->BF[A.id=B.id]}, B.id->
      * {A.id->BF[A.id=B.id]} }
-     * 
+     * <p/>
      * <pre>
      * 第一层key: one column
      * 第二层key：a pair of Key col
@@ -42,11 +38,11 @@ public final class JoinPermutationGenerator {
      * </pre>
      */
     private Map<ISelectable, Map<ISelectable, IBooleanFilter>> joinColumnsAndFilter = new HashMap();
-    private List<QueryTreeNode>                                queryNodes           = new ArrayList();
-    private List<ISelectable>                                  columns;
-    private IFilter                                            allWhereFilter;
+    private List<QueryTreeNode> queryNodes = new ArrayList();
+    private List<ISelectable> columns;
+    private IFilter allWhereFilter;
 
-    public JoinPermutationGenerator(QueryTreeNode qtn){
+    public JoinPermutationGenerator(QueryTreeNode qtn) {
         this.orderBys = qtn.getOrderBys();
         this.groupBys = qtn.getGroupBys();
         this.columns = qtn.getColumnsSelected();
@@ -62,9 +58,9 @@ public final class JoinPermutationGenerator {
 
     /**
      * 从查询树中收集不会再被调整Join顺序的子树
-     * 
+     * <p/>
      * <pre>
-     * 包括： 
+     * 包括：
      * 1、非InnerJoin的Join节点。因为既然用户已经指定了left或者right，说明用户已经指定了outter的就为驱动表，所以无需再做额外的调整
      * 2、被标记为子查询的Join节点，子查询中的节点会单独去调整
      * 3、不在1中的Query节点
@@ -73,7 +69,7 @@ public final class JoinPermutationGenerator {
     private void getQueryNodesFromQueryTree(QueryTreeNode node) {
         if (node instanceof JoinNode) {
             if (!((JoinNode) node).isInnerJoin() || node.isSubQuery()
-                || ((JoinNode) node).getOtherJoinOnFilter() != null) {
+                    || ((JoinNode) node).getOtherJoinOnFilter() != null) {
                 this.queryNodes.add(node);
                 return;
             }

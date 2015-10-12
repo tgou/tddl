@@ -1,10 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.common.DuplicateKVPair;
@@ -19,27 +14,32 @@ import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 批量到右边去取数据的index nested loop实现
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-3 上午10:55:29
  * @since 5.0.0
  */
 public class IndexNestedLoopMgetImpCursor extends IndexNestLoopCursor implements IIndexNestLoopCursor {
 
+    protected ICursorMeta rightCursorMeta = null;
     /**
      * 一次匹配中，batch传递的数据个数
      */
-    int                                   sizeKeyLimination             = 20;
-
+    int sizeKeyLimination = 20;
     /**
      * 假定每个key都有25个不同的value
      */
-    int                                   sizeRetLimination             = 5000;
+    int sizeRetLimination = 5000;
     /**
      * left cursor ，会先取一批数据（sizeKeyLimination个），这是那一批数据的遍历器
      */
-    Iterator<IRowSet>                     leftIterator                  = null;
+    Iterator<IRowSet> leftIterator = null;
     /**
      * 当前取出的kvPair
      */
@@ -47,30 +47,26 @@ public class IndexNestedLoopMgetImpCursor extends IndexNestLoopCursor implements
     /**
      * 如果有重复，那么会放在这里
      */
-    DuplicateKVPair                       rightDuplicateCache;
-
+    DuplicateKVPair rightDuplicateCache;
     /**
      * 左cursor join on columns 的value的遍历器，这个值是从leftIterator里面，根据left join on
      * column ，取出来放到队列里的。
      */
-    Iterator<CloneableRecord>             leftJoinOnColumnCacheIterator = null;
-    KVPair                                rightPair                     = null;
-
-    boolean                               isLeftJoin                    = false;
-    boolean                               useProxyResult                = true;
-
-    protected ICursorMeta                 rightCursorMeta               = null;
+    Iterator<CloneableRecord> leftJoinOnColumnCacheIterator = null;
+    KVPair rightPair = null;
+    boolean isLeftJoin = false;
+    boolean useProxyResult = true;
 
     public IndexNestedLoopMgetImpCursor(ISchematicCursor leftCursor, ISchematicCursor rightCursor, List leftColumns,
                                         List rightColumns, List columns, List leftRetColumns, List rightRetColumns,
-                                        IJoin join) throws TddlException{
+                                        IJoin join) throws TddlException {
         super(leftCursor, rightCursor, leftColumns, rightColumns, columns, leftRetColumns, rightRetColumns);
         setLeftRightJoin(join);
     }
 
     public IndexNestedLoopMgetImpCursor(ISchematicCursor leftCursor, ISchematicCursor rightCursor, List leftColumns,
                                         List rightColumns, List columns, boolean prefix, List leftRetColumns,
-                                        List rightRetColumns, IJoin join) throws TddlException{
+                                        List rightRetColumns, IJoin join) throws TddlException {
         super(leftCursor, rightCursor, leftColumns, rightColumns, columns, prefix, leftRetColumns, rightRetColumns);
         setLeftRightJoin(join);
     }
@@ -102,19 +98,18 @@ public class IndexNestedLoopMgetImpCursor extends IndexNestLoopCursor implements
     /**
      * <pre>
      * 这个方法的核心作用，就是把已经取出的左面一组数，和右面的一组数，按照join on
-     * column的条件，从两边各找到一个对应的Row.然后把这两个row join到一起。 右列与左列排序相同，但右列可能出现几种情况： 
+     * column的条件，从两边各找到一个对应的Row.然后把这两个row join到一起。 右列与左列排序相同，但右列可能出现几种情况：
      * 1. 右列可能缺少左列中的某个值
      * 2. 右列也可能拥有多个与左列某个值相同的值（重复）
      * 若左列当前值为空，从左面拿一个值出来，再从右面拿一个值出来，做比较。否则使用左列当前值
      * 因为可能出现左列某值在右列为空的情况，为了简化场景（主要简化：左要知道右是否有左，需要遍历全结果集），所以以右作为驱动表。
      * 右的值，一定会在左中有对应的值。 找到他，组合成joinRecord.放到current里面。然后返回true即可。
      * </pre>
-     * 
-     * @param leftIterator 左值的一个遍历队列便利器
+     *
+     * @param leftIterator                   左值的一个遍历队列便利器
      * @param leftJoinOnColumnCacheIterator2 左值中，用来做join on column的数据的队列便利器
-     * @param rightPairs2
-     * 根据左面的数据id,从右面的结果集中取出的一组数据，这组数据内是可能有重复数据的。这个Map的key，是join on column中要求的数据
-     * value，是拥有这行数据的KVPair的集合（也就是拥有相同join on column的数据的集合，是个链表)
+     * @param rightPairs2                    根据左面的数据id,从右面的结果集中取出的一组数据，这组数据内是可能有重复数据的。这个Map的key，是join on column中要求的数据
+     *                                       value，是拥有这行数据的KVPair的集合（也就是拥有相同join on column的数据的集合，是个链表)
      * @return 返回一个Join后的结果。
      */
     protected IRowSet match(Iterator<IRowSet> leftIterator, Iterator<CloneableRecord> leftJoinOnColumnCacheIterator2,
@@ -155,7 +150,7 @@ public class IndexNestedLoopMgetImpCursor extends IndexNestLoopCursor implements
 
                         // 建一个都为null的rouset
                         IRowSet rightRowSet = new ArrayRowSet(rightCursorMeta, new Object[rightCursorMeta.getColumns()
-                            .size()]);
+                                .size()]);
                         current = joinRecord(left, rightRowSet);
 
                         // Object[] row = new Object[leftColumns.size() +
@@ -218,13 +213,13 @@ public class IndexNestedLoopMgetImpCursor extends IndexNestLoopCursor implements
     }
 
     protected Map<CloneableRecord, DuplicateKVPair> getRecordFromRight(List<CloneableRecord> leftJoinOnColumnCache)
-                                                                                                                   throws TddlException {
+            throws TddlException {
         return right_cursor.mgetWithDuplicate(leftJoinOnColumnCache, false, true);
     }
 
     /**
      * 将left cursor 取出 sizeKeyLimination个。 放到缓存里
-     * 
+     *
      * @param leftJoinOnColumnCache
      * @param leftKVPair
      * @return
@@ -232,7 +227,7 @@ public class IndexNestedLoopMgetImpCursor extends IndexNestLoopCursor implements
      * @throws InterruptedException
      */
     private boolean fillCache(List<CloneableRecord> leftJoinOnColumnCache, List<IRowSet> leftKVPair, boolean forward)
-                                                                                                                     throws TddlException {
+            throws TddlException {
 
         int currentSize = 0;
         boolean hasMore = false;

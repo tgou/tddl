@@ -1,7 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.Arrays;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.cursor.IAffectRowCursor;
@@ -14,14 +12,16 @@ import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.config.table.ColumnMessage;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
 
+import java.util.Arrays;
+
 public class AffectRowCursor extends SchematicCursor implements IAffectRowCursor {
 
-    private int           affectRow    = 0;
-    protected boolean     first        = true;
-    private boolean       schemaInited = false;
+    protected boolean first = true;
     protected ICursorMeta cursormeta;
+    private int affectRow = 0;
+    private boolean schemaInited = false;
 
-    public AffectRowCursor(int affectRow){
+    public AffectRowCursor(int affectRow) {
         super(null, null, null);
         this.affectRow = affectRow;
     }

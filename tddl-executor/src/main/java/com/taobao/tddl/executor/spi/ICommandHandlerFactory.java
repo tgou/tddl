@@ -10,7 +10,7 @@ import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
  * .和一个select* from tab where id =1 这样的查询效率太低。
  * 因此，可以直接从updateNode这里，就将updateNode和selectNode在这个地方直接变成sql去执行。而不走到cursor层合并
  * 能够简化查询编码。
- * 
+ *
  * @author whisper
  */
 public interface ICommandHandlerFactory {

@@ -1,13 +1,13 @@
 package com.taobao.tddl.qatest.util;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map.Entry;
 import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @author zhuoxue.yll
@@ -18,7 +18,7 @@ public class LoadPropsUtil {
 
     /**
      * load the file to Properties
-     * 
+     *
      * @param classPath
      * @return
      */

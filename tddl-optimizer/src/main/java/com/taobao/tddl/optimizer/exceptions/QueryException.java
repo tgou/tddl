@@ -9,23 +9,23 @@ public class QueryException extends OptimizerException {
 
     private static final long serialVersionUID = 6432150590171245275L;
 
-    public QueryException(String errorCode, String errorDesc, Throwable cause){
+    public QueryException(String errorCode, String errorDesc, Throwable cause) {
         super(errorCode, errorDesc, cause);
     }
 
-    public QueryException(String errorCode, String errorDesc){
+    public QueryException(String errorCode, String errorDesc) {
         super(errorCode, errorDesc);
     }
 
-    public QueryException(String errorCode, Throwable cause){
+    public QueryException(String errorCode, Throwable cause) {
         super(errorCode, cause);
     }
 
-    public QueryException(String errorCode){
+    public QueryException(String errorCode) {
         super(errorCode);
     }
 
-    public QueryException(Throwable cause){
+    public QueryException(Throwable cause) {
         super(cause);
     }
 

@@ -1,10 +1,5 @@
 package com.taobao.tddl.executor.cursor;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.common.DuplicateKVPair;
@@ -14,17 +9,22 @@ import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author jianxing <jianxing.qx@taobao.com>
- * 所有cursor的抽象基类，以前的作用是存放了当前cursor的schema信息和order by信息。 现在只存放order by信息了。
- * schema因为可能会随着IRowSet动态变更，所以不在这里使用了。
+ *         所有cursor的抽象基类，以前的作用是存放了当前cursor的schema信息和order by信息。 现在只存放order by信息了。
+ *         schema因为可能会随着IRowSet动态变更，所以不在这里使用了。
  * @author Whisper
  */
 public class SchematicCursor extends AbstractCursor implements ISchematicCursor {
 
     public List<IOrderBy> orderBys = Collections.emptyList();
 
-    public SchematicCursor(Cursor cursor){
+    public SchematicCursor(Cursor cursor) {
         super(cursor);
         if (cursor != null && cursor instanceof ISchematicCursor) {
             orderBys = ((ISchematicCursor) cursor).getOrderBy();
@@ -33,22 +33,22 @@ public class SchematicCursor extends AbstractCursor implements ISchematicCursor 
         }
     }
 
-    public SchematicCursor(Cursor cursor, List<IOrderBy> orderBys){
+    public SchematicCursor(Cursor cursor, List<IOrderBy> orderBys) {
         super(cursor);
         this.orderBys = orderBys;
     }
 
-    public SchematicCursor(Cursor cursor, ICursorMeta meta, List<IOrderBy> orderBys){
+    public SchematicCursor(Cursor cursor, ICursorMeta meta, List<IOrderBy> orderBys) {
         super(cursor);
-        this.orderBys = orderBys;
-    }
-
-    public void setOrderBy(List<IOrderBy> orderBys) {
         this.orderBys = orderBys;
     }
 
     public List<IOrderBy> getOrderBy() {
         return orderBys;
+    }
+
+    public void setOrderBy(List<IOrderBy> orderBys) {
+        this.orderBys = orderBys;
     }
 
     public List<List<IOrderBy>> getJoinOrderBys() {

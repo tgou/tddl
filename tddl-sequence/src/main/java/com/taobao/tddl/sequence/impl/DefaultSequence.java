@@ -1,28 +1,28 @@
 package com.taobao.tddl.sequence.impl;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import com.taobao.tddl.sequence.Sequence;
 import com.taobao.tddl.sequence.SequenceDao;
 import com.taobao.tddl.sequence.SequenceRange;
 import com.taobao.tddl.sequence.exception.SequenceException;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * 序列默认实现
- * 
+ *
  * @author shenxun
  */
 public class DefaultSequence implements Sequence {
 
-    private final Lock             lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
 
-    private SequenceDao            sequenceDao;
+    private SequenceDao sequenceDao;
 
     /**
      * 序列名称
      */
-    private String                 name;
+    private String name;
 
     private volatile SequenceRange currentRange;
 
@@ -42,7 +42,7 @@ public class DefaultSequence implements Sequence {
         if (value == -1) {
             lock.lock();
             try {
-                for (;;) {
+                for (; ; ) {
                     if (currentRange.isOver()) {
                         currentRange = sequenceDao.nextRange(name);
                     }

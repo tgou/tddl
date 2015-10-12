@@ -1,15 +1,7 @@
 package com.taobao.tddl.repo.bdb.spi;
 
 import com.taobao.tddl.executor.common.ExecutionContext;
-import com.taobao.tddl.executor.handler.DeleteHandler;
-import com.taobao.tddl.executor.handler.IndexNestedLoopJoinHandler;
-import com.taobao.tddl.executor.handler.InsertHandler;
-import com.taobao.tddl.executor.handler.MergeHandler;
-import com.taobao.tddl.executor.handler.NestedLoopJoinHandler;
-import com.taobao.tddl.executor.handler.QueryHandler;
-import com.taobao.tddl.executor.handler.ReplaceHandler;
-import com.taobao.tddl.executor.handler.SortMergeJoinHandler;
-import com.taobao.tddl.executor.handler.UpdateHandler;
+import com.taobao.tddl.executor.handler.*;
 import com.taobao.tddl.executor.spi.ICommandHandler;
 import com.taobao.tddl.executor.spi.ICommandHandlerFactory;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
@@ -26,9 +18,17 @@ import com.taobao.tddl.optimizer.core.plan.query.IQuery;
  */
 public class CommandHandlerFactoryBDBImpl implements ICommandHandlerFactory {
 
+    private final ICommandHandler INSERT_HANDLER;
+    private final ICommandHandler UPDATE_HANDLER;
+    private final ICommandHandler DELETE_HANDLER;
+    private final ICommandHandler REPLACE_HANDLER;
+    private final ICommandHandler QUERY_HANDLER;
+    private final ICommandHandler MERGE_HANDLER;
+    private final ICommandHandler INDEX_NEST_LOOP_JOIN_HANDLER;
+    private final ICommandHandler NEST_LOOP_JOIN_HANDLER;
+    private final ICommandHandler SORT_MERGE_JOIN_HANDLER;
     private QueryHandler CONDENSABLE_JOIN_HANDLER;
-
-    public CommandHandlerFactoryBDBImpl(){
+    public CommandHandlerFactoryBDBImpl() {
         INSERT_HANDLER = new InsertHandler();
         UPDATE_HANDLER = new UpdateHandler();
         DELETE_HANDLER = new DeleteHandler();
@@ -40,16 +40,6 @@ public class CommandHandlerFactoryBDBImpl implements ICommandHandlerFactory {
         SORT_MERGE_JOIN_HANDLER = new SortMergeJoinHandler();
         CONDENSABLE_JOIN_HANDLER = new QueryHandler();
     }
-
-    private final ICommandHandler INSERT_HANDLER;
-    private final ICommandHandler UPDATE_HANDLER;
-    private final ICommandHandler DELETE_HANDLER;
-    private final ICommandHandler REPLACE_HANDLER;
-    private final ICommandHandler QUERY_HANDLER;
-    private final ICommandHandler MERGE_HANDLER;
-    private final ICommandHandler INDEX_NEST_LOOP_JOIN_HANDLER;
-    private final ICommandHandler NEST_LOOP_JOIN_HANDLER;
-    private final ICommandHandler SORT_MERGE_JOIN_HANDLER;
 
     @Override
     public ICommandHandler getCommandHandler(IDataNodeExecutor executor, ExecutionContext executionContext) {

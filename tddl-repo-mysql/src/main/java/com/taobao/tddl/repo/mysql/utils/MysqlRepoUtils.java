@@ -1,11 +1,5 @@
 package com.taobao.tddl.repo.mysql.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.sql.DataSource;
-
 import com.taobao.tddl.executor.common.ExecutionContext;
 import com.taobao.tddl.executor.spi.IDataSourceGetter;
 import com.taobao.tddl.executor.spi.ITransaction;
@@ -19,6 +13,11 @@ import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.repo.mysql.spi.My_JdbcHandler;
 import com.taobao.tddl.repo.mysql.spi.My_Transaction;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author mengshi.sunmengshi 2013-12-5 下午6:08:32

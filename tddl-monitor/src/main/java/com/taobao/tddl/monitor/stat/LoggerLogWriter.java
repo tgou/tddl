@@ -1,14 +1,13 @@
 package com.taobao.tddl.monitor.stat;
 
-import java.util.Date;
-
+import com.taobao.tddl.common.utils.logger.Logger;
 import org.apache.commons.lang.time.FastDateFormat;
 
-import com.taobao.tddl.common.utils.logger.Logger;
+import java.util.Date;
 
 /**
  * 基于 Tddl Logger 的统计日志输出类。 保证向下兼容, 日志刷出的结构为：
- * 
+ * <p/>
  * <pre>
  * key1(sql)    key2(dbname)    key3(flag)  val1(count) val2(sum)       val3(min)       val4(max)       time
  * sql      logicDbName 执行成功        执行次数        响应时间        最小响应时间  最大响应时间  日志时间
@@ -20,29 +19,30 @@ import com.taobao.tddl.common.utils.logger.Logger;
  * sql      null        解析失败        执行次数        响应时间        最小响应时间  最大响应时间  日志时间
  * sql      null        解析命中        执行次数        命中次数        NA      NA      日志时间
  * </pre>
- * 
+ *
  * @author changyuan.lh
  */
 public class LoggerLogWriter extends StatLogWriter {
 
-    /** XXX: 改成 commons-lang 自带的 {@link FastDateFormat}, 这个才是线程安全的 */
-    public static final FastDateFormat df             = FastDateFormat.getInstance("yyy-MM-dd HH:mm:ss:SSS");
+    /**
+     * XXX: 改成 commons-lang 自带的 {@link FastDateFormat}, 这个才是线程安全的
+     */
+    public static final FastDateFormat df = FastDateFormat.getInstance("yyy-MM-dd HH:mm:ss:SSS");
+    protected final Logger statLogger;
+    protected String fieldSeperator = "#@#";                                               // SQL中出现概率小,
+    // 和正则式不冲突
+    protected String lineSeperator = System.getProperty("line.separator");
 
-    protected String                   fieldSeperator = "#@#";                                               // SQL中出现概率小,
-                                                                                                              // 和正则式不冲突
-    protected String                   lineSeperator  = System.getProperty("line.separator");
-    protected final Logger             statLogger;
-
-    public LoggerLogWriter(Logger statLogger){
+    public LoggerLogWriter(Logger statLogger) {
         this.statLogger = statLogger;
     }
 
-    public LoggerLogWriter(String fieldSeperator, Logger statLogger){
+    public LoggerLogWriter(String fieldSeperator, Logger statLogger) {
         this.fieldSeperator = fieldSeperator;
         this.statLogger = statLogger;
     }
 
-    public LoggerLogWriter(String fieldSeperator, String lineSeperator, Logger statLogger){
+    public LoggerLogWriter(String fieldSeperator, String lineSeperator, Logger statLogger) {
         this.fieldSeperator = fieldSeperator;
         this.lineSeperator = lineSeperator;
         this.statLogger = statLogger;

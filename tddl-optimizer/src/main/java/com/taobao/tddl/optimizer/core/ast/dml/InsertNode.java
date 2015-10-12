@@ -11,7 +11,7 @@ public class InsertNode extends DMLNode<InsertNode> {
 
     private boolean createPk = true; // 是否为自增长字段，暂时不支持
 
-    public InsertNode(TableNode table){
+    public InsertNode(TableNode table) {
         super(table);
     }
 

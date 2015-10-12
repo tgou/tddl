@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.parse.cobar.visitor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.ast.expression.primary.ParamMarker;
 import com.alibaba.cobar.parser.ast.fragment.GroupBy;
@@ -24,9 +21,12 @@ import com.taobao.tddl.optimizer.core.ast.query.QueryNode;
 import com.taobao.tddl.optimizer.core.expression.IFilter;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * select表达式的解析
- * 
+ *
  * @since 5.0.0
  */
 public class MySqlSelectVisitor extends EmptySQLASTVisitor {
@@ -158,7 +158,7 @@ public class MySqlSelectVisitor extends EmptySQLASTVisitor {
             expr.accept(v);
             SortOrder sorder = p.getValue();
             this.tableNode = tableNode.orderBy((ISelectable) v.getColumnOrValue(),
-                sorder == SortOrder.ASC ? true : false);
+                    sorder == SortOrder.ASC ? true : false);
         }
     }
 
@@ -170,7 +170,7 @@ public class MySqlSelectVisitor extends EmptySQLASTVisitor {
             expr.accept(v);
             SortOrder sorder = p.getValue();
             this.tableNode = tableNode.groupBy((ISelectable) v.getColumnOrValue(),
-                sorder == SortOrder.ASC ? true : false);
+                    sorder == SortOrder.ASC ? true : false);
         }
 
         if (groupBy.isWithRollup()) {
@@ -197,14 +197,14 @@ public class MySqlSelectVisitor extends EmptySQLASTVisitor {
     private void handleLimit(Limit limit) {
         if (limit.getOffset() instanceof ParamMarker) {
             tableNode.setLimitFrom(ASTNodeFactory.getInstance()
-                .createBindValue(((ParamMarker) limit.getOffset()).getParamIndex()));
+                    .createBindValue(((ParamMarker) limit.getOffset()).getParamIndex()));
         } else {
             tableNode.setLimitFrom(Long.valueOf(String.valueOf(limit.getOffset())));
         }
 
         if (limit.getSize() instanceof ParamMarker) {
             tableNode.setLimitTo(ASTNodeFactory.getInstance()
-                .createBindValue(((ParamMarker) limit.getSize()).getParamIndex()));
+                    .createBindValue(((ParamMarker) limit.getSize()).getParamIndex()));
         } else {
             tableNode.setLimitTo(Long.valueOf(String.valueOf(limit.getSize())));
         }

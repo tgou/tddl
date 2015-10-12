@@ -1,22 +1,17 @@
 package com.taobao.tddl.qatest.matrix.ibatis;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.ibatis.sqlmap.client.SqlMapClient;
+import com.taobao.tddl.qatest.util.NormalTblRow;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.ibatis.sqlmap.client.SqlMapClient;
-import com.taobao.tddl.qatest.util.NormalTblRow;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.util.*;
 
 /**
  * Comment for ibatisTypeTest
@@ -26,12 +21,12 @@ import com.taobao.tddl.qatest.util.NormalTblRow;
 
 public class IbatisTypeTest {
 
-    protected static SqlMapClient andorSqlMapClient          = null;
-    // protected static SqlMapClient andorTDHSSqlMapClient = null;
-    protected static SqlMapClient mysqlSqlMapClient          = null;
     protected static final String MATRIX_IBATIS_CONTEXT_PATH = "classpath:spring/spring_context.xml";
-    private NormalTblRow          row                        = null;
-    private NormalTblRow          rowMysql                   = null;
+    protected static SqlMapClient andorSqlMapClient = null;
+    // protected static SqlMapClient andorTDHSSqlMapClient = null;
+    protected static SqlMapClient mysqlSqlMapClient = null;
+    private NormalTblRow row = null;
+    private NormalTblRow rowMysql = null;
 
     @BeforeClass
     public static void setUp() {

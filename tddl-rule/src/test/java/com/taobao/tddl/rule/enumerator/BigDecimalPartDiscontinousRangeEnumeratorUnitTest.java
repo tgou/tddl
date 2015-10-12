@@ -1,19 +1,14 @@
 package com.taobao.tddl.rule.enumerator;
 
-import static com.taobao.tddl.rule.TestUtils.Equivalent;
-import static com.taobao.tddl.rule.TestUtils.GreaterThan;
-import static com.taobao.tddl.rule.TestUtils.LessThanOrEqual;
-import static com.taobao.tddl.rule.TestUtils.gand;
-import static com.taobao.tddl.rule.TestUtils.gcomp;
+import com.taobao.tddl.rule.TestUtils;
+import com.taobao.tddl.rule.model.sqljep.Comparative;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.taobao.tddl.rule.TestUtils;
-import com.taobao.tddl.rule.model.sqljep.Comparative;
+import static com.taobao.tddl.rule.TestUtils.*;
 
 public class BigDecimalPartDiscontinousRangeEnumeratorUnitTest {
 
@@ -22,10 +17,10 @@ public class BigDecimalPartDiscontinousRangeEnumeratorUnitTest {
      * and x < ?) 测试开区间 ，测试x>5 and x>10,测试x >= 3 and x < 5取值是否正确 测试x>3 and
      * x<5取值是否正确。 测试x >=3 and x=3的时候返回是否正确。
      */
-    Comparative btc                        = null;
+    Comparative btc = null;
 
-    Enumerator  e                          = new EnumeratorImp();
-    boolean     needMergeValueInCloseRange = true;
+    Enumerator e = new EnumeratorImp();
+    boolean needMergeValueInCloseRange = true;
 
     @Test
     public void test_没有自增的closeinterval() throws Exception {
@@ -42,7 +37,7 @@ public class BigDecimalPartDiscontinousRangeEnumeratorUnitTest {
     public void test_带有自增的closeInterval() throws Exception {
         btc = gand(gcomp(BigDecimal.valueOf(3), GreaterThan), gcomp(5l, LessThanOrEqual));
         Set<Object> s = e.getEnumeratedValue(btc, 16, 64, needMergeValueInCloseRange);
-        TestUtils.testSet(new Object[] { 4l, 5l }, s);
+        TestUtils.testSet(new Object[]{4l, 5l}, s);
     }
 
     // 以下是一些对两个and节点上挂两个参数一些情况的单元测试。
@@ -52,14 +47,14 @@ public class BigDecimalPartDiscontinousRangeEnumeratorUnitTest {
     public void test_带有自增的closeInterval_1() throws Exception {
         btc = gand(gcomp(3l, GreaterThan), gcomp(BigDecimal.valueOf(5), LessThanOrEqual));
         Set<Object> s = e.getEnumeratedValue(btc, 64, 1, needMergeValueInCloseRange);
-        TestUtils.testSet(new Object[] { 4l, 5l }, s);
+        TestUtils.testSet(new Object[]{4l, 5l}, s);
     }
 
     @Test
     public void test_开区间() throws Exception {
         btc = gand(gcomp(BigDecimal.valueOf(3), LessThanOrEqual), gcomp(BigDecimal.valueOf(5), GreaterThan));
         Set<Object> s = e.getEnumeratedValue(btc, 5, 1, needMergeValueInCloseRange);
-        TestUtils.testSet(new Object[] {}, s);
+        TestUtils.testSet(new Object[]{}, s);
     }
 
     @Test
@@ -76,21 +71,21 @@ public class BigDecimalPartDiscontinousRangeEnumeratorUnitTest {
     public void test_一个小于() throws Exception {
         btc = gcomp(BigDecimal.valueOf(3), LessThanOrEqual);
         Set<Object> s = e.getEnumeratedValue(btc, 5, 1, needMergeValueInCloseRange);
-        TestUtils.testSet(new Object[] { 3l, 2l, 1l, 0l }, s);
+        TestUtils.testSet(new Object[]{3l, 2l, 1l, 0l}, s);
     }
 
     @Test
     public void test_两个小于等于() throws Exception {
         btc = gand(gcomp(BigDecimal.valueOf(3), LessThanOrEqual), gcomp(BigDecimal.valueOf(5), LessThanOrEqual));
         Set<Object> s = e.getEnumeratedValue(btc, 5, 1, needMergeValueInCloseRange);
-        TestUtils.testSet(new Object[] { 3l, 2l, 1l, 0l }, s);
+        TestUtils.testSet(new Object[]{3l, 2l, 1l, 0l}, s);
     }
 
     @Test
     public void test_一个小于一个等于() throws Exception {
         btc = gand(gcomp(BigDecimal.valueOf(3), LessThanOrEqual), gcomp(BigDecimal.valueOf(5), Equivalent));
         Set<Object> s = e.getEnumeratedValue(btc, 5, 1, needMergeValueInCloseRange);
-        TestUtils.testSet(new Object[] {}, s);
+        TestUtils.testSet(new Object[]{}, s);
     }
 
     // @Test
@@ -105,7 +100,7 @@ public class BigDecimalPartDiscontinousRangeEnumeratorUnitTest {
     public void test_一个等于一个大于() throws Exception {
         btc = gand(gcomp(BigDecimal.valueOf(3), Equivalent), gcomp(5l, GreaterThan));
         Set<Object> s = e.getEnumeratedValue(btc, 5, 1, needMergeValueInCloseRange);
-        TestUtils.testSet(new Object[] {}, s);
+        TestUtils.testSet(new Object[]{}, s);
     }
 
     // @Test
@@ -120,14 +115,14 @@ public class BigDecimalPartDiscontinousRangeEnumeratorUnitTest {
     public void test_两个等于() throws Exception {
         btc = gand(gcomp(BigDecimal.valueOf(3), LessThanOrEqual), gcomp(5l, Equivalent));
         Set<Object> s = e.getEnumeratedValue(btc, 5, 1, needMergeValueInCloseRange);
-        TestUtils.testSet(new Object[] {}, s);
+        TestUtils.testSet(new Object[]{}, s);
     }
 
     @Test
     public void test_两个大于不是大于等于() throws Exception {
         btc = gand(gcomp(BigDecimal.valueOf(3), GreaterThan), gcomp(5l, GreaterThan));
         Set<Object> s = e.getEnumeratedValue(btc, 5, 1, needMergeValueInCloseRange);
-        TestUtils.testSet(new Object[] { 6l, 7l, 8l, 9l, 10l }, s);
+        TestUtils.testSet(new Object[]{6l, 7l, 8l, 9l, 10l}, s);
     }
 
 }

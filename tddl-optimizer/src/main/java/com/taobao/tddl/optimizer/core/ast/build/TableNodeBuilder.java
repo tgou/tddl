@@ -1,9 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast.build;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.taobao.tddl.optimizer.OptimizerContext;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.config.table.TableMeta;
@@ -14,12 +10,16 @@ import com.taobao.tddl.optimizer.core.expression.IFunction;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @since 5.0.0
  */
 public class TableNodeBuilder extends QueryTreeNodeBuilder {
 
-    public TableNodeBuilder(TableNode tableNode){
+    public TableNodeBuilder(TableNode tableNode) {
         this.setNode(tableNode);
     }
 
@@ -39,7 +39,7 @@ public class TableNodeBuilder extends QueryTreeNodeBuilder {
 
     /**
      * 构建TableMeta
-     * 
+     *
      * @param getNode ()
      */
     public void buildTableMeta() {
@@ -62,8 +62,8 @@ public class TableNodeBuilder extends QueryTreeNodeBuilder {
     private void buildSelectedFromSelectableObject() {
         if (this.getNode().getColumnsSelected().isEmpty()) {
             this.getNode()
-                .getColumnsSelected()
-                .add(ASTNodeFactory.getInstance().createColumn().setColumnName(IColumn.STAR));
+                    .getColumnsSelected()
+                    .add(ASTNodeFactory.getInstance().createColumn().setColumnName(IColumn.STAR));
         }
 
         // 如果有 * ，最后需要把*删掉
@@ -84,9 +84,9 @@ public class TableNodeBuilder extends QueryTreeNodeBuilder {
                 if (IColumn.STAR.equals(this.getNode().getColumnsSelected().get(i).getColumnName())) {
                     for (ColumnMeta cm : this.getNode().getTableMeta().getAllColumns()) {
                         columnsWithOutStar.add(ASTNodeFactory.getInstance()
-                            .createColumn()
-                            .setColumnName(cm.getName())
-                            .setDataType(cm.getDataType()));
+                                .createColumn()
+                                .setColumnName(cm.getName())
+                                .setDataType(cm.getDataType()));
                     }
                 } else {
                     columnsWithOutStar.add(this.getNode().getColumnsSelected().get(i));
@@ -104,7 +104,7 @@ public class TableNodeBuilder extends QueryTreeNodeBuilder {
     public ISelectable getSelectableFromChild(ISelectable c) {
         // 如果存在表名，则进行强校验，比如字段为A.ID，否则直接进行ID名字匹配
         if (c.getTableName() != null && !c.getTableName().equals(this.getNode().getTableName())
-            && !c.getTableName().equals(this.getNode().getAlias())) {
+                && !c.getTableName().equals(this.getNode().getAlias())) {
             return null;
         }
 

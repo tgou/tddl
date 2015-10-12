@@ -1,14 +1,10 @@
 package com.taobao.tddl.repo.mysql.sqlconvertor;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * 一组sql
- * 
+ *
  * @author whisper
  */
 public class Sqls {

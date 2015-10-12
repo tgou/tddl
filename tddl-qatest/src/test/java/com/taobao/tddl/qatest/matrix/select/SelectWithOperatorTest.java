@@ -1,9 +1,9 @@
 package com.taobao.tddl.qatest.matrix.select;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -11,10 +11,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 带条件的选择查询
@@ -24,15 +23,15 @@ import com.taobao.tddl.qatest.util.EclipseParameterized;
 @RunWith(EclipseParameterized.class)
 public class SelectWithOperatorTest extends BaseMatrixTestCase {
 
-    String[] columnParam = { "PK", "NAME", "ID" };
+    String[] columnParam = {"PK", "NAME", "ID"};
+
+    public SelectWithOperatorTest(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
 
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectWithOperatorTest(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -122,7 +121,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
         param.add(start2);
         param.add(end1);
         param.add(end2);
-        String[] columnParam = { "PK", "NAME", "ID", "GMT_TIMESTAMP", "GMT_DATETIME" };
+        String[] columnParam = {"PK", "NAME", "ID", "GMT_TIMESTAMP", "GMT_DATETIME"};
         selectContentSameAssert(sql, columnParam, param);
 
         sql = "select * from " + normaltblTableName + " where pk>=? and pk>? and name like ? or gmt_timestamp >?";
@@ -150,7 +149,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
         selectContentSameAssert(sql, columnParam, param);
 
         sql = "select * from " + normaltblTableName
-              + " where pk<=? and id>?  or name like ? and gmt_timestamp =? or floatCol=?";
+                + " where pk<=? and id>?  or name like ? and gmt_timestamp =? or floatCol=?";
         param.clear();
         param.add(start1);
         param.add(516);
@@ -161,7 +160,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
         selectContentSameAssert(sql, columnParam, param);
 
         sql = "select * from " + normaltblTableName
-              + " where pk<=? and id>?  or name like ? and gmt_datetime =? or floatCol=?";
+                + " where pk<=? and id>?  or name like ? and gmt_datetime =? or floatCol=?";
         param.clear();
         param.add(start1);
         param.add(516);
@@ -228,7 +227,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
     // 不支持这个符号
     public void equalsTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, null }));
+                Arrays.asList(new Object[]{RANDOM_ID, null}));
         String sql = "select * from " + normaltblTableName + " where name <=> ?";
         List<Object> param = new ArrayList<Object>();
         param.add(null);
@@ -242,8 +241,8 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
     public void bitwiseAndTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = "select count(*) from " + normaltblTableName
-                         + " where pk in (?,?,?) and name =? and id & ? = ?";
-            String[] columnParam = { "count(*)" };
+                    + " where pk in (?,?,?) and name =? and id & ? = ?";
+            String[] columnParam = {"count(*)"};
             List<Object> param = new ArrayList<Object>();
             param.add(1);
             param.add(2);
@@ -262,8 +261,8 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
     public void bitwiseLikeTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = "select count(*) from " + normaltblTableName
-                         + " where pk in (?,?,?) and name like ? and id & ? = ?";
-            String[] columnParam = { "count(*)" };
+                    + " where pk in (?,?,?) and name like ? and id & ? = ?";
+            String[] columnParam = {"count(*)"};
             List<Object> param = new ArrayList<Object>();
             param.add(1);
             param.add(2);
@@ -282,7 +281,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
     public void xorTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = "select count(*) from " + normaltblTableName + " where pk ^ id > ?";
-            String[] columnParam = { "count(*)" };
+            String[] columnParam = {"count(*)"};
             List<Object> param = new ArrayList<Object>();
             param.add(100);
             selectContentSameAssert(sql, columnParam, param);
@@ -316,7 +315,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
 
     /**
      * 除法操作：/
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -324,7 +323,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
         String sql = "select sum(id)/sum(pk)  as avg from " + normaltblTableName + "  where name =? ";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columnParam = { "avg" };
+        String[] columnParam = {"avg"};
         selectContentSameAssert(sql, columnParam, param);
     }
 
@@ -336,7 +335,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
         String sql = "select id/(pk+1)*floatCol as c from " + normaltblTableName + " where name=?";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columParam = { "c" };
+        String[] columParam = {"c"};
         selectContentSameAssert(sql, columParam, param);
     }
 
@@ -348,7 +347,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
         String sql = "select 20*2 a ,id from " + normaltblTableName + " where name=?";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columParam = { "a", "id" };
+        String[] columParam = {"a", "id"};
         selectContentSameAssert(sql, columParam, param);
     }
 
@@ -360,7 +359,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
         String sql = "select 20*2 a ,id from " + normaltblTableName + " where name=?";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columParam = { "a", "id" };
+        String[] columParam = {"a", "id"};
         selectContentSameAssert(sql, columParam, param);
     }
 
@@ -380,7 +379,7 @@ public class SelectWithOperatorTest extends BaseMatrixTestCase {
 
     /**
      * &&操作
-     * 
+     *
      * @throws Exception
      */
     @Test

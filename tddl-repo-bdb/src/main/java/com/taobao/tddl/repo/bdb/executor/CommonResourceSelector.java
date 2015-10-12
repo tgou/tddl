@@ -10,7 +10,7 @@ public abstract class CommonResourceSelector implements ResourceSelector {
 
     protected volatile ArrayList<Integer> executorList;
 
-    public CommonResourceSelector(Integer indexes){
+    public CommonResourceSelector(Integer indexes) {
         super();
         this.executorList = new ArrayList<Integer>(indexes);
         for (int i = 0; i < indexes; i++) {

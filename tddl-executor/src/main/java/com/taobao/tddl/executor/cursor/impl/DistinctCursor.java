@@ -1,7 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.cursor.ISchematicCursor;
@@ -9,15 +7,17 @@ import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 
+import java.util.List;
+
 /**
  * 去重操作
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-3 上午10:54:54
  * @since 5.0.0
  */
 public class DistinctCursor extends MergeSortedCursors {
 
-    public DistinctCursor(ISchematicCursor cursor, List<IOrderBy> distinctOrderbys) throws TddlException{
+    public DistinctCursor(ISchematicCursor cursor, List<IOrderBy> distinctOrderbys) throws TddlException {
         super(cursor, false);
         this.cursor = cursor;
         this.orderBys = distinctOrderbys;

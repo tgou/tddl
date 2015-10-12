@@ -1,11 +1,5 @@
 package com.taobao.tddl.rule;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.collect.Lists;
 import com.taobao.tddl.rule.exceptions.RouteCompareDiffException;
 import com.taobao.tddl.rule.model.Field;
@@ -16,18 +10,20 @@ import com.taobao.tddl.rule.model.sqljep.ComparativeMapChoicer;
 import com.taobao.tddl.rule.utils.ComparativeStringAnalyser;
 import com.taobao.tddl.rule.utils.MatchResultCompare;
 
+import java.util.*;
+
 /**
  * 类名取名兼容老的rule代码<br/>
  * 结合tddl的动态规则管理体系，获取对应{@linkplain VirtualTableRule}
  * 规则定义，再根据sql中condition或者是setParam()提交的参数计算出路由规则 {@linkplain MatcherResult}
- * 
+ * <p/>
  * <pre>
  * condition简单语法： KEY CMP VALUE [:TYPE]
  * 1. KEY： 类似字段名字，用户随意定义
  * 2. CMP： 链接符，比如< = > 等，具体可查看{@linkplain Comparative}
  * 3. VALUE: 对应的值，比如1
  * 4. TYPE: 描述VALUE的类型，可选型，如果不填默认为Long类型。支持: int/long/string/date，可以使用首字母做为缩写，比如i/l/s/d。
- * 
+ *
  * 几个例子：
  * 1. id = 1
  * 2. id = 1 : long
@@ -35,7 +31,7 @@ import com.taobao.tddl.rule.utils.MatchResultCompare;
  * 4. gmt_create = 2011-11-11 : date
  * 5. id in (1,2,3,4) : long
  * </pre>
- * 
+ *
  * @author jianghang 2013-11-5 下午8:11:43
  * @since 5.0.0
  */
@@ -110,7 +106,7 @@ public class TddlRule extends TddlRuleConfig implements TddlTableRule {
 
     /**
      * 没有分库分表的逻辑表，返回指定库表
-     * 
+     *
      * @param vtab
      * @param vtrCurrent
      * @return
@@ -125,13 +121,13 @@ public class TddlRule extends TddlRuleConfig implements TddlTableRule {
         targetDb.setTableNames(tableNames);
 
         return new MatcherResult(Arrays.asList(targetDb),
-            new HashMap<String, Comparative>(),
-            new HashMap<String, Comparative>());
+                new HashMap<String, Comparative>(),
+                new HashMap<String, Comparative>());
     }
 
     /**
      * 没有分库分表的逻辑表，先从dbIndex中获取映射的库，没有则返回默认的库
-     * 
+     *
      * @param vtab
      * @param vtrCurrent
      * @return
@@ -153,7 +149,7 @@ public class TddlRule extends TddlRuleConfig implements TddlTableRule {
 
         private Map<String, Comparative> comparativeMap = new HashMap<String, Comparative>();
 
-        public SimpleComparativeMapChoicer(Map<String, Comparative> comparativeMap){
+        public SimpleComparativeMapChoicer(Map<String, Comparative> comparativeMap) {
             this.comparativeMap = comparativeMap;
         }
 

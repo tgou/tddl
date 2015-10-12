@@ -6,7 +6,7 @@ public class DataAccessException extends TddlException {
 
     private static final long serialVersionUID = 1L;
 
-    public DataAccessException(String errorCode, String errorDesc){
+    public DataAccessException(String errorCode, String errorDesc) {
         super(errorCode, errorDesc);
     }
 

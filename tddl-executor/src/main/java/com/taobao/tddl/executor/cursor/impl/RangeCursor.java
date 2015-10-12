@@ -1,10 +1,9 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.Comparator;
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.executor.common.KVPair;
 import com.taobao.tddl.executor.cursor.IRangeCursor;
 import com.taobao.tddl.executor.cursor.ISchematicCursor;
@@ -18,37 +17,34 @@ import com.taobao.tddl.optimizer.core.expression.IFilter;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * 现在具有对多个索引内前缀字段+非前缀字段
- * 
+ *
  * @author jianxing <jianxing.qx@taobao.com>
  */
 public class RangeCursor extends SchematicCursor implements IRangeCursor {
 
-    public static final Logger    log          = LoggerFactory.getLogger(RangeCursor.class);
+    public static final Logger log = LoggerFactory.getLogger(RangeCursor.class);
     /**
      * 范围，到哪里结束
      */
-    protected IRowSet             to;
+    protected IRowSet to;
     /**
      * 范围，从哪里开始？
      */
-    protected IRowSet             from;
+    protected IRowSet from;
 
     protected Comparator<IRowSet> fromComparator;
 
     protected Comparator<IRowSet> toComparator;
+    boolean first = true;
+    private boolean schemaInited = false;
+    private IFilter lf = null;
 
-    private boolean               schemaInited = false;
-
-    private IFilter               lf           = null;
-
-    boolean                       first        = true;
-
-    public RangeCursor(ISchematicCursor cursor, IFilter lf){
+    public RangeCursor(ISchematicCursor cursor, IFilter lf) {
         super(cursor, null, cursor.getOrderBy());
         this.lf = lf;
         RangeMaker.Range range = makeRange(lf, orderBys);
@@ -69,13 +65,13 @@ public class RangeCursor extends SchematicCursor implements IRangeCursor {
         List<ColumnMeta> columnMetas = to.getParentCursorMeta().getColumns();
         List<ISelectable> iColumns = ExecUtils.getIColumnsWithISelectable(columnMetas.toArray(new ColumnMeta[0]));
         toComparator = ExecUtils.getComp(iColumns,
-            iColumns,
-            to.getParentCursorMeta(),
-            firstRowSet.getParentCursorMeta());
+                iColumns,
+                to.getParentCursorMeta(),
+                firstRowSet.getParentCursorMeta());
         fromComparator = ExecUtils.getComp(iColumns,
-            iColumns,
-            from.getParentCursorMeta(),
-            firstRowSet.getParentCursorMeta());
+                iColumns,
+                from.getParentCursorMeta(),
+                firstRowSet.getParentCursorMeta());
         // init(rangeFilters);
     }
 
@@ -187,8 +183,8 @@ public class RangeCursor extends SchematicCursor implements IRangeCursor {
                 // 此时current和to相等
                 return cursor.current();
             }// current>to或者current<from
-             // 取prev的值
-             // 如果current<from，则prev同样小于from，不会match
+            // 取prev的值
+            // 如果current<from，则prev同样小于from，不会match
             else {
 
                 IRowSet prevCurrent = cursor.prev();
@@ -240,12 +236,12 @@ public class RangeCursor extends SchematicCursor implements IRangeCursor {
         StringBuilder sb = new StringBuilder();
         String tab = GeneralUtil.getTab(inden);
         sb.append(tab)
-            .append("【Range cursor .start : ")
-            .append(from)
-            .append("|")
-            .append(" end : ")
-            .append(to)
-            .append("\n");
+                .append("【Range cursor .start : ")
+                .append(from)
+                .append("|")
+                .append(" end : ")
+                .append(to)
+                .append("\n");
         ExecUtils.printOrderBy(orderBys, inden, sb);
         sb.append(super.toStringWithInden(inden));
         return sb.toString();

@@ -27,23 +27,15 @@ import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
  */
 public class MTSRollbackStatement implements SQLStatement {
 
-    public static enum CompleteType {
-        /** not specified, then use default */
-        UN_DEF, CHAIN,
-        /** MySQL's default */
-        NO_CHAIN, RELEASE, NO_RELEASE
-    }
-
     private final CompleteType completeType;
-    private final Identifier   savepoint;
-
-    public MTSRollbackStatement(CompleteType completeType){
+    private final Identifier savepoint;
+    public MTSRollbackStatement(CompleteType completeType) {
         if (completeType == null) throw new IllegalArgumentException("complete type is null!");
         this.completeType = completeType;
         this.savepoint = null;
     }
 
-    public MTSRollbackStatement(Identifier savepoint){
+    public MTSRollbackStatement(Identifier savepoint) {
         this.completeType = null;
         if (savepoint == null) throw new IllegalArgumentException("savepoint is null!");
         this.savepoint = savepoint;
@@ -66,6 +58,17 @@ public class MTSRollbackStatement implements SQLStatement {
     @Override
     public void accept(SQLASTVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public static enum CompleteType {
+        /**
+         * not specified, then use default
+         */
+        UN_DEF, CHAIN,
+        /**
+         * MySQL's default
+         */
+        NO_CHAIN, RELEASE, NO_RELEASE
     }
 
 }

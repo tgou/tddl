@@ -1,23 +1,21 @@
 package com.taobao.tddl.atom.common;
 
+import com.taobao.tddl.atom.config.TAtomConfParser;
+import com.taobao.tddl.atom.config.TAtomDsConfDO;
+import com.taobao.tddl.atom.securety.impl.PasswordCoder;
+import com.taobao.tddl.atom.utils.ConnRestrictEntry;
+import org.junit.Assert;
+import org.junit.Test;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.taobao.tddl.atom.config.TAtomConfParser;
-import com.taobao.tddl.atom.config.TAtomDsConfDO;
-import com.taobao.tddl.atom.securety.impl.PasswordCoder;
-import com.taobao.tddl.atom.utils.ConnRestrictEntry;
 
 public class TAtomConfParserUnitTest {
 
@@ -43,22 +41,22 @@ public class TAtomConfParserUnitTest {
         Assert.assertEquals(tAtomDsConfDO.getUserName(), prop.get(TAtomConfParser.APP_USER_NAME_KEY));
         Assert.assertEquals(tAtomDsConfDO.getOracleConType(), prop.get(TAtomConfParser.APP_ORACLE_CON_TYPE_KEY));
         Assert.assertEquals(String.valueOf(tAtomDsConfDO.getMinPoolSize()),
-            prop.get(TAtomConfParser.APP_MIN_POOL_SIZE_KEY));
+                prop.get(TAtomConfParser.APP_MIN_POOL_SIZE_KEY));
         Assert.assertEquals(String.valueOf(tAtomDsConfDO.getMaxPoolSize()),
-            prop.get(TAtomConfParser.APP_MAX_POOL_SIZE_KEY));
+                prop.get(TAtomConfParser.APP_MAX_POOL_SIZE_KEY));
         Assert.assertEquals(String.valueOf(tAtomDsConfDO.getIdleTimeout()),
-            prop.get(TAtomConfParser.APP_IDLE_TIMEOUT_KEY));
+                prop.get(TAtomConfParser.APP_IDLE_TIMEOUT_KEY));
         Assert.assertEquals(String.valueOf(tAtomDsConfDO.getBlockingTimeout()),
-            prop.get(TAtomConfParser.APP_BLOCKING_TIMEOUT_KEY));
+                prop.get(TAtomConfParser.APP_BLOCKING_TIMEOUT_KEY));
         Assert.assertEquals(String.valueOf(tAtomDsConfDO.getPreparedStatementCacheSize()),
-            prop.get(TAtomConfParser.APP_PREPARED_STATEMENT_CACHE_SIZE_KEY));
+                prop.get(TAtomConfParser.APP_PREPARED_STATEMENT_CACHE_SIZE_KEY));
         Map<String, String> connectionProperties = TAtomConfParser.parserConPropStr2Map(prop.getProperty(TAtomConfParser.APP_CON_PROP_KEY));
         Assert.assertEquals(tAtomDsConfDO.getConnectionProperties(), connectionProperties);
     }
 
     @Test
     public void parserPasswd_解析密码() throws IOException, InvalidKeyException, NoSuchAlgorithmException,
-                                   NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
+            NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
         String passwdFile = "conf/oracle/passwd.properties";
         String passwdStr = PropLoadTestUtil.loadPropFile2String(passwdFile);
         String passwd = TAtomConfParser.parserPasswd(passwdStr);

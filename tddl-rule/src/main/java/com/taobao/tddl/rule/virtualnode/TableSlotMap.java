@@ -1,28 +1,27 @@
 package com.taobao.tddl.rule.virtualnode;
 
+import com.google.common.collect.Maps;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-
 /**
  * 构造table的一致性hash的slot
- * 
+ *
  * @author <a href="junyu@taobao.com">junyu</a>
  * @version 1.0
- * @since 1.6
  * @date 2011-6-2 03:13:08
+ * @since 1.6
  */
 public class TableSlotMap extends WrappedLogic implements VirtualNodeMap {
 
-    private String                                                   logicTable;
-
     protected Map<String/* slot number */, String/* table suffix */> tableContext = Maps.newConcurrentMap();
-    private Map<String/* table suffix */, String/* slot string */>   tableSlotMap = Maps.newHashMap();
+    private String logicTable;
+    private Map<String/* table suffix */, String/* slot string */> tableSlotMap = Maps.newHashMap();
 
-    private PartitionFunction                                        keyPartitionFunction;
-    private PartitionFunction                                        valuePartitionFunction;
+    private PartitionFunction keyPartitionFunction;
+    private PartitionFunction valuePartitionFunction;
 
     public void init() {
         this.initTableSlotMap(tableSlotMap);

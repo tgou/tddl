@@ -7,26 +7,26 @@ package com.taobao.tddl.rule.model.sqljep;
  *          \                  /
  *            \               /
  *             [ComparativeOR]
- *             
+ *
  * 类似这样的节点出现
  * </pre>
- * 
+ *
  * @author shenxun
  */
 public class ComparativeOR extends ComparativeBaseList {
 
-    public ComparativeOR(int function, Comparable<?> value){
+    public ComparativeOR(int function, Comparable<?> value) {
         super(function, value);
     }
 
-    public ComparativeOR(){
+    public ComparativeOR() {
     }
 
-    public ComparativeOR(Comparative item){
+    public ComparativeOR(Comparative item) {
         super(item);
     }
 
-    public ComparativeOR(int capacity){
+    public ComparativeOR(int capacity) {
         super(capacity);
     }
 

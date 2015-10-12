@@ -1,10 +1,6 @@
 package com.taobao.tddl.group.jdbc;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.RowIdLifetime;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * @author linxuan
@@ -12,9 +8,9 @@ import java.sql.SQLException;
 public class TGroupDatabaseMetaData implements DatabaseMetaData {
 
     protected TGroupConnection tGroupConnection = null;
-    private TGroupDataSource   tGroupDataSource;
+    private TGroupDataSource tGroupDataSource;
 
-    public TGroupDatabaseMetaData(TGroupConnection tGroupConnection, TGroupDataSource tGroupDataSource){
+    public TGroupDatabaseMetaData(TGroupConnection tGroupConnection, TGroupDataSource tGroupDataSource) {
         super();
         this.tGroupConnection = tGroupConnection;
         this.tGroupDataSource = tGroupDataSource;
@@ -71,7 +67,7 @@ public class TGroupDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getBestRowIdentifier(String catalog, String schema, String table, int scope, boolean nullable)
-                                                                                                                   throws SQLException {
+            throws SQLException {
         return getDatabaseMetaData().getBestRowIdentifier(catalog, schema, table, scope, nullable);
     }
 
@@ -92,12 +88,12 @@ public class TGroupDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getColumnPrivileges(String catalog, String schema, String table, String columnNamePattern)
-                                                                                                               throws SQLException {
+            throws SQLException {
         return getDatabaseMetaData().getColumnPrivileges(catalog, schema, table, columnNamePattern);
     }
 
     public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern)
-                                                                                                                        throws SQLException {
+            throws SQLException {
         return getDatabaseMetaData().getColumns(catalog, schemaPattern, tableNamePattern, columnNamePattern);
     }
 
@@ -107,13 +103,13 @@ public class TGroupDatabaseMetaData implements DatabaseMetaData {
 
     public ResultSet getCrossReference(String parentCatalog, String parentSchema, String parentTable,
                                        String foreignCatalog, String foreignSchema, String foreignTable)
-                                                                                                        throws SQLException {
+            throws SQLException {
         return getDatabaseMetaData().getCrossReference(parentCatalog,
-            parentSchema,
-            parentTable,
-            foreignCatalog,
-            foreignSchema,
-            foreignTable);
+                parentSchema,
+                parentTable,
+                foreignCatalog,
+                foreignSchema,
+                foreignTable);
     }
 
     public int getDatabaseMajorVersion() throws SQLException {
@@ -186,7 +182,7 @@ public class TGroupDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getIndexInfo(String catalog, String schema, String table, boolean unique, boolean approximate)
-                                                                                                                   throws SQLException {
+            throws SQLException {
         return getDatabaseMetaData().getIndexInfo(catalog, schema, table, unique, approximate);
     }
 
@@ -289,9 +285,9 @@ public class TGroupDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getProcedureColumns(String catalog, String schemaPattern, String procedureNamePattern,
                                          String columnNamePattern) throws SQLException {
         return getDatabaseMetaData().getProcedureColumns(catalog,
-            schemaPattern,
-            procedureNamePattern,
-            columnNamePattern);
+                schemaPattern,
+                procedureNamePattern,
+                columnNamePattern);
     }
 
     public String getProcedureTerm() throws SQLException {
@@ -299,7 +295,7 @@ public class TGroupDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getProcedures(String catalog, String schemaPattern, String procedureNamePattern)
-                                                                                                     throws SQLException {
+            throws SQLException {
         return getDatabaseMetaData().getProcedures(catalog, schemaPattern, procedureNamePattern);
     }
 
@@ -352,7 +348,7 @@ public class TGroupDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getTablePrivileges(String catalog, String schemaPattern, String tableNamePattern)
-                                                                                                      throws SQLException {
+            throws SQLException {
         return getDatabaseMetaData().getTablePrivileges(catalog, schemaPattern, tableNamePattern);
     }
 
@@ -361,7 +357,7 @@ public class TGroupDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types)
-                                                                                                             throws SQLException {
+            throws SQLException {
         return getDatabaseMetaData().getTables(catalog, schemaPattern, tableNamePattern, types);
     }
 
@@ -374,7 +370,7 @@ public class TGroupDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types)
-                                                                                                       throws SQLException {
+            throws SQLException {
         return getDatabaseMetaData().getUDTs(catalog, schemaPattern, typeNamePattern, types);
     }
 

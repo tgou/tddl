@@ -1,28 +1,13 @@
 package com.taobao.tddl.rule;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.common.model.lifecycle.Lifecycle;
 import com.taobao.tddl.common.utils.TStringUtil;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.config.ConfigDataHandler;
 import com.taobao.tddl.config.ConfigDataHandlerFactory;
 import com.taobao.tddl.config.ConfigDataListener;
@@ -31,49 +16,90 @@ import com.taobao.tddl.monitor.logger.LoggerInit;
 import com.taobao.tddl.rule.config.RuleChangeListener;
 import com.taobao.tddl.rule.exceptions.TddlRuleException;
 import com.taobao.tddl.rule.utils.StringXmlApplicationContext;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * tddl rule config管理
- * 
+ *
  * @author jianghang 2013-11-5 下午3:34:36
  * @since 5.0.0
  */
 public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
 
-    protected static final Logger                               logger                       = LoggerFactory.getLogger(TddlRuleConfig.class);
-    private static final int                                    TIMEOUT                      = 10 * 1000;
-    private static final String                                 ROOT_BEAN_NAME               = "vtabroot";
-    private static final String                                 TDDL_RULE_LE_PREFIX          = "com.taobao.tddl.rule.le.";
-    private static final String                                 TDDL_RULE_LE_VERSIONS_FORMAT = "com.taobao.tddl.rule.le.{0}.versions";
-    private static final String                                 NO_VERSION_NAME              = "__VN__";
+    protected static final Logger logger = LoggerFactory.getLogger(TddlRuleConfig.class);
+    private static final int TIMEOUT = 10 * 1000;
+    private static final String ROOT_BEAN_NAME = "vtabroot";
+    private static final String TDDL_RULE_LE_PREFIX = "com.taobao.tddl.rule.le.";
+    private static final String TDDL_RULE_LE_VERSIONS_FORMAT = "com.taobao.tddl.rule.le.{0}.versions";
+    private static final String NO_VERSION_NAME = "__VN__";
 
-    private String                                              appName;
-    private String                                              unitName;
+    private String appName;
+    private String unitName;
 
     // 本地规则
-    private String                                              appRuleFile;
-    private String                                              appRuleString;
+    private String appRuleFile;
+    private String appRuleString;
 
     // 多套规则(动态推)
-    private volatile ConfigDataHandlerFactory                   cdhf;
-    private volatile ConfigDataHandler                          versionHandler;
-    private volatile Map<String, ConfigDataHandler>             ruleHandlers                 = Maps.newHashMap();
-    private volatile List<RuleChangeListener>                   listeners                    = Lists.newArrayList();
+    private volatile ConfigDataHandlerFactory cdhf;
+    private volatile ConfigDataHandler versionHandler;
+    private volatile Map<String, ConfigDataHandler> ruleHandlers = Maps.newHashMap();
+    private volatile List<RuleChangeListener> listeners = Lists.newArrayList();
 
     /**
      * key = 0(old),1(new),2,3,4... value= version
      */
-    private volatile Map<String, VirtualTableRoot>              vtrs                         = Maps.newLinkedHashMap();
-    private volatile Map<String, String>                        ruleStrs                     = Maps.newHashMap();
-    private volatile Map<Integer, String>                       versionIndex                 = Maps.newHashMap();
-    private volatile Map<String, AbstractXmlApplicationContext> oldCtxs                      = Maps.newHashMap();
+    private volatile Map<String, VirtualTableRoot> vtrs = Maps.newLinkedHashMap();
+    private volatile Map<String, String> ruleStrs = Maps.newHashMap();
+    private volatile Map<Integer, String> versionIndex = Maps.newHashMap();
+    private volatile Map<String, AbstractXmlApplicationContext> oldCtxs = Maps.newHashMap();
 
-    private ClassLoader                                         outerClassLoader             = null;
+    private ClassLoader outerClassLoader = null;
     // 是否兼容历史老的rule，主要是tdd5代码修改过类的全路径，针对tddl3之前的rule需要考虑做兼容处理
-    private boolean                                             compatibleOldRule            = true;
+    private boolean compatibleOldRule = true;
+
+    /**
+     * 获取appname的versions列表的dataId
+     *
+     * @param appName
+     * @return
+     */
+    public static String getVersionsDataId(String appName) {
+        String versionsDataId = new MessageFormat(TDDL_RULE_LE_VERSIONS_FORMAT).format(new Object[]{appName});
+        return versionsDataId;
+    }
+
+    /**
+     * 获取appname指定version的dataId
+     *
+     * @param appName
+     * @param version
+     * @return
+     */
+    public static String getVersionedRuleDataId(String appName, String version) {
+        return TDDL_RULE_LE_PREFIX + appName + "." + version;
+    }
+
+    /**
+     * 获取appname无版本信息的dataId
+     *
+     * @param appName
+     * @return
+     */
+    public static String getNonversionedRuledataId(String appName) {
+        return TDDL_RULE_LE_PREFIX + appName;
+    }
 
     public void doInit() {
         if (appRuleFile != null) { // 如果存在本地规则
@@ -90,7 +116,7 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
                         continue;
                     } else {
                         throw new TddlRuleException("rule file path \"" + rulePaths[i]
-                                                    + " \" does not fit the pattern!");
+                                + " \" does not fit the pattern!");
                     }
                 }
                 for (int i = 0; i < rulePaths.length; i++) {
@@ -121,7 +147,7 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
                     String dataId = getVersionedRuleDataId(appName, version);
                     if (!dataSub(dataId, version, new SingleRuleConfigListener())) {
                         throw new RuntimeException("subscribe the rule data or init rule error!check the error log! the rule version is:"
-                                                   + version);
+                                + version);
                     }
                 }
 
@@ -145,7 +171,7 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
      * 返回当前使用的rule规则
      * 1. 如果是本地文件，则直接返回本地文件的版本 (本地文件存在多版本时，直接返回第一个版本)
      * 2. 如果是动态规则，则直接返回第一个版本
-     * 
+     *
      * ps. 正常情况，只有一个版本会处于使用中，也就是在数据库动态切换出现多版本使用中.
      * </pre>
      */
@@ -178,6 +204,8 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
 
         return versions;
     }
+
+    // ======================= help metod ==================
 
     /**
      * 初始化某个版本的rule
@@ -219,7 +247,7 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
 
     /**
      * 尝试订阅一下
-     * 
+     *
      * @throws TddlException
      */
     private boolean dataSub(String dataId, String version, ConfigDataListener listener) {
@@ -250,7 +278,7 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
 
     /**
      * remove listeners
-     * 
+     *
      * @throws TddlException
      */
     public void doDestory() throws TddlException {
@@ -263,11 +291,9 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
         }
     }
 
-    // ======================= help metod ==================
-
     /**
      * 基于文件创建rule的spring容器
-     * 
+     *
      * @param file
      * @return
      */
@@ -283,7 +309,7 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
 
     /**
      * 基于string字符流创建rule的spring容器
-     * 
+     *
      * @param data
      * @return
      */
@@ -312,13 +338,13 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
             String linesep = System.getProperty("line.separator");
             String time = df.format(new Date());
             StringBuilder sb = new StringBuilder().append(appName)
-                .append(logFieldSep)
-                .append(version)
-                .append(logFieldSep)
-                .append(time)
-                .append(logFieldSep)
-                .append(1)
-                .append(linesep);
+                    .append(logFieldSep)
+                    .append(version)
+                    .append(logFieldSep)
+                    .append(time)
+                    .append(logFieldSep)
+                    .append(1)
+                    .append(linesep);
 
             LoggerInit.DYNAMIC_RULE_LOG.info(sb.toString());
         }
@@ -332,39 +358,37 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
         logger.info(sb.toString());
     }
 
-    /**
-     * 获取appname的versions列表的dataId
-     * 
-     * @param appName
-     * @return
-     */
-    public static String getVersionsDataId(String appName) {
-        String versionsDataId = new MessageFormat(TDDL_RULE_LE_VERSIONS_FORMAT).format(new Object[] { appName });
-        return versionsDataId;
-    }
-
-    /**
-     * 获取appname指定version的dataId
-     * 
-     * @param appName
-     * @param version
-     * @return
-     */
-    public static String getVersionedRuleDataId(String appName, String version) {
-        return TDDL_RULE_LE_PREFIX + appName + "." + version;
-    }
-
-    /**
-     * 获取appname无版本信息的dataId
-     * 
-     * @param appName
-     * @return
-     */
-    public static String getNonversionedRuledataId(String appName) {
-        return TDDL_RULE_LE_PREFIX + appName;
-    }
-
     // ================== listener =======================
+
+    public void setOuterClassLoader(ClassLoader outerClassLoader) {
+        this.outerClassLoader = outerClassLoader;
+    }
+
+    public void addRuleChangeListener(RuleChangeListener listener) {
+        this.listeners.add(listener);
+    }
+
+    // =================== setter / getter ======================
+
+    public void setAppRuleFile(String appRuleFile) {
+        this.appRuleFile = appRuleFile;
+    }
+
+    public void setAppRuleString(String appRuleString) {
+        this.appRuleString = appRuleString;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
+
+    public void setCompatibleOldRule(boolean compatibleOldRule) {
+        this.compatibleOldRule = compatibleOldRule;
+    }
 
     private class VersionsConfigListener implements ConfigDataListener {
 
@@ -457,36 +481,6 @@ public class TddlRuleConfig extends AbstractLifecycle implements Lifecycle {
                 }
             }
         }
-    }
-
-    // =================== setter / getter ======================
-
-    public void setOuterClassLoader(ClassLoader outerClassLoader) {
-        this.outerClassLoader = outerClassLoader;
-    }
-
-    public void addRuleChangeListener(RuleChangeListener listener) {
-        this.listeners.add(listener);
-    }
-
-    public void setAppRuleFile(String appRuleFile) {
-        this.appRuleFile = appRuleFile;
-    }
-
-    public void setAppRuleString(String appRuleString) {
-        this.appRuleString = appRuleString;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public void setUnitName(String unitName) {
-        this.unitName = unitName;
-    }
-
-    public void setCompatibleOldRule(boolean compatibleOldRule) {
-        this.compatibleOldRule = compatibleOldRule;
     }
 
 }

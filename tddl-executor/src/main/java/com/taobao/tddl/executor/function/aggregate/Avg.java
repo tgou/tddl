@@ -9,12 +9,12 @@ import com.taobao.tddl.optimizer.exceptions.FunctionException;
 
 /**
  * Avg函数处理比较特殊，会将AVG转化为SUM + COUNT，拿到所有库的数据后再计算AVG
- * 
+ *
  * @since 5.0.0
  */
 public class Avg extends AggregateFunction {
 
-    private Long   count = 0L;
+    private Long count = 0L;
     private Object total = null;
 
     @Override

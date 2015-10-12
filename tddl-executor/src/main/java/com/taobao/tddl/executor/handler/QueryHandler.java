@@ -1,7 +1,5 @@
 package com.taobao.tddl.executor.handler;
 
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.executor.common.ExecutionContext;
 import com.taobao.tddl.executor.common.ExecutorContext;
@@ -12,25 +10,23 @@ import com.taobao.tddl.executor.spi.ITable;
 import com.taobao.tddl.executor.spi.ITransaction;
 import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 
+import java.util.List;
+
 /**
  * 用于处理执行的handler 。 目的是将执行计划中的Query节点进行转义处理。
  * 这个执行器主要是用在使用KV接口的数据库里，比如bdb.concurrentHashMap等。
- * 
+ *
  * @author Whisper
  */
 public class QueryHandler extends QueryHandlerCommon {
 
-    public QueryHandler(){
+    public QueryHandler() {
         super();
     }
 

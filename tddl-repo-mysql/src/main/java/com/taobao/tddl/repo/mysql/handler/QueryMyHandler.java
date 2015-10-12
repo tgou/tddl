@@ -1,7 +1,5 @@
 package com.taobao.tddl.repo.mysql.handler;
 
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.utils.GeneralUtil;
@@ -25,9 +23,11 @@ import com.taobao.tddl.repo.mysql.spi.My_Cursor;
 import com.taobao.tddl.repo.mysql.spi.My_JdbcHandler;
 import com.taobao.tddl.repo.mysql.utils.MysqlRepoUtils;
 
+import java.util.List;
+
 /**
  * mysql 查询逻辑
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-6 上午11:26:49
  * @since 5.0.0
  */
@@ -35,7 +35,7 @@ public class QueryMyHandler extends QueryHandler implements ICommandHandler {
 
     protected IDataSourceGetter dsGetter;
 
-    public QueryMyHandler(){
+    public QueryMyHandler() {
         super();
         dsGetter = new DatasourceMySQLImplement();
     }

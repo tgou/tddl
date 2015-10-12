@@ -1,21 +1,6 @@
 package com.taobao.tddl.rule.enumerator;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import com.taobao.tddl.rule.enumerator.handler.BigIntegerPartDiscontinousRangeEnumerator;
-import com.taobao.tddl.rule.enumerator.handler.CloseIntervalFieldsEnumeratorHandler;
-import com.taobao.tddl.rule.enumerator.handler.DatePartDiscontinousRangeEnumerator;
-import com.taobao.tddl.rule.enumerator.handler.DefaultEnumerator;
-import com.taobao.tddl.rule.enumerator.handler.IntegerPartDiscontinousRangeEnumerator;
-import com.taobao.tddl.rule.enumerator.handler.LongPartDiscontinousRangeEnumerator;
+import com.taobao.tddl.rule.enumerator.handler.*;
 import com.taobao.tddl.rule.exceptions.TddlRuleException;
 import com.taobao.tddl.rule.model.AdvancedParameter;
 import com.taobao.tddl.rule.model.sqljep.Comparative;
@@ -23,19 +8,23 @@ import com.taobao.tddl.rule.model.sqljep.ComparativeAND;
 import com.taobao.tddl.rule.model.sqljep.ComparativeBaseList;
 import com.taobao.tddl.rule.model.sqljep.ComparativeOR;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
+
 /**
  * 针对{@linkplain ComparativeBaseList}，基于{@linkplain AdvancedParameter}实现区间范围的枚举<br/>
  * 简单的{@linkplain Comparative}通过{@linkplain AdvancedParameter}
  * 的enumerateRange方法已经能搞定
- * 
+ *
  * @author jianghang 2013-10-29 下午5:57:27
  * @since 5.0.0
  */
 public class EnumeratorImp implements Enumerator {
 
-    private static final String                                              DEFAULT_ENUMERATOR = "DEFAULT_ENUMERATOR";
-    protected static final Map<String, CloseIntervalFieldsEnumeratorHandler> enumeratorMap      = new HashMap<String, CloseIntervalFieldsEnumeratorHandler>();
-    private boolean                                                          isDebug            = false;
+    protected static final Map<String, CloseIntervalFieldsEnumeratorHandler> enumeratorMap = new HashMap<String, CloseIntervalFieldsEnumeratorHandler>();
+    private static final String DEFAULT_ENUMERATOR = "DEFAULT_ENUMERATOR";
+    private boolean isDebug = false;
 
     {
         enumeratorMap.put(Integer.class.getName(), new IntegerPartDiscontinousRangeEnumerator());
@@ -46,6 +35,34 @@ public class EnumeratorImp implements Enumerator {
         enumeratorMap.put(java.sql.Date.class.getName(), new DatePartDiscontinousRangeEnumerator());
         enumeratorMap.put(java.sql.Timestamp.class.getName(), new DatePartDiscontinousRangeEnumerator());
         enumeratorMap.put(DEFAULT_ENUMERATOR, new DefaultEnumerator());
+    }
+
+    /**
+     * 处理一个and条件中 x > 1 and x = 3 类似这样的情况，因为前面已经对from 和 to 相等的情况作了处理
+     * 因此这里只需要处理不等的情况中的上述问题。 同时也处理了x = 1 and x = 2这种情况。以及x = 1 and x>2 和x < 1
+     * and x =2这种情况
+     *
+     * @param from
+     * @param to
+     * @return
+     */
+    protected static Comparable compareAndGetIntersactionOneValue(Comparative from, Comparative to) {
+        // x = from and x <= to
+        if (from.getComparison() == Comparative.Equivalent) {
+            if (to.getComparison() == Comparative.LessThan || to.getComparison() == Comparative.LessThanOrEqual) {
+                return from.getValue();
+            }
+        }
+
+        // x <= from and x = to
+        if (to.getComparison() == Comparative.Equivalent) {
+            if (from.getComparison() == Comparative.GreaterThan
+                    || from.getComparison() == Comparative.GreaterThanOrEqual) {
+                return to.getValue();
+            }
+        }
+
+        return null;
     }
 
     public Set<Object> getEnumeratedValue(Comparable condition, Integer cumulativeTimes, Comparable<?> atomIncrValue,
@@ -60,10 +77,10 @@ public class EnumeratorImp implements Enumerator {
             process(condition, retValue, cumulativeTimes, atomIncrValue, needMergeValueInCloseInterval);
         } catch (EnumerationInterruptException e) {
             processAllPassableFields(e.getComparative(),
-                retValue,
-                cumulativeTimes,
-                atomIncrValue,
-                needMergeValueInCloseInterval);
+                    retValue,
+                    cumulativeTimes,
+                    atomIncrValue,
+                    needMergeValueInCloseInterval);
         }
         return retValue;
     }
@@ -120,20 +137,20 @@ public class EnumeratorImp implements Enumerator {
             } else if (compResult < 0) {
                 // arg1 < arg2
                 processTwoDifferentArgsInComparativeAnd(retValue,
-                    compArg1,
-                    compArg2,
-                    cumulativeTimes,
-                    atomIncrValue,
-                    needMergeValueInCloseInterval);
+                        compArg1,
+                        compArg2,
+                        cumulativeTimes,
+                        atomIncrValue,
+                        needMergeValueInCloseInterval);
             } else {
                 // compResult>0
                 // arg1 > arg2
                 processTwoDifferentArgsInComparativeAnd(retValue,
-                    compArg2,
-                    compArg1,
-                    cumulativeTimes,
-                    atomIncrValue,
-                    needMergeValueInCloseInterval);
+                        compArg2,
+                        compArg1,
+                        cumulativeTimes,
+                        atomIncrValue,
+                        needMergeValueInCloseInterval);
             }
         } else {
             throw new TddlRuleException("目前只支持一个and节点上有两个子节点");
@@ -164,9 +181,11 @@ public class EnumeratorImp implements Enumerator {
         }
     }
 
+    // ======================== 委托调用handler进行处理==========================
+
     /**
      * 处理在一个and条件中的两个不同的argument
-     * 
+     *
      * @param samplingField
      * @param from
      * @param to
@@ -176,11 +195,11 @@ public class EnumeratorImp implements Enumerator {
                                                          boolean needMergeValueInCloseInterval) {
         if (isCloseInterval(from, to)) { // 处理 1 < x < 3的情况
             mergeFeildOfDefinitionInCloseInterval(from,
-                to,
-                retValue,
-                cumulativeTimes,
-                atomIncrValue,
-                needMergeValueInCloseInterval);
+                    to,
+                    retValue,
+                    cumulativeTimes,
+                    atomIncrValue,
+                    needMergeValueInCloseInterval);
         } else { // 处理 1 < x = 3 or 1 = x <= 3
             Comparable temp = compareAndGetIntersactionOneValue(from, to);
             if (temp != null) {
@@ -193,24 +212,24 @@ public class EnumeratorImp implements Enumerator {
                     if (to.getComparison() == Comparative.LessThanOrEqual || to.getComparison() == Comparative.LessThan) {
                         // 处理 x <= 3 and x <= 5
                         processAllPassableFields(from,
-                            retValue,
-                            cumulativeTimes,
-                            atomIncrValue,
-                            needMergeValueInCloseInterval);
+                                retValue,
+                                cumulativeTimes,
+                                atomIncrValue,
+                                needMergeValueInCloseInterval);
                     } else {
                         // to为GreaterThanOrEqual,或者为Equals 那么是个开区间，无交集
                         // do nothing.
                     }
                 } else if (to.getComparison() == Comparative.GreaterThanOrEqual
-                           || to.getComparison() == Comparative.GreaterThan) {
+                        || to.getComparison() == Comparative.GreaterThan) {
                     if (from.getComparison() == Comparative.GreaterThanOrEqual
-                        || from.getComparison() == Comparative.GreaterThan) {
+                            || from.getComparison() == Comparative.GreaterThan) {
                         // 处理 x >= 3 and x >= 5
                         processAllPassableFields(to,
-                            retValue,
-                            cumulativeTimes,
-                            atomIncrValue,
-                            needMergeValueInCloseInterval);
+                                retValue,
+                                cumulativeTimes,
+                                atomIncrValue,
+                                needMergeValueInCloseInterval);
                     } else {
                         // from为LessThanOrEqual，或者为Equals,为开区间，无交集
                         // do nothing.
@@ -222,12 +241,10 @@ public class EnumeratorImp implements Enumerator {
         }
     }
 
-    // ======================== 委托调用handler进行处理==========================
-
     /**
      * 函数的目标是返回全部可能的值，主要用于无限的定义域的处理，一般的说，对于部分连续部分不连续的函数曲线。
      * 这个值应该是从任意一个值开始，按照原子自增值与倍数穷举出该函数的y的一个变化周期中x对应的变化周期的所有点即可。
-     * 
+     *
      * @param retValue
      * @param cumulativeTimes
      * @param atomIncrValue
@@ -241,13 +258,13 @@ public class EnumeratorImp implements Enumerator {
         // 重构 现在这种架构下，id =? id in (?,?,?)都能走最短路径，但如果有多个 id > ? and id < ? or id>
         // ? and id<? 则要从map中查多次。不过因为这种情况比较少，因此可以忽略
         CloseIntervalFieldsEnumeratorHandler closeIntervalFieldsEnumeratorHandler = getCloseIntervalEnumeratorHandlerByComparative(source,
-            needMergeValueInCloseInterval);
+                needMergeValueInCloseInterval);
         closeIntervalFieldsEnumeratorHandler.processAllPassableFields(source, retValue, cumulativeTimes, atomIncrValue);
     }
 
     /**
      * 穷举出从from到to中的所有值，根据自增value
-     * 
+     *
      * @param from
      * @param to
      */
@@ -262,17 +279,19 @@ public class EnumeratorImp implements Enumerator {
         // 但如果有多个 id > ? and id < ? or id > ? and id<?
         // 则要从map中查多次。不过因为这种情况比较少，因此可以忽略
         CloseIntervalFieldsEnumeratorHandler closeIntervalFieldsEnumeratorHandler = getCloseIntervalEnumeratorHandlerByComparative(from,
-            needMergeValueInCloseInterval);
+                needMergeValueInCloseInterval);
         closeIntervalFieldsEnumeratorHandler.mergeFeildOfDefinitionInCloseInterval(from,
-            to,
-            retValue,
-            cumulativeTimes,
-            atomIncrValue);
+                to,
+                retValue,
+                cumulativeTimes,
+                atomIncrValue);
     }
+
+    // ======================== helper method ==================
 
     /**
      * 根据传入的参数决定使用哪类枚举器
-     * 
+     *
      * @param comp
      * @param needMergeValueInCloseInterval
      * @return
@@ -306,8 +325,6 @@ public class EnumeratorImp implements Enumerator {
         }
     }
 
-    // ======================== helper method ==================
-
     private Comparative valid2varableInAndIsNotComparativeBaseList(Comparable<?> arg) {
         if (arg instanceof ComparativeBaseList) {
             throw new TddlRuleException("在一组and条件中只支持两个范围的值共同决定分表，不支持3个");
@@ -333,7 +350,7 @@ public class EnumeratorImp implements Enumerator {
     private boolean containsEquvilentRelation(Comparative comp) {
         int comparasion = comp.getComparison();
         if (comparasion == Comparative.Equivalent || comparasion == Comparative.GreaterThanOrEqual
-            || comparasion == Comparative.LessThanOrEqual) {
+                || comparasion == Comparative.LessThanOrEqual) {
             return true;
         }
         return false;
@@ -347,40 +364,12 @@ public class EnumeratorImp implements Enumerator {
         int toComparasion = to.getComparison();
         // 本来想简单通过数值比大小，但发现里面还有not in,like这类的标记，还是保守点写清楚
         if ((fromComparasion == Comparative.GreaterThan || fromComparasion == Comparative.GreaterThanOrEqual)
-            && (toComparasion == Comparative.LessThan || toComparasion == Comparative.LessThanOrEqual)) {
+                && (toComparasion == Comparative.LessThan || toComparasion == Comparative.LessThanOrEqual)) {
             return true;
         } else {
             return false;
         }
 
-    }
-
-    /**
-     * 处理一个and条件中 x > 1 and x = 3 类似这样的情况，因为前面已经对from 和 to 相等的情况作了处理
-     * 因此这里只需要处理不等的情况中的上述问题。 同时也处理了x = 1 and x = 2这种情况。以及x = 1 and x>2 和x < 1
-     * and x =2这种情况
-     * 
-     * @param from
-     * @param to
-     * @return
-     */
-    protected static Comparable compareAndGetIntersactionOneValue(Comparative from, Comparative to) {
-        // x = from and x <= to
-        if (from.getComparison() == Comparative.Equivalent) {
-            if (to.getComparison() == Comparative.LessThan || to.getComparison() == Comparative.LessThanOrEqual) {
-                return from.getValue();
-            }
-        }
-
-        // x <= from and x = to
-        if (to.getComparison() == Comparative.Equivalent) {
-            if (from.getComparison() == Comparative.GreaterThan
-                || from.getComparison() == Comparative.GreaterThanOrEqual) {
-                return to.getValue();
-            }
-        }
-
-        return null;
     }
 
     public boolean isDebug() {

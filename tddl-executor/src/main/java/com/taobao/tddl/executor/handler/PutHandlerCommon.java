@@ -1,6 +1,8 @@
 package com.taobao.tddl.executor.handler;
 
 import com.taobao.tddl.common.exception.TddlException;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.executor.common.ExecutionContext;
 import com.taobao.tddl.executor.common.KVPair;
 import com.taobao.tddl.executor.common.TransactionConfig;
@@ -18,19 +20,16 @@ import com.taobao.tddl.optimizer.config.table.IndexMeta;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.IPut;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
-
 /**
  * CUD操作基类
- * 
+ *
  * @since 5.0.0
  */
 public abstract class PutHandlerCommon extends HandlerCommon {
 
     private static final Logger logger = LoggerFactory.getLogger(PutHandlerCommon.class);
 
-    public PutHandlerCommon(){
+    public PutHandlerCommon() {
         super();
     }
 
@@ -68,8 +67,8 @@ public abstract class PutHandlerCommon extends HandlerCommon {
 
         // 这里返回key->value的方式的东西，类似Key=affectRow val=1 这样的软编码
         IAffectRowCursor affectrowCursor = executionContext.getCurrentRepository()
-            .getCursorFactory()
-            .affectRowCursor(executionContext, affect_rows);
+                .getCursorFactory()
+                .affectRowCursor(executionContext, affect_rows);
 
         time = Monitor.monitorAndRenewTime(Monitor.KEY1, Monitor.ServerPut, Monitor.Key3Success, time);
         return affectrowCursor;
@@ -96,7 +95,7 @@ public abstract class PutHandlerCommon extends HandlerCommon {
     }
 
     protected abstract int executePut(ExecutionContext executionContext, IPut put, ITable table, IndexMeta meta)
-                                                                                                                throws Exception;
+            throws Exception;
 
     protected void prepare(ITransaction transaction, ITable table, IRowSet oldkv, CloneableRecord key,
                            CloneableRecord value, IPut.PUT_TYPE putType) throws TddlException {

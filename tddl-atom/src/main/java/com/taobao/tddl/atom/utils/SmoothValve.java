@@ -1,5 +1,8 @@
 package com.taobao.tddl.atom.utils;
 
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Map;
@@ -7,15 +10,12 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
-
 /**
  * 平滑阀门。用于可用性状态切换。 解决不可用到可用时，瞬间的流量、连接等的暴增冲击问题
  * 第一批只允许执行1次，第二批允许执行2次，。。。最后一批之后不再限制(batchLimits)
  * 每一批的名额用尽，要间隔timeDelay毫秒后，才开始下一批名额的发放。 在这个间隔时间期间的请求直接拒绝。
  * 允许负数的limit，含义为1/n的概率去执行。具体见构造函数
- * 
+ * <p/>
  * <pre>
  * 使用列子：
  * SmoothValve smoothValve = new SmoothValve(0);
@@ -25,53 +25,92 @@ import com.taobao.tddl.common.utils.logger.LoggerFactory;
  *    }else {
  *          if (valve.smoothThroughOnInitial()) {
  *              // do smooth trying
- *              
+ *
  *              if(sucessed){
  *                  valve.setAvailable();
  *              } else {
  *                // throw not available
  *              }
- *              
+ *
  *          }else {
  *              // throw not available
  *          }
  *    }
- * 
- * 
+ *
+ *
  * </pre>
- * 
+ *
  * @author linxuan
  */
 public class SmoothValve {
 
-    private static final Logger log         = LoggerFactory.getLogger(SmoothValve.class);
-
-    private volatile boolean    available   = true;
-    private volatile boolean    isInSmooth  = false;                                     // 是否在平滑期
-    private final AtomicInteger count       = new AtomicInteger();
-    private final AtomicInteger batchNo     = new AtomicInteger();
-    private final int[]         batchLimits;
+    private static final Logger log = LoggerFactory.getLogger(SmoothValve.class);
+    private final AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger batchNo = new AtomicInteger();
+    private final int[] batchLimits;
     private final AtomicInteger rejectCount = new AtomicInteger();
-    private final long          timeDelay;                                               // ms
-    private volatile long       timeBegin;
+    private final long timeDelay;                                               // ms
+    private volatile boolean available = true;
+    private volatile boolean isInSmooth = false;                                     // 是否在平滑期
+    private volatile long timeBegin;
 
-    public SmoothValve(long timeDelay){
+    public SmoothValve(long timeDelay) {
         this.timeDelay = timeDelay;
-        this.batchLimits = new int[] { 1, 2, 4, 8, 16, 32, 64 };
+        this.batchLimits = new int[]{1, 2, 4, 8, 16, 32, 64};
     }
 
     /**
      * @param timeDelay
      * @param batchLimits 允许负数的limit，为了解决cliet数量相当多时，每个client放一个请求进来都会冲垮服务器的场景：
-     * >1，表示允许通过的次数 <br/>
-     * -1和0作用相同，表示放弃当前尝试，只是多延迟了一些时间。所以一般不设 <br/>
-     * -2表示这批尝试中，只随机放入所有client的1/2(让当前操作1/2的概率通过) <br/>
-     * -3表示这批尝试中，只随机放入所有client的1/3(让当前操作1/3的概率通过) ... <br/>
-     * 例如：batchLimits = new int[] { -4,-3,-2, 1, 2, 4, 8, 16, 32 };
+     *                    >1，表示允许通过的次数 <br/>
+     *                    -1和0作用相同，表示放弃当前尝试，只是多延迟了一些时间。所以一般不设 <br/>
+     *                    -2表示这批尝试中，只随机放入所有client的1/2(让当前操作1/2的概率通过) <br/>
+     *                    -3表示这批尝试中，只随机放入所有client的1/3(让当前操作1/3的概率通过) ... <br/>
+     *                    例如：batchLimits = new int[] { -4,-3,-2, 1, 2, 4, 8, 16, 32 };
      */
-    public SmoothValve(long timeDelay, int[] batchLimits){
+    public SmoothValve(long timeDelay, int[] batchLimits) {
         this.timeDelay = timeDelay;
         this.batchLimits = batchLimits;
+    }
+
+    public static SmoothValve parse(String str) {
+        try {
+            Properties p = new Properties();
+            p.load(new ByteArrayInputStream((str).getBytes()));
+            long td = 0;
+            String[] limits = null;
+            for (Map.Entry<Object, Object> entry : p.entrySet()) {
+                String key = ((String) entry.getKey()).trim();
+                String value = ((String) entry.getValue()).trim();
+                switch (CreateProperties.valueOf(key)) {
+                    case timeDelay:
+                        td = Integer.parseInt(value);
+                        break;
+                    case batchLimits:
+                        limits = value.split("\\|");
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (td == 0) {
+                log.error("SmoothValve Properties incomplete");
+                return null;
+            }
+            if (limits != null) {
+                int[] limitArray = new int[limits.length];
+                for (int i = 0; i < limits.length; i++) {
+                    limitArray[i] = Integer.parseInt(limits[i].trim());
+                }
+                return new SmoothValve(td, limitArray);
+            } else {
+                return new SmoothValve(td);
+            }
+
+        } catch (Exception e) {
+            log.error("parse SmoothValve Properties failed", e);
+            return null;
+        }
     }
 
     /**
@@ -163,55 +202,15 @@ public class SmoothValve {
         }
     }
 
-    private static enum CreateProperties {
-        timeDelay, batchLimits;
-    }
-
-    public static SmoothValve parse(String str) {
-        try {
-            Properties p = new Properties();
-            p.load(new ByteArrayInputStream((str).getBytes()));
-            long td = 0;
-            String[] limits = null;
-            for (Map.Entry<Object, Object> entry : p.entrySet()) {
-                String key = ((String) entry.getKey()).trim();
-                String value = ((String) entry.getValue()).trim();
-                switch (CreateProperties.valueOf(key)) {
-                    case timeDelay:
-                        td = Integer.parseInt(value);
-                        break;
-                    case batchLimits:
-                        limits = value.split("\\|");
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if (td == 0) {
-                log.error("SmoothValve Properties incomplete");
-                return null;
-            }
-            if (limits != null) {
-                int[] limitArray = new int[limits.length];
-                for (int i = 0; i < limits.length; i++) {
-                    limitArray[i] = Integer.parseInt(limits[i].trim());
-                }
-                return new SmoothValve(td, limitArray);
-            } else {
-                return new SmoothValve(td);
-            }
-
-        } catch (Exception e) {
-            log.error("parse SmoothValve Properties failed", e);
-            return null;
-        }
-    }
-
     public String toString() {
         return new StringBuilder("timeDelay=").append(timeDelay)
-            .append(",batchLimits=")
-            .append(Arrays.toString(batchLimits))
-            .toString();
+                .append(",batchLimits=")
+                .append(Arrays.toString(batchLimits))
+                .toString();
+    }
+
+    private static enum CreateProperties {
+        timeDelay, batchLimits;
     }
 
 }

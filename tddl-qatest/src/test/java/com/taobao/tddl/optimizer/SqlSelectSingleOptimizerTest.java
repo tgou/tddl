@@ -1,9 +1,8 @@
 package com.taobao.tddl.optimizer;
 
+import com.taobao.tddl.repo.mysql.sqlconvertor.SqlMergeNode;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.taobao.tddl.repo.mysql.sqlconvertor.SqlMergeNode;
 
 /**
  * @author Dreamond
@@ -72,7 +71,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(1, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.ID as ID1,SUM(STUDENT.ID),SUM(STUDENT.ID) as SUM1 from student where (STUDENT.NAME = ?) group by STUDENT.ID asc  order by STUDENT.ID asc ",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -89,7 +88,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
             Assert.assertEquals(1, node.getSubQuerys().size());
             Assert.assertEquals("select STUDENT.ID,STUDENT.ID from student where (STUDENT.ID = ?) and (STUDENT.NAME = ?)",
-                getSql0(node));
+                    getSql0(node));
         }
     }
 
@@ -110,7 +109,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
             Assert.assertEquals(2, node.getSubQuerys().size());
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID = ?)",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
@@ -118,7 +117,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
             Assert.assertEquals(1, node.getSubQuerys().size());
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.NAME = ?)",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
@@ -126,7 +125,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
             Assert.assertEquals(2, node.getSubQuerys().size());
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID > ?)",
-                getSql0(node));
+                    getSql0(node));
         }
     }
 
@@ -136,7 +135,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (NOW() = STUDENT.ID)",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -186,7 +185,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select S.ID,S.NAME,S.SCHOOL,T.ID,T.NAME,T.SCHOOL,COUNT(*) from student S join student T on S.NAME = T.NAME",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -195,7 +194,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID = null)",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -280,7 +279,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
             Assert.assertEquals(2, node.getSubQuerys().size());
             Assert.assertEquals("select ADDDATE(?,INTERVAL ? DAY) from student where (STUDENT.ID = null)",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
@@ -295,7 +294,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
             Assert.assertEquals(2, node.getSubQuerys().size());
             Assert.assertEquals("select DATE_ADD(?,INTERVAL ? SECOND_MICROSECOND) from student where (STUDENT.ID = null)",
-                getSql0(node));
+                    getSql0(node));
         }
 
     }
@@ -322,7 +321,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID = ?)",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -331,7 +330,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(1, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.NAME = ?)",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -499,7 +498,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.SCHOOL = ?)",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -508,7 +507,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.SCHOOL = ?)",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -517,7 +516,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.SCHOOL = ?)",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -526,7 +525,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID = ?)",
-            getSql0(node));
+                getSql0(node));
 
     }
 
@@ -536,7 +535,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID = ?)",
-            getSql0(node));
+                getSql0(node));
 
     }
 
@@ -546,7 +545,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID = ?)",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -567,7 +566,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID = ?)",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -584,7 +583,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID > ?)",
-            getSql0(node));
+                getSql0(node));
 
     }
 
@@ -593,7 +592,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         SqlMergeNode node = getMergeNode("select * from student where name=1 or name='sadasd'");
         System.out.println(node);
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where ((STUDENT.NAME = ?) OR (STUDENT.NAME = ?))",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -603,7 +602,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
             Assert.assertEquals(1, node.getSubQuerys().size());
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.NAME IN (?))",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
@@ -611,14 +610,14 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
             Assert.assertEquals(1, node.getSubQuerys().size());
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID = ?) and (STUDENT.NAME IN (?))",
-                getSql0(node));
+                    getSql0(node));
         }
         {
             SqlMergeNode node = getMergeNode("select * from student where name in (1,2)");
             System.out.println(node);
             Assert.assertEquals(1, node.getSubQuerys().size());
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.NAME IN (?,?))",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
@@ -626,10 +625,10 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
             Assert.assertEquals(2, node.getSubQuerys().size());
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.NAME IN (?,?,?,?,?,?))",
-                getSql0(node));
+                    getSql0(node));
 
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.NAME IN (?,?,?,?))",
-                getSql1(node));
+                    getSql1(node));
         }
     }
 
@@ -639,7 +638,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(1, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where ((STUDENT.NAME = ?) AND (STUDENT.SCHOOL = ?))",
-            getSql0(node));
+                getSql0(node));
 
     }
 
@@ -649,7 +648,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         System.out.println(node);
         Assert.assertEquals(2, node.getSubQuerys().size());
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where ((STUDENT.NAME = ?) OR (STUDENT.SCHOOL = ?))",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -662,7 +661,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             Assert.assertEquals("ID", node.getOrderBy().get(0).getColumn().getColumnName());
             Assert.assertEquals((Boolean) true, node.getOrderBy().get(0).getDirection());
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student order by STUDENT.ID asc ",
-                getSql0(node));
+                    getSql0(node));
 
         }
         {
@@ -814,7 +813,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         Assert.assertEquals(1, node.getGroupBys().size());
         Assert.assertEquals("NAME", node.getGroupBys().get(0).getColumnName());
         Assert.assertEquals("select SUM(STUDENT.ID),STUDENT.NAME from student group by STUDENT.NAME asc ",
-            getSql0(node));
+                getSql0(node));
 
     }
 
@@ -834,7 +833,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             Assert.assertEquals("SUM(ID)", node.getOrderBy().get(0).getColumn().getColumnName());
 
             Assert.assertEquals("select SUM(STUDENT.ID),STUDENT.NAME from student where (STUDENT.NAME = ?) group by STUDENT.NAME asc  order by SUM(STUDENT.ID) asc ",
-                getSql0(node));
+                    getSql0(node));
         }
 
         // {
@@ -881,14 +880,14 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             SqlMergeNode node = getMergeNode("select school from student where name=1 order by id");
             System.out.println(node);
             Assert.assertEquals("select STUDENT.SCHOOL from student where (STUDENT.NAME = ?) order by STUDENT.ID asc ",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
             SqlMergeNode node = getMergeNode("select school from student where name=1 group by id");
             System.out.println(node);
             Assert.assertEquals("select STUDENT.SCHOOL from student where (STUDENT.NAME = ?) group by STUDENT.ID asc ",
-                getSql0(node));
+                    getSql0(node));
         }
 
     }
@@ -907,7 +906,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
             Assert.assertEquals(1, node.getColumns().size());
             Assert.assertEquals("select COUNT( distinct STUDENT.SCHOOL) from student where (STUDENT.NAME = ?)",
-                getSql0(node));
+                    getSql0(node));
         }
     }
 
@@ -916,7 +915,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         SqlMergeNode node = getMergeNode("select * from student group by name,id,school");
         System.out.println(node);
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student group by STUDENT.NAME asc ,STUDENT.ID asc ,STUDENT.SCHOOL asc ",
-            getSql0(node));
+                getSql0(node));
 
     }
 
@@ -925,7 +924,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
         SqlMergeNode node = getMergeNode("select * from student order by name,id,school");
         System.out.println(node);
         Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student order by STUDENT.NAME asc ,STUDENT.ID asc ,STUDENT.SCHOOL asc ",
-            getSql0(node));
+                getSql0(node));
     }
 
     @Test
@@ -934,28 +933,28 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             SqlMergeNode node = getMergeNode("select SUM(id),NAME from STUDENT  group by NAME asc order by NAME asc");
             System.out.println(node);
             Assert.assertEquals("select SUM(STUDENT.ID),STUDENT.NAME from student group by STUDENT.NAME asc  order by STUDENT.NAME asc ",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
             SqlMergeNode node = getMergeNode("select sum(id) ,name from student group by name order by name desc");
             System.out.println(node);
             Assert.assertEquals("select SUM(STUDENT.ID),STUDENT.NAME from student group by STUDENT.NAME desc  order by STUDENT.NAME desc ",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
             SqlMergeNode node = getMergeNode("select sum(id) ,name from student group by name order by sum(id) desc");
             System.out.println(node);
             Assert.assertEquals("select SUM(STUDENT.ID),STUDENT.NAME from student group by STUDENT.NAME asc  order by STUDENT.NAME asc ",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
             SqlMergeNode node = getMergeNode("select * from student group by name,id order by id,name");
             System.out.println(node);
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student group by STUDENT.ID asc ,STUDENT.NAME asc  order by STUDENT.ID asc ,STUDENT.NAME asc ",
-                getSql0(node));
+                    getSql0(node));
         }
     }
 
@@ -965,21 +964,21 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             SqlMergeNode node = getMergeNode("select * from student where id>1 having id<2");
             System.out.println(node);
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME,STUDENT.SCHOOL from student where (STUDENT.ID > ?)",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
             SqlMergeNode node = getMergeNode("select max(id),name from student group by name having max(id)<2");
             System.out.println(node);
             Assert.assertEquals("select MAX(STUDENT.ID),STUDENT.NAME from student group by STUDENT.NAME asc ",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
             SqlMergeNode node = getMergeNode("select max(id) m,name from student group by name having m<2");
             System.out.println(node);
             Assert.assertEquals("select MAX(STUDENT.ID) as M,STUDENT.NAME from student group by STUDENT.NAME asc ",
-                getSql0(node));
+                    getSql0(node));
         }
 
     }
@@ -991,7 +990,7 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             System.out.println(node);
 
             Assert.assertEquals("select MAX(STUDENT.ID) as M,STUDENT.NAME from student where (STUDENT.NAME = ?) group by STUDENT.NAME asc  having (MAX(STUDENT.ID) < ?)",
-                getSql0(node));
+                    getSql0(node));
         }
 
     }
@@ -1002,16 +1001,16 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             SqlMergeNode node = getMergeNode("select max(id)+min(id) from student where name=2");
             System.out.println(node);
             Assert.assertEquals("select (MAX(STUDENT.ID) + MIN(STUDENT.ID)) from student where (STUDENT.NAME = ?)",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
             SqlMergeNode node = getMergeNode("select -min(id) from student where name=2");
             System.out.println(node);
             Assert.assertEquals("select -(MIN(STUDENT.ID)) from student where (STUDENT.NAME = ?)", node.getSubQuerys()
-                .get("group0")
-                .get(0)
-                .getSql());
+                    .get("group0")
+                    .get(0)
+                    .getSql());
 
         }
 
@@ -1077,14 +1076,14 @@ public class SqlSelectSingleOptimizerTest extends BaseSqlOptimizerTest {
             SqlMergeNode node = getMergeNode("select ID,NAME from student where (id,name) in ((1,2),(2,3))");
             System.out.println(node);
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME from student where ((STUDENT.ID,STUDENT.NAME) IN ((?,?),(?,?)))",
-                getSql0(node));
+                    getSql0(node));
         }
 
         {
             SqlMergeNode node = getMergeNode("select ID,NAME from student where (id,name) = (1,2)");
             System.out.println(node);
             Assert.assertEquals("select STUDENT.ID,STUDENT.NAME from student where ((STUDENT.ID,STUDENT.NAME) = (?,?))",
-                getSql0(node));
+                    getSql0(node));
         }
     }
 }

@@ -1,8 +1,7 @@
 package com.tddl.tddl.monitor.logger;
 
-import org.junit.Test;
-
 import com.taobao.tddl.monitor.logger.LoggerInit;
+import org.junit.Test;
 
 public class DynamicLoggerTest {
 

@@ -1,11 +1,5 @@
 package com.taobao.tddl.optimizer.rule;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -22,29 +16,35 @@ import com.taobao.tddl.optimizer.config.table.TableMeta;
 import com.taobao.tddl.optimizer.exceptions.OptimizerException;
 import com.taobao.tddl.rule.model.TargetDB;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 /**
  * 基于Rule获取到物理的group进行查找
- * 
+ *
  * @since 5.0.0
  */
 public class RuleSchemaManager extends AbstractLifecycle implements SchemaManager {
 
-    private OptimizerRule                          rule;
-    private final Matrix                           matrix;
-    private StaticSchemaManager                    local;
-    private boolean                                useCache        = true;
-    private LoadingCache<Group, RepoSchemaManager> repos           = null;
-    private LoadingCache<String, TableMeta>        cache           = null;
+    private final Matrix matrix;
+    private OptimizerRule rule;
+    private StaticSchemaManager local;
+    private boolean useCache = true;
+    private LoadingCache<Group, RepoSchemaManager> repos = null;
+    private LoadingCache<String, TableMeta> cache = null;
     /**
      * default cache expire time, 30000ms
      */
-    private long                                   cacheExpireTime = TddlConstants.DEFAULT_TABLE_META_EXPIRE_TIME;
+    private long cacheExpireTime = TddlConstants.DEFAULT_TABLE_META_EXPIRE_TIME;
 
-    public RuleSchemaManager(OptimizerRule rule, Matrix matrix){
+    public RuleSchemaManager(OptimizerRule rule, Matrix matrix) {
         this(rule, matrix, null);
     }
 
-    public RuleSchemaManager(OptimizerRule rule, Matrix matrix, Long cacheExpireTime){
+    public RuleSchemaManager(OptimizerRule rule, Matrix matrix, Long cacheExpireTime) {
         this.rule = rule;
         this.matrix = matrix;
 
@@ -74,16 +74,16 @@ public class RuleSchemaManager extends AbstractLifecycle implements SchemaManage
         });
 
         cache = CacheBuilder.newBuilder()
-            .maximumSize(1000)
-            .expireAfterWrite(cacheExpireTime, TimeUnit.MILLISECONDS)
-            .build(new CacheLoader<String, TableMeta>() {
+                .maximumSize(1000)
+                .expireAfterWrite(cacheExpireTime, TimeUnit.MILLISECONDS)
+                .build(new CacheLoader<String, TableMeta>() {
 
-                @Override
-                public TableMeta load(String tableName) throws Exception {
-                    return getTable0(tableName);
+                    @Override
+                    public TableMeta load(String tableName) throws Exception {
+                        return getTable0(tableName);
 
-                }
-            });
+                    }
+                });
     }
 
     @Override

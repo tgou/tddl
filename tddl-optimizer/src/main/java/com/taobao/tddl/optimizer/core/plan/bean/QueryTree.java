@@ -1,10 +1,5 @@
 package com.taobao.tddl.optimizer.core.plan.bean;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
 import com.taobao.tddl.optimizer.core.expression.IFilter;
@@ -15,32 +10,37 @@ import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IParallelizableQueryTree;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 public abstract class QueryTree extends DataNodeExecutor<IQueryTree> implements IParallelizableQueryTree<IQueryTree> {
 
-    protected IFilter                        valueFilter;
-    protected IFilter                        havingFilter;
-    protected List<IOrderBy>                 orderBys             = Collections.emptyList();
-    protected List<IOrderBy>                 groupBys             = Collections.emptyList();
-    protected Comparable                     limitFrom;
-    protected Comparable                     limitTo;
-    protected List<ISelectable>              columns              = Collections.emptyList();
-    protected String                         alias;
+    protected IFilter valueFilter;
+    protected IFilter havingFilter;
+    protected List<IOrderBy> orderBys = Collections.emptyList();
+    protected List<IOrderBy> groupBys = Collections.emptyList();
+    protected Comparable limitFrom;
+    protected Comparable limitTo;
+    protected List<ISelectable> columns = Collections.emptyList();
+    protected String alias;
     /**
      * 查询模式，并行？串行？
      */
-    protected QUERY_CONCURRENCY              queryConcurrency     = QUERY_CONCURRENCY.SEQUENTIAL;
+    protected QUERY_CONCURRENCY queryConcurrency = QUERY_CONCURRENCY.SEQUENTIAL;
 
     /**
      * 能否被合并成一条sql，默认可以
      */
-    protected Boolean                        canMerge             = true;
+    protected Boolean canMerge = true;
 
     /**
      * 是否显式使用临时表，默认不可以
      */
-    protected Boolean                        useTempTableExplicit = false;
-    protected Boolean                        isSubQuery           = false;
-    protected boolean                        isTopQuery           = false;
+    protected Boolean useTempTableExplicit = false;
+    protected Boolean isSubQuery = false;
+    protected boolean isTopQuery = false;
     protected Map<Integer, ParameterContext> parameterSettings;
 
     @Override

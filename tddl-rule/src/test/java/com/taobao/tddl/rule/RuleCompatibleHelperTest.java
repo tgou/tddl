@@ -1,7 +1,6 @@
 package com.taobao.tddl.rule;
 
-import java.io.IOException;
-
+import com.taobao.tddl.rule.utils.StringXmlApplicationContext;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -12,7 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.taobao.tddl.rule.utils.StringXmlApplicationContext;
+import java.io.IOException;
 
 public class RuleCompatibleHelperTest {
 

@@ -1,14 +1,13 @@
 package com.taobao.tddl.qatest.atom;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.taobao.tddl.qatest.util.DateUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.dao.DataAccessException;
 
-import com.taobao.tddl.qatest.util.DateUtil;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Comment for AtomBaseCRUDTest
@@ -23,10 +22,10 @@ public class AtomBaseCRUDTest extends AtomTestCase {
     @Test
     public void insertByPreStTest() {
         String sql = "insert into normaltbl_0001 (pk,gmt_create) values (?,?)";
-        Object[] arguments = new Object[] { RANDOM_ID, time };
+        Object[] arguments = new Object[]{RANDOM_ID, time};
         tddlJT.update(sql, arguments);
 
-        Map re = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+        Map re = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
         Assert.assertEquals(time, String.valueOf(re.get("gmt_create")));
     }
 
@@ -35,13 +34,13 @@ public class AtomBaseCRUDTest extends AtomTestCase {
      */
     @Test
     public void updateByPreStTest() {
-        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID, time });
+        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID, time});
 
         String sql = "update normaltbl_0001 set gmt_create=? where pk=?";
-        Object[] arguments = new Object[] { nextDay, RANDOM_ID };
+        Object[] arguments = new Object[]{nextDay, RANDOM_ID};
         tddlJT.update(sql, arguments);
 
-        Map re = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+        Map re = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
         Assert.assertEquals(nextDay, String.valueOf(re.get("gmt_create")));
     }
 
@@ -50,10 +49,10 @@ public class AtomBaseCRUDTest extends AtomTestCase {
      */
     @Test
     public void queryByPreStTest() {
-        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID, time });
+        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID, time});
 
         String sql = "select * from normaltbl_0001 where pk=?";
-        Object[] arguments = new Object[] { RANDOM_ID };
+        Object[] arguments = new Object[]{RANDOM_ID};
         Map re = tddlJT.queryForMap(sql, arguments);
         Assert.assertEquals(time, String.valueOf(re.get("gmt_create")));
     }
@@ -63,13 +62,13 @@ public class AtomBaseCRUDTest extends AtomTestCase {
      */
     @Test
     public void deleteByPreStTest() {
-        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID, time });
+        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID, time});
 
         String sql = "delete from normaltbl_0001 where pk=?";
-        Object[] arguments = new Object[] { RANDOM_ID };
+        Object[] arguments = new Object[]{RANDOM_ID};
         tddlJT.update(sql, arguments);
 
-        List re = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+        List re = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
         Assert.assertEquals(0, re.size());
     }
 
@@ -78,11 +77,11 @@ public class AtomBaseCRUDTest extends AtomTestCase {
      */
     @Test
     public void replaceByPreStTest() {
-        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID, time });
+        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID, time});
         String sql = "replace into normaltbl_0001 (pk,gmt_create) values (?,?)";
-        Object[] arguments = new Object[] { RANDOM_ID, nextDay };
+        Object[] arguments = new Object[]{RANDOM_ID, nextDay};
         tddlJT.update(sql, arguments);
-        Map re = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+        Map re = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
         Assert.assertEquals(nextDay, String.valueOf(re.get("gmt_create")));
     }
 
@@ -103,7 +102,7 @@ public class AtomBaseCRUDTest extends AtomTestCase {
      */
     @Test
     public void updateByStTest() {
-        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID, time });
+        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID, time});
 
         String sql = "update normaltbl_0001 set gmt_create= ADDDATE(CURDATE(),INTERVAL 1 DAY) where pk=" + RANDOM_ID;
         tddlJT.update(sql);
@@ -117,7 +116,7 @@ public class AtomBaseCRUDTest extends AtomTestCase {
      */
     @Test
     public void queryByStTest() {
-        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID, time });
+        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID, time});
 
         Map re = tddlJT.queryForMap("select * from normaltbl_0001 where pk=" + RANDOM_ID);
         Assert.assertEquals(time, DateUtil.formatDate((Date) re.get("gmt_create"), DateUtil.DATE_FULLHYPHEN));
@@ -128,7 +127,7 @@ public class AtomBaseCRUDTest extends AtomTestCase {
      */
     @Test
     public void deleteByStTest() {
-        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID, time });
+        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID, time});
 
         String sql = "delete from normaltbl_0001 where pk=" + RANDOM_ID;
         tddlJT.update(sql);
@@ -142,9 +141,9 @@ public class AtomBaseCRUDTest extends AtomTestCase {
      */
     @Test
     public void replaceByStTest() {
-        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID, time });
+        prepareData(tddlJT, "insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID, time});
         String sql = "replace into normaltbl_0001 (gmt_create,pk) values (ADDDATE(CURDATE(),INTERVAL 1 DAY),"
-                     + RANDOM_ID + ")";
+                + RANDOM_ID + ")";
         tddlJT.update(sql);
         Map re = tddlJT.queryForMap("select * from normaltbl_0001 where pk=" + RANDOM_ID);
         Assert.assertEquals(nextDay, DateUtil.formatDate((Date) re.get("gmt_create"), DateUtil.DATE_FULLHYPHEN));
@@ -158,7 +157,7 @@ public class AtomBaseCRUDTest extends AtomTestCase {
         String time = DateUtil.formatDate(new Date(), DateUtil.DATE_FULLHYPHEN);
         String sql = "insert into normaltbl_noneExist (pk,gmt_create) values (?,?)";
         try {
-            tddlJT.update(sql, new Object[] { RANDOM_ID, time });
+            tddlJT.update(sql, new Object[]{RANDOM_ID, time});
             Assert.fail();
         } catch (DataAccessException e) {
         }

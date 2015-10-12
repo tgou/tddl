@@ -1,35 +1,33 @@
 package com.taobao.tddl.atom;
 
-import java.sql.SQLException;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import com.alibaba.druid.pool.DruidDataSource;
 import com.taobao.tddl.atom.config.TAtomDsConfDO;
 import com.taobao.tddl.atom.config.TAtomDsConfHandle;
 import com.taobao.tddl.atom.exception.AtomAlreadyInitException;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.Map;
+
 /**
  * 静态剥离的druid数据源，不支持动态改参数 主要用来方便测试
- * 
+ *
  * @author qihao
  */
 public class StaticTAtomDataSource extends AbstractTAtomDataSource {
 
-    private static Logger    logger = LoggerFactory.getLogger(StaticTAtomDataSource.class);
+    private static Logger logger = LoggerFactory.getLogger(StaticTAtomDataSource.class);
     /**
      * 数据源配置信息
      */
-    private TAtomDsConfDO    confDO = new TAtomDsConfDO();
+    private TAtomDsConfDO confDO = new TAtomDsConfDO();
 
     /**
      * Jboss数据源通过init初始化
      */
-    private DruidDataSource  druidDataSource;
+    private DruidDataSource druidDataSource;
 
     private volatile boolean init;
 
@@ -43,8 +41,8 @@ public class StaticTAtomDataSource extends AbstractTAtomDataSource {
             throw new AtomAlreadyInitException("[AlreadyInit] double call Init !");
         }
         DruidDataSource localDruidDataSource = TAtomDsConfHandle.convertTAtomDsConf2DruidConf(confDO.getIp(),
-            confDO,
-            confDO.getDbName());
+                confDO,
+                confDO.getDbName());
         boolean checkPram = TAtomDsConfHandle.checkLocalTxDataSourceDO(localDruidDataSource);
         if (checkPram) {
             localDruidDataSource.init();
@@ -175,10 +173,6 @@ public class StaticTAtomDataSource extends AbstractTAtomDataSource {
         this.confDO.setIdleTimeout(idleTimeout);
     }
 
-    public void setDbType(String dbType) {
-        this.confDO.setDbType(dbType);
-    }
-
     public String getOracleConType() {
         return this.confDO.getOracleConType();
     }
@@ -203,5 +197,9 @@ public class StaticTAtomDataSource extends AbstractTAtomDataSource {
     @Override
     public TAtomDbTypeEnum getDbType() {
         return confDO.getDbTypeEnum();
+    }
+
+    public void setDbType(String dbType) {
+        this.confDO.setDbType(dbType);
     }
 }

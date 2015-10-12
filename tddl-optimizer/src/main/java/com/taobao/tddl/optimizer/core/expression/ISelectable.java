@@ -1,22 +1,22 @@
 package com.taobao.tddl.optimizer.core.expression;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.CanVisit;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
 
+import java.util.Map;
+
 /**
  * 描述一个列信息，可能会是字段列，函数列，常量列<br>
  * 使用RT泛型解决子类流式API需要的返回结果为子类
- * 
+ *
  * @since 5.0.0
  */
 public interface ISelectable<RT extends ISelectable> extends CanVisit, Comparable {
 
     /**
      * 参数赋值，计算过程获取parameter参数获取?对应的数据
-     * 
+     * <p/>
      * <pre>
      * a. 比如原始sql中使用了?占位符，通过PrepareStatement.setXXX设置参数
      * b. sql解析后构造了，将?解析为IBindVal对象
@@ -29,9 +29,9 @@ public interface ISelectable<RT extends ISelectable> extends CanVisit, Comparabl
     // DATE_VAL, TIMESTAMP_VAL, TIME_VAL, BLOB_VAL, BIT_VAL
     // }
 
-    public RT setDataType(DataType dataType);
-
     public DataType getDataType();
+
+    public RT setDataType(DataType dataType);
 
     // --------------- name相关信息 ----------------------
 
@@ -40,13 +40,13 @@ public interface ISelectable<RT extends ISelectable> extends CanVisit, Comparabl
      */
     public String getAlias();
 
-    public String getTableName();
-
-    public String getColumnName();
-
     public RT setAlias(String alias);
 
+    public String getTableName();
+
     public RT setTableName(String tableName);
+
+    public String getColumnName();
 
     public RT setColumnName(String columnName);
 
@@ -64,9 +64,9 @@ public interface ISelectable<RT extends ISelectable> extends CanVisit, Comparabl
 
     public boolean isDistinct();
 
-    public boolean isNot();
-
     public RT setDistinct(boolean distinct);
+
+    public boolean isNot();
 
     public RT setIsNot(boolean isNot);
 

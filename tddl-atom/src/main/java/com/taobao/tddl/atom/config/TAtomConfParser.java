@@ -1,69 +1,63 @@
 package com.taobao.tddl.atom.config;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.lang.BooleanUtils;
-
 import com.taobao.tddl.atom.securety.impl.PasswordCoder;
 import com.taobao.tddl.atom.utils.ConnRestrictEntry;
 import com.taobao.tddl.common.utils.TStringUtil;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import org.apache.commons.lang.BooleanUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * TAtom数据源的推送配置解析类
- * 
+ *
  * @author qihao
  */
 public class TAtomConfParser {
 
-    private static Logger      logger                                = LoggerFactory.getLogger(TAtomConfParser.class);
-
-    public static final String GLOBA_IP_KEY                          = "ip";
-    public static final String GLOBA_PORT_KEY                        = "port";
-    public static final String GLOBA_DB_NAME_KEY                     = "dbName";
-    public static final String GLOBA_DB_TYPE_KEY                     = "dbType";
-    public static final String GLOBA_DB_STATUS_KEY                   = "dbStatus";
-    public static final String APP_USER_NAME_KEY                     = "userName";
-    public static final String APP_INIT_POOL_SIZE_KEY                = "initPoolSize";
-    public static final String APP_PREFILL                           = "prefill";
-    public static final String APP_MIN_POOL_SIZE_KEY                 = "minPoolSize";
-    public static final String APP_MAX_POOL_SIZE_KEY                 = "maxPoolSize";
-    public static final String APP_IDLE_TIMEOUT_KEY                  = "idleTimeout";
-    public static final String APP_BLOCKING_TIMEOUT_KEY              = "blockingTimeout";
+    public static final String GLOBA_IP_KEY = "ip";
+    public static final String GLOBA_PORT_KEY = "port";
+    public static final String GLOBA_DB_NAME_KEY = "dbName";
+    public static final String GLOBA_DB_TYPE_KEY = "dbType";
+    public static final String GLOBA_DB_STATUS_KEY = "dbStatus";
+    public static final String APP_USER_NAME_KEY = "userName";
+    public static final String APP_INIT_POOL_SIZE_KEY = "initPoolSize";
+    public static final String APP_PREFILL = "prefill";
+    public static final String APP_MIN_POOL_SIZE_KEY = "minPoolSize";
+    public static final String APP_MAX_POOL_SIZE_KEY = "maxPoolSize";
+    public static final String APP_IDLE_TIMEOUT_KEY = "idleTimeout";
+    public static final String APP_BLOCKING_TIMEOUT_KEY = "blockingTimeout";
     public static final String APP_PREPARED_STATEMENT_CACHE_SIZE_KEY = "preparedStatementCacheSize";
-    public static final String APP_ORACLE_CON_TYPE_KEY               = "oracleConType";
-    public static final String APP_CON_PROP_KEY                      = "connectionProperties";
-    public static final String PASSWD_ENC_PASSWD_KEY                 = "encPasswd";
-    public static final String PASSWD_ENC_KEY_KEY                    = "encKey";
-
-    public static final String APP_DRIVER_CLASS_KEY                  = "driverClass";
+    public static final String APP_ORACLE_CON_TYPE_KEY = "oracleConType";
+    public static final String APP_CON_PROP_KEY = "connectionProperties";
+    public static final String PASSWD_ENC_PASSWD_KEY = "encPasswd";
+    public static final String PASSWD_ENC_KEY_KEY = "encKey";
+    public static final String APP_DRIVER_CLASS_KEY = "driverClass";
     /**
      * 写，次数限制
      */
-    public static final String APP_WRITE_RESTRICT_TIMES              = "writeRestrictTimes";
+    public static final String APP_WRITE_RESTRICT_TIMES = "writeRestrictTimes";
     /**
      * 读，次数限制
      */
-    public static final String APP_READ_RESTRICT_TIMES               = "readRestrictTimes";
+    public static final String APP_READ_RESTRICT_TIMES = "readRestrictTimes";
     /**
      * thread count 次数限制
      */
-    public static final String APP_THREAD_COUNT_RESTRICT             = "threadCountRestrict";
-
-    public static final String APP_TIME_SLICE_IN_MILLS               = "timeSliceInMillis";
-
+    public static final String APP_THREAD_COUNT_RESTRICT = "threadCountRestrict";
+    public static final String APP_TIME_SLICE_IN_MILLS = "timeSliceInMillis";
     /**
      * 应用连接限制: 限制某个应用键值的并发连接数。
      */
-    public static final String APP_CONN_RESTRICT                     = "connRestrict";
+    public static final String APP_CONN_RESTRICT = "connRestrict";
+    /**
+     * HASH 策略的最大槽数量限制。
+     */
+    public static final int MAX_HASH_RESTRICT_SLOT = 32;
+    private static Logger logger = LoggerFactory.getLogger(TAtomConfParser.class);
 
     public static TAtomDsConfDO parserTAtomDsConfDO(String globaConfStr, String appConfStr) {
         TAtomDsConfDO pasObj = new TAtomDsConfDO();
@@ -125,7 +119,7 @@ public class TAtomConfParser {
                 }
                 String preparedStatementCacheSize = TStringUtil.trim(appProp.getProperty(TAtomConfParser.APP_PREPARED_STATEMENT_CACHE_SIZE_KEY));
                 if (TStringUtil.isNotBlank(preparedStatementCacheSize)
-                    && TStringUtil.isNumeric(preparedStatementCacheSize)) {
+                        && TStringUtil.isNumeric(preparedStatementCacheSize)) {
                     pasObj.setPreparedStatementCacheSize(Integer.valueOf(preparedStatementCacheSize));
                 }
 
@@ -160,7 +154,7 @@ public class TAtomConfParser {
                         // add by agapple, 简单处理支持下初始化链接
                         String prefill = connectionProperties.get(APP_PREFILL);
                         if (BooleanUtils.toBoolean(prefill)
-                            && pasObj.getInitPoolSize() == TAtomDsConfDO.defaultInitPoolSize) {
+                                && pasObj.getInitPoolSize() == TAtomDsConfDO.defaultInitPoolSize) {
                             pasObj.setInitPoolSize(pasObj.getMinPoolSize());
                         }
                     }
@@ -169,7 +163,7 @@ public class TAtomConfParser {
                 // 解析应用连接限制, 参看下面的文档
                 String connRestrictStr = TStringUtil.trim(appProp.getProperty(TAtomConfParser.APP_CONN_RESTRICT));
                 List<ConnRestrictEntry> connRestrictEntries = parseConnRestrictEntries(connRestrictStr,
-                    pasObj.getMaxPoolSize());
+                        pasObj.getMaxPoolSize());
                 if (null != connRestrictEntries && !connRestrictEntries.isEmpty()) {
                     pasObj.setConnRestrictEntries(connRestrictEntries);
                 }
@@ -232,11 +226,6 @@ public class TAtomConfParser {
     }
 
     /**
-     * HASH 策略的最大槽数量限制。
-     */
-    public static final int MAX_HASH_RESTRICT_SLOT = 32;
-
-    /**
      * 解析应用连接限制, 完整格式是:
      * "K1,K2,K3,K4:80%; K5,K6,K7,K8:80%; K9,K10,K11,K12:80%; *:16,80%; ~:80%;"
      * 这样可以兼容 HASH: "*:16,80%", 也可以兼容 LIST:
@@ -276,13 +265,13 @@ public class TAtomConfParser {
                                     existKeys.put(slotKey, entry);
                                 } else if (ConnRestrictEntry.isWildcard(slotKey)) {
                                     logger.error("[connRestrict Error] hash config [" + entry + "] conflict with ["
-                                                 + existKeys.get(slotKey) + "]");
+                                            + existKeys.get(slotKey) + "]");
                                 } else if (ConnRestrictEntry.isNullKey(slotKey)) {
                                     logger.error("[connRestrict Error] null-key config [" + entry + "] conflict with ["
-                                                 + existKeys.get(slotKey) + "]");
+                                            + existKeys.get(slotKey) + "]");
                                 } else {
                                     logger.error("[connRestrict Error] " + slotKey + " config [" + entry
-                                                 + "] conflict with [" + existKeys.get(slotKey) + "]");
+                                            + "] conflict with [" + existKeys.get(slotKey) + "]");
                                 }
                             }
                             connRestrictEntries.add(connRestrictEntry);

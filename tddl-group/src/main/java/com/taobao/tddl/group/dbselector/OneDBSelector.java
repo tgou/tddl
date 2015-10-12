@@ -1,27 +1,26 @@
 package com.taobao.tddl.group.dbselector;
 
+import com.taobao.tddl.group.jdbc.DataSourceWrapper;
+
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
-import com.taobao.tddl.group.jdbc.DataSourceWrapper;
-
 /**
  * 只有一个数据源的DBSelector
- * 
+ *
  * @author linxuan
  * @author yangzhu
  */
 public class OneDBSelector extends AbstractDBSelector {
 
-    private final DataSourceHolder        dsHolder;
+    private final DataSourceHolder dsHolder;
     private final Map<String, DataSource> dsMap;
 
-    public OneDBSelector(DataSourceWrapper dsw){
+    public OneDBSelector(DataSourceWrapper dsw) {
         this.dsHolder = new DataSourceHolder(dsw);
         dsMap = new LinkedHashMap<String, DataSource>();
         dsMap.put(dsw.getDataSourceKey(), dsw.getWrappedDataSource());

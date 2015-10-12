@@ -1,11 +1,10 @@
 package com.taobao.tddl.common.sorter;
 
-import java.sql.SQLException;
-
+import com.taobao.tddl.common.jdbc.sorter.OracleExceptionSorter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.taobao.tddl.common.jdbc.sorter.OracleExceptionSorter;
+import java.sql.SQLException;
 
 /**
  * @author yangzhu
@@ -15,7 +14,7 @@ public class OracleExceptionSorterUnitTest {
     @Test
     public void all() {
         OracleExceptionSorter s = new OracleExceptionSorter();
-        int[] errors = new int[] { 28, 600, 1012 };
+        int[] errors = new int[]{28, 600, 1012};
 
         SQLException e = new SQLException("reason", "08S01");
 

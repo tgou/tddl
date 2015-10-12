@@ -10,7 +10,7 @@ import java.util.Map;
 public class Parameters {
 
     public static void setParameters(PreparedStatement ps, Map<Integer, ParameterContext> parameterSettings)
-                                                                                                            throws SQLException {
+            throws SQLException {
         ParameterMethod.setParameters(ps, parameterSettings);
     }
 

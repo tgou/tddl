@@ -1,23 +1,23 @@
 package com.taobao.tddl.executor.rowset;
 
+import com.taobao.tddl.executor.cursor.ICursorMeta;
+
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.taobao.tddl.executor.cursor.ICursorMeta;
-
 /**
  * 可以用来给列改名，去除一个列
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-3 上午11:05:57
  * @since 5.0.0
  */
 public class RowSetWrapper extends AbstractRowSet implements IRowSet {
 
     protected final ICursorMeta newCursorMeta;
-    protected IRowSet           parentRowSet;
+    protected IRowSet parentRowSet;
 
-    public RowSetWrapper(ICursorMeta iCursorMeta, IRowSet rowSet){
+    public RowSetWrapper(ICursorMeta iCursorMeta, IRowSet rowSet) {
         super(iCursorMeta);
         this.newCursorMeta = iCursorMeta;
         this.parentRowSet = rowSet;

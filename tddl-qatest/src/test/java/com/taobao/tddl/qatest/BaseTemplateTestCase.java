@@ -13,9 +13,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Ignore(value = "提供初始化环境的实际方法")
 public class BaseTemplateTestCase extends BaseMatrixTestCase {
 
-    protected static JdbcTemplate andorJT                    = null;
     protected static final String MATRIX_IBATIS_CONTEXT_PATH = "classpath:spring/spring_context.xml";
-    protected String              sql                        = null;
+    protected static JdbcTemplate andorJT = null;
+    protected String sql = null;
 
     @BeforeClass
     public static void IEnvInitTemplate() throws Exception {
@@ -30,7 +30,7 @@ public class BaseTemplateTestCase extends BaseMatrixTestCase {
     @Before
     public void init() {
         sql = String.format("delete from %s where pk = ?", normaltblTableName);
-        andorJT.update(sql, new Object[] { RANDOM_ID });
+        andorJT.update(sql, new Object[]{RANDOM_ID});
 
     }
 }

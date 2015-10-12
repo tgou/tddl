@@ -1,24 +1,18 @@
 package com.taobao.tddl.group;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.junit.Test;
-
 import com.taobao.diamond.mockserver.MockServer;
 import com.taobao.tddl.common.model.DBType;
 import com.taobao.tddl.group.jdbc.DataSourceWrapper;
 import com.taobao.tddl.group.jdbc.TGroupDataSource;
+import org.junit.Test;
+
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class CrudTest extends BaseGroupTest {
 
@@ -89,7 +83,7 @@ public class CrudTest extends BaseGroupTest {
         ds.setDbGroupKey(GROUP0);
         ds.setAppName(APPNAME);
         MockServer.setConfigInfo(ds.getFullDbGroupKey(), DSKEY0 + ":r10w" + "," + DSKEY1 + ":r20" + "," + DSKEY2
-                                                         + ":r30");
+                + ":r30");
         ds.init();
 
         testCrud(ds);
@@ -100,7 +94,7 @@ public class CrudTest extends BaseGroupTest {
         // 测试Statement的crud
         Statement stmt = conn.createStatement();
         assertEquals(stmt.executeUpdate("insert into tddl_test_0000(id,name,gmt_create,gmt_modified) values(10,'str',now(),now())"),
-            1);
+                1);
         assertEquals(stmt.executeUpdate("update tddl_test_0000 set name='str2'"), 1);
         ResultSet rs = stmt.executeQuery("select id,name from tddl_test_0000");
         assertEquals(true, rs.next());
@@ -172,7 +166,7 @@ public class CrudTest extends BaseGroupTest {
 
         Statement stmt = conn.createStatement();
         assertEquals(stmt.executeUpdate("insert into tddl_test_0000(id,name,gmt_create,gmt_modified) values(100,'str',now(),now())"),
-            1);
+                1);
 
         // 在只写库上更新后，会保留写连接，
         // 但是因为写连接对应的数据源被配置成只写，所以接下来的读操作不允许在写连接上进行

@@ -1,8 +1,8 @@
 package com.taobao.tddl.monitor.unit;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
+
+import java.util.Map;
 
 public class DefaultTddlUnitDeployProtect implements TddlUnitDeployProtect {
 

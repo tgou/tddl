@@ -1,11 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.after;
 
-import java.util.Map;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.utils.GeneralUtil;
@@ -15,50 +9,20 @@ import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.core.plan.query.IParallelizableQueryTree.QUERY_CONCURRENCY;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Map;
 
 /**
  * 会修改一个状态标记。
- * 
+ *
  * @author Whisper
  */
 public class MergeConcurrentOptimizer implements QueryPlanOptimizer {
 
-    public MergeConcurrentOptimizer(){
-    }
-
-    /**
-     * 如果设置了MergeConcurrent 并且值为True，则将所有的Merge变为并行
-     */
-    @Override
-    public IDataNodeExecutor optimize(IDataNodeExecutor dne, Map<Integer, ParameterContext> parameterSettings,
-                                      Map<String, Object> extraCmd) {
-        this.findMergeAndSetConcurrent(dne, extraCmd);
-
-        return dne;
-    }
-
-    private void findMergeAndSetConcurrent(IDataNodeExecutor dne, Map<String, Object> extraCmd) {
-        if (dne instanceof IMerge) {
-            if (isMergeConcurrent(extraCmd, (IMerge) dne)) {
-                ((IMerge) dne).setQueryConcurrency(QUERY_CONCURRENCY.CONCURRENT);
-            } else {
-                ((IMerge) dne).setQueryConcurrency(QUERY_CONCURRENCY.SEQUENTIAL);
-            }
-
-            for (IDataNodeExecutor child : ((IMerge) dne).getSubNode()) {
-                this.findMergeAndSetConcurrent(child, extraCmd);
-            }
-        }
-
-        if (dne instanceof IJoin) {
-            this.findMergeAndSetConcurrent(((IJoin) dne).getLeftNode(), extraCmd);
-            this.findMergeAndSetConcurrent(((IJoin) dne).getRightNode(), extraCmd);
-        }
-
-        if (dne instanceof IQuery && ((IQuery) dne).getSubQuery() != null) {
-            this.findMergeAndSetConcurrent(((IQuery) dne).getSubQuery(), extraCmd);
-
-        }
+    public MergeConcurrentOptimizer() {
     }
 
     private static boolean isMergeConcurrent(Map<String, Object> extraCmd, IMerge query) {
@@ -75,8 +39,8 @@ public class MergeConcurrentOptimizer implements QueryPlanOptimizer {
                     return false;
                 }
             } else if ((query.getOrderBys() == null || query.getOrderBys().isEmpty())
-                       && (query.getGroupBys() == null || query.getGroupBys().isEmpty())
-                       && query.getHavingFilter() == null) {
+                    && (query.getGroupBys() == null || query.getGroupBys().isEmpty())
+                    && query.getHavingFilter() == null) {
                 if (isNoFilter(query)) {
                     // 没有其他的order by / group by / having /
                     // where等条件时，就是个简单的select *
@@ -116,5 +80,40 @@ public class MergeConcurrentOptimizer implements QueryPlanOptimizer {
         }
 
         return true;
+    }
+
+    /**
+     * 如果设置了MergeConcurrent 并且值为True，则将所有的Merge变为并行
+     */
+    @Override
+    public IDataNodeExecutor optimize(IDataNodeExecutor dne, Map<Integer, ParameterContext> parameterSettings,
+                                      Map<String, Object> extraCmd) {
+        this.findMergeAndSetConcurrent(dne, extraCmd);
+
+        return dne;
+    }
+
+    private void findMergeAndSetConcurrent(IDataNodeExecutor dne, Map<String, Object> extraCmd) {
+        if (dne instanceof IMerge) {
+            if (isMergeConcurrent(extraCmd, (IMerge) dne)) {
+                ((IMerge) dne).setQueryConcurrency(QUERY_CONCURRENCY.CONCURRENT);
+            } else {
+                ((IMerge) dne).setQueryConcurrency(QUERY_CONCURRENCY.SEQUENTIAL);
+            }
+
+            for (IDataNodeExecutor child : ((IMerge) dne).getSubNode()) {
+                this.findMergeAndSetConcurrent(child, extraCmd);
+            }
+        }
+
+        if (dne instanceof IJoin) {
+            this.findMergeAndSetConcurrent(((IJoin) dne).getLeftNode(), extraCmd);
+            this.findMergeAndSetConcurrent(((IJoin) dne).getRightNode(), extraCmd);
+        }
+
+        if (dne instanceof IQuery && ((IQuery) dne).getSubQuery() != null) {
+            this.findMergeAndSetConcurrent(((IQuery) dne).getSubQuery(), extraCmd);
+
+        }
     }
 }

@@ -1,21 +1,20 @@
 package com.taobao.tddl.optimizer.parse.hint;
 
+import com.taobao.tddl.common.utils.TddlToStringStyle;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import com.taobao.tddl.common.utils.TddlToStringStyle;
-
 /**
  * 扩展参数
- * 
+ *
  * @author jianghang 2014-1-13 下午6:08:14
  * @since 5.0.0
  */
 public class ExtraCmdRouteCondition implements RouteCondition {
 
-    protected String              virtualTableName;
+    protected String virtualTableName;
     protected Map<String, Object> extraCmds = new HashMap<String, Object>();
 
     public String getVirtualTableName() {

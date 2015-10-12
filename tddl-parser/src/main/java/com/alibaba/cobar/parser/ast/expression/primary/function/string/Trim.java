@@ -18,24 +18,24 @@
  */
 package com.alibaba.cobar.parser.ast.expression.primary.function.string;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.ast.expression.primary.function.FunctionExpression;
 import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class Trim extends FunctionExpression {
 
-    public static enum Direction {
-        /** no tag for direction */
-        DEFAULT, BOTH, LEADING, TRAILING
-    }
-
     private final Direction direction;
+
+    public Trim(Direction direction, Expression remstr, Expression str) {
+        super("TRIM", wrapList(str, remstr));
+        this.direction = direction;
+    }
 
     private static List<Expression> wrapList(Expression str, Expression remstr) {
         if (str == null) throw new IllegalArgumentException("str is null");
@@ -43,11 +43,6 @@ public class Trim extends FunctionExpression {
         list.add(str);
         if (remstr != null) list.add(remstr);
         return list;
-    }
-
-    public Trim(Direction direction, Expression remstr, Expression str){
-        super("TRIM", wrapList(str, remstr));
-        this.direction = direction;
     }
 
     /**
@@ -75,5 +70,12 @@ public class Trim extends FunctionExpression {
     @Override
     public void accept(SQLASTVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public static enum Direction {
+        /**
+         * no tag for direction
+         */
+        DEFAULT, BOTH, LEADING, TRAILING
     }
 }

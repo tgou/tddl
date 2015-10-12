@@ -1,18 +1,11 @@
 package com.taobao.tddl.rule;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.taobao.tddl.common.model.DBType;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.common.model.lifecycle.Lifecycle;
 import com.taobao.tddl.common.utils.TStringUtil;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.rule.impl.DbVirtualNodeRule;
 import com.taobao.tddl.rule.impl.GroovyRule;
 import com.taobao.tddl.rule.impl.TableVirtualNodeRule;
@@ -21,35 +14,37 @@ import com.taobao.tddl.rule.utils.SimpleNamedMessageFormat;
 import com.taobao.tddl.rule.virtualnode.DBTableMap;
 import com.taobao.tddl.rule.virtualnode.TableSlotMap;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * 对原类做一些重构，避免污染主类的可阅读性<br/>
  * 1. 抽取showTopology <br/>
  * 2. 抽取一些不常用的配置以及一些遗留的配置
- * 
+ *
  * @author jianghang 2013-11-4 下午8:04:59
  * @since 5.0.0
  */
 public abstract class VirtualTableSupport extends AbstractLifecycle implements Lifecycle, VirtualTableRule {
 
-    protected static final Logger      logger               = LoggerFactory.getLogger(TableRule.class);
-    protected static final String      tableNameSepInSpring = ",";
-    protected static final int         showColsPerRow       = 5;
+    protected static final Logger logger = LoggerFactory.getLogger(TableRule.class);
+    protected static final String tableNameSepInSpring = ",";
+    protected static final int showColsPerRow = 5;
 
     /** ============ 一些老的用法 ================= **/
     /**
      * 用来替换dbRules、tbRules中的占位符
      * 优先用dbRuleParames，tbRuleParames替换，其为空时再用ruleParames替换
      */
-    protected String[]                 ruleParames;
-    protected String[]                 dbRuleParames;
-    protected String[]                 tbRuleParames;
+    protected String[] ruleParames;
+    protected String[] dbRuleParames;
+    protected String[] tbRuleParames;
 
-    /** ============ 运行时变量 ================= **/
-    protected DBType                   dbType               = DBType.MYSQL;                            // Oracle|MySql
-    protected String                   virtualTbName;                                                  // 逻辑表名
+    /**
+     * ============ 运行时变量 ================= *
+     */
+    protected DBType dbType = DBType.MYSQL;                            // Oracle|MySql
+    protected String virtualTbName;                                                  // 逻辑表名
     protected Map<String, Set<String>> actualTopology;
 
     // ==================== 参数处理方法 ====================
@@ -80,7 +75,7 @@ public abstract class VirtualTableSupport extends AbstractLifecycle implements L
      * <pre>
      * 存在类似的变量配置，shardColumn:#business_id#.longValue()
      * </pre>
-     * 
+     *
      * @param template
      * @param params
      * @return
@@ -98,12 +93,12 @@ public abstract class VirtualTableSupport extends AbstractLifecycle implements L
     }
 
     /**
-     * @param rules 规则字符串配置
-     * @param namePattern 根据isTableRule选择dbNamePattern or tbNamePattern
+     * @param rules            规则字符串配置
+     * @param namePattern      根据isTableRule选择dbNamePattern or tbNamePattern
      * @param extraPackagesStr groovy的自定义package
-     * @param dbTableMap db虚拟节点
-     * @param tableSlotMap table虚拟节点
-     * @param isTableRule 是否为table规则
+     * @param dbTableMap       db虚拟节点
+     * @param tableSlotMap     table虚拟节点
+     * @param isTableRule      是否为table规则
      * @return
      */
     protected List<Rule<String>> convertToRuleArray(String[] rules, String namePattern, String extraPackagesStr,

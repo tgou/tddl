@@ -18,18 +18,6 @@
  */
 package com.alibaba.cobar.parser.recognizer.mysql.syntax;
 
-import static com.alibaba.cobar.parser.recognizer.mysql.MySQLToken.KW_DELETE;
-import static com.alibaba.cobar.parser.recognizer.mysql.MySQLToken.KW_FROM;
-import static com.alibaba.cobar.parser.recognizer.mysql.MySQLToken.KW_LIMIT;
-import static com.alibaba.cobar.parser.recognizer.mysql.MySQLToken.KW_ORDER;
-import static com.alibaba.cobar.parser.recognizer.mysql.MySQLToken.KW_WHERE;
-
-import java.sql.SQLSyntaxErrorException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.ast.expression.primary.Identifier;
 import com.alibaba.cobar.parser.ast.fragment.Limit;
@@ -39,28 +27,32 @@ import com.alibaba.cobar.parser.ast.stmt.dml.DMLDeleteStatement;
 import com.alibaba.cobar.parser.recognizer.mysql.MySQLToken;
 import com.alibaba.cobar.parser.recognizer.mysql.lexer.MySQLLexer;
 
+import java.sql.SQLSyntaxErrorException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.alibaba.cobar.parser.recognizer.mysql.MySQLToken.*;
+
 /**
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class MySQLDMLDeleteParser extends MySQLDMLParser {
-
-    public MySQLDMLDeleteParser(MySQLLexer lexer, MySQLExprParser exprParser){
-        super(lexer, exprParser);
-    }
-
-    private static enum SpecialIdentifier {
-        QUICK
-    }
 
     private static final Map<String, SpecialIdentifier> specialIdentifiers = new HashMap<String, SpecialIdentifier>();
     static {
         specialIdentifiers.put("QUICK", SpecialIdentifier.QUICK);
     }
 
+    public MySQLDMLDeleteParser(MySQLLexer lexer, MySQLExprParser exprParser) {
+        super(lexer, exprParser);
+    }
+
     /**
      * first token is {@link MySQLToken#KW_DELETE} <code><pre>
      * 'DELETE' 'LOW_PRIORITY'? 'QUICK'? 'IGNORE'? (
-     *     'FROM' tid ( (',' tid)* 'USING' table_refs ('WHERE' cond)?  
+     *     'FROM' tid ( (',' tid)* 'USING' table_refs ('WHERE' cond)?
      *                | ('WHERE' cond)? ('ORDER' 'BY' ids)? ('LIMIT' count)?  )  // single table
      *    | tid (',' tid)* 'FROM' table_refs ('WHERE' cond)? )
      * </pre></code>
@@ -70,7 +62,8 @@ public class MySQLDMLDeleteParser extends MySQLDMLParser {
         boolean lowPriority = false;
         boolean quick = false;
         boolean ignore = false;
-        loopOpt: for (;; lexer.nextToken()) {
+        loopOpt:
+        for (; ; lexer.nextToken()) {
             switch (lexer.token()) {
                 case KW_LOW_PRIORITY:
                     lowPriority = true;
@@ -140,6 +133,10 @@ public class MySQLDMLDeleteParser extends MySQLDMLParser {
             return new DMLDeleteStatement(lowPriority, quick, ignore, tempList, tempRefs, tempWhere);
         }
         return new DMLDeleteStatement(lowPriority, quick, ignore, tempList, tempRefs);
+    }
+
+    private static enum SpecialIdentifier {
+        QUICK
     }
 
 }

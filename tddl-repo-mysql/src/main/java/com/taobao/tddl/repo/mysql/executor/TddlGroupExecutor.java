@@ -1,7 +1,5 @@
 package com.taobao.tddl.repo.mysql.executor;
 
-import java.util.concurrent.Future;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.Group;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
@@ -10,33 +8,31 @@ import com.taobao.tddl.executor.common.ExecutorContext;
 import com.taobao.tddl.executor.common.TransactionConfig;
 import com.taobao.tddl.executor.cursor.ISchematicCursor;
 import com.taobao.tddl.executor.cursor.ResultCursor;
-import com.taobao.tddl.executor.spi.ICommandHandler;
-import com.taobao.tddl.executor.spi.ICommandHandlerFactory;
-import com.taobao.tddl.executor.spi.IGroupExecutor;
-import com.taobao.tddl.executor.spi.IRepository;
-import com.taobao.tddl.executor.spi.ITransaction;
+import com.taobao.tddl.executor.spi.*;
 import com.taobao.tddl.group.jdbc.TGroupDataSource;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
+
+import java.util.concurrent.Future;
 
 /**
  * 为TGroupDatasource实现的groupexecutor
  * 因为TGroupDatasource中已经做了主备切换等功能，所以TddlGroupExecutor只是简单的执行sql
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-6 下午2:39:18
  * @since 5.0.0
  */
 public class TddlGroupExecutor extends AbstractLifecycle implements IGroupExecutor {
 
     public static final String TRANSACTION_GROUP_KEY = "GROUP_KEY";
-    private IRepository        repo;
+    private IRepository repo;
 
     /**
      * 可能是个datasource ，也可能是个rpc客户端。放在一起的原因是
      */
-    private Object             remotingExecutableObject;
-    private Group              group;
+    private Object remotingExecutableObject;
+    private Group group;
 
-    public TddlGroupExecutor(IRepository repo){
+    public TddlGroupExecutor(IRepository repo) {
         this.repo = repo;
     }
 
@@ -56,7 +52,7 @@ public class TddlGroupExecutor extends AbstractLifecycle implements IGroupExecut
 
     @Override
     public ISchematicCursor execByExecPlanNode(IDataNodeExecutor qc, ExecutionContext executionContext)
-                                                                                                       throws TddlException {
+            throws TddlException {
 
         executionContext.setCurrentRepository(repo);
         getTransaction(executionContext, qc);
@@ -67,12 +63,12 @@ public class TddlGroupExecutor extends AbstractLifecycle implements IGroupExecut
 
     @Override
     public Future<ISchematicCursor> execByExecPlanNodeFuture(IDataNodeExecutor qc, ExecutionContext executionContext)
-                                                                                                                     throws TddlException {
+            throws TddlException {
         return ExecutorContext.getContext().getTopologyExecutor().execByExecPlanNodeFuture(qc, executionContext);
     }
 
     public ISchematicCursor executeInner(IDataNodeExecutor executor, ExecutionContext executionContext)
-                                                                                                       throws TddlException {
+            throws TddlException {
 
         // 允许远程执行。在cursor里面所依赖的执行器，从本地的换为远程的。并要注意远程事务处理过程中的兼容。
         // 目前的处理方式是，走到这里的远程执行，不允许出现事务。。。出现就丢异常
@@ -84,7 +80,7 @@ public class TddlGroupExecutor extends AbstractLifecycle implements IGroupExecut
     }
 
     public void getTransaction(ExecutionContext executionContext, IDataNodeExecutor targetExecutor)
-                                                                                                   throws TddlException {
+            throws TddlException {
         if (executionContext.getTransaction() != null) {
             return;
         }
@@ -143,17 +139,17 @@ public class TddlGroupExecutor extends AbstractLifecycle implements IGroupExecut
         return remotingExecutableObject;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
     public void setRemotingExecutableObject(Object remotingExecutableObject) {
         this.remotingExecutableObject = remotingExecutableObject;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     @Override
     public String toString() {
         return "GroupExecutor [groupName=" + group.getName() + ", type=" + group.getType()
-               + ", remotingExecutableObject=" + remotingExecutableObject + "]";
+                + ", remotingExecutableObject=" + remotingExecutableObject + "]";
     }
 }

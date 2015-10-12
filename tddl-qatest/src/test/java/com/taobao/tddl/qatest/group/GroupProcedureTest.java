@@ -1,13 +1,13 @@
 package com.taobao.tddl.qatest.group;
 
-import java.sql.CallableStatement;
-import java.sql.SQLException;
-import java.sql.Types;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.CallableStatementCallback;
+
+import java.sql.CallableStatement;
+import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * 存储过程进行测试

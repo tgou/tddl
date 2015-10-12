@@ -1,21 +1,20 @@
 package com.taobao.tddl.optimizer.costbased.esitimater.stat;
 
+import com.taobao.tddl.common.utils.TddlToStringStyle;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import com.taobao.tddl.common.utils.TddlToStringStyle;
-
 /**
  * 一个表的所有索引的统计数据
- * 
+ *
  * @author danchen
  */
 public class TableIndexStat {
 
     // 表名
-    private String            tableName;
+    private String tableName;
     // 所有索引采集的元数据
     private List<KVIndexStat> indexStats = new LinkedList<KVIndexStat>();
 

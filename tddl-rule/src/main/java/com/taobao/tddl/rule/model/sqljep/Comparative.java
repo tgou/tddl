@@ -2,32 +2,32 @@ package com.taobao.tddl.rule.model.sqljep;
 
 /**
  * 可比较的类 实际上是是两个东西的结合 符号+值 例如 [> 1] , [< 1] , [= 1]
- * 
+ *
  * @author shenxun
  */
 public class Comparative implements Comparable, Cloneable {
 
-    public static final int GreaterThan        = 1;
+    public static final int GreaterThan = 1;
     public static final int GreaterThanOrEqual = 2;
-    public static final int Equivalent         = 3;
-    public static final int NotEquivalent      = 4;
-    public static final int LessThan           = 5;
-    public static final int LessThanOrEqual    = 6;
+    public static final int Equivalent = 3;
+    public static final int NotEquivalent = 4;
+    public static final int LessThan = 5;
+    public static final int LessThanOrEqual = 6;
 
-    private Comparable      value;                 // 这有可能又是个Comparative，从而实质上表示一课树（比较树）
-    private int             comparison;
+    private Comparable value;                 // 这有可能又是个Comparative，从而实质上表示一课树（比较树）
+    private int comparison;
 
-    protected Comparative(){
+    protected Comparative() {
     }
 
-    public Comparative(int function, Comparable value){
+    public Comparative(int function, Comparable value) {
         this.comparison = function;
         this.value = value;
     }
 
     /**
      * 表达式取反
-     * 
+     *
      * @param function
      * @return
      */
@@ -37,7 +37,7 @@ public class Comparative implements Comparable, Cloneable {
 
     /**
      * 表达式前后位置调换的时候
-     * 
+     *
      * @param function
      * @return
      */
@@ -55,14 +55,6 @@ public class Comparative implements Comparable, Cloneable {
         } else {
             return function;
         }
-    }
-
-    public Comparable getValue() {
-        return value;
-    }
-
-    public void setComparison(int function) {
-        this.comparison = function;
     }
 
     public static String getComparisonName(int function) {
@@ -85,7 +77,7 @@ public class Comparative implements Comparable, Cloneable {
 
     /**
      * contains顺序按字符从多到少排列，否则逻辑不对，这里 先这样处理。
-     * 
+     *
      * @param completeStr
      * @return
      */
@@ -114,12 +106,20 @@ public class Comparative implements Comparable, Cloneable {
         }
     }
 
-    public int getComparison() {
-        return comparison;
+    public Comparable getValue() {
+        return value;
     }
 
     public void setValue(Comparable value) {
         this.value = value;
+    }
+
+    public int getComparison() {
+        return comparison;
+    }
+
+    public void setComparison(int function) {
+        this.comparison = function;
     }
 
     public int compareTo(Object o) {

@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * OracleExceptionSorter.java Created: Fri Mar 14 21:54:23 2003
- * 
+ *
  * @author <a href="mailto:an_test@mail.ru">Andrey Demchenko</a>
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:weston.price@jboss.com>Weston Price</a>
@@ -37,8 +37,19 @@ import java.util.List;
 public class OracleExceptionSorter implements ExceptionSorter, Serializable {
 
     private static final long serialVersionUID = 573723525408205079L;
+    private static List<ExceptionSorter> externalExceptionSorters;
 
-    public OracleExceptionSorter(){
+    public OracleExceptionSorter() {
+    }
+
+    /**
+     * @param sorter 外部的ExceptionSorter只需判断SQLException本身即可，不需要判断其cause链
+     */
+    public static void addExceptionSorter(ExceptionSorter sorter) {
+        if (externalExceptionSorters == null) {
+            externalExceptionSorters = new LinkedList<ExceptionSorter>();
+        }
+        externalExceptionSorters.add(sorter);
     }
 
     public boolean isExceptionFatal(SQLException e) {
@@ -64,37 +75,37 @@ public class OracleExceptionSorter implements ExceptionSorter, Serializable {
 
     public boolean isExceptionFatal0(final SQLException e) {
         final int error_code = Math.abs(e.getErrorCode()); // I can't remember
-                                                           // if the errors are
-                                                           // negative or
-                                                           // positive.
+        // if the errors are
+        // negative or
+        // positive.
 
         if ((error_code == 28) // session has been killed
-            || (error_code == 600) // Internal oracle error
-            || (error_code == 1012) // not logged on
-            || (error_code == 1014) // Oracle shutdown in progress
-            || (error_code == 1033) // Oracle initialization or shutdown in
-                                    // progress
-            || (error_code == 1034) // Oracle not available
-            || (error_code == 1035) // ORACLE only available to users with
-                                    // RESTRICTED SESSION privilege
-            || (error_code == 1089) // immediate shutdown in progress - no
-                                    // operations are permitted
-            || (error_code == 1090) // shutdown in progress - connection is not
-                                    // permitted
-            || (error_code == 1092) // ORACLE instance terminated. Disconnection
-                                    // forced
-            || (error_code == 1094) // ALTER DATABASE CLOSE in progress.
-                                    // Connections not permitted
-            || (error_code == 2396) // exceeded maximum idle time, please
-                                    // connect again
-            || (error_code == 3106) // fatal two-task communication protocol
-                                    // error
-            || (error_code == 3111) // break received on communication channel
-            || (error_code == 3113) // end-of-file on communication channel
-            || (error_code == 3114) // not connected to ORACLE
-            || (error_code >= 12100 && error_code <= 12299) // TNS issues
-            || (error_code == 17002) // connection reset
-            || (error_code == 17008)) // connection closed
+                || (error_code == 600) // Internal oracle error
+                || (error_code == 1012) // not logged on
+                || (error_code == 1014) // Oracle shutdown in progress
+                || (error_code == 1033) // Oracle initialization or shutdown in
+                // progress
+                || (error_code == 1034) // Oracle not available
+                || (error_code == 1035) // ORACLE only available to users with
+                // RESTRICTED SESSION privilege
+                || (error_code == 1089) // immediate shutdown in progress - no
+                // operations are permitted
+                || (error_code == 1090) // shutdown in progress - connection is not
+                // permitted
+                || (error_code == 1092) // ORACLE instance terminated. Disconnection
+                // forced
+                || (error_code == 1094) // ALTER DATABASE CLOSE in progress.
+                // Connections not permitted
+                || (error_code == 2396) // exceeded maximum idle time, please
+                // connect again
+                || (error_code == 3106) // fatal two-task communication protocol
+                // error
+                || (error_code == 3111) // break received on communication channel
+                || (error_code == 3113) // end-of-file on communication channel
+                || (error_code == 3114) // not connected to ORACLE
+                || (error_code >= 12100 && error_code <= 12299) // TNS issues
+                || (error_code == 17002) // connection reset
+                || (error_code == 17008)) // connection closed
         {
             return true;
         }
@@ -109,10 +120,10 @@ public class OracleExceptionSorter implements ExceptionSorter, Serializable {
         // certain strings.
 
         if ((error_code < 20000 || error_code >= 21000)
-            && ("NO DATASOURCE!".equals(error_text)
+                && ("NO DATASOURCE!".equals(error_text)
                 || "NO ALIVE DATASOURCE".equals(error_text) // 兼容rjdbc抛出的错误
                 || (error_text.indexOf("SOCKET") > -1) // for control socket
-                                                       // error
+                // error
                 || (error_text.indexOf("CONNECTION HAS ALREADY BEEN CLOSED") > -1)
                 || (error_text.indexOf("BROKEN PIPE") > -1) || (error_text.indexOf("TNS") > -1 && error_text.indexOf("ORA-") > -1))) {
             return true;
@@ -126,17 +137,5 @@ public class OracleExceptionSorter implements ExceptionSorter, Serializable {
             }
         }
         return false;
-    }
-
-    private static List<ExceptionSorter> externalExceptionSorters;
-
-    /**
-     * @param sorter 外部的ExceptionSorter只需判断SQLException本身即可，不需要判断其cause链
-     */
-    public static void addExceptionSorter(ExceptionSorter sorter) {
-        if (externalExceptionSorters == null) {
-            externalExceptionSorters = new LinkedList<ExceptionSorter>();
-        }
-        externalExceptionSorters.add(sorter);
     }
 }

@@ -5,14 +5,14 @@ import com.taobao.tddl.common.utils.logger.Logger;
 
 /**
  * copy from dubbo logger
- * 
+ *
  * @author jianghang 2013-9-13 下午4:08:36
  */
 public class FailsafeLogger implements Logger {
 
     private Logger logger;
 
-    public FailsafeLogger(Logger logger){
+    public FailsafeLogger(Logger logger) {
         this.logger = logger;
     }
 

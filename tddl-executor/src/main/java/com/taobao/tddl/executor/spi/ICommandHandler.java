@@ -7,14 +7,14 @@ import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 
 /**
  * 命令执行处理器 比如增删改查 都属于一个命令，可能会被循环调用
- * 
+ *
  * @author whisper
  */
 public interface ICommandHandler {
 
     /**
      * 处理对应的一个命令 具体请看实现
-     * 
+     *
      * @param context
      * @param executor
      * @param executionContext

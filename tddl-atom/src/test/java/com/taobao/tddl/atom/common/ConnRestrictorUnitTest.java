@@ -1,17 +1,16 @@
 package com.taobao.tddl.atom.common;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.atom.config.TAtomConfParser;
 import com.taobao.tddl.atom.utils.AtomDataSourceHelper;
 import com.taobao.tddl.atom.utils.ConnRestrictEntry;
 import com.taobao.tddl.atom.utils.ConnRestrictSlot;
 import com.taobao.tddl.atom.utils.ConnRestrictor;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnRestrictorUnitTest {
 

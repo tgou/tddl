@@ -1,8 +1,8 @@
 package com.taobao.tddl.config.impl;
 
-import java.util.Map;
-
 import com.taobao.tddl.config.ConfigDataHandlerFactory;
+
+import java.util.Map;
 
 public class ConfigDataHandlerCity {
 

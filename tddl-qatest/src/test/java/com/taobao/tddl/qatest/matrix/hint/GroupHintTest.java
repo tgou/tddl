@@ -1,24 +1,23 @@
 package com.taobao.tddl.qatest.matrix.hint;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class GroupHintTest extends BaseMatrixTestCase {
 
     private JdbcTemplate jdbcTemplate;
-    private Date         time = new Date();
+    private Date time = new Date();
 
-    public GroupHintTest(){
+    public GroupHintTest() {
         BaseTestCase.normaltblTableName = "mysql_normaltbl_oneGroup_oneAtom";
         jdbcTemplate = new JdbcTemplate(us);
     }

@@ -1,15 +1,14 @@
 package com.taobao.tddl.rule.model;
 
+import com.taobao.tddl.common.utils.TddlToStringStyle;
+import com.taobao.tddl.rule.Rule.RuleColumn;
+import com.taobao.tddl.rule.utils.AdvancedParameterParser;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import com.taobao.tddl.common.utils.TddlToStringStyle;
-import com.taobao.tddl.rule.Rule.RuleColumn;
-import com.taobao.tddl.rule.utils.AdvancedParameterParser;
 
 /**
  * 通过{@linkplain AdvancedParameterParser}.getAdvancedParamByParamTokenNew()进行构建
@@ -19,17 +18,17 @@ public class AdvancedParameter extends RuleColumn {
     /**
      * 自增，给枚举器用的
      */
-    public final Comparable<?>    atomicIncreateValue;
+    public final Comparable<?> atomicIncreateValue;
 
     /**
      * 叠加次数，给枚举器用的
      */
-    public final Integer          cumulativeTimes;
+    public final Integer cumulativeTimes;
 
     /**
      * 决定当前参数是否允许范围查询如>= <= ...
      */
-    public final boolean          needMergeValueInCloseInterval;
+    public final boolean needMergeValueInCloseInterval;
 
     /**
      * 自增的类型，包括
@@ -39,10 +38,10 @@ public class AdvancedParameter extends RuleColumn {
     /**
      * 起始与结束值对象列表，通过"|"分割
      */
-    public final Range[]          rangeArray;
+    public final Range[] rangeArray;
 
     public AdvancedParameter(String key, Comparable<?> atomicIncreateValue, Integer cumulativeTimes,
-                             boolean needAppear, AtomIncreaseType atomicIncreateType, Range[] rangeObjectArray){
+                             boolean needAppear, AtomIncreaseType atomicIncreateType, Range[] rangeObjectArray) {
         super(key, needAppear);
         this.atomicIncreateValue = atomicIncreateValue;
         this.atomicIncreateType = atomicIncreateType;
@@ -58,7 +57,7 @@ public class AdvancedParameter extends RuleColumn {
 
     /**
      * 枚举所有值
-     * 
+     *
      * @param basepoint
      * @return
      */
@@ -83,7 +82,7 @@ public class AdvancedParameter extends RuleColumn {
 
     /**
      * 枚举所有值
-     * 
+     *
      * @param basepoint
      * @return
      */
@@ -104,7 +103,7 @@ public class AdvancedParameter extends RuleColumn {
 
     /**
      * 枚举所有值
-     * 
+     *
      * @param basepoint
      * @return
      */
@@ -124,7 +123,7 @@ public class AdvancedParameter extends RuleColumn {
 
     /**
      * 枚举所有值
-     * 
+     *
      * @param basepoint
      * @return
      */
@@ -158,6 +157,10 @@ public class AdvancedParameter extends RuleColumn {
         return c.getTime();
     }
 
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, TddlToStringStyle.DEFAULT_STYLE);
+    }
+
     /**
      * 参数自增类型，现在支持4种(#2011-12-5,modify by junyu,add HOUR type)
      */
@@ -174,14 +177,10 @@ public class AdvancedParameter extends RuleColumn {
         public final Integer start; // 起始值
         public final Integer end;  // 结束值
 
-        public Range(Integer start, Integer end){
+        public Range(Integer start, Integer end) {
             this.start = start;
             this.end = end;
         }
-    }
-
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, TddlToStringStyle.DEFAULT_STYLE);
     }
 
 }

@@ -1,16 +1,16 @@
 package com.taobao.tddl.optimizer.parse.hint;
 
+import com.taobao.tddl.rule.model.sqljep.Comparative;
+import com.taobao.tddl.rule.model.sqljep.ComparativeMapChoicer;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.taobao.tddl.rule.model.sqljep.Comparative;
-import com.taobao.tddl.rule.model.sqljep.ComparativeMapChoicer;
-
 /**
  * 基于tddl-rule的hint条件
- * 
+ *
  * @author jianghang 2014-1-13 下午5:09:34
  * @since 5.0.0
  */
@@ -20,8 +20,8 @@ public class RuleRouteCondition extends ExtraCmdRouteCondition implements RouteC
 
     /**
      * 添加一个默认为=的参数对
-     * 
-     * @param str 参数项名字
+     *
+     * @param str  参数项名字
      * @param comp 参数项值，一般为基本类型或可比较类型
      */
     public void put(String key, Comparable<?> parameter) {

@@ -6,17 +6,17 @@ import java.util.Stack;
 
 /**
  * 用来生成一个序列的全排列 非递归
- * 
+ *
  * @author Dreamond
  */
 public final class PermutationGenerator {
 
-    private List           elements;
-    private Stack<List>    currentState     = new Stack();
+    private List elements;
+    private Stack<List> currentState = new Stack();
     private Stack<Integer> currentUsedStack = new Stack();
-    private List           permutation      = new ArrayList();
+    private List permutation = new ArrayList();
 
-    public PermutationGenerator(List elements){
+    public PermutationGenerator(List elements) {
         this.elements = elements;
         this.reset();
     }
@@ -38,7 +38,7 @@ public final class PermutationGenerator {
             Integer currentUsed = currentUsedStack.peek();
             if (currentUsed != rest.size() - 1) {
                 if (!permutation.isEmpty() && currentUsed > -1
-                    && permutation.get(permutation.size() - 1).equals(rest.get(currentUsed))) {
+                        && permutation.get(permutation.size() - 1).equals(rest.get(currentUsed))) {
                     permutation.remove(permutation.size() - 1);
                 } else {
                     currentUsed++;

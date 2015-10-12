@@ -1,13 +1,13 @@
 package com.taobao.tddl.optimizer.utils.range;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
 import com.taobao.tddl.optimizer.core.expression.IFilter;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author jianghang 2013-11-13 下午4:08:47
@@ -15,12 +15,12 @@ import com.taobao.tddl.optimizer.core.expression.ISelectable;
  */
 public class AndRangeProcessor extends AbstractRangeProcessor {
 
-    private final Comparable    column;
-    private Range               wholeRange   = null;
+    private final Comparable column;
     private final List<IFilter> otherFilters = new ArrayList();
-    boolean                     emptySet     = false;
+    boolean emptySet = false;
+    private Range wholeRange = null;
 
-    public AndRangeProcessor(Comparable c){
+    public AndRangeProcessor(Comparable c) {
         this.column = c;
     }
 

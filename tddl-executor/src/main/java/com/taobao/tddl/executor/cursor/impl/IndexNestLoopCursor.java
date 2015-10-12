@@ -1,7 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.codec.CodecFactory;
@@ -13,6 +11,8 @@ import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 
+import java.util.List;
+
 /**
  * @author jianxing <jianxing.qx@taobao.com> 重构用以支持mget接口实现。
  * @author whisper
@@ -20,24 +20,18 @@ import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 @SuppressWarnings("rawtypes")
 public class IndexNestLoopCursor extends JoinSchematicCursor implements IIndexNestLoopCursor {
 
-    protected static enum IteratorDirection {
-        FORWARD, BACKWARD
-    }
-
-    protected IRowSet           left;
-
-    protected IRowSet           dup;
-    protected IRowSet           current;
+    protected IRowSet left;
+    protected IRowSet dup;
+    protected IRowSet current;
     protected IteratorDirection iteratorDirection = null;
-    protected boolean           right_prefix;
-    protected ISchematicCursor  dup_cursor;
-    protected CloneableRecord   right_key;
-    protected RecordCodec       rightJoinOnColumnCodec;
-    protected CloneableRecord   left_key;
-
+    protected boolean right_prefix;
+    protected ISchematicCursor dup_cursor;
+    protected CloneableRecord right_key;
+    protected RecordCodec rightJoinOnColumnCodec;
+    protected CloneableRecord left_key;
     public IndexNestLoopCursor(ISchematicCursor leftCursor, ISchematicCursor rightCursor, List leftJoinOnColumns,
                                List rightJoinOnColumns, List columns, boolean prefix, List leftColumns,
-                               List rightColumns) throws TddlException{
+                               List rightColumns) throws TddlException {
 
         super(leftCursor, rightCursor, leftJoinOnColumns, rightJoinOnColumns);
         this.right_prefix = prefix;
@@ -56,7 +50,7 @@ public class IndexNestLoopCursor extends JoinSchematicCursor implements IIndexNe
      */
     public IndexNestLoopCursor(ISchematicCursor leftCursor, ISchematicCursor rightCursor, List leftJoinOnColumns,
                                List rightJoinOnColumns, List columns, List leftColumns, List rightColumns)
-                                                                                                          throws TddlException{
+            throws TddlException {
         this(leftCursor, rightCursor, leftJoinOnColumns, rightJoinOnColumns, columns, false, leftColumns, rightColumns);
     }
 
@@ -121,7 +115,7 @@ public class IndexNestLoopCursor extends JoinSchematicCursor implements IIndexNe
 
     /**
      * 处理右值重复用。 左值不变，右值因为有相同key的值，所以取右，下移指针一次。
-     * 
+     *
      * @return
      * @throws TddlException
      */
@@ -198,6 +192,10 @@ public class IndexNestLoopCursor extends JoinSchematicCursor implements IIndexNe
         GeneralUtil.printlnToStringBuilder(sb, tabContent + "right:");
         sb.append(this.right_cursor.toStringWithInden(inden + 1));
         return sb.toString();
+    }
+
+    protected static enum IteratorDirection {
+        FORWARD, BACKWARD
     }
 
 }

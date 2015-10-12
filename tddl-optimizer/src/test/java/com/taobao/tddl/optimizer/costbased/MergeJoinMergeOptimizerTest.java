@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import org.codehaus.groovy.syntax.ParserException;
-import org.junit.Test;
-
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree;
@@ -11,6 +8,8 @@ import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.optimizer.costbased.after.MergeJoinMergeOptimizer;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
+import org.codehaus.groovy.syntax.ParserException;
+import org.junit.Test;
 
 public class MergeJoinMergeOptimizerTest extends BaseOptimizerTest {
 

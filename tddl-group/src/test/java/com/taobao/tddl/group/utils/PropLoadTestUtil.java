@@ -1,13 +1,12 @@
 package com.taobao.tddl.group.utils;
 
+import com.taobao.tddl.common.exception.TddlRuntimeException;
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map.Entry;
 import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
-
-import com.taobao.tddl.common.exception.TddlRuntimeException;
 
 public class PropLoadTestUtil {
 

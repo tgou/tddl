@@ -1,11 +1,11 @@
 package com.taobao.tddl.rule.groovy;
 
 /**
- * @description
  * @author <a href="junyu@taobao.com">junyu</a>
  * @version 1.0
- * @since 1.6
+ * @description
  * @date 2011-8-17 07:23:43
+ * @since 1.6
  */
 public class ProfileFactory {
 

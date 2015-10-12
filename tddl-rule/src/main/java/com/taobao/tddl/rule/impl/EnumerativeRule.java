@@ -1,10 +1,5 @@
 package com.taobao.tddl.rule.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.taobao.tddl.rule.model.AdvancedParameter;
 import com.taobao.tddl.rule.model.sqljep.Comparative;
 import com.taobao.tddl.rule.utils.AdvancedParameterParser;
@@ -12,17 +7,22 @@ import com.taobao.tddl.rule.utils.RuleUtils;
 import com.taobao.tddl.rule.utils.sample.Samples;
 import com.taobao.tddl.rule.utils.sample.SamplesCtx;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * 通过描点枚举的方式实现比较树匹配
- * 
- * @author linxuan
+ *
  * @param <T>
+ * @author linxuan
  */
 public abstract class EnumerativeRule<T> extends ExpressionRule<T> {
 
     public static final String REAL_TABLE_NAME_KEY = "REAL_TABLE_NAME";
 
-    public EnumerativeRule(String expression){
+    public EnumerativeRule(String expression) {
         super(expression);
     }
 
@@ -46,7 +46,7 @@ public abstract class EnumerativeRule<T> extends ExpressionRule<T> {
 
     /**
      * 允许子类根据{@linkplain RuleColumn}生成执行表达式
-     * 
+     *
      * @param ruleColumn
      * @return
      */
@@ -95,7 +95,7 @@ public abstract class EnumerativeRule<T> extends ExpressionRule<T> {
 
     /**
      * 计算一下枚举值
-     * 
+     *
      * @param sqlArgs
      * @param ctx
      * @return

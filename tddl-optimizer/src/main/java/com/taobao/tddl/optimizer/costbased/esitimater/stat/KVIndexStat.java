@@ -1,15 +1,13 @@
 package com.taobao.tddl.optimizer.costbased.esitimater.stat;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import com.taobao.tddl.common.utils.TddlToStringStyle;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * 单个索引的统计数据
- * 
+ *
  * @author danchen
  */
 public class KVIndexStat {
@@ -17,17 +15,17 @@ public class KVIndexStat {
     // 日志
     private static final Logger logger = LoggerFactory.getLogger(KVIndexStat.class);
     // 索引的名字
-    private String              indexName;
+    private String indexName;
     // 索引的类型
-    private int                 indexType;
+    private int indexType;
     // 不同值的个数
-    private int                 distinctKeys;
+    private int distinctKeys;
     // 采样大小
-    private int                 numRows;
+    private int numRows;
     // 索引的选择度,至少大于0
     // 0<=factor<=1 越接近1,索引的选择度越大
     // 如果factor很接近为0,并不一定代表着索引的选择度就低,这时候列的柱状图将发挥作用
-    private double              factor;
+    private double factor;
 
     public String getIndexName() {
         return indexName;

@@ -29,8 +29,9 @@ import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
 public class BetweenAndExpression extends TernaryOperatorExpression implements ReplacableExpression {
 
     private final boolean not;
+    private Expression replaceExpr;
 
-    public BetweenAndExpression(boolean not, Expression comparee, Expression notLessThan, Expression notGreaterThan){
+    public BetweenAndExpression(boolean not, Expression comparee, Expression notLessThan, Expression notGreaterThan) {
         super(comparee, notLessThan, notGreaterThan);
         this.not = not;
     }
@@ -43,8 +44,6 @@ public class BetweenAndExpression extends TernaryOperatorExpression implements R
     public int getPrecedence() {
         return PRECEDENCE_BETWEEN_AND;
     }
-
-    private Expression replaceExpr;
 
     @Override
     public void setReplaceExpr(Expression replaceExpr) {

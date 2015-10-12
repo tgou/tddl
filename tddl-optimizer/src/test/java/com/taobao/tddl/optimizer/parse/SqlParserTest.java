@@ -1,18 +1,10 @@
 package com.taobao.tddl.optimizer.parse;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.jdbc.ParameterMethod;
 import com.taobao.tddl.common.model.SqlType;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
@@ -31,9 +23,11 @@ import com.taobao.tddl.optimizer.core.expression.IFunction;
 import com.taobao.tddl.optimizer.core.expression.bean.BindVal;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
 import com.taobao.tddl.optimizer.exceptions.SqlParserException;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.util.*;
 
 /**
  * @author jianghang 2013-11-15 下午3:55:47
@@ -102,9 +96,9 @@ public class SqlParserTest extends BaseOptimizerTest {
         TableNode table1 = new TableNode("TABLE1");
         TableNode table2 = new TableNode("TABLE2");
         QueryTreeNode qnExpected = table1.alias("A")
-            .join(table2.alias("B"))
-            .addJoinKeys("A.ID", "B.ID")
-            .query("A.NAME=1");
+                .join(table2.alias("B"))
+                .addJoinKeys("A.ID", "B.ID")
+                .query("A.NAME=1");
         qnExpected.build();
         assertEquals(qn, qnExpected);
     }
@@ -118,10 +112,10 @@ public class SqlParserTest extends BaseOptimizerTest {
         TableNode table1 = new TableNode("TABLE1");
         TableNode table2 = new TableNode("TABLE2");
         QueryTreeNode qnExpected = table1.alias("A")
-            .join(table2.alias("B"))
-            .setInnerJoin()
-            .addJoinKeys("A.ID", "B.ID")
-            .query("A.NAME=1");
+                .join(table2.alias("B"))
+                .setInnerJoin()
+                .addJoinKeys("A.ID", "B.ID")
+                .query("A.NAME=1");
         qnExpected.build();
         assertEquals(qn, qnExpected);
     }
@@ -135,10 +129,10 @@ public class SqlParserTest extends BaseOptimizerTest {
         TableNode table1 = new TableNode("TABLE1");
         TableNode table2 = new TableNode("TABLE2");
         QueryTreeNode qnExpected = table1.alias("A")
-            .join(table2.alias("B"))
-            .setLeftOuterJoin()
-            .addJoinKeys("A.ID", "B.ID")
-            .query("A.NAME=1");
+                .join(table2.alias("B"))
+                .setLeftOuterJoin()
+                .addJoinKeys("A.ID", "B.ID")
+                .query("A.NAME=1");
         qnExpected.build();
         assertEquals(qn, qnExpected);
     }
@@ -152,10 +146,10 @@ public class SqlParserTest extends BaseOptimizerTest {
         TableNode table1 = new TableNode("TABLE1");
         TableNode table2 = new TableNode("TABLE2");
         QueryTreeNode qnExpected = table1.alias("A")
-            .join(table2.alias("B"))
-            .setRightOuterJoin()
-            .addJoinKeys("A.ID", "B.ID")
-            .query("A.NAME=1");
+                .join(table2.alias("B"))
+                .setRightOuterJoin()
+                .addJoinKeys("A.ID", "B.ID")
+                .query("A.NAME=1");
         qnExpected.build();
         assertEquals(qn, qnExpected);
     }
@@ -170,10 +164,10 @@ public class SqlParserTest extends BaseOptimizerTest {
         TableNode table1 = new TableNode("TABLE1");
         TableNode table2 = new TableNode("TABLE2");
         QueryTreeNode qnExpected = table1.alias("A")
-            .join(table2.alias("B"))
-            .setOuterJoin()
-            .addJoinKeys("A.ID", "B.ID")
-            .query("A.NAME=1");
+                .join(table2.alias("B"))
+                .setOuterJoin()
+                .addJoinKeys("A.ID", "B.ID")
+                .query("A.NAME=1");
         qnExpected.build();
         assertEquals(qn, qnExpected);
     }
@@ -187,10 +181,10 @@ public class SqlParserTest extends BaseOptimizerTest {
         TableNode table1 = new TableNode("TABLE1");
         TableNode table2 = new TableNode("TABLE2");
         QueryTreeNode qnExpected = table1.alias("A")
-            .join(table2.alias("B"))
-            .addJoinKeys("A.ID", "B.ID")
-            .addJoinKeys("A.NAME", "B.NAME")
-            .query("A.NAME=1");
+                .join(table2.alias("B"))
+                .addJoinKeys("A.ID", "B.ID")
+                .addJoinKeys("A.NAME", "B.NAME")
+                .query("A.NAME=1");
         qnExpected.build();
         assertEquals(qn, qnExpected);
     }
@@ -204,11 +198,11 @@ public class SqlParserTest extends BaseOptimizerTest {
         TableNode table1 = new TableNode("TABLE1");
         TableNode table2 = new TableNode("TABLE2");
         QueryTreeNode qnExpected = table1.alias("A")
-            .join(table2.alias("B"))
-            .addJoinKeys("A.ID", "B.ID")
-            .addJoinKeys("A.NAME", "B.NAME")
-            .query("A.NAME=1")
-            .select("A.ID AS AID,A.SCHOOL AS ASCHOOL,B.*");
+                .join(table2.alias("B"))
+                .addJoinKeys("A.ID", "B.ID")
+                .addJoinKeys("A.NAME", "B.NAME")
+                .query("A.NAME=1")
+                .select("A.ID AS AID,A.SCHOOL AS ASCHOOL,B.*");
         qnExpected.build();
         assertEquals(qn, qnExpected);
     }
@@ -223,14 +217,14 @@ public class SqlParserTest extends BaseOptimizerTest {
         TableNode table1 = new TableNode("TABLE1");
         TableNode table2 = new TableNode("TABLE2");
         QueryTreeNode qnExpected = table1.alias("A")
-            .join(table2.alias("B"))
-            .addJoinKeys("A.ID", "B.ID")
-            .addJoinKeys("A.NAME", "B.NAME")
-            .query("A.NAME=1")
-            .select("A.ID AS AID,A.SCHOOL AS ASCHOOL,B.*")
-            .groupBy("AID")
-            .having("AID > 0")
-            .orderBy("A.ID", true);
+                .join(table2.alias("B"))
+                .addJoinKeys("A.ID", "B.ID")
+                .addJoinKeys("A.NAME", "B.NAME")
+                .query("A.NAME=1")
+                .select("A.ID AS AID,A.SCHOOL AS ASCHOOL,B.*")
+                .groupBy("AID")
+                .having("AID > 0")
+                .orderBy("A.ID", true);
         qnExpected.build();
         assertEquals(qn, qnExpected);
     }
@@ -245,14 +239,14 @@ public class SqlParserTest extends BaseOptimizerTest {
         TableNode table1 = new TableNode("TABLE1");
         TableNode table2 = new TableNode("TABLE2");
         QueryTreeNode qnExpected = table1.alias("A")
-            .join(table2.alias("B"))
-            .addJoinKeys("A.ID", "B.ID")
-            .addJoinKeys("A.NAME", "B.NAME")
-            .query("A.NAME=1")
-            .select("A.ID AS AID,A.ID")
-            .groupBy("AID")
-            .having("AID > 0")
-            .orderBy("A.ID", true);
+                .join(table2.alias("B"))
+                .addJoinKeys("A.ID", "B.ID")
+                .addJoinKeys("A.NAME", "B.NAME")
+                .query("A.NAME=1")
+                .select("A.ID AS AID,A.ID")
+                .groupBy("AID")
+                .having("AID > 0")
+                .orderBy("A.ID", true);
         IFunction function1 = ASTNodeFactory.getInstance().createFunction();
         function1.setColumnName("COUNT(A.ID)");
         function1.setFunctionName("COUNT");
@@ -277,7 +271,7 @@ public class SqlParserTest extends BaseOptimizerTest {
             Assert.fail();
         } catch (Exception e) {
             Assert.assertEquals("java.lang.IllegalArgumentException: not support 'or' in join on statment ",
-                e.getCause().getMessage());
+                    e.getCause().getMessage());
         }
     }
 
@@ -662,9 +656,9 @@ public class SqlParserTest extends BaseOptimizerTest {
         TableNode table1 = new TableNode("TABLE1");
         TableNode table2 = new TableNode("TABLE2");
         QueryTreeNode qnExpected = table1.alias("A")
-            .join(table2.alias("B"))
-            .addJoinKeys("ID", "ID")
-            .query("A.ID>5 && B.ID<11");
+                .join(table2.alias("B"))
+                .addJoinKeys("ID", "ID")
+                .query("A.ID>5 && B.ID<11");
         qnExpected.build();
         assertEquals(qn, qnExpected);
     }
@@ -676,7 +670,7 @@ public class SqlParserTest extends BaseOptimizerTest {
         un.build();
 
         TableNode table1 = new TableNode("TABLE1");
-        UpdateNode unExpected = table1.update("NAME", new Comparable[] { 2 });
+        UpdateNode unExpected = table1.update("NAME", new Comparable[]{2});
         table1.query("ID>=5 AND ID<=5");
         unExpected.build();
         assertEquals(un, unExpected);
@@ -703,7 +697,7 @@ public class SqlParserTest extends BaseOptimizerTest {
         in.build();
 
         TableNode table1 = new TableNode("TABLE1");
-        InsertNode inExpected = table1.insert("ID", new Comparable[] { 2 });
+        InsertNode inExpected = table1.insert("ID", new Comparable[]{2});
         inExpected.build();
 
         assertEquals(in, inExpected);
@@ -717,7 +711,7 @@ public class SqlParserTest extends BaseOptimizerTest {
         in.build();
 
         TableNode table1 = new TableNode("TABLE1");
-        InsertNode inExpected = table1.insert("ID NAME SCHOOL", new Comparable[] { 2, "sun", "sysu" });
+        InsertNode inExpected = table1.insert("ID NAME SCHOOL", new Comparable[]{2, "sun", "sysu"});
         inExpected.build();
 
         assertEquals(in, inExpected);
@@ -791,9 +785,9 @@ public class SqlParserTest extends BaseOptimizerTest {
         InsertNode in = insert(sql);
         Map<Integer, ParameterContext> parameterSettings = null;
         parameterSettings = new TreeMap<Integer, ParameterContext>();
-        ParameterContext p1 = new ParameterContext(ParameterMethod.setObject1, new Object[] { 0, 2 });
-        ParameterContext p2 = new ParameterContext(ParameterMethod.setObject1, new Object[] { 1, "sun" });
-        ParameterContext p3 = new ParameterContext(ParameterMethod.setObject1, new Object[] { 2, "sysu" });
+        ParameterContext p1 = new ParameterContext(ParameterMethod.setObject1, new Object[]{0, 2});
+        ParameterContext p2 = new ParameterContext(ParameterMethod.setObject1, new Object[]{1, "sun"});
+        ParameterContext p3 = new ParameterContext(ParameterMethod.setObject1, new Object[]{2, "sysu"});
         parameterSettings.put(1, p1);
         parameterSettings.put(2, p2);
         parameterSettings.put(3, p3);
@@ -802,7 +796,7 @@ public class SqlParserTest extends BaseOptimizerTest {
         in.build();
 
         TableNode table1 = new TableNode("TABLE1");
-        InsertNode inExpected = table1.insert("ID NAME SCHOOL", new Comparable[] { 2, "sun", "sysu" });
+        InsertNode inExpected = table1.insert("ID NAME SCHOOL", new Comparable[]{2, "sun", "sysu"});
         inExpected.build();
         assertEquals(in, inExpected);
     }
@@ -814,9 +808,9 @@ public class SqlParserTest extends BaseOptimizerTest {
 
         Map<Integer, ParameterContext> parameterSettings = null;
         parameterSettings = new TreeMap<Integer, ParameterContext>();
-        ParameterContext p1 = new ParameterContext(ParameterMethod.setObject1, new Object[] { 0, 2 });
-        ParameterContext p2 = new ParameterContext(ParameterMethod.setObject1, new Object[] { 1, 3 });
-        ParameterContext p3 = new ParameterContext(ParameterMethod.setObject1, new Object[] { 2, 5 });
+        ParameterContext p1 = new ParameterContext(ParameterMethod.setObject1, new Object[]{0, 2});
+        ParameterContext p2 = new ParameterContext(ParameterMethod.setObject1, new Object[]{1, 3});
+        ParameterContext p3 = new ParameterContext(ParameterMethod.setObject1, new Object[]{2, 5});
         parameterSettings.put(1, p1);
         parameterSettings.put(2, p2);
         parameterSettings.put(3, p3);
@@ -825,7 +819,7 @@ public class SqlParserTest extends BaseOptimizerTest {
         un.build();
 
         TableNode table1 = new TableNode("TABLE1");
-        UpdateNode unExpected = table1.update("ID", new Comparable[] { 2 });
+        UpdateNode unExpected = table1.update("ID", new Comparable[]{2});
         table1.query("ID>=3 AND ID<=5");
         unExpected.build();
 
@@ -839,8 +833,8 @@ public class SqlParserTest extends BaseOptimizerTest {
 
         Map<Integer, ParameterContext> parameterSettings = null;
         parameterSettings = new TreeMap<Integer, ParameterContext>();
-        ParameterContext p1 = new ParameterContext(ParameterMethod.setObject1, new Object[] { 0, 3 });
-        ParameterContext p2 = new ParameterContext(ParameterMethod.setObject1, new Object[] { 1, 5 });
+        ParameterContext p1 = new ParameterContext(ParameterMethod.setObject1, new Object[]{0, 3});
+        ParameterContext p2 = new ParameterContext(ParameterMethod.setObject1, new Object[]{1, 5});
         parameterSettings.put(1, p1);
         parameterSettings.put(2, p2);
 
@@ -988,10 +982,10 @@ public class SqlParserTest extends BaseOptimizerTest {
 
         IColumn column = ASTNodeFactory.getInstance().createColumn().setColumnName("NAME");
         IBooleanFilter filter = ASTNodeFactory.getInstance()
-            .createBooleanFilter()
-            .setColumn(column)
-            .setValue(subQuery)
-            .setOperation(OPERATION.EQ);
+                .createBooleanFilter()
+                .setColumn(column)
+                .setValue(subQuery)
+                .setOperation(OPERATION.EQ);
         table1.query(filter);
         qnExpected.build();
         assertEquals(qn, qnExpected);
@@ -1015,7 +1009,7 @@ public class SqlParserTest extends BaseOptimizerTest {
     public void testWhere_字段_表_复杂子查询() throws QueryException, SqlParserException {
         String subSql = "SELECT B.* FROM TABLE2 B WHERE B.ID=1 GROUP BY SCHOOL HAVING COUNT(*) > 1 ORDER BY ID DESC LIMIT 1";
         String sql = "SELECT NAME FROM (SELECT * FROM TABLE1 A WHERE A.ID=1) A WHERE NAME=(SELECT C.NAME FROM ("
-                     + subSql + ") C )";
+                + subSql + ") C )";
         QueryTreeNode qn = query(sql);
         qn.build();
 

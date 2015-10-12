@@ -1,8 +1,11 @@
 package com.taobao.tddl.group.jdbc;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import com.taobao.tddl.common.mock.MockDataSource;
+import com.taobao.tddl.common.model.DBType;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,13 +14,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.taobao.tddl.common.mock.MockDataSource;
-import com.taobao.tddl.common.model.DBType;
+import static org.junit.Assert.*;
 
 /**
  * @author yangzhu
@@ -42,15 +39,15 @@ public class TGroupConnectionTest {
         assertTrue((conn.createStatement() instanceof TGroupStatement));
         assertTrue((conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE) instanceof TGroupStatement));
         assertTrue((conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-            ResultSet.CONCUR_UPDATABLE,
-            ResultSet.HOLD_CURSORS_OVER_COMMIT) instanceof TGroupStatement));
+                ResultSet.CONCUR_UPDATABLE,
+                ResultSet.HOLD_CURSORS_OVER_COMMIT) instanceof TGroupStatement));
 
         assertTrue((conn.prepareStatement("sql") instanceof TGroupPreparedStatement));
         assertTrue((conn.prepareStatement("sql", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE) instanceof TGroupPreparedStatement));
         assertTrue((conn.prepareStatement("sql",
-            ResultSet.TYPE_SCROLL_INSENSITIVE,
-            ResultSet.CONCUR_UPDATABLE,
-            ResultSet.HOLD_CURSORS_OVER_COMMIT) instanceof TGroupPreparedStatement));
+                ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_UPDATABLE,
+                ResultSet.HOLD_CURSORS_OVER_COMMIT) instanceof TGroupPreparedStatement));
         assertTrue((conn.prepareStatement("sql", Statement.RETURN_GENERATED_KEYS) instanceof TGroupPreparedStatement));
         assertTrue((conn.prepareStatement("sql", new int[0]) instanceof TGroupPreparedStatement));
         assertTrue((conn.prepareStatement("sql", new String[0]) instanceof TGroupPreparedStatement));

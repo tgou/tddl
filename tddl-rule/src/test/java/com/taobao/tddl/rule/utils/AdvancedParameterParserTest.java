@@ -1,11 +1,10 @@
 package com.taobao.tddl.rule.utils;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.rule.model.AdvancedParameter;
 import com.taobao.tddl.rule.model.AdvancedParameter.AtomIncreaseType;
 import com.taobao.tddl.rule.model.AdvancedParameter.Range;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class AdvancedParameterParserTest {
 
@@ -25,16 +24,16 @@ public class AdvancedParameterParserTest {
         String param = "id,1_number,0_1024|1m_1g";
         AdvancedParameter result = AdvancedParameterParser.getAdvancedParamByParamTokenNew(param, false);
         testResult(result,
-            AtomIncreaseType.NUMBER,
-            new AdvancedParameter.Range[] { getRange(0, 1024), getRange(1 * 1000000, 1 * 1000000000) },
-            1);
+                AtomIncreaseType.NUMBER,
+                new AdvancedParameter.Range[]{getRange(0, 1024), getRange(1 * 1000000, 1 * 1000000000)},
+                1);
 
         param = "id,0_1024|1m_1g";
         result = AdvancedParameterParser.getAdvancedParamByParamTokenNew(param, false);
         testResult(result,
-            AtomIncreaseType.NUMBER,
-            new AdvancedParameter.Range[] { getRange(0, 1024), getRange(1 * 1000000, 1 * 1000000000) },
-            1);
+                AtomIncreaseType.NUMBER,
+                new AdvancedParameter.Range[]{getRange(0, 1024), getRange(1 * 1000000, 1 * 1000000000)},
+                1);
     }
 
     private void testResult(AdvancedParameter result, AtomIncreaseType type, Comparable atomicIncreateValue,

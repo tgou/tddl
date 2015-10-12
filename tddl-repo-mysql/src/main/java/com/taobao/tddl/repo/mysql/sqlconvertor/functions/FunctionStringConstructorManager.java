@@ -1,14 +1,14 @@
 package com.taobao.tddl.repo.mysql.sqlconvertor.functions;
 
+import com.taobao.tddl.optimizer.core.expression.IFunction;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-
 public class FunctionStringConstructorManager {
 
-    static protected Map<String, FunctionStringConstructor> constructors       = null;
-    
+    static protected Map<String, FunctionStringConstructor> constructors = null;
+
     static {
         constructors = new HashMap<String, FunctionStringConstructor>();
         constructors.put(IFunction.BuiltInFunction.INTERVAL, new DateIntervalFunction());

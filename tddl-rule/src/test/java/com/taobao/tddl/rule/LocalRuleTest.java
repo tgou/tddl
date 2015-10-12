@@ -1,17 +1,5 @@
 package com.taobao.tddl.rule;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import com.google.common.collect.Lists;
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.rule.BaseRuleTest.Choicer;
@@ -21,10 +9,21 @@ import com.taobao.tddl.rule.model.MatcherResult;
 import com.taobao.tddl.rule.model.TargetDB;
 import com.taobao.tddl.rule.model.sqljep.Comparative;
 import com.taobao.tddl.rule.utils.MatchResultCompare;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 一些常见的本地rule测试
- * 
+ *
  * @author jianghang 2013-11-6 下午9:22:54
  * @since 5.0.0
  */
@@ -101,10 +100,10 @@ public class LocalRuleTest {
     public void testRule_date() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String conditionStr = "message_id >24:int and message_id<=26:int;gmt_create>=" + sdf.format(new Date())
-                              + ":date";
+                + ":date";
         MatcherResult result = rule.route("nserch", conditionStr);
         Assert.assertEquals(true,
-            MatchResultCompare.oriDbTabCompareWithMatchResult(result, "NSEARCH_GROUP_2", "nserch_1"));
+                MatchResultCompare.oriDbTabCompareWithMatchResult(result, "NSEARCH_GROUP_2", "nserch_1"));
     }
 
     @Test

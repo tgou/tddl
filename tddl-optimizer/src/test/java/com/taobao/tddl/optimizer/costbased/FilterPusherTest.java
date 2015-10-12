@@ -1,10 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
 import com.taobao.tddl.optimizer.core.ast.query.QueryNode;
@@ -13,6 +8,10 @@ import com.taobao.tddl.optimizer.core.expression.IFilter;
 import com.taobao.tddl.optimizer.costbased.pusher.FilterPusher;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.List;
 
 public class FilterPusherTest extends BaseOptimizerTest {
 
@@ -104,7 +103,7 @@ public class FilterPusherTest extends BaseOptimizerTest {
         JoinNode join = table1.join(table2);
         join.alias("S").select("TABLE1.ID");
         join.getColumnsSelected()
-            .add(OptimizerUtils.createColumnFromString("CONCAT_WS(' ',TABLE1.NAME,TABLE1.SCHOOL) AS NAME"));
+                .add(OptimizerUtils.createColumnFromString("CONCAT_WS(' ',TABLE1.NAME,TABLE1.SCHOOL) AS NAME"));
         join.query("TABLE1.ID>5 AND TABLE2.ID<10 AND TABLE1.NAME = TABLE2.NAME");
         join.build();
 
@@ -125,7 +124,7 @@ public class FilterPusherTest extends BaseOptimizerTest {
         JoinNode join = table1.join(table2);
         join.alias("S").select("TABLE1.ID");
         join.getColumnsSelected()
-            .add(OptimizerUtils.createColumnFromString("CONCAT_WS(' ',TABLE1.NAME,TABLE1.SCHOOL) AS NAME"));
+                .add(OptimizerUtils.createColumnFromString("CONCAT_WS(' ',TABLE1.NAME,TABLE1.SCHOOL) AS NAME"));
         join.query("TABLE1.ID>5 AND TABLE2.ID<10 AND TABLE1.NAME = TABLE2.NAME");
         join.build();
 
@@ -160,11 +159,11 @@ public class FilterPusherTest extends BaseOptimizerTest {
         FilterPusher.optimize(nextJoin);
 
         Assert.assertEquals("(TABLE1.NAME = 6 AND TABLE1.ID > 5)", ((JoinNode) nextJoin.getLeftNode()).getLeftNode()
-            .getWhereFilter()
-            .toString());
+                .getWhereFilter()
+                .toString());
         Assert.assertEquals("(TABLE2.ID < 10 AND TABLE2.NAME = 6)", ((JoinNode) nextJoin.getLeftNode()).getRightNode()
-            .getWhereFilter()
-            .toString());
+                .getWhereFilter()
+                .toString());
         Assert.assertEquals("TABLE1.ID = TABLE3.ID", nextJoin.getJoinFilter().get(0).toString());
     }
 
@@ -193,19 +192,19 @@ public class FilterPusherTest extends BaseOptimizerTest {
 
         Assert.assertEquals("B.ID = C.ID", nextJoin.getJoinFilter().get(0).toString());
         Assert.assertEquals("(TABLE1.NAME = 2 AND TABLE1.ID > 5)",
-            ((JoinNode) nextJoin.getLeftNode().getChild()).getLeftNode().getWhereFilter().toString());
+                ((JoinNode) nextJoin.getLeftNode().getChild()).getLeftNode().getWhereFilter().toString());
         Assert.assertEquals("(TABLE2.ID < 10 AND TABLE2.NAME = 2)",
-            ((JoinNode) nextJoin.getLeftNode().getChild()).getRightNode().getWhereFilter().toString());
+                ((JoinNode) nextJoin.getLeftNode().getChild()).getRightNode().getWhereFilter().toString());
         Assert.assertEquals("TABLE1.NAME = TABLE2.NAME", ((JoinNode) nextJoin.getLeftNode().getChild()).getJoinFilter()
-            .get(0)
-            .toString());
+                .get(0)
+                .toString());
 
         Assert.assertEquals("(TABLE1.NAME = 3 AND TABLE1.ID > 5)",
-            ((JoinNode) nextJoin.getRightNode().getChild()).getLeftNode().getWhereFilter().toString());
+                ((JoinNode) nextJoin.getRightNode().getChild()).getLeftNode().getWhereFilter().toString());
         Assert.assertEquals("(TABLE2.SCHOOL = 4 AND TABLE2.ID < 10 AND TABLE2.NAME = 3)",
-            ((JoinNode) nextJoin.getRightNode().getChild()).getRightNode().getWhereFilter().toString());
+                ((JoinNode) nextJoin.getRightNode().getChild()).getRightNode().getWhereFilter().toString());
         Assert.assertEquals("TABLE1.NAME = TABLE2.NAME",
-            ((JoinNode) nextJoin.getRightNode().getChild()).getJoinFilter().get(0).toString());
+                ((JoinNode) nextJoin.getRightNode().getChild()).getJoinFilter().get(0).toString());
     }
 
     @Test
@@ -256,14 +255,14 @@ public class FilterPusherTest extends BaseOptimizerTest {
 
         Assert.assertEquals("A.ID = TABLE3.ID", nextJoin.getJoinFilter().get(0).toString());
         Assert.assertEquals("TABLE1.NAME = TABLE2.NAME", ((JoinNode) nextJoin.getLeftNode()).getJoinFilter()
-            .get(0)
-            .toString());
+                .get(0)
+                .toString());
         Assert.assertEquals("(TABLE1.NAME = 6 AND TABLE1.ID > 5)", ((JoinNode) nextJoin.getLeftNode()).getLeftNode()
-            .getOtherJoinOnFilter()
-            .toString());
+                .getOtherJoinOnFilter()
+                .toString());
         Assert.assertEquals("(TABLE2.ID < 10 AND TABLE2.NAME = 6)", ((JoinNode) nextJoin.getLeftNode()).getRightNode()
-            .getOtherJoinOnFilter()
-            .toString());
+                .getOtherJoinOnFilter()
+                .toString());
 
     }
 

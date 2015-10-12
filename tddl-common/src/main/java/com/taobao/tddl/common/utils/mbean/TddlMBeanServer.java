@@ -1,5 +1,12 @@
 package com.taobao.tddl.common.utils.mbean;
 
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
+
+import javax.management.*;
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
@@ -9,37 +16,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
-
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
-
 public class TddlMBeanServer {
 
-    private static final Logger                                              log            = LoggerFactory.getLogger(TddlMBeanServer.class);
-    private static final String                                              LogPrefix      = "[TddlMBeanServer]";
-    private MBeanServer                                                      mbs            = null;
-    private ConcurrentHashMap<String, ConcurrentHashMap<String, AtomicLong>> idMap          = new ConcurrentHashMap<String, ConcurrentHashMap<String, AtomicLong>>();
-    private ReentrantLock                                                    lock           = new ReentrantLock();
+    private static final Logger log = LoggerFactory.getLogger(TddlMBeanServer.class);
+    private static final String LogPrefix = "[TddlMBeanServer]";
+    public static boolean shutDownMBean = true;
+    private static ConcurrentHashMap<String, ObjectName> beanNameHolder = new ConcurrentHashMap<String, ObjectName>();
+    private MBeanServer mbs = null;
+    private ConcurrentHashMap<String, ConcurrentHashMap<String, AtomicLong>> idMap = new ConcurrentHashMap<String, ConcurrentHashMap<String, AtomicLong>>();
+    private ReentrantLock lock = new ReentrantLock();
 
-    private static ConcurrentHashMap<String, ObjectName>                     beanNameHolder = new ConcurrentHashMap<String, ObjectName>();
-
-    public static boolean                                                    shutDownMBean  = true;
-
-    private static class Holder {
-
-        private static final TddlMBeanServer instance = new TddlMBeanServer();
-    }
-
-    private TddlMBeanServer(){
+    private TddlMBeanServer() {
         // 创建MBServer
         String hostName = null;
         try {
@@ -71,8 +58,8 @@ public class TddlMBeanServer {
                 String serverURL = "service:jmx:rmi:///jndi/rmi://" + host + ":" + port + "/" + rmiName;
                 JMXServiceURL url = new JMXServiceURL(serverURL);
                 final JMXConnectorServer connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url,
-                    null,
-                    mbs);
+                        null,
+                        mbs);
                 connectorServer.start();
                 Runtime.getRuntime().addShutdownHook(new Thread() {
 
@@ -110,11 +97,15 @@ public class TddlMBeanServer {
         }
     }
 
+    public static void removeAllMBean() throws MBeanRegistrationException, InstanceNotFoundException {
+        Holder.instance.unRegisterAllSelfMBean();
+    }
+
     private void registerMBean0(Object o, String name) {
         // 注册MBean
         if (beanServerExist()) {
             String beanName = o.getClass().getPackage().getName() + ":type=" + o.getClass().getSimpleName()
-                              + (null == name ? (",id=" + o.hashCode()) : (",name=" + name + "-" + o.hashCode()));
+                    + (null == name ? (",id=" + o.hashCode()) : (",name=" + name + "-" + o.hashCode()));
             realRegisterMBean(o, beanName);
         }
     }
@@ -193,8 +184,8 @@ public class TddlMBeanServer {
     }
 
     private synchronized void realRegisterMBean(Object o, ObjectName objectName) throws InstanceAlreadyExistsException,
-                                                                                MBeanRegistrationException,
-                                                                                NotCompliantMBeanException {
+            MBeanRegistrationException,
+            NotCompliantMBeanException {
         ObjectName old = beanNameHolder.putIfAbsent(objectName.getCanonicalName(), objectName);
         if (old == null) {
             mbs.registerMBean(o, objectName);
@@ -209,8 +200,9 @@ public class TddlMBeanServer {
         }
     }
 
-    public static void removeAllMBean() throws MBeanRegistrationException, InstanceNotFoundException {
-        Holder.instance.unRegisterAllSelfMBean();
+    private static class Holder {
+
+        private static final TddlMBeanServer instance = new TddlMBeanServer();
     }
 
 }

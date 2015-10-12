@@ -1,19 +1,18 @@
 package com.taobao.tddl.atom.common;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import com.taobao.diamond.mockserver.MockServer;
 import com.taobao.tddl.atom.BaseAtomTest;
 import com.taobao.tddl.atom.TAtomDataSource;
 import com.taobao.tddl.atom.config.TAtomConfParser;
 import com.taobao.tddl.atom.config.TAtomDsConfDO;
 import com.taobao.tddl.atom.exception.AtomAlreadyInitException;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.io.IOException;
+import java.util.Properties;
 
 public class TAtomDataSourceTest extends BaseAtomTest {
 
@@ -247,9 +246,9 @@ public class TAtomDataSourceTest extends BaseAtomTest {
     }
 
     private void testChangePasswd(ChangeTestConfig change, ChangeTestConfig restore, String dbType)
-                                                                                                   throws IOException,
-                                                                                                   AtomAlreadyInitException,
-                                                                                                   Exception {
+            throws IOException,
+            AtomAlreadyInitException,
+            Exception {
         String appName = "tddl_sample";
         String dbKey = "unitTestDb-" + dbType;
         String configName = "";
@@ -270,8 +269,8 @@ public class TAtomDataSourceTest extends BaseAtomTest {
         TAtomDsConfDO tAtomDsConfDO = TAtomConfParser.parserTAtomDsConfDO(globaStr, appStr);
         Properties passwdProp = PropLoadTestUtil.loadPropFromFile("conf/" + configName + "/passwd.properties");
         String passwdDataId = TAtomConstants.getPasswdDataId(tAtomDsConfDO.getDbName(),
-            tAtomDsConfDO.getDbType(),
-            tAtomDsConfDO.getUserName());
+                tAtomDsConfDO.getDbType(),
+                tAtomDsConfDO.getUserName());
         MockServer.setConfigInfo(passwdDataId, PropLoadTestUtil.convertProp2Str(change.doChange(passwdProp)));
         Thread.sleep(3000);
         // 期待出现错误
@@ -283,8 +282,8 @@ public class TAtomDataSourceTest extends BaseAtomTest {
         }
         Assert.assertTrue(result);
         MockServer.setConfigInfo(passwdDataId,
-            PropLoadTestUtil.convertProp2Str(restore.doChange(PropLoadTestUtil.loadPropFromFile("conf/" + configName
-                                                                                                + "/passwd.properties"))));
+                PropLoadTestUtil.convertProp2Str(restore.doChange(PropLoadTestUtil.loadPropFromFile("conf/" + configName
+                        + "/passwd.properties"))));
         Thread.sleep(3000);
         // 期待结果正常
         actual = jtp.queryForInt(testSql);
@@ -325,8 +324,8 @@ public class TAtomDataSourceTest extends BaseAtomTest {
         }
         Assert.assertTrue(result);
         MockServer.setConfigInfo(dataId,
-            PropLoadTestUtil.convertProp2Str(restore.doChange(PropLoadTestUtil.loadPropFromFile("conf/" + configName
-                                                                                                + fileName))));
+                PropLoadTestUtil.convertProp2Str(restore.doChange(PropLoadTestUtil.loadPropFromFile("conf/" + configName
+                        + fileName))));
         Thread.sleep(3000);
         // 期待结果正常
         actual = jtp.queryForInt(testSql);
@@ -335,9 +334,9 @@ public class TAtomDataSourceTest extends BaseAtomTest {
     }
 
     private TAtomDataSource createTAtomDataSource(String appName, String dbKey, String configName)
-                                                                                                  throws IOException,
-                                                                                                  AtomAlreadyInitException,
-                                                                                                  Exception {
+            throws IOException,
+            AtomAlreadyInitException,
+            Exception {
         // 全局配置
         String globaStr = PropLoadTestUtil.loadPropFile2String("conf/" + configName + "/globa.properties");
         MockServer.setConfigInfo(TAtomConstants.getGlobalDataId(dbKey), globaStr);
@@ -349,8 +348,8 @@ public class TAtomDataSourceTest extends BaseAtomTest {
         // 密码配置
         String passwdStr = PropLoadTestUtil.loadPropFile2String("conf/" + configName + "/passwd.properties");
         MockServer.setConfigInfo(TAtomConstants.getPasswdDataId(tAtomDsConfDO.getDbName(),
-            tAtomDsConfDO.getDbType(),
-            tAtomDsConfDO.getUserName()), passwdStr);
+                tAtomDsConfDO.getDbType(),
+                tAtomDsConfDO.getUserName()), passwdStr);
         // 进行初始化
         TAtomDataSource tAtomDataSource = new TAtomDataSource();
         tAtomDataSource.setAppName(appName);

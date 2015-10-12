@@ -11,7 +11,7 @@ import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 
 public class NestedLoopJoinHandler extends QueryHandlerCommon {
 
-    public NestedLoopJoinHandler(){
+    public NestedLoopJoinHandler() {
         super();
     }
 
@@ -24,20 +24,20 @@ public class NestedLoopJoinHandler extends QueryHandlerCommon {
         IQueryTree leftQuery = join.getLeftNode();
 
         ISchematicCursor cursor_left = ExecutorContext.getContext()
-            .getTopologyExecutor()
-            .execByExecPlanNode(leftQuery, executionContext);
+                .getTopologyExecutor()
+                .execByExecPlanNode(leftQuery, executionContext);
 
         ISchematicCursor cursor_right = ExecutorContext.getContext()
-            .getTopologyExecutor()
-            .execByExecPlanNode(join.getRightNode(), executionContext);
+                .getTopologyExecutor()
+                .execByExecPlanNode(join.getRightNode(), executionContext);
 
         cursor = repo.getCursorFactory().blockNestedLoopJoinCursor(executionContext,
-            cursor_left,
-            cursor_right,
-            join.getLeftJoinOnColumns(),
-            join.getRightJoinOnColumns(),
-            join.getColumns(),
-            join);
+                cursor_left,
+                cursor_right,
+                join.getLeftJoinOnColumns(),
+                join.getRightJoinOnColumns(),
+                join.getColumns(),
+                join);
         return cursor;
     }
 

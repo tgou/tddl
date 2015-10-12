@@ -9,21 +9,21 @@ import java.io.PrintStream;
  */
 public class ExceptionErrorCodeUtils {
 
-    public static final String separator                               = "-!@#-";
-    public static final int    Duplicate_entry                         = 10000;
-    public static final int    Null_Pointer_exception                  = 10001;
-    public static final int    Wrong_PassWD_Or_UserName                = 10002;
-    public static final int    UNKNOWN_EXCEPTION                       = 10003;
-    public static final int    WRITE_NOT_ALLOW_EXECUTE_ON_MUTI_SERVERS = 10004;
+    public static final String separator = "-!@#-";
+    public static final int Duplicate_entry = 10000;
+    public static final int Null_Pointer_exception = 10001;
+    public static final int Wrong_PassWD_Or_UserName = 10002;
+    public static final int UNKNOWN_EXCEPTION = 10003;
+    public static final int WRITE_NOT_ALLOW_EXECUTE_ON_MUTI_SERVERS = 10004;
     /**
      * 2开头的，是需要重试，并且是写库重试的异常
      */
-    public static final int    Read_only                               = 20001;
+    public static final int Read_only = 20001;
     /**
      * 3开头的，是需要读重试的异常
      */
-    public static final int    Communication_link_failure              = 30000;
-    public static final int    Connect_timeout                         = 30001;
+    public static final int Communication_link_failure = 30000;
+    public static final int Connect_timeout = 30001;
 
     public static Integer getErrorCode(String exception) {
         if (exception == null || exception.isEmpty()) {

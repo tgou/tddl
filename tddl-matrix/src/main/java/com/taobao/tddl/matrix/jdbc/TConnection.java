@@ -1,32 +1,5 @@
 package com.taobao.tddl.matrix.jdbc;
 
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.NClob;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLClientInfoException;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.sql.Struct;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.utils.TStringUtil;
@@ -39,6 +12,11 @@ import com.taobao.tddl.executor.spi.ITransaction;
 import com.taobao.tddl.group.utils.GroupHintParser;
 import com.taobao.tddl.matrix.jdbc.utils.ExceptionUtils;
 import com.taobao.tddl.optimizer.OptimizerContext;
+import org.apache.commons.lang.StringUtils;
+
+import java.sql.*;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @author mengshi.sunmengshi 2013-11-22 下午3:26:06
@@ -46,16 +24,16 @@ import com.taobao.tddl.optimizer.OptimizerContext;
  */
 public class TConnection implements Connection {
 
-    private MatrixExecutor         executor             = null;
-    private final TDataSource      ds;
-    private ExecutionContext       executionContext     = new ExecutionContext();                                    // 记录上一次的执行上下文
-    private final List<TStatement> openedStatements     = Collections.synchronizedList(new ArrayList<TStatement>(2));
-    private boolean                isAutoCommit         = true;                                                      // jdbc规范，新连接为true
-    private boolean                closed;
-    private int                    transactionIsolation = -1;
-    private final ExecutorService  executorService;
+    private final TDataSource ds;
+    private final List<TStatement> openedStatements = Collections.synchronizedList(new ArrayList<TStatement>(2));
+    private final ExecutorService executorService;
+    private MatrixExecutor executor = null;
+    private ExecutionContext executionContext = new ExecutionContext();                                    // 记录上一次的执行上下文
+    private boolean isAutoCommit = true;                                                      // jdbc规范，新连接为true
+    private boolean closed;
+    private int transactionIsolation = -1;
 
-    public TConnection(TDataSource ds){
+    public TConnection(TDataSource ds) {
         this.ds = ds;
         this.executor = ds.getExecutor();
         this.executorService = ds.borrowExecutorService();
@@ -137,6 +115,12 @@ public class TConnection implements Connection {
      */
 
     @Override
+    public boolean getAutoCommit() throws SQLException {
+        checkClosed();
+        return isAutoCommit;
+    }
+
+    @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
         checkClosed();
         if (this.isAutoCommit == autoCommit) {
@@ -147,12 +131,6 @@ public class TConnection implements Connection {
         if (this.executionContext != null) {
             this.executionContext.setAutoCommit(autoCommit);
         }
-    }
-
-    @Override
-    public boolean getAutoCommit() throws SQLException {
-        checkClosed();
-        return isAutoCommit;
     }
 
     @Override
@@ -298,7 +276,7 @@ public class TConnection implements Connection {
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-                                                                                                           throws SQLException {
+            throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -325,7 +303,7 @@ public class TConnection implements Connection {
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
-                                                                                                      throws SQLException {
+            throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -346,14 +324,14 @@ public class TConnection implements Connection {
     }
 
     @Override
-    public void setTransactionIsolation(int level) throws SQLException {
-        this.transactionIsolation = level;
-    }
-
-    @Override
     public int getTransactionIsolation() throws SQLException {
         checkClosed();
         return transactionIsolation;
+    }
+
+    @Override
+    public void setTransactionIsolation(int level) throws SQLException {
+        this.transactionIsolation = level;
     }
 
     /**
@@ -365,17 +343,17 @@ public class TConnection implements Connection {
     }
 
     @Override
+    public int getHoldability() throws SQLException {
+        return ResultSet.CLOSE_CURSORS_AT_COMMIT;
+    }
+
+    @Override
     public void setHoldability(int holdability) throws SQLException {
         /*
          * 如果你看到这里，那么恭喜，哈哈 mysql默认在5.x的jdbc driver里面也没有实现holdability 。
          * 所以默认都是.CLOSE_CURSORS_AT_COMMIT 为了简化起见，我们也就只实现close这种
          */
         throw new UnsupportedOperationException("setHoldability");
-    }
-
-    @Override
-    public int getHoldability() throws SQLException {
-        return ResultSet.CLOSE_CURSORS_AT_COMMIT;
     }
 
     @Override
@@ -410,17 +388,17 @@ public class TConnection implements Connection {
         // do nothing
     }
 
-    @Override
-    public void setReadOnly(boolean readOnly) throws SQLException {
-        // do nothing
-    }
-
     /**
      * 保持可读可写
      */
     @Override
     public boolean isReadOnly() throws SQLException {
         return false;
+    }
+
+    @Override
+    public void setReadOnly(boolean readOnly) throws SQLException {
+        // do nothing
     }
 
     /*---------------------后面是未实现的方法------------------------------*/
@@ -472,11 +450,6 @@ public class TConnection implements Connection {
     }
 
     @Override
-    public void setClientInfo(Properties properties) throws SQLClientInfoException {
-        throw new RuntimeException("not support exception");
-    }
-
-    @Override
     public String getClientInfo(String name) throws SQLException {
         throw new SQLException("not support exception");
     }
@@ -484,6 +457,11 @@ public class TConnection implements Connection {
     @Override
     public Properties getClientInfo() throws SQLException {
         throw new SQLException("not support exception");
+    }
+
+    @Override
+    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+        throw new RuntimeException("not support exception");
     }
 
     @Override
@@ -512,13 +490,13 @@ public class TConnection implements Connection {
     }
 
     @Override
-    public void setCatalog(String catalog) throws SQLException {
-        throw new UnsupportedOperationException("setCatalog");
+    public String getCatalog() throws SQLException {
+        throw new UnsupportedOperationException("getCatalog");
     }
 
     @Override
-    public String getCatalog() throws SQLException {
-        throw new UnsupportedOperationException("getCatalog");
+    public void setCatalog(String catalog) throws SQLException {
+        throw new UnsupportedOperationException("setCatalog");
     }
 
 }

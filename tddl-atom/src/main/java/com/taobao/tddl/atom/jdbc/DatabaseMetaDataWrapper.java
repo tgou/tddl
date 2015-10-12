@@ -1,18 +1,13 @@
 package com.taobao.tddl.atom.jdbc;
 
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.RowIdLifetime;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseMetaDataWrapper implements DatabaseMetaData {
 
     private final DatabaseMetaData targetMetaData;
-    private final Connection       targetConnection;
+    private final Connection targetConnection;
 
-    public DatabaseMetaDataWrapper(DatabaseMetaData targetMetaData, Connection targetConnection){
+    public DatabaseMetaDataWrapper(DatabaseMetaData targetMetaData, Connection targetConnection) {
         super();
         this.targetMetaData = targetMetaData;
         this.targetConnection = targetConnection;
@@ -46,13 +41,13 @@ public class DatabaseMetaDataWrapper implements DatabaseMetaData {
                                    String attributeNamePattern) throws SQLException {
         // 这里connection 是null吧，调用不到的感觉
         return new TResultSetWrapper(null, this.targetMetaData.getAttributes(catalog,
-            schemaPattern,
-            typeNamePattern,
-            attributeNamePattern));
+                schemaPattern,
+                typeNamePattern,
+                attributeNamePattern));
     }
 
     public ResultSet getBestRowIdentifier(String catalog, String schema, String table, int scope, boolean nullable)
-                                                                                                                   throws SQLException {
+            throws SQLException {
         return this.targetMetaData.getBestRowIdentifier(catalog, schema, table, scope, nullable);
     }
 
@@ -69,17 +64,17 @@ public class DatabaseMetaDataWrapper implements DatabaseMetaData {
     }
 
     public ResultSet getColumnPrivileges(String catalog, String schema, String table, String columnNamePattern)
-                                                                                                               throws SQLException {
+            throws SQLException {
         return new TResultSetWrapper(null,
-            targetMetaData.getColumnPrivileges(catalog, schema, table, columnNamePattern));
+                targetMetaData.getColumnPrivileges(catalog, schema, table, columnNamePattern));
     }
 
     public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern)
-                                                                                                                        throws SQLException {
+            throws SQLException {
         return new TResultSetWrapper(null, targetMetaData.getColumns(catalog,
-            schemaPattern,
-            tableNamePattern,
-            columnNamePattern));
+                schemaPattern,
+                tableNamePattern,
+                columnNamePattern));
     }
 
     public Connection getConnection() throws SQLException {
@@ -88,13 +83,13 @@ public class DatabaseMetaDataWrapper implements DatabaseMetaData {
 
     public ResultSet getCrossReference(String primaryCatalog, String primarySchema, String primaryTable,
                                        String foreignCatalog, String foreignSchema, String foreignTable)
-                                                                                                        throws SQLException {
+            throws SQLException {
         return new TResultSetWrapper(null, targetMetaData.getCrossReference(primaryCatalog,
-            primarySchema,
-            primaryTable,
-            foreignCatalog,
-            foreignSchema,
-            foreignTable));
+                primarySchema,
+                primaryTable,
+                foreignCatalog,
+                foreignSchema,
+                foreignTable));
     }
 
     public int getDatabaseMajorVersion() throws SQLException {
@@ -150,7 +145,7 @@ public class DatabaseMetaDataWrapper implements DatabaseMetaData {
     }
 
     public ResultSet getIndexInfo(String catalog, String schema, String table, boolean unique, boolean approximate)
-                                                                                                                   throws SQLException {
+            throws SQLException {
         return new TResultSetWrapper(null, targetMetaData.getIndexInfo(catalog, schema, table, unique, approximate));
     }
 
@@ -253,9 +248,9 @@ public class DatabaseMetaDataWrapper implements DatabaseMetaData {
     public ResultSet getProcedureColumns(String catalog, String schemaPattern, String procedureNamePattern,
                                          String columnNamePattern) throws SQLException {
         return new TResultSetWrapper(null, targetMetaData.getProcedureColumns(catalog,
-            schemaPattern,
-            procedureNamePattern,
-            columnNamePattern));
+                schemaPattern,
+                procedureNamePattern,
+                columnNamePattern));
     }
 
     public String getProcedureTerm() throws SQLException {
@@ -263,7 +258,7 @@ public class DatabaseMetaDataWrapper implements DatabaseMetaData {
     }
 
     public ResultSet getProcedures(String catalog, String schemaPattern, String procedureNamePattern)
-                                                                                                     throws SQLException {
+            throws SQLException {
         return new TResultSetWrapper(null, targetMetaData.getProcedures(catalog, schemaPattern, procedureNamePattern));
     }
 
@@ -308,7 +303,7 @@ public class DatabaseMetaDataWrapper implements DatabaseMetaData {
     }
 
     public ResultSet getTablePrivileges(String catalog, String schemaPattern, String tableNamePattern)
-                                                                                                      throws SQLException {
+            throws SQLException {
         return new TResultSetWrapper(null, targetMetaData.getTablePrivileges(catalog, schemaPattern, tableNamePattern));
     }
 
@@ -317,7 +312,7 @@ public class DatabaseMetaDataWrapper implements DatabaseMetaData {
     }
 
     public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types)
-                                                                                                             throws SQLException {
+            throws SQLException {
         return new TResultSetWrapper(null, targetMetaData.getTables(catalog, schemaPattern, tableNamePattern, types));
     }
 
@@ -330,7 +325,7 @@ public class DatabaseMetaDataWrapper implements DatabaseMetaData {
     }
 
     public ResultSet getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types)
-                                                                                                       throws SQLException {
+            throws SQLException {
         return new TResultSetWrapper(null, targetMetaData.getUDTs(catalog, schemaPattern, typeNamePattern, types));
     }
 

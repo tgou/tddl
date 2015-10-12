@@ -1,16 +1,15 @@
 package com.taobao.tddl.rule.model;
 
+import com.taobao.tddl.common.utils.TddlToStringStyle;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import com.taobao.tddl.common.utils.TddlToStringStyle;
-
 /**
  * 目标数据库特征 包含读写目标ds的id 以及该ds中符合要求的表名列表。
- * 
+ *
  * @author shenxun
  */
 public class TargetDB {
@@ -18,7 +17,7 @@ public class TargetDB {
     /**
      * 这个库在TDatasource索引中的索引
      */
-    private String             dbIndex;
+    private String dbIndex;
 
     /**
      * 这个规则下的符合查询条件的表名列表
@@ -27,7 +26,7 @@ public class TargetDB {
 
     /**
      * 返回表名的结果集
-     * 
+     *
      * @return 空Set if 没有表 表名结果集
      */
     public Set<String> getTableNames() {

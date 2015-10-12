@@ -1,12 +1,12 @@
 package com.taobao.tddl.repo.mysql.sqlconvertor;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
+
+import java.util.Map;
 
 public class SqlAndParam {
 
-    public String                         sql;
+    public String sql;
     public Map<Integer, ParameterContext> param;
 
     @Override

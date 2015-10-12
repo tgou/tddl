@@ -1,25 +1,25 @@
 package com.taobao.tddl.executor.codec;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.executor.record.CloneableRecord;
 import com.taobao.tddl.executor.record.FixedLengthRecord;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
 import com.taobao.tddl.optimizer.core.datatype.DataType.DecodeResult;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author jianxing <jianxing.qx@taobao.com>
  */
 public class FixedLengthCodec implements RecordCodec<byte[]> {
 
-    List<ColumnMeta>     columns;
+    List<ColumnMeta> columns;
     Map<String, Integer> index;
-    int                  sizeCache = 0;
+    int sizeCache = 0;
 
-    public FixedLengthCodec(List<ColumnMeta> columns){
+    public FixedLengthCodec(List<ColumnMeta> columns) {
         this.columns = columns;
         sizeCache = columns.size();
         this.index = new HashMap(sizeCache);

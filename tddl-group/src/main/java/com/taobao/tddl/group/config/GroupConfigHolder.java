@@ -1,16 +1,15 @@
 package com.taobao.tddl.group.config;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.common.model.Atom;
 import com.taobao.tddl.common.model.Group;
 import com.taobao.tddl.config.impl.holder.AbstractConfigDataHolder;
 import com.taobao.tddl.group.jdbc.TGroupDataSource;
+import org.apache.commons.lang.StringUtils;
+
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author mengshi.sunmengshi 2013-11-12 下午5:16:38
@@ -19,11 +18,11 @@ import com.taobao.tddl.group.jdbc.TGroupDataSource;
 public class GroupConfigHolder extends AbstractConfigDataHolder {
 
     private static final String ATOM_CONFIG_HOLDER_NAME = "com.taobao.tddl.atom.config.AtomConfigHolder";
-    private final String        appName;
-    private final List<Group>   groups;
-    private final String        unitName;
+    private final String appName;
+    private final List<Group> groups;
+    private final String unitName;
 
-    public GroupConfigHolder(String appName, List<Group> groups, String unitName){
+    public GroupConfigHolder(String appName, List<Group> groups, String unitName) {
         this.appName = appName;
         this.groups = groups;
         this.unitName = unitName;
@@ -56,7 +55,7 @@ public class GroupConfigHolder extends AbstractConfigDataHolder {
             String atomConfig = queryResults.get(getFullDbGroupKey(groupKey));
             if (StringUtils.isEmpty(atomConfig)) {
                 throw new IllegalArgumentException("Group Config Is Null, AppName >> " + appName + " ## UnitName >> "
-                                                   + unitName + " ## GroupKey >> " + groupKey);
+                        + unitName + " ## GroupKey >> " + groupKey);
             }
 
             String[] dsWeightArray = atomConfig.split(",");

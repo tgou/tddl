@@ -1,14 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
@@ -19,13 +10,21 @@ import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.costbased.chooser.IndexChooser;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Dreamond
  */
 public class IndexChooserTest extends BaseOptimizerTest {
 
-    private Map               extraCmd     = new HashMap();
+    private Map extraCmd = new HashMap();
     private List<ISelectable> emptyColumns = new ArrayList<ISelectable>();
 
     @Before
@@ -40,10 +39,10 @@ public class IndexChooserTest extends BaseOptimizerTest {
         qn.build();
 
         IndexMeta index = IndexChooser.findBestIndex(table.getTableMeta(),
-            emptyColumns,
-            toDNFFilter(table.getWhereFilter()),
-            table.getTableName(),
-            extraCmd);
+                emptyColumns,
+                toDNFFilter(table.getWhereFilter()),
+                table.getTableName(),
+                extraCmd);
 
         Assert.assertNotNull(index);
         Assert.assertEquals(index.getName(), "TABLE1");
@@ -51,7 +50,7 @@ public class IndexChooserTest extends BaseOptimizerTest {
 
     /**
      * NAME=1的选择性显然比SCHOOL>1好，所以选择二级索引NAME
-     * 
+     *
      * @throws QueryException
      */
     @Test
@@ -61,10 +60,10 @@ public class IndexChooserTest extends BaseOptimizerTest {
         qn1.build();
 
         IndexMeta index = IndexChooser.findBestIndex(table1.getTableMeta(),
-            table1.getColumnsRefered(),
-            toDNFFilter(table1.getWhereFilter()),
-            table1.getTableName(),
-            extraCmd);
+                table1.getColumnsRefered(),
+                toDNFFilter(table1.getWhereFilter()),
+                table1.getTableName(),
+                extraCmd);
 
         Assert.assertNotNull(index);
         Assert.assertEquals(index.getName(), "TABLE1._NAME");
@@ -74,10 +73,10 @@ public class IndexChooserTest extends BaseOptimizerTest {
         qn2.build();
 
         index = IndexChooser.findBestIndex(table2.getTableMeta(),
-            table2.getColumnsRefered(),
-            toDNFFilter(table2.getWhereFilter()),
-            table2.getTableName(),
-            extraCmd);
+                table2.getColumnsRefered(),
+                toDNFFilter(table2.getWhereFilter()),
+                table2.getTableName(),
+                extraCmd);
 
         Assert.assertNotNull(index);
         Assert.assertEquals(index.getName(), "TABLE1._NAME");
@@ -93,10 +92,10 @@ public class IndexChooserTest extends BaseOptimizerTest {
         qn.build();
 
         IndexMeta index = IndexChooser.findBestIndex(table.getTableMeta(),
-            table.getColumnsRefered(),
-            toDNFFilter(table.getWhereFilter()),
-            table.getTableName(),
-            extraCmd);
+                table.getColumnsRefered(),
+                toDNFFilter(table.getWhereFilter()),
+                table.getTableName(),
+                extraCmd);
 
         Assert.assertNotNull(index);
         Assert.assertEquals(index.getName(), "TABLE9._NAME");
@@ -104,7 +103,7 @@ public class IndexChooserTest extends BaseOptimizerTest {
 
     /**
      * 虽然C1，C2上都存在单索引，但是C1，C2还是组合索引，这种情况下优先选择组合索引
-     * 
+     *
      * @throws QueryException
      */
     @Test
@@ -114,10 +113,10 @@ public class IndexChooserTest extends BaseOptimizerTest {
         qn.build();
 
         IndexMeta index = IndexChooser.findBestIndex(table.getTableMeta(),
-            table.getColumnsRefered(),
-            toDNFFilter(table.getWhereFilter()),
-            table.getTableName(),
-            extraCmd);
+                table.getColumnsRefered(),
+                toDNFFilter(table.getWhereFilter()),
+                table.getTableName(),
+                extraCmd);
 
         Assert.assertNotNull(index);
         Assert.assertEquals(index.getName(), "TABLE9._C1_C2");
@@ -133,10 +132,10 @@ public class IndexChooserTest extends BaseOptimizerTest {
         qn.build();
 
         IndexMeta index = IndexChooser.findBestIndex(table.getTableMeta(),
-            table.getColumnsRefered(),
-            toDNFFilter(table.getWhereFilter()),
-            table.getTableName(),
-            extraCmd);
+                table.getColumnsRefered(),
+                toDNFFilter(table.getWhereFilter()),
+                table.getTableName(),
+                extraCmd);
 
         Assert.assertNotNull(index);
         Assert.assertEquals(index.getName(), "TABLE9._C4");
@@ -152,10 +151,10 @@ public class IndexChooserTest extends BaseOptimizerTest {
         qn.build();
 
         IndexMeta index = IndexChooser.findBestIndex(table.getTableMeta(),
-            table.getColumnsRefered(),
-            toDNFFilter(table.getWhereFilter()),
-            table.getTableName(),
-            extraCmd);
+                table.getColumnsRefered(),
+                toDNFFilter(table.getWhereFilter()),
+                table.getTableName(),
+                extraCmd);
 
         Assert.assertNotNull(index);
         Assert.assertEquals(index.getName(), "TABLE9._C6_C7");

@@ -4,7 +4,7 @@ import com.taobao.tddl.optimizer.core.plan.dml.IUpdate;
 
 public class Update extends Put<IUpdate> implements IUpdate {
 
-    public Update(){
+    public Update() {
         putType = PUT_TYPE.UPDATE;
     }
 }

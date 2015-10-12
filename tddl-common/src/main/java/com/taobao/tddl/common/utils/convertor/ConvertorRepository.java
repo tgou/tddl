@@ -5,23 +5,23 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 定义自己的convertor仓库
- * 
+ *
  * @author jianghang 2011-5-25 下午10:16:10
  */
 public class ConvertorRepository {
 
-    private static final String    SEPERATOR   = ":";
-    private static String          int_name    = Integer.class.getName();
-    private static String          short_name  = Short.class.getName();
-    private static String          long_name   = Long.class.getName();
-    private static String          char_name   = Character.class.getName();
-    private static String          void_name   = Void.class.getName();
-    private static String          double_name = Double.class.getName();
-    private static String          float_name  = Float.class.getName();
-    private static String          byte_name   = Byte.class.getName();
-    private static String          bool_name   = Boolean.class.getName();
+    private static final String SEPERATOR = ":";
+    private static String int_name = Integer.class.getName();
+    private static String short_name = Short.class.getName();
+    private static String long_name = Long.class.getName();
+    private static String char_name = Character.class.getName();
+    private static String void_name = Void.class.getName();
+    private static String double_name = Double.class.getName();
+    private static String float_name = Float.class.getName();
+    private static String byte_name = Byte.class.getName();
+    private static String bool_name = Boolean.class.getName();
 
-    private Map<String, Convertor> convertors  = new ConcurrentHashMap<String, Convertor>(10);
+    private Map<String, Convertor> convertors = new ConcurrentHashMap<String, Convertor>(10);
 
     public Convertor getConvertor(Class src, Class dest) {
         // 按照src->dest来取映射

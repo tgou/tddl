@@ -1,12 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast.query;
 
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendField;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendln;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.printFilterString;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
@@ -18,13 +11,18 @@ import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.taobao.tddl.optimizer.utils.OptimizerToString.*;
+
 public class MergeNode extends QueryTreeNode {
 
     private MergeNodeBuilder builder;
-    private boolean          sharded = true;
-    private boolean          union   = false;
+    private boolean sharded = true;
+    private boolean union = false;
 
-    public MergeNode(){
+    public MergeNode() {
         this.builder = new MergeNodeBuilder(this);
     }
 
@@ -86,12 +84,12 @@ public class MergeNode extends QueryTreeNode {
         return this.getAlias();
     }
 
-    public void setSharded(boolean b) {
-        this.sharded = b;
-    }
-
     public boolean isSharded() {
         return this.sharded;
+    }
+
+    public void setSharded(boolean b) {
+        this.sharded = b;
     }
 
     public boolean isUnion() {
@@ -131,7 +129,7 @@ public class MergeNode extends QueryTreeNode {
         appendField(sb, "resultFilter", printFilterString(this.getResultFilter(), inden + 2), tabContent);
         appendField(sb, "having", printFilterString(this.getHavingFilter(), inden + 2), tabContent);
         if (!(this.getLimitFrom() != null && this.getLimitFrom().equals(0L) && this.getLimitTo() != null && this.getLimitTo()
-            .equals(0L))) {
+                .equals(0L))) {
             appendField(sb, "limitFrom", this.getLimitFrom(), tabContent);
             appendField(sb, "limitTo", this.getLimitTo(), tabContent);
         }

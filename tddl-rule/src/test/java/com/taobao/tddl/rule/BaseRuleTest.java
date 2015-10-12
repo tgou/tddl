@@ -1,16 +1,15 @@
 package com.taobao.tddl.rule;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.junit.Ignore;
-
 import com.taobao.tddl.rule.model.sqljep.Comparative;
 import com.taobao.tddl.rule.model.sqljep.ComparativeAND;
 import com.taobao.tddl.rule.model.sqljep.ComparativeMapChoicer;
 import com.taobao.tddl.rule.model.sqljep.ComparativeOR;
+import org.junit.Ignore;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Ignore
 public class BaseRuleTest {
@@ -35,11 +34,11 @@ public class BaseRuleTest {
 
         private Map<String, Comparative> comparatives = new HashMap<String, Comparative>();
 
-        public Choicer(){
+        public Choicer() {
 
         }
 
-        public Choicer(Map<String, Comparative> comparatives){
+        public Choicer(Map<String, Comparative> comparatives) {
             this.comparatives = comparatives;
         }
 

@@ -1,10 +1,10 @@
 package com.taobao.tddl.common.utils.thread;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author jianghang 2013-10-24 下午2:01:31
@@ -12,8 +12,8 @@ import com.taobao.tddl.common.utils.logger.LoggerFactory;
  */
 public class ThreadLocalMap {
 
-    private static final Logger                             logger           = LoggerFactory.getLogger(ThreadLocalMap.class);
     protected final static ThreadLocal<Map<Object, Object>> threadContext = new MapThreadLocal();
+    private static final Logger logger = LoggerFactory.getLogger(ThreadLocalMap.class);
 
     public static void put(Object key, Object value) {
         getContextMap().put(key, value);
@@ -29,6 +29,23 @@ public class ThreadLocalMap {
 
     public static boolean containsKey(Object key) {
         return getContextMap().containsKey(key);
+    }
+
+    /**
+     * 取得thread context Map的实例。
+     *
+     * @return thread context Map的实例
+     */
+    protected static Map<Object, Object> getContextMap() {
+        return (Map<Object, Object>) threadContext.get();
+    }
+
+    /**
+     * 清理线程所有被hold住的对象。以便重用！
+     */
+
+    public static void reset() {
+        getContextMap().clear();
     }
 
     private static class MapThreadLocal extends ThreadLocal<Map<Object, Object>> {
@@ -51,22 +68,5 @@ public class ThreadLocalMap {
                 }
             };
         }
-    }
-
-    /**
-     * 取得thread context Map的实例。
-     * 
-     * @return thread context Map的实例
-     */
-    protected static Map<Object, Object> getContextMap() {
-        return (Map<Object, Object>) threadContext.get();
-    }
-
-    /**
-     * 清理线程所有被hold住的对象。以便重用！
-     */
-
-    public static void reset() {
-        getContextMap().clear();
     }
 }

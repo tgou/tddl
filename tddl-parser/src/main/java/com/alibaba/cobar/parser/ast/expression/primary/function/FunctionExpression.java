@@ -18,34 +18,23 @@
  */
 package com.alibaba.cobar.parser.ast.expression.primary.function;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.ast.expression.primary.PrimaryExpression;
 import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public abstract class FunctionExpression extends PrimaryExpression {
 
-    protected static List<Expression> wrapList(Expression expr) {
-        List<Expression> list = new ArrayList<Expression>(1);
-        list.add(expr);
-        return list;
-    }
-
-    /**
-     * <code>this</code> function object being called is a prototype
-     */
-    public abstract FunctionExpression constructFunction(List<Expression> arguments);
-
-    protected final String           functionName;
+    protected final String functionName;
     protected final List<Expression> arguments;
 
-    public FunctionExpression(String functionName, List<Expression> arguments){
+    public FunctionExpression(String functionName, List<Expression> arguments) {
         super();
         this.functionName = functionName;
         if (arguments == null || arguments.isEmpty()) {
@@ -58,6 +47,17 @@ public abstract class FunctionExpression extends PrimaryExpression {
             }
         }
     }
+
+    protected static List<Expression> wrapList(Expression expr) {
+        List<Expression> list = new ArrayList<Expression>(1);
+        list.add(expr);
+        return list;
+    }
+
+    /**
+     * <code>this</code> function object being called is a prototype
+     */
+    public abstract FunctionExpression constructFunction(List<Expression> arguments);
 
     public void init() {
     }

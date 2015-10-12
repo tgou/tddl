@@ -18,27 +18,22 @@
  */
 package com.alibaba.cobar.parser.ast.fragment.ddl.index;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.alibaba.cobar.parser.ast.ASTNode;
 import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class IndexDefinition implements ASTNode {
 
-    public static enum IndexType {
-        BTREE, HASH
-    }
-
-    private final IndexType             indexType;
+    private final IndexType indexType;
     private final List<IndexColumnName> columns;
-    private final List<IndexOption>     options;
-
+    private final List<IndexOption> options;
     @SuppressWarnings("unchecked")
-    public IndexDefinition(IndexType indexType, List<IndexColumnName> columns, List<IndexOption> options){
+    public IndexDefinition(IndexType indexType, List<IndexColumnName> columns, List<IndexOption> options) {
         this.indexType = indexType;
         if (columns == null || columns.isEmpty()) throw new IllegalArgumentException("columns is null or empty");
         this.columns = columns;
@@ -67,6 +62,10 @@ public class IndexDefinition implements ASTNode {
     public void accept(SQLASTVisitor visitor) {
         // QS_TODO
 
+    }
+
+    public static enum IndexType {
+        BTREE, HASH
     }
 
 }

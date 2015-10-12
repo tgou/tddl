@@ -1,19 +1,14 @@
 package com.taobao.tddl.optimizer.parse;
 
+import com.alibaba.fastjson.JSON;
+import com.taobao.tddl.optimizer.parse.hint.*;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.alibaba.fastjson.JSON;
-import com.taobao.tddl.optimizer.parse.hint.DirectlyRouteCondition;
-import com.taobao.tddl.optimizer.parse.hint.ExtraCmdRouteCondition;
-import com.taobao.tddl.optimizer.parse.hint.RouteCondition;
-import com.taobao.tddl.optimizer.parse.hint.RuleRouteCondition;
-import com.taobao.tddl.optimizer.parse.hint.SimpleHintParser;
 
 public class SimpleHintParserTest {
 

@@ -1,26 +1,26 @@
 package com.taobao.tddl.optimizer.utils.range;
 
+import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
+import com.taobao.tddl.optimizer.core.expression.IFilter;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
-
 /**
  * 比如条件 a>10 || a=5 ||a < 1 min=1 max=10 equalList=[5]
- * 
+ *
  * @author jianghang 2013-11-13 下午4:23:29
  * @since 5.0.0
  */
 public class OrRangeProcessor extends AbstractRangeProcessor {
 
-    private boolean                   fullSet      = false;
     private final List<List<IFilter>> otherFilters = new ArrayList();
-    private final List<Range>         ranges       = new LinkedList<Range>();
-    private final Object              column;
+    private final List<Range> ranges = new LinkedList<Range>();
+    private final Object column;
+    private boolean fullSet = false;
 
-    public OrRangeProcessor(Object c){
+    public OrRangeProcessor(Object c) {
         this.column = c;
     }
 
@@ -57,7 +57,7 @@ public class OrRangeProcessor extends AbstractRangeProcessor {
                 // 如果不相交，则判断是否是=，并判断能否合并，比如 A > 5 , A = 5
                 if (range.isSingleValue()) {
                     if (range.getMaxValue().equals(rangeExisted.getMinValue())
-                        || range.getMaxValue().equals(rangeExisted.getMaxValue())) {
+                            || range.getMaxValue().equals(rangeExisted.getMaxValue())) {
                         ranges.set(i, rangeExisted.union(range));
                         return true;
                     }
@@ -65,7 +65,7 @@ public class OrRangeProcessor extends AbstractRangeProcessor {
 
                 if (rangeExisted.isSingleValue()) {
                     if (rangeExisted.getMaxValue().equals(range.getMinValue())
-                        || rangeExisted.getMaxValue().equals(range.getMaxValue())) {
+                            || rangeExisted.getMaxValue().equals(range.getMaxValue())) {
                         ranges.set(i, rangeExisted.union(range));
                         return true;
                     }

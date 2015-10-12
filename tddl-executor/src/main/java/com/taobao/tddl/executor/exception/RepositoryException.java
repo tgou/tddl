@@ -10,11 +10,11 @@ public class RepositoryException extends TddlException {
 
     private static final long serialVersionUID = 6716562075578894547L;
 
-    public RepositoryException(String message, Throwable cause){
+    public RepositoryException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public RepositoryException(String message){
+    public RepositoryException(String message) {
         super(message);
     }
 

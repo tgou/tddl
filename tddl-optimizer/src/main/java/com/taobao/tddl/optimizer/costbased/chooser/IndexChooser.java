@@ -1,12 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.chooser;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.optimizer.OptimizerContext;
@@ -18,16 +11,22 @@ import com.taobao.tddl.optimizer.costbased.esitimater.CostEsitimaterFactory;
 import com.taobao.tddl.optimizer.costbased.esitimater.stat.KVIndexStat;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 索引选择
- * 
+ * <p/>
  * <pre>
  * 索引选择策略：
  * 1. 根据选择条件查询，计算出开销最小
  * 2. 根据选择的列，找出全覆盖的索引 (顺序和查询顺序一致，前缀查询)
  * </pre>
- * 
+ *
  * @author Dreamond
  */
 public class IndexChooser {
@@ -59,10 +58,10 @@ public class IndexChooser {
             }
 
             KVIndexStat kvIndexStat = OptimizerContext.getContext()
-                .getStatManager()
-                .getKVIndex(indexs.get(i).getName());
+                    .getStatManager()
+                    .getKVIndex(indexs.get(i).getName());
             List<ISelectable> indexColumns = OptimizerUtils.columnMetaListToIColumnList(indexs.get(i).getKeyColumns(),
-                tablename);
+                    tablename);
             for (int j = 0; j < indexColumns.size(); j++) {
                 boolean isContain = false;
                 if (columnFilters.isEmpty()) {// 此时以columns为准
@@ -73,9 +72,9 @@ public class IndexChooser {
 
                 if (isContain) {
                     scores[i] = (int) CostEsitimaterFactory.estimateRowCount(scores[i],
-                        columnFilters.get((indexColumns.get(j))),
-                        indexs.get(i),
-                        kvIndexStat);
+                            columnFilters.get((indexColumns.get(j))),
+                            indexs.get(i),
+                            kvIndexStat);
                     scores[i] -= 1; // 命中一个主键字段
                 } else {
                     break;
@@ -131,7 +130,7 @@ public class IndexChooser {
 
     private static boolean chooseIndex(Map<String, Object> extraCmd) {
         String ifChooseIndex = ObjectUtils.toString(GeneralUtil.getExtraCmdString(extraCmd,
-            ExtraCmd.CHOOSE_INDEX));
+                ExtraCmd.CHOOSE_INDEX));
         // 默认返回true
         if (StringUtils.isEmpty(ifChooseIndex)) {
             return true;

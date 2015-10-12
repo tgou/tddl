@@ -1,30 +1,24 @@
 package com.taobao.tddl.common.utils.logger;
 
-import java.io.File;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import com.taobao.tddl.common.utils.logger.jcl.JclLoggerAdapter;
 import com.taobao.tddl.common.utils.logger.jdk.JdkLoggerAdapter;
 import com.taobao.tddl.common.utils.logger.log4j.Log4jLoggerAdapter;
 import com.taobao.tddl.common.utils.logger.slf4j.Slf4jLoggerAdapter;
 import com.taobao.tddl.common.utils.logger.support.FailsafeLogger;
 
+import java.io.File;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * copy from dubbo logger
- * 
+ *
  * @author jianghang 2013-9-13 下午4:07:32
  */
 public class LoggerFactory {
 
-    private LoggerFactory(){
-    }
-
-    private static volatile LoggerAdapter                      LOGGER_ADAPTER;
-
     private static final ConcurrentMap<String, FailsafeLogger> LOGGERS = new ConcurrentHashMap<String, FailsafeLogger>();
-
     // 查找常用的日志框架
     static {
         String logger = System.getProperty("tddl.application.logger");
@@ -52,10 +46,23 @@ public class LoggerFactory {
             }
         }
     }
+    private static volatile LoggerAdapter LOGGER_ADAPTER;
+
+    private LoggerFactory() {
+    }
+
+    /**
+     * 获取当前的日志输出器供给器
+     *
+     * @return
+     */
+    public static LoggerAdapter getLoggerAdapter() {
+        return LoggerFactory.LOGGER_ADAPTER;
+    }
 
     /**
      * 设置日志输出器供给器
-     * 
+     *
      * @param loggerAdapter 日志输出器供给器
      */
     public static void setLoggerAdapter(LoggerAdapter loggerAdapter) {
@@ -70,17 +77,8 @@ public class LoggerFactory {
     }
 
     /**
-     * 获取当前的日志输出器供给器
-     * 
-     * @return
-     */
-    public static LoggerAdapter getLoggerAdapter() {
-        return LoggerFactory.LOGGER_ADAPTER;
-    }
-
-    /**
      * 获取日志输出器
-     * 
+     *
      * @param key 分类键
      * @return 日志输出器, 后验条件: 不返回null.
      */
@@ -95,7 +93,7 @@ public class LoggerFactory {
 
     /**
      * 获取日志输出器
-     * 
+     *
      * @param key 分类键
      * @return 日志输出器, 后验条件: 不返回null.
      */
@@ -109,17 +107,8 @@ public class LoggerFactory {
     }
 
     /**
-     * 动态设置输出日志级别
-     * 
-     * @param level 日志级别
-     */
-    public static void setLevel(Level level) {
-        LOGGER_ADAPTER.setLevel(level);
-    }
-
-    /**
      * 获取日志级别
-     * 
+     *
      * @return 日志级别
      */
     public static Level getLevel() {
@@ -127,8 +116,17 @@ public class LoggerFactory {
     }
 
     /**
+     * 动态设置输出日志级别
+     *
+     * @param level 日志级别
+     */
+    public static void setLevel(Level level) {
+        LOGGER_ADAPTER.setLevel(level);
+    }
+
+    /**
      * 获取日志文件
-     * 
+     *
      * @return 日志文件
      */
     public static File getFile() {

@@ -5,7 +5,7 @@ import com.taobao.tddl.common.model.DataSourceType;
 
 /**
  * 数据库类型枚举类型
- * 
+ *
  * @author qihao
  */
 public enum TAtomDbTypeEnum {
@@ -17,6 +17,16 @@ public enum TAtomDbTypeEnum {
     private String driverClass;
     private String sorterClass;
 
+    public static TAtomDbTypeEnum getAtomDbTypeEnum(String dbType, DataSourceType dataSourceType) {
+        try {
+            TAtomDbTypeEnum atomDbTypeEnum = TAtomDbTypeEnum.valueOf(dbType.trim().toUpperCase());
+            atomDbTypeEnum.init(dataSourceType);
+            return atomDbTypeEnum;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     private void init(DataSourceType dataSourceType) {
         if (dataSourceType == DataSourceType.DruidDataSource) {
             if (this == TAtomDbTypeEnum.ORACLE) {
@@ -26,16 +36,6 @@ public enum TAtomDbTypeEnum {
                 this.driverClass = TAtomConstants.DEFAULT_MYSQL_DRIVER_CLASS;
                 this.sorterClass = TAtomConstants.DEFAULT_DRUID_MYSQL_SORTER_CLASS;
             }
-        }
-    }
-
-    public static TAtomDbTypeEnum getAtomDbTypeEnum(String dbType, DataSourceType dataSourceType) {
-        try {
-            TAtomDbTypeEnum atomDbTypeEnum = TAtomDbTypeEnum.valueOf(dbType.trim().toUpperCase());
-            atomDbTypeEnum.init(dataSourceType);
-            return atomDbTypeEnum;
-        } catch (Exception e) {
-            return null;
         }
     }
 

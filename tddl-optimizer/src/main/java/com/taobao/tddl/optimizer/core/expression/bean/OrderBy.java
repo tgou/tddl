@@ -1,13 +1,13 @@
 package com.taobao.tddl.optimizer.core.expression.bean;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.PlanVisitor;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
+
+import java.util.Map;
 
 /**
  * @since 5.0.0
@@ -20,7 +20,7 @@ public class OrderBy implements IOrderBy {
      * true : asc <br/>
      * false: desc
      */
-    private Boolean     direction = true;
+    private Boolean direction = true;
 
     @Override
     public IOrderBy setColumn(ISelectable columnName) {

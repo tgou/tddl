@@ -1,54 +1,37 @@
 package com.taobao.tddl.common.mock;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.mock.MockDataSource.ExecuteInfo;
 import com.taobao.tddl.common.mock.MockDataSource.QueryResult;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.sql.*;
+import java.sql.Date;
+import java.util.*;
+
 public class MockResultSet implements ResultSet {
 
-    private final MockDataSource                       mds;
-    private ResultSetMetaData                          resultSetMetaData;
     public final Map<String/* 列名 */, Integer/* 列序号 */> columns;
-    public final List<Object[]>                        rows;
-    private int                                        cursor               = -1;
-    private boolean                                    closed;
-    private int                                        closeInvocatingTimes = 0;
-    private int                                        nextInvokingTimes    = 0;
-    private long                                       nextSleepTime        = 0;
+    public final List<Object[]> rows;
+    private final MockDataSource mds;
+    private ResultSetMetaData resultSetMetaData;
+    private int cursor = -1;
+    private boolean closed;
+    private int closeInvocatingTimes = 0;
+    private int nextInvokingTimes = 0;
+    private long nextSleepTime = 0;
 
-    public MockResultSet(MockDataSource mockDataSource, Map<String, Integer> columns, List<Object[]> values){
+    public MockResultSet(MockDataSource mockDataSource, Map<String, Integer> columns, List<Object[]> values) {
         this.mds = mockDataSource;
         this.columns = columns;
         this.rows = values;
         resultSetMetaData = new MockResultSetMetaData(columns);
     }
 
-    public MockResultSet(MockDataSource mockDataSource, QueryResult res){
+    public MockResultSet(MockDataSource mockDataSource, QueryResult res) {
         this.mds = mockDataSource;
         if (res != null) {
             this.columns = res.columns;
@@ -239,8 +222,16 @@ public class MockResultSet implements ResultSet {
         throw new NotSupportException("getFetchDirection");
     }
 
+    public void setFetchDirection(int direction) throws SQLException {
+        throw new NotSupportException("setFetchDirection");
+    }
+
     public int getFetchSize() throws SQLException {
         throw new NotSupportException("getFetchSize");
+    }
+
+    public void setFetchSize(int rows) throws SQLException {
+        throw new NotSupportException("setFetchSize");
     }
 
     public float getFloat(int columnIndex) throws SQLException {
@@ -450,14 +441,6 @@ public class MockResultSet implements ResultSet {
 
     public boolean rowUpdated() throws SQLException {
         throw new NotSupportException("rowUpdated");
-    }
-
-    public void setFetchDirection(int direction) throws SQLException {
-        throw new NotSupportException("setFetchDirection");
-    }
-
-    public void setFetchSize(int rows) throws SQLException {
-        throw new NotSupportException("setFetchSize");
     }
 
     public void updateArray(int columnIndex, Array x) throws SQLException {

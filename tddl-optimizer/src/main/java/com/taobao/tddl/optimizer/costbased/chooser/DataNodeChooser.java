@@ -1,20 +1,11 @@
 package com.taobao.tddl.optimizer.costbased.chooser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.utils.GeneralUtil;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.optimizer.OptimizerContext;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.config.table.TableMeta;
@@ -26,11 +17,7 @@ import com.taobao.tddl.optimizer.core.ast.dml.DeleteNode;
 import com.taobao.tddl.optimizer.core.ast.dml.InsertNode;
 import com.taobao.tddl.optimizer.core.ast.dml.PutNode;
 import com.taobao.tddl.optimizer.core.ast.dml.UpdateNode;
-import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
-import com.taobao.tddl.optimizer.core.ast.query.KVIndexNode;
-import com.taobao.tddl.optimizer.core.ast.query.MergeNode;
-import com.taobao.tddl.optimizer.core.ast.query.QueryNode;
-import com.taobao.tddl.optimizer.core.ast.query.TableNode;
+import com.taobao.tddl.optimizer.core.ast.query.*;
 import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
 import com.taobao.tddl.optimizer.core.expression.IFilter;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
@@ -46,24 +33,26 @@ import com.taobao.tddl.optimizer.utils.FilterUtils;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 import com.taobao.tddl.rule.model.Field;
 import com.taobao.tddl.rule.model.TargetDB;
+import org.apache.commons.lang.StringUtils;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <pre>
  * 1. 根据Rule计算分库分表，并设置执行计划的executeOn()
  * 2. 如果存在多个执行目标库，构造为Merge查询树
- * 
+ *
  * </pre>
- * 
+ *
  * @since 5.0.0
  */
 public class DataNodeChooser {
 
-    private static final String LOCAL         = "localhost";
-    private static Pattern      suffixPattern = Pattern.compile("\\d+$");                      // 提取字符串最后的数字
-    private static final Logger logger        = LoggerFactory.getLogger(DataNodeChooser.class);
+    private static final String LOCAL = "localhost";
+    private static final Logger logger = LoggerFactory.getLogger(DataNodeChooser.class);
+    private static Pattern suffixPattern = Pattern.compile("\\d+$");                      // 提取字符串最后的数字
 
     public static ASTNode shard(ASTNode dne, Map<Integer, ParameterContext> parameterSettings,
                                 Map<String, Object> extraCmd) throws QueryException {
@@ -173,7 +162,7 @@ public class DataNodeChooser {
                 Cost leftCost = CostEsitimaterFactory.estimate(left);
                 Cost rightCost = CostEsitimaterFactory.estimate(right);
                 dataNode = leftCost.getRowCount() > rightCost.getRowCount() ? join.getLeftNode().getDataNode() : join.getRightNode()
-                    .getDataNode();
+                        .getDataNode();
                 join.executeOn(dataNode);
             }
 
@@ -352,12 +341,6 @@ public class DataNodeChooser {
         return dataNodeChoosed;
     }
 
-    private static class OneDbNodeWithCount {
-
-        List<QueryTreeNode> subs          = new ArrayList();
-        long                totalRowCount = 0;
-    }
-
     /**
      * 根据执行的目标节点，构建MergeNode
      */
@@ -368,7 +351,7 @@ public class DataNodeChooser {
         // 单库单表是大多数场景，此时无需复制执行计划
         boolean needCopy = true;
         if (dataNodeChoosed != null && dataNodeChoosed.size() == 1
-            && dataNodeChoosed.get(0).getTableNameMap().size() == 1) {
+                && dataNodeChoosed.get(0).getTableNameMap().size() == 1) {
             needCopy = false;
         }
 
@@ -549,14 +532,6 @@ public class DataNodeChooser {
         return GeneralUtil.getExtraCmdBoolean(extraCmd, ExtraCmd.JOIN_MERGE_JOIN, false);
     }
 
-    private static class PartitionJoinResult {
-
-        List<IBooleanFilter> joinFilters;
-        String               joinGroup;
-        boolean              broadcast = false;
-        boolean              flag      = false; // 成功还是失败
-    }
-
     /**
      * 找到join条件完全是分区键的filter，返回null代表没找到，否则返回join条件
      */
@@ -636,8 +611,8 @@ public class DataNodeChooser {
 
             // KVIndexNode
             List<String> shardColumns = OptimizerContext.getContext()
-                .getRule()
-                .getSharedColumns(((KVIndexNode) qtn).getKvIndexName());
+                    .getRule()
+                    .getSharedColumns(((KVIndexNode) qtn).getKvIndexName());
             List<ColumnMeta> columns = new ArrayList<ColumnMeta>();
             TableMeta tableMeta = ((KVIndexNode) qtn).getTableMeta();
             for (String shardColumn : shardColumns) {
@@ -806,11 +781,11 @@ public class DataNodeChooser {
 
     /**
      * 根据表名提取唯一标识
-     * 
+     * <p/>
      * <pre>
      * 1. tddl中的分库分表时，比如分16个库，每个库128张表，总共1024张表. 表的顺序为递增，从0000-1023，
      *    此时executeNode就是库名，表名可通过后缀获取，两者结合可以唯一确定一张表
-     * 2. cobar中的分库分表，只会分库，不分表，每个库中的表名都一样. 
+     * 2. cobar中的分库分表，只会分库，不分表，每个库中的表名都一样.
      *    此时executeNode就是库名，已经可以唯一确定一张表
      * </pre>
      */
@@ -851,5 +826,19 @@ public class DataNodeChooser {
             insertFilter = and;
         }
         return insertFilter;
+    }
+
+    private static class OneDbNodeWithCount {
+
+        List<QueryTreeNode> subs = new ArrayList();
+        long totalRowCount = 0;
+    }
+
+    private static class PartitionJoinResult {
+
+        List<IBooleanFilter> joinFilters;
+        String joinGroup;
+        boolean broadcast = false;
+        boolean flag = false; // 成功还是失败
     }
 }

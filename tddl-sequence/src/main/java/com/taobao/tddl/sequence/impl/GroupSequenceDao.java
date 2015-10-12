@@ -1,40 +1,25 @@
 package com.taobao.tddl.sequence.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.sql.DataSource;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.common.GroupDataSourceRouteHelper;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.group.jdbc.TGroupDataSource;
 import com.taobao.tddl.monitor.eagleeye.EagleeyeHelper;
 import com.taobao.tddl.sequence.SequenceDao;
 import com.taobao.tddl.sequence.SequenceRange;
 import com.taobao.tddl.sequence.exception.SequenceException;
 import com.taobao.tddl.sequence.util.RandomSequence;
+import org.apache.commons.lang.StringUtils;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author JIECHEN 2013-10-31 下午5:48:48
@@ -42,37 +27,30 @@ import com.taobao.tddl.common.utils.logger.LoggerFactory;
  */
 public class GroupSequenceDao implements SequenceDao {
 
-    private static final Logger       logger                           = LoggerFactory.getLogger(GroupSequenceDao.class);
+    protected static final long DELTA = 100000000L;
     // private static final int MIN_STEP = 1;
     // private static final int MAX_STEP = 100000;
-
-    private static final int          DEFAULT_INNER_STEP               = 1000;
-
-    private static final int          DEFAULT_RETRY_TIMES              = 2;
-
-    private static final String       DEFAULT_TABLE_NAME               = "sequence";
-    private static final String       DEFAULT_TEMP_TABLE_NAME          = "sequence_temp";
-
-    private static final String       DEFAULT_NAME_COLUMN_NAME         = "name";
-    private static final String       DEFAULT_VALUE_COLUMN_NAME        = "value";
-    private static final String       DEFAULT_GMT_MODIFIED_COLUMN_NAME = "gmt_modified";
-
-    private static final int          DEFAULT_DSCOUNT                  = 2;                                              // 默认
-    private static final Boolean      DEFAULT_ADJUST                   = false;
-
-    protected static final long       DELTA                            = 100000000L;
-
+    private static final Logger logger = LoggerFactory.getLogger(GroupSequenceDao.class);
+    private static final int DEFAULT_INNER_STEP = 1000;
+    private static final int DEFAULT_RETRY_TIMES = 2;
+    private static final String DEFAULT_TABLE_NAME = "sequence";
+    private static final String DEFAULT_TEMP_TABLE_NAME = "sequence_temp";
+    private static final String DEFAULT_NAME_COLUMN_NAME = "name";
+    private static final String DEFAULT_VALUE_COLUMN_NAME = "value";
+    private static final String DEFAULT_GMT_MODIFIED_COLUMN_NAME = "gmt_modified";
+    private static final int DEFAULT_DSCOUNT = 2;                                              // 默认
+    private static final Boolean DEFAULT_ADJUST = false;
     /**
      * 应用名
      */
-    protected String                  appName;
+    protected String appName;
 
     /**
      * group阵列
      */
-    protected List<String>            dbGroupKeys;
+    protected List<String> dbGroupKeys;
 
-    protected List<String>            oriDbGroupKeys;
+    protected List<String> oriDbGroupKeys;
 
     /**
      * 数据源
@@ -82,58 +60,105 @@ public class GroupSequenceDao implements SequenceDao {
     /**
      * 自适应开关
      */
-    protected boolean                 adjust                           = DEFAULT_ADJUST;
+    protected boolean adjust = DEFAULT_ADJUST;
     /**
      * 重试次数
      */
-    protected int                     retryTimes                       = DEFAULT_RETRY_TIMES;
+    protected int retryTimes = DEFAULT_RETRY_TIMES;
 
     /**
      * 数据源个数
      */
-    protected int                     dscount                          = DEFAULT_DSCOUNT;
+    protected int dscount = DEFAULT_DSCOUNT;
 
     /**
      * 内步长
      */
-    protected int                     innerStep                        = DEFAULT_INNER_STEP;
+    protected int innerStep = DEFAULT_INNER_STEP;
 
     /**
      * 外步长
      */
-    protected int                     outStep                          = DEFAULT_INNER_STEP;
+    protected int outStep = DEFAULT_INNER_STEP;
 
     /**
      * 序列所在的表名
      */
-    protected String                  tableName                        = DEFAULT_TABLE_NAME;
+    protected String tableName = DEFAULT_TABLE_NAME;
 
-    protected String                  switchTempTable                  = DEFAULT_TEMP_TABLE_NAME;
-
-    private String                    TEST_TABLE_PREFIX                = "__test_";
-    // 全链路压测对应sequence表的影子表
-    protected String                  testTableName                    = TEST_TABLE_PREFIX + tableName;
-    // 全链路压测对应sequence_temp表的影子表
-    protected String                  testSwitchTempTable              = TEST_TABLE_PREFIX + switchTempTable;
-
+    protected String switchTempTable = DEFAULT_TEMP_TABLE_NAME;
     /**
      * 存储序列名称的列名
      */
-    protected String                  nameColumnName                   = DEFAULT_NAME_COLUMN_NAME;
-
+    protected String nameColumnName = DEFAULT_NAME_COLUMN_NAME;
     /**
      * 存储序列值的列名
      */
-    protected String                  valueColumnName                  = DEFAULT_VALUE_COLUMN_NAME;
-
+    protected String valueColumnName = DEFAULT_VALUE_COLUMN_NAME;
     /**
      * 存储序列最后更新时间的列名
      */
-    protected String                  gmtModifiedColumnName            = DEFAULT_GMT_MODIFIED_COLUMN_NAME;
+    protected String gmtModifiedColumnName = DEFAULT_GMT_MODIFIED_COLUMN_NAME;
+    protected Lock configLock = new ReentrantLock();
+    private String TEST_TABLE_PREFIX = "__test_";
+    // 全链路压测对应sequence表的影子表
+    protected String testTableName = TEST_TABLE_PREFIX + tableName;
+    // 全链路压测对应sequence_temp表的影子表
+    protected String testSwitchTempTable = TEST_TABLE_PREFIX + switchTempTable;
+    private ConcurrentHashMap<Integer/* ds index */, AtomicInteger/* 掠过次数 */> excludedKeyCount = new ConcurrentHashMap<Integer, AtomicInteger>(dscount);
+    // 最大略过次数后恢复
+    private int maxSkipCount = 10;
+    // 使用慢速数据库保护
+    private boolean useSlowProtect = false;
+    // 保护的时间
+    private int protectMilliseconds = 50;
+    private ExecutorService exec = Executors.newFixedThreadPool(1);
+
+    protected static void closeDbResource(ResultSet rs, Statement stmt, Connection conn) {
+        closeResultSet(rs);
+        closeStatement(stmt);
+        closeConnection(conn);
+    }
+
+    protected static void closeResultSet(ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                logger.debug("Could not close JDBC ResultSet", e);
+            } catch (Throwable e) {
+                logger.debug("Unexpected exception on closing JDBC ResultSet", e);
+            }
+        }
+    }
+
+    protected static void closeStatement(Statement stmt) {
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                logger.debug("Could not close JDBC Statement", e);
+            } catch (Throwable e) {
+                logger.debug("Unexpected exception on closing JDBC Statement", e);
+            }
+        }
+    }
+
+    protected static void closeConnection(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                logger.debug("Could not close JDBC Connection", e);
+            } catch (Throwable e) {
+                logger.debug("Unexpected exception on closing JDBC Connection", e);
+            }
+        }
+    }
 
     /**
      * 初试化
-     * 
+     *
      * @throws SequenceException
      */
     public void init() throws SequenceException {
@@ -204,14 +229,13 @@ public class GroupSequenceDao implements SequenceDao {
 
     /**
      * <pre>
-     * 检查并初试某个sequence。 
-     * 
-     * 1、如果sequece不处在，插入值，并初始化值。 
+     * 检查并初试某个sequence。
+     *
+     * 1、如果sequece不处在，插入值，并初始化值。
      * 2、如果已经存在，但有重叠，重新生成。
      * 3、如果已经存在，且无重叠。
-     * 
-     * @throws SequenceException
-     * </pre>
+     *
+     * @throws SequenceException </pre>
      */
     public void adjust(String name) throws SequenceException, SQLException {
         Connection conn = null;
@@ -264,7 +288,7 @@ public class GroupSequenceDao implements SequenceDao {
 
     /**
      * 更新
-     * 
+     *
      * @param index
      * @param value
      * @param name
@@ -290,12 +314,12 @@ public class GroupSequenceDao implements SequenceDao {
                 throw new SequenceException("faild to auto adjust init value at  " + name + " update affectedRow =0");
             }
             logger.info(dbGroupKeys.get(index) + "更新初值成功!" + "sequence Name：" + name + "更新过程：" + value + "-->"
-                        + newValue);
+                    + newValue);
         } catch (SQLException e) { // 吃掉SQL异常，抛Sequence异常
             logger.error("由于SQLException,更新初值自适应失败！dbGroupIndex:" + dbGroupKeys.get(index) + "，sequence Name：" + name
-                         + "更新过程：" + value + "-->" + newValue, e);
+                    + "更新过程：" + value + "-->" + newValue, e);
             throw new SequenceException("由于SQLException,更新初值自适应失败！dbGroupIndex:" + dbGroupKeys.get(index)
-                                        + "，sequence Name：" + name + "更新过程：" + value + "-->" + newValue, e);
+                    + "，sequence Name：" + name + "更新过程：" + value + "-->" + newValue, e);
         } finally {
             closeDbResource(null, stmt, conn);
         }
@@ -303,7 +327,7 @@ public class GroupSequenceDao implements SequenceDao {
 
     /**
      * 插入新值
-     * 
+     *
      * @param index
      * @param name
      * @return
@@ -331,29 +355,17 @@ public class GroupSequenceDao implements SequenceDao {
 
         } catch (SQLException e) {
             logger.error("由于SQLException,插入初值自适应失败！dbGroupIndex:" + dbGroupKeys.get(index) + "，sequence Name：" + name
-                         + "   value:" + newValue, e);
+                    + "   value:" + newValue, e);
             throw new SequenceException("由于SQLException,插入初值自适应失败！dbGroupIndex:" + dbGroupKeys.get(index)
-                                        + "，sequence Name：" + name + "   value:" + newValue, e);
+                    + "，sequence Name：" + name + "   value:" + newValue, e);
         } finally {
             closeDbResource(rs, stmt, conn);
         }
     }
 
-    private ConcurrentHashMap<Integer/* ds index */, AtomicInteger/* 掠过次数 */> excludedKeyCount    = new ConcurrentHashMap<Integer, AtomicInteger>(dscount);
-    // 最大略过次数后恢复
-    private int                                                               maxSkipCount        = 10;
-    // 使用慢速数据库保护
-    private boolean                                                           useSlowProtect      = false;
-    // 保护的时间
-    private int                                                               protectMilliseconds = 50;
-
-    private ExecutorService                                                   exec                = Executors.newFixedThreadPool(1);
-
-    protected Lock                                                            configLock          = new ReentrantLock();
-
     /**
      * 检查groupKey对象是否已经关闭
-     * 
+     *
      * @param groupKey
      * @return
      */
@@ -363,7 +375,7 @@ public class GroupSequenceDao implements SequenceDao {
 
     /**
      * 检查是否被exclude,如果有尝试恢复
-     * 
+     *
      * @param index
      * @return
      */
@@ -402,7 +414,7 @@ public class GroupSequenceDao implements SequenceDao {
 
     /**
      * CAS更新sequence值
-     * 
+     *
      * @param dataSource
      * @param keyName
      * @param oldValue
@@ -411,7 +423,7 @@ public class GroupSequenceDao implements SequenceDao {
      * @throws SQLException
      */
     protected int updateNewValue(DataSource dataSource, String keyName, long oldValue, long newValue)
-                                                                                                     throws SQLException {
+            throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -431,7 +443,7 @@ public class GroupSequenceDao implements SequenceDao {
 
     /**
      * 从指定的数据库中获取sequence值
-     * 
+     *
      * @param dataSource
      * @param keyName
      * @return
@@ -439,7 +451,7 @@ public class GroupSequenceDao implements SequenceDao {
      * @throws SequenceException
      */
     protected long getOldValue(final DataSource dataSource, final String keyName) throws SQLException,
-                                                                                 SequenceException {
+            SequenceException {
         long result = 0;
 
         // 如果未使用超时保护或者已经只剩下了1个数据源，无论怎么样去拿
@@ -462,7 +474,7 @@ public class GroupSequenceDao implements SequenceDao {
                 throw new SQLException("[SEQUENCE SLOW-PROTECTED MODE]:ExecutionException", e);
             } catch (TimeoutException e) {
                 throw new SQLException("[SEQUENCE SLOW-PROTECTED MODE]:TimeoutException,当前设置超时时间为"
-                                       + protectMilliseconds, e);
+                        + protectMilliseconds, e);
             }
         }
         return result;
@@ -470,7 +482,7 @@ public class GroupSequenceDao implements SequenceDao {
 
     /**
      * 生成oldValue生成newValue
-     * 
+     *
      * @param index
      * @param oldValue
      * @param keyName
@@ -505,7 +517,7 @@ public class GroupSequenceDao implements SequenceDao {
 
     /**
      * 检查该sequence值是否在正常范围内
-     * 
+     *
      * @return
      */
     protected boolean isOldValueFixed(long oldValue) {
@@ -528,7 +540,7 @@ public class GroupSequenceDao implements SequenceDao {
 
     /**
      * 将该数据源排除到sequence可选数据源以外
-     * 
+     *
      * @param index
      */
     protected void excludeDataSource(int index) {
@@ -623,48 +635,6 @@ public class GroupSequenceDao implements SequenceDao {
         buffer.append(getNameColumnName()).append(" = ? and ");
         buffer.append(getValueColumnName()).append(" = ?");
         return buffer.toString();
-    }
-
-    protected static void closeDbResource(ResultSet rs, Statement stmt, Connection conn) {
-        closeResultSet(rs);
-        closeStatement(stmt);
-        closeConnection(conn);
-    }
-
-    protected static void closeResultSet(ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                logger.debug("Could not close JDBC ResultSet", e);
-            } catch (Throwable e) {
-                logger.debug("Unexpected exception on closing JDBC ResultSet", e);
-            }
-        }
-    }
-
-    protected static void closeStatement(Statement stmt) {
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                logger.debug("Could not close JDBC Statement", e);
-            } catch (Throwable e) {
-                logger.debug("Unexpected exception on closing JDBC Statement", e);
-            }
-        }
-    }
-
-    protected static void closeConnection(Connection conn) {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                logger.debug("Could not close JDBC Connection", e);
-            } catch (Throwable e) {
-                logger.debug("Unexpected exception on closing JDBC Connection", e);
-            }
-        }
     }
 
     public int getRetryTimes() {

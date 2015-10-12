@@ -1,11 +1,6 @@
 package com.taobao.tddl.repo.oceanbase.handler;
 
-import com.taobao.tddl.executor.handler.DeleteHandler;
-import com.taobao.tddl.executor.handler.IndexNestedLoopJoinHandler;
-import com.taobao.tddl.executor.handler.MergeHandler;
-import com.taobao.tddl.executor.handler.NestedLoopJoinHandler;
-import com.taobao.tddl.executor.handler.SortMergeJoinHandler;
-import com.taobao.tddl.executor.handler.UpdateHandler;
+import com.taobao.tddl.executor.handler.*;
 import com.taobao.tddl.repo.mysql.handler.CommandHandlerFactoryMyImp;
 import com.taobao.tddl.repo.mysql.handler.InsertMyHandler;
 import com.taobao.tddl.repo.mysql.handler.QueryMyHandler;
@@ -17,7 +12,7 @@ import com.taobao.tddl.repo.mysql.handler.ReplaceMyHandler;
  */
 public class ObCommandHandlerFactory extends CommandHandlerFactoryMyImp {
 
-    public ObCommandHandlerFactory(){
+    public ObCommandHandlerFactory() {
         INSERT_HANDLER = new InsertMyHandler();
         UPDATE_HANDLER = new UpdateHandler();
         DELETE_HANDLER = new DeleteHandler();

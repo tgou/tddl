@@ -1,36 +1,21 @@
 package com.taobao.tddl.matrix.jdbc;
 
+import com.taobao.tddl.common.jdbc.ParameterContext;
+import com.taobao.tddl.common.jdbc.ParameterMethod;
+import com.taobao.tddl.common.model.SqlType;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import com.taobao.tddl.executor.common.ExecutionContext;
+import com.taobao.tddl.matrix.jdbc.utils.PreParser;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.ParameterMetaData;
-import java.sql.PreparedStatement;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLXML;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.taobao.tddl.common.jdbc.ParameterContext;
-import com.taobao.tddl.common.jdbc.ParameterMethod;
-import com.taobao.tddl.common.model.SqlType;
-import com.taobao.tddl.executor.common.ExecutionContext;
-import com.taobao.tddl.matrix.jdbc.utils.PreParser;
-
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
 
 /**
  * @author mengshi.sunmengshi 2013-11-22 下午3:26:18
@@ -38,12 +23,12 @@ import com.taobao.tddl.common.utils.logger.LoggerFactory;
  */
 public class TPreparedStatement extends TStatement implements PreparedStatement {
 
-    private static final Logger              log               = LoggerFactory.getLogger(TPreparedStatement.class);
+    private static final Logger log = LoggerFactory.getLogger(TPreparedStatement.class);
 
     // 参数列表到参数上下文的映射 如 1:name 2：'2011-11-11'
     protected Map<Integer, ParameterContext> parameterSettings = new HashMap<Integer, ParameterContext>();
 
-    public TPreparedStatement(TDataSource ds, TConnection conn, String sql, ExecutionContext ec){
+    public TPreparedStatement(TDataSource ds, TConnection conn, String sql, ExecutionContext ec) {
         super(ds, conn, sql, ec);
     }
 
@@ -77,12 +62,12 @@ public class TPreparedStatement extends TStatement implements PreparedStatement 
         /**
          * show 不支持吗 || sqlType == SqlType.SHOW
          **/
-        ) {
+                ) {
             executeQuery();
             return true;
         } else if (sqlType == SqlType.INSERT || sqlType == SqlType.UPDATE || sqlType == SqlType.DELETE
-                   || sqlType == SqlType.REPLACE || sqlType == SqlType.TRUNCATE || sqlType == SqlType.CREATE
-                   || sqlType == SqlType.DROP || sqlType == SqlType.LOAD || sqlType == SqlType.MERGE) {
+                || sqlType == SqlType.REPLACE || sqlType == SqlType.TRUNCATE || sqlType == SqlType.CREATE
+                || sqlType == SqlType.DROP || sqlType == SqlType.LOAD || sqlType == SqlType.MERGE) {
             super.updateCount = executeUpdate();
             return false;
         } else {
@@ -92,69 +77,69 @@ public class TPreparedStatement extends TStatement implements PreparedStatement 
 
     @Override
     public void setShort(int parameterIndex, short x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setShort, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setShort, new Object[]{
+                parameterIndex, x}));
 
     }
 
     // 数据库从0开始，jdbc规范从1开始，jdbc到数据库要减一
     @Override
     public void setInt(int parameterIndex, int x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setInt, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setInt, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setLong(int parameterIndex, long x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setLong, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setLong, new Object[]{
+                parameterIndex, x}));
 
     }
 
     @Override
     public void setBoolean(int parameterIndex, boolean x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setBoolean, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setBoolean, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setString(int parameterIndex, String x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setString, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setString, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setFloat(int parameterIndex, float x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setFloat, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setFloat, new Object[]{
+                parameterIndex, x}));
 
     }
 
     @Override
     public void setDouble(int parameterIndex, double x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setDouble, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setDouble, new Object[]{
+                parameterIndex, x}));
 
     }
 
     @Override
     public void setBytes(int parameterIndex, byte[] x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setBytes, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setBytes, new Object[]{
+                parameterIndex, x}));
 
     }
 
     // 这里ustore底层将date按long存储
     @Override
     public void setDate(int parameterIndex, Date x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setDate1, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setDate1, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setDate(int parameterIndex, Date x, Calendar cal) throws SQLException {
-        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setDate2, new Object[] {
-                parameterIndex, x, cal }));
+        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setDate2, new Object[]{
+                parameterIndex, x, cal}));
     }
 
     @Override
@@ -163,62 +148,62 @@ public class TPreparedStatement extends TStatement implements PreparedStatement 
     }
 
     public void setNull(int parameterIndex, Object o) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setNull1, new Object[] {
-                parameterIndex, null }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setNull1, new Object[]{
+                parameterIndex, null}));
     }
 
     @Override
     public void setNull(int parameterIndex, int sqlType) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setNull1, new Object[] {
-                parameterIndex, null }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setNull1, new Object[]{
+                parameterIndex, null}));
     }
 
     @Override
     public void setByte(int parameterIndex, byte x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setByte, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setByte, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setBigDecimal(int parameterIndex, BigDecimal x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setBigDecimal, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setBigDecimal, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setTime(int parameterIndex, Time x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setTime1, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setTime1, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setTimestamp(int parameterIndex, Timestamp x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setTimestamp1, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setTimestamp1, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x, int length) throws SQLException {
-        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setAsciiStream, new Object[] {
-                parameterIndex, x, length }));
+        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setAsciiStream, new Object[]{
+                parameterIndex, x, length}));
     }
 
     @Override
     public void setUnicodeStream(int parameterIndex, InputStream x, int length) throws SQLException {
-        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setUnicodeStream, new Object[] {
-                parameterIndex, x, length }));
+        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setUnicodeStream, new Object[]{
+                parameterIndex, x, length}));
     }
 
     @Override
     public void setBinaryStream(int parameterIndex, InputStream x, int length) throws SQLException {
-        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setBinaryStream, new Object[] {
-                parameterIndex, x, length }));
+        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setBinaryStream, new Object[]{
+                parameterIndex, x, length}));
     }
 
     @Override
     public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setObject3, new Object[] {
-                parameterIndex, x, targetSqlType }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setObject3, new Object[]{
+                parameterIndex, x, targetSqlType}));
     }
 
     @Override
@@ -228,8 +213,8 @@ public class TPreparedStatement extends TStatement implements PreparedStatement 
         // */
         // if (x instanceof java.util.Date)
         // x = new Date(((java.util.Date) x).getTime());
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setObject1, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setObject1, new Object[]{
+                parameterIndex, x}));
         // if (x == null) {
         // setNull(parameterIndex -1, x);
         // } else if (x instanceof Integer) {
@@ -265,68 +250,68 @@ public class TPreparedStatement extends TStatement implements PreparedStatement 
     @Override
     public void setCharacterStream(int parameterIndex, Reader reader, int length) throws SQLException {
         parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setCharacterStream,
-            new Object[] { parameterIndex, reader, length }));
+                new Object[]{parameterIndex, reader, length}));
     }
 
     @Override
     public void setRef(int parameterIndex, Ref x) throws SQLException {
-        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setRef, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setRef, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setBlob(int parameterIndex, Blob x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setBlob, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setBlob, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setClob(int parameterIndex, Clob x) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setClob, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setClob, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setArray(int parameterIndex, Array x) throws SQLException {
-        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setArray, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setArray, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setTime(int parameterIndex, Time x, Calendar cal) throws SQLException {
         if (null == cal) {
-            parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setTime1, new Object[] {
-                    parameterIndex, x }));
+            parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setTime1, new Object[]{
+                    parameterIndex, x}));
         } else {
-            parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setTime2, new Object[] {
-                    parameterIndex, x }));
+            parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setTime2, new Object[]{
+                    parameterIndex, x}));
         }
     }
 
     @Override
     public void setTimestamp(int parameterIndex, Timestamp x, Calendar cal) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setTimestamp2, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setTimestamp2, new Object[]{
+                parameterIndex, x}));
 
     }
 
     @Override
     public void setNull(int parameterIndex, int sqlType, String typeName) throws SQLException {
-        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setNull2, new Object[] {
-                parameterIndex, sqlType, typeName }));
+        parameterSettings.put(parameterIndex, new ParameterContext(ParameterMethod.setNull2, new Object[]{
+                parameterIndex, sqlType, typeName}));
 
     }
 
     @Override
     public void setURL(int parameterIndex, URL x) throws SQLException {
-        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setURL, new Object[] {
-                parameterIndex, x }));
+        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setURL, new Object[]{
+                parameterIndex, x}));
     }
 
     @Override
     public void setObject(int parameterIndex, Object x, int targetSqlType, int scaleOrLength) throws SQLException {
-        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setObject3, new Object[] {
-                parameterIndex, x, targetSqlType, scaleOrLength }));
+        parameterSettings.put(parameterIndex - 1, new ParameterContext(ParameterMethod.setObject3, new Object[]{
+                parameterIndex, x, targetSqlType, scaleOrLength}));
     }
 
     @Override
@@ -359,12 +344,12 @@ public class TPreparedStatement extends TStatement implements PreparedStatement 
     }
 
     @Override
-    public void setPoolable(boolean poolable) throws SQLException {
+    public boolean isPoolable() throws SQLException {
         throw new SQLException("not support exception");
     }
 
     @Override
-    public boolean isPoolable() throws SQLException {
+    public void setPoolable(boolean poolable) throws SQLException {
         throw new SQLException("not support exception");
     }
 

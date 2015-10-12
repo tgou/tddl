@@ -1,11 +1,5 @@
 package com.taobao.tddl.atom.config;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import com.taobao.tddl.atom.TAtomDbStatusEnum;
 import com.taobao.tddl.atom.TAtomDbTypeEnum;
 import com.taobao.tddl.atom.common.TAtomConstants;
@@ -13,10 +7,15 @@ import com.taobao.tddl.atom.utils.ConnRestrictEntry;
 import com.taobao.tddl.common.model.DataSourceType;
 import com.taobao.tddl.common.utils.TStringUtil;
 import com.taobao.tddl.common.utils.TddlToStringStyle;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * TAtom数据源全局和应用配置的DO
- * 
+ *
  * @author qihao
  * @author shenxun
  */
@@ -25,82 +24,82 @@ public class TAtomDsConfDO implements Cloneable {
     /**
      * 默认初始化的线程池连接数量
      */
-    public static final int         defaultInitPoolSize  = 0;
+    public static final int defaultInitPoolSize = 0;
 
     /**
      * 默认初始化的defaultMaxWait druid专用，目前是和jboss的blockingTimeout是同一个配置。运维人员请注意。
      */
-    public static final int         defaultMaxWait       = 5000;
+    public static final int defaultMaxWait = 5000;
 
-    private String                  ip;
+    private String ip;
 
-    private String                  port;
+    private String port;
 
-    private String                  dbName;
+    private String dbName;
 
-    private String                  userName;
+    private String userName;
 
-    private String                  passwd;
+    private String passwd;
 
-    private String                  driverClass;
+    private String driverClass;
 
-    private String                  sorterClass;
+    private String sorterClass;
 
-    private int                     preparedStatementCacheSize;
+    private int preparedStatementCacheSize;
 
-    private int                     initPoolSize         = defaultInitPoolSize;
+    private int initPoolSize = defaultInitPoolSize;
 
-    private int                     minPoolSize;
+    private int minPoolSize;
 
-    private int                     maxPoolSize;
+    private int maxPoolSize;
 
-    private int                     blockingTimeout      = defaultMaxWait;
+    private int blockingTimeout = defaultMaxWait;
 
-    private long                    idleTimeout;
+    private long idleTimeout;
 
     // private String dbType;
 
-    private String                  oracleConType        = TAtomConstants.DEFAULT_ORACLE_CON_TYPE;
+    private String oracleConType = TAtomConstants.DEFAULT_ORACLE_CON_TYPE;
 
-    private TAtomDbTypeEnum         dbTypeEnum;
+    private TAtomDbTypeEnum dbTypeEnum;
 
-    private TAtomDbStatusEnum       dbStautsEnum;
+    private TAtomDbStatusEnum dbStautsEnum;
 
-    private String                  dbStatus;
+    private String dbStatus;
 
-    private Map<String, String>     connectionProperties = new HashMap<String, String>();
+    private Map<String, String> connectionProperties = new HashMap<String, String>();
 
     /**
      * 写 次数限制
      */
-    private int                     writeRestrictTimes;
+    private int writeRestrictTimes;
 
     /**
      * 读 次数限制
      */
-    private int                     readRestrictTimes;
+    private int readRestrictTimes;
 
     /**
      * 统计时间片
      */
-    private int                     timeSliceInMillis;
+    private int timeSliceInMillis;
 
     /**
      * 线程技术count限制
      */
-    private int                     threadCountRestrict;
+    private int threadCountRestrict;
 
     /**
      * 允许并发读的最大个数，0为不限制
      */
-    private int                     maxConcurrentReadRestrict;
+    private int maxConcurrentReadRestrict;
 
     /**
      * 允许并发写的最大个数，0为不限制
      */
-    private int                     maxConcurrentWriteRestrict;
+    private int maxConcurrentWriteRestrict;
 
-    private volatile boolean        isSingleInGroup;
+    private volatile boolean isSingleInGroup;
 
     /**
      * 应用连接限制: 限制某个应用键值的并发连接数。
@@ -221,6 +220,10 @@ public class TAtomDsConfDO implements Cloneable {
         return connectionProperties;
     }
 
+    public void setConnectionProperties(Map<String, String> connectionProperties) {
+        this.connectionProperties = connectionProperties;
+    }
+
     public String getDbType() {
         return dbTypeEnum.name().toLowerCase();
     }
@@ -246,10 +249,6 @@ public class TAtomDsConfDO implements Cloneable {
 
     public TAtomDbTypeEnum getDbTypeEnum() {
         return dbTypeEnum;
-    }
-
-    public void setConnectionProperties(Map<String, String> connectionProperties) {
-        this.connectionProperties = connectionProperties;
     }
 
     public String getOracleConType() {

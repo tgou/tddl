@@ -1,10 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.executor.codec.CodecFactory;
 import com.taobao.tddl.executor.codec.RecordCodec;
@@ -23,25 +18,30 @@ import com.taobao.tddl.optimizer.core.expression.IColumn;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author mengshi <mengshi.sunmengshi@taobao.com> Block Nested Loop Join
  */
 public class BlockNestedtLoopCursor extends IndexNestedLoopMgetImpCursor implements IBlockNestedLoopCursor {
 
-    ICursorFactory      cursorFactory    = null;
-    ExecutionContext    executionContext = null;
     // ICursorMeta rightCursorMeta = null;
     private final IJoin join;
+    ICursorFactory cursorFactory = null;
+    ExecutionContext executionContext = null;
     private RecordCodec leftCodec;
 
     public BlockNestedtLoopCursor(ISchematicCursor leftCursor, ISchematicCursor rightCursor, List leftColumns,
                                   List rightColumns, List columns, ICursorFactory cursorFactory, IJoin join,
                                   ExecutionContext executionContext, List leftRetColumns, List rightRetColumns)
-                                                                                                               throws Exception{
+            throws Exception {
         super(leftCursor, rightCursor, leftColumns, rightColumns, columns, leftRetColumns, rightRetColumns, join);
         this.cursorFactory = cursorFactory;
         this.leftCodec = CodecFactory.getInstance(CodecFactory.FIXED_LENGTH)
-            .getCodec(ExecUtils.getColumnMetas(rightColumns));
+                .getCodec(ExecUtils.getColumnMetas(rightColumns));
         this.left_key = leftCodec.newEmptyRecord();
         this.executionContext = executionContext;
         // rightCursorMeta =
@@ -53,22 +53,22 @@ public class BlockNestedtLoopCursor extends IndexNestedLoopMgetImpCursor impleme
 
     public BlockNestedtLoopCursor(ISchematicCursor leftCursor, ISchematicCursor rightCursor, List leftColumns,
                                   List rightColumns, List columns, boolean prefix, ICursorFactory cursorFactory,
-                                  List leftRetColumns, List rightRetColumns, IJoin join) throws Exception{
+                                  List leftRetColumns, List rightRetColumns, IJoin join) throws Exception {
         super(leftCursor,
-            rightCursor,
-            leftColumns,
-            rightColumns,
-            columns,
-            prefix,
-            leftRetColumns,
-            rightRetColumns,
-            join);
+                rightCursor,
+                leftColumns,
+                rightColumns,
+                columns,
+                prefix,
+                leftRetColumns,
+                rightRetColumns,
+                join);
         this.join = join;
         this.cursorFactory = cursorFactory;
     }
 
     protected Map<CloneableRecord, DuplicateKVPair> getRecordFromRightByValueFilter(List<CloneableRecord> leftJoinOnColumnCache)
-                                                                                                                                throws TddlException {
+            throws TddlException {
 
         right_cursor.beforeFirst();
         if (isLeftOutJoin() && this.rightCursorMeta == null) {
@@ -109,14 +109,14 @@ public class BlockNestedtLoopCursor extends IndexNestedLoopMgetImpCursor impleme
             blockNestedLoopJoin(leftJoinOnColumnCache, rightColumn, vfc, records);
         } else {
             throw new UnsupportedOperationException("不支持该操作  leftOutJoin:" + isLeftOutJoin() + " ; rightOutJoin:"
-                                                    + isRightOutJoin());
+                    + isRightOutJoin());
         }
         return records;
     }
 
     @Override
     protected Map<CloneableRecord, DuplicateKVPair> getRecordFromRight(List<CloneableRecord> leftJoinOnColumnCache)
-                                                                                                                   throws TddlException {
+            throws TddlException {
         // 子查询的话不能用mget
         // 因为子查询的话，join的列可以是函数，函数应该放在having里，而不是放在valueFilter里
         if (this.join.getRightNode().isSubQuery()) {
@@ -164,7 +164,7 @@ public class BlockNestedtLoopCursor extends IndexNestedLoopMgetImpCursor impleme
 
     private void blockNestedLoopJoin(List<CloneableRecord> leftJoinOnColumnCache, IColumn rightColumn,
                                      IValueFilterCursor vfc, Map<CloneableRecord, DuplicateKVPair> records)
-                                                                                                           throws TddlException {
+            throws TddlException {
         IRowSet kv = null;
         while ((kv = vfc.next()) != null) {
 

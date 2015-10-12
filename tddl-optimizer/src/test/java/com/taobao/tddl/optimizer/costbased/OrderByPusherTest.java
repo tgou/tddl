@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
@@ -12,6 +9,8 @@ import com.taobao.tddl.optimizer.core.ast.query.TableNode;
 import com.taobao.tddl.optimizer.core.expression.IColumn;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin.JoinStrategy;
 import com.taobao.tddl.optimizer.costbased.pusher.OrderByPusher;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class OrderByPusherTest extends BaseOptimizerTest {
 

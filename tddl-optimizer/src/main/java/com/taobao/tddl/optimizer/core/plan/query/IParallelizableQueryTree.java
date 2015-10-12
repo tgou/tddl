@@ -7,14 +7,14 @@ import com.taobao.tddl.optimizer.core.plan.IQueryTree;
  */
 public interface IParallelizableQueryTree<RT extends IQueryTree> extends IQueryTree<RT> {
 
+    public RT setQueryConcurrency(QUERY_CONCURRENCY queryConcurrency);
+
+    public QUERY_CONCURRENCY getQueryConcurrency();
+
     /**
      * 是否并行
      */
     public enum QUERY_CONCURRENCY {
         SEQUENTIAL, CONCURRENT;
     }
-
-    public RT setQueryConcurrency(QUERY_CONCURRENCY queryConcurrency);
-
-    public QUERY_CONCURRENCY getQueryConcurrency();
 }

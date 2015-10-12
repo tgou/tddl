@@ -1,12 +1,12 @@
 package com.taobao.tddl.atom.utils;
 
-import java.util.Arrays;
-
 import com.taobao.tddl.common.utils.TStringUtil;
+
+import java.util.Arrays;
 
 /**
  * 应用连接数限制功能中的连接数配置。
- * 
+ *
  * @author changyuan.lh
  */
 public final class ConnRestrictEntry {
@@ -14,69 +14,19 @@ public final class ConnRestrictEntry {
     /**
      * HASH 策略的最大槽数量限制。
      */
-    public static final int  MAX_HASH_RESTRICT_SLOT = 32;
-
+    public static final int MAX_HASH_RESTRICT_SLOT = 32;
+    protected static final String KEY_DEFAULT = "~"; // 匹配 null Key
+    protected static final String KEY_WILDCARD = "*"; // 匹配所有 Key
+    protected static final String PERCENT = "%"; // 百分比
     protected final String[] keys;
+    protected int hashSize;
+    protected int limits;
 
-    protected int            hashSize;
-
-    protected int            limits;
-
-    public ConnRestrictEntry(String[] keys, int hashSize, int limits){
+    public ConnRestrictEntry(String[] keys, int hashSize, int limits) {
         this.keys = keys;
         this.hashSize = hashSize;
         this.limits = limits;
     }
-
-    public String[] getKeys() {
-        return keys;
-    }
-
-    public void setHashSize(int hashSize) {
-        this.hashSize = hashSize;
-    }
-
-    public int getHashSize() {
-        return hashSize;
-    }
-
-    public void setLimits(int limits) {
-        this.limits = limits;
-    }
-
-    public int getLimits() {
-        return limits;
-    }
-
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + limits;
-        result = prime * result + hashSize;
-        result = prime * result + Arrays.hashCode(keys);
-        return result;
-    }
-
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        ConnRestrictEntry other = (ConnRestrictEntry) obj;
-        if (limits != other.limits) return false;
-        if (hashSize != other.hashSize) return false;
-        if (!Arrays.equals(keys, other.keys)) return false;
-        return true;
-    }
-
-    public String toString() {
-        return "ConnRestrictEntry: " + Arrays.toString(keys) + " " + hashSize + ", " + limits;
-    }
-
-    protected static final String KEY_DEFAULT  = "~"; // 匹配 null Key
-
-    protected static final String KEY_WILDCARD = "*"; // 匹配所有 Key
-
-    protected static final String PERCENT      = "%"; // 百分比
 
     public static boolean isNullKey(String key) {
         return KEY_DEFAULT.equals(key);
@@ -105,15 +55,15 @@ public final class ConnRestrictEntry {
                     if (numberStr.endsWith(PERCENT)) {
                         numberStr = TStringUtil.substringBefore(numberStr, PERCENT);
                         if (TStringUtil.isNumeric(numberStr)) {
-                            ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[] { key },
-                                1,
-                                maxPoolSize * Integer.valueOf(numberStr) / 100);
+                            ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[]{key},
+                                    1,
+                                    maxPoolSize * Integer.valueOf(numberStr) / 100);
                             return connRestrictEntry;
                         }
                     } else if (TStringUtil.isNumeric(numberStr)) {
-                        ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[] { key },
-                            1,
-                            Integer.valueOf(numberStr));
+                        ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[]{key},
+                                1,
+                                Integer.valueOf(numberStr));
                         return connRestrictEntry;
                     }
                 } else if (TStringUtil.isNumeric(countStr)) {
@@ -121,15 +71,15 @@ public final class ConnRestrictEntry {
                     if (numberStr.endsWith(PERCENT)) {
                         numberStr = TStringUtil.substringBefore(numberStr, PERCENT);
                         if (TStringUtil.isNumeric(numberStr)) {
-                            ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[] { key },
-                                Integer.valueOf(countStr),
-                                maxPoolSize * Integer.valueOf(numberStr) / 100);
+                            ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[]{key},
+                                    Integer.valueOf(countStr),
+                                    maxPoolSize * Integer.valueOf(numberStr) / 100);
                             return connRestrictEntry;
                         }
                     } else if (TStringUtil.isNumeric(numberStr)) {
-                        ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[] { key },
-                            Integer.valueOf(countStr),
-                            Integer.valueOf(numberStr));
+                        ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[]{key},
+                                Integer.valueOf(countStr),
+                                Integer.valueOf(numberStr));
                         return connRestrictEntry;
                     }
                 }
@@ -138,15 +88,15 @@ public final class ConnRestrictEntry {
                 if (value.endsWith(PERCENT)) {
                     String numberStr = TStringUtil.substringBefore(value, PERCENT);
                     if (TStringUtil.isNumeric(numberStr)) {
-                        ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[] { key },
-                            1,
-                            maxPoolSize * Integer.valueOf(numberStr) / 100);
+                        ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[]{key},
+                                1,
+                                maxPoolSize * Integer.valueOf(numberStr) / 100);
                         return connRestrictEntry;
                     }
                 } else if (TStringUtil.isNumeric(value)) {
-                    ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[] { key },
-                        1,
-                        Integer.valueOf(value));
+                    ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[]{key},
+                            1,
+                            Integer.valueOf(value));
                     return connRestrictEntry;
                 }
             }
@@ -155,15 +105,15 @@ public final class ConnRestrictEntry {
             if (value.endsWith(PERCENT)) {
                 String numberStr = TStringUtil.substringBefore(value, PERCENT);
                 if (TStringUtil.isNumeric(numberStr)) {
-                    ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[] { key },
-                        1,
-                        maxPoolSize * Integer.valueOf(numberStr) / 100);
+                    ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[]{key},
+                            1,
+                            maxPoolSize * Integer.valueOf(numberStr) / 100);
                     return connRestrictEntry;
                 }
             } else if (TStringUtil.isNumeric(value)) {
-                ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[] { key },
-                    1,
-                    Integer.valueOf(value));
+                ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(new String[]{key},
+                        1,
+                        Integer.valueOf(value));
                 return connRestrictEntry;
             }
         } else {
@@ -174,8 +124,8 @@ public final class ConnRestrictEntry {
                     String[] keys = TStringUtil.split(key, ",");
                     if (null != keys && keys.length > 0) {
                         ConnRestrictEntry connRestrictEntry = new ConnRestrictEntry(keys,
-                            1,
-                            maxPoolSize * Integer.valueOf(numberStr) / 100);
+                                1,
+                                maxPoolSize * Integer.valueOf(numberStr) / 100);
                         return connRestrictEntry;
                     }
                 }
@@ -188,5 +138,49 @@ public final class ConnRestrictEntry {
             }
         }
         return null;
+    }
+
+    public String[] getKeys() {
+        return keys;
+    }
+
+    public int getHashSize() {
+        return hashSize;
+    }
+
+    public void setHashSize(int hashSize) {
+        this.hashSize = hashSize;
+    }
+
+    public int getLimits() {
+        return limits;
+    }
+
+    public void setLimits(int limits) {
+        this.limits = limits;
+    }
+
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + limits;
+        result = prime * result + hashSize;
+        result = prime * result + Arrays.hashCode(keys);
+        return result;
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        ConnRestrictEntry other = (ConnRestrictEntry) obj;
+        if (limits != other.limits) return false;
+        if (hashSize != other.hashSize) return false;
+        if (!Arrays.equals(keys, other.keys)) return false;
+        return true;
+    }
+
+    public String toString() {
+        return "ConnRestrictEntry: " + Arrays.toString(keys) + " " + hashSize + ", " + limits;
     }
 }

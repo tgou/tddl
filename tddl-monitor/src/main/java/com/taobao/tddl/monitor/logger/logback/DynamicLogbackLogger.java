@@ -1,17 +1,16 @@
 package com.taobao.tddl.monitor.logger.logback;
 
-import java.io.File;
-import java.nio.charset.Charset;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
-
 import com.taobao.tddl.monitor.logger.DynamicLogger;
 import com.taobao.tddl.monitor.logger.LoggerInit;
+
+import java.io.File;
+import java.nio.charset.Charset;
 
 public class DynamicLogbackLogger extends DynamicLogger {
 
@@ -20,17 +19,17 @@ public class DynamicLogbackLogger extends DynamicLogger {
         Appender md5sqlAppender = buildAppender("TDDL_MD5_TO_SQL_Appender", "tddl.md5sql.log", "%d %p [%c{10}] - %m%n");
         Appender nagiosAppender = buildAppender("TDDL_Nagios_Appender", "Nagios.log", "%m%n");
         Appender atomStatisticAppender = buildDailyMaxRollingAppender("TDDL_Atom_Statistic_Appender",
-            "tddl-atom-statistic.log",
-            "%m",
-            6);
+                "tddl-atom-statistic.log",
+                "%m",
+                6);
         Appender matrixStatisticAppender = buildDailyMaxRollingAppender("TDDL_Matrix_Statistic_Appender",
-            "tddl-matrix-statistic.log",
-            "%m",
-            12);
+                "tddl-matrix-statistic.log",
+                "%m",
+                12);
         Appender connStatisticAppender = buildDailyMaxRollingAppender("TDDL_Conn_Statistic_Appender",
-            "tddl-conn-statistic.log",
-            "%m",
-            6);
+                "tddl-conn-statistic.log",
+                "%m",
+                6);
 
         Appender statisticAppender = buildAppender("TDDL_Statistic_Appender", "tddl-statistic.log", "%m");
         Appender snapshotAppender = buildAppender("TDDL_Snapshot_Appender", "tddl-snapshot.log", "%m");

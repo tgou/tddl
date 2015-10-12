@@ -1,154 +1,65 @@
 package com.taobao.tddl.common.mock;
 
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.model.DBType;
 
+import javax.sql.DataSource;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
+
 public class MockDataSource implements DataSource, Cloneable {
 
-    private int     timeToObtainConnection     = 0;
-    private int     getConnectionInvokingTimes = 0;
-    private String  name;
-    private String  dbIndex;
-    private boolean isClosed;
-    private DBType  dbType                     = DBType.MYSQL;
-
-    public MockDataSource(){
-    }
-
-    public MockDataSource(String dbIndex, String name){
-        this.dbIndex = dbIndex;
-        this.name = name;
-    }
-
-    public static class ExecuteInfo {
-
-        public ExecuteInfo(MockDataSource dataSource, String method, String sql, Object[] args){
-            this.ds = dataSource;
-            this.method = method;
-            this.sql = sql;
-            this.args = args;
-        }
-
-        public MockDataSource ds;
-        public String         method;
-        public String         sql;
-        public Object[]       args;
-
-        @Override
-        public String toString() {
-            return new StringBuilder("ExecuteInfo:{ds:").append(ds)
-                .append(",method:")
-                .append(method)
-                .append(",sql:")
-                .append(sql)
-                .append(",args:")
-                .append(Arrays.toString(args))
-                .append("}")
-                .toString();
-        }
-    }
-
-    public static class QueryResult {
-
-        public QueryResult(Map<String, Integer> columns, List<Object[]> values){
-            this.columns = columns;
-            this.rows = values;
-        }
-
-        /**
-         * 只支持放一行数据，数据类型只支持数值long和String,例如： sku_id:0,item_id:65,seller_id:63
-         * sku_id:0,item_id:65,name:'aaa'
-         */
-        public QueryResult(String row){
-            String[] cols = row.split(",");
-            this.columns = new HashMap<String, Integer>(cols.length);
-            List<Object> colvalues = new ArrayList<Object>(cols.length);
-            for (int i = 0; i < cols.length; i++) {
-                String col = cols[i];
-                String[] nv = col.split("\\:");
-                this.columns.put(nv[0], i);
-                if (nv[1].startsWith("'") && nv[1].endsWith("'")) {
-                    colvalues.add(nv[1].substring(1, nv[1].length() - 1));// 字符串
-                } else if (nv[1].endsWith("NULL")) {
-                    colvalues.add(null);
-                } else {
-                    colvalues.add(Long.parseLong(nv[1]));// 数字
-                }
-            }
-            this.rows = new ArrayList<Object[]>(1);
-            this.rows.add(colvalues.toArray(new Object[colvalues.size()]));
-        }
-
-        public final Map<String, Integer> columns;
-        public final List<Object[]>       rows;
-    }
-
-    public void checkState() throws SQLException {
-        if (isClosed) {
-            throw genFatalSQLException();
-        }
-    }
-
-    public SQLException genFatalSQLException() throws SQLException {
-        if (DBType.MYSQL.equals(dbType)) {
-            return new SQLException("dsClosed", "08001");// 来自MySQLExceptionSorter
-        } else if (DBType.ORACLE.equals(dbType)) {
-            return new SQLException("dsClosed", "28");// 来自OracleExceptionSorter
-                                                      // //28 session has been
-                                                      // killed
-        } else {
-            throw new RuntimeException("有了新的dbType而这里没有更新");
-        }
-    }
-
+    // 下面这些变量改成一个enum类
+    public static final String m_getConnection = "getConnection";
+    public static final String m_prepareStatement = "prepareStatement";
+    public static final String m_createStatement = "createStatement";
+    public static final String m_executeQuery = "executeQuery";
+    public static final String m_executeUpdate = "executeUpdate";
     /**
      * 存放每次执行的结果信息：实际的sql，参数，数据源名称
      */
-    private static ThreadLocal<ExecuteInfo>                     RESULT             = new ThreadLocal<ExecuteInfo>();      // TODO
-                                                                                                                           // 有了TRACE不需要这个了
-    private static ThreadLocal<List<ExecuteInfo>>               TRACE              = new ThreadLocal<List<ExecuteInfo>>();
-    private static ThreadLocal<List<QueryResult>>               PREDATA            = new ThreadLocal<List<QueryResult>>();
-    private static ThreadLocal<List<Integer>>                   PREAffectedRow     = new ThreadLocal<List<Integer>>();
+    private static ThreadLocal<ExecuteInfo> RESULT = new ThreadLocal<ExecuteInfo>();      // TODO
+    // 有了TRACE不需要这个了
+    private static ThreadLocal<List<ExecuteInfo>> TRACE = new ThreadLocal<List<ExecuteInfo>>();
+    private static ThreadLocal<List<QueryResult>> PREDATA = new ThreadLocal<List<QueryResult>>();
+    private static ThreadLocal<List<Integer>> PREAffectedRow = new ThreadLocal<List<Integer>>();
     /**
      * map中key的取值"getConnection"、"prepareStatement"、"executeQuery"、
      * "executeUpdate"、"" ...
      */
-    private static ThreadLocal<Map<String, List<SQLException>>> PREException       = new ThreadLocal<Map<String, List<SQLException>>>() {
+    private static ThreadLocal<Map<String, List<SQLException>>> PREException = new ThreadLocal<Map<String, List<SQLException>>>() {
 
-                                                                                       @Override
-                                                                                       protected Map<String, List<SQLException>> initialValue() {
-                                                                                           Map<String, List<SQLException>> exceptions = new HashMap<String, List<SQLException>>(4);
-                                                                                           exceptions.put(m_getConnection,
-                                                                                               new ArrayList<SQLException>(0));
-                                                                                           exceptions.put(m_prepareStatement,
-                                                                                               new ArrayList<SQLException>(0));
-                                                                                           exceptions.put(m_createStatement,
-                                                                                               new ArrayList<SQLException>(0));
-                                                                                           exceptions.put(m_executeQuery,
-                                                                                               new ArrayList<SQLException>(0));
-                                                                                           exceptions.put(m_executeUpdate,
-                                                                                               new ArrayList<SQLException>(0));
-                                                                                           return exceptions;
-                                                                                       }
-                                                                                   };
+        @Override
+        protected Map<String, List<SQLException>> initialValue() {
+            Map<String, List<SQLException>> exceptions = new HashMap<String, List<SQLException>>(4);
+            exceptions.put(m_getConnection,
+                    new ArrayList<SQLException>(0));
+            exceptions.put(m_prepareStatement,
+                    new ArrayList<SQLException>(0));
+            exceptions.put(m_createStatement,
+                    new ArrayList<SQLException>(0));
+            exceptions.put(m_executeQuery,
+                    new ArrayList<SQLException>(0));
+            exceptions.put(m_executeUpdate,
+                    new ArrayList<SQLException>(0));
+            return exceptions;
+        }
+    };
+    private int timeToObtainConnection = 0;
+    private int getConnectionInvokingTimes = 0;
+    private String name;
+    private String dbIndex;
+    private boolean isClosed;
+    private DBType dbType = DBType.MYSQL;
+    public MockDataSource() {
+    }
 
-    // 下面这些变量改成一个enum类
-    public static final String                                  m_getConnection    = "getConnection";
-    public static final String                                  m_prepareStatement = "prepareStatement";
-    public static final String                                  m_createStatement  = "createStatement";
-    public static final String                                  m_executeQuery     = "executeQuery";
-    public static final String                                  m_executeUpdate    = "executeUpdate";
+    public MockDataSource(String dbIndex, String name) {
+        this.dbIndex = dbIndex;
+        this.name = name;
+    }
 
     /**
      * 需要在每个testcase的afterclass中调用这个方法
@@ -198,7 +109,7 @@ public class MockDataSource implements DataSource, Cloneable {
         if (trace != null) {
             for (ExecuteInfo info : trace) {
                 if (info.sql != null && dbIndex.equals(info.ds.dbIndex) && sqlHead.length() <= info.sql.length()
-                    && sqlHead.equalsIgnoreCase(info.sql.substring(0, sqlHead.length()))) {
+                        && sqlHead.equalsIgnoreCase(info.sql.substring(0, sqlHead.length()))) {
                     return true;
                 }
             }
@@ -212,8 +123,8 @@ public class MockDataSource implements DataSource, Cloneable {
         if (trace != null) {
             for (ExecuteInfo info : trace) {
                 if (info.sql != null && dbIndex.equals(info.ds.dbIndex) && info.ds.name.equals(dsName)
-                    && sqlHead.length() <= info.sql.length()
-                    && sqlHead.equalsIgnoreCase(info.sql.substring(0, sqlHead.length()))) {
+                        && sqlHead.length() <= info.sql.length()
+                        && sqlHead.equalsIgnoreCase(info.sql.substring(0, sqlHead.length()))) {
                     return true;
                 }
             }
@@ -245,9 +156,6 @@ public class MockDataSource implements DataSource, Cloneable {
         return false;
     }
 
-    /*
-     * public static List<QueryResult> getPreData(){ return PREDATA.get(); }
-     */
     /**
      * 记录一个Datasource、Connection、Statement上的执行动作
      */
@@ -261,7 +169,7 @@ public class MockDataSource implements DataSource, Cloneable {
 
     /**
      * 加入一个预置的查询结果。返回ResultSet时，会按顺序提取预置的数据构造ResultSet
-     * 
+     *
      * @param arow 格式：sku_id:0,item_id:65,seller_id:63,name:'尺码'
      */
     public static void addPreData(String arow) {
@@ -281,6 +189,10 @@ public class MockDataSource implements DataSource, Cloneable {
         }
         PREAffectedRow.get().add(preAffectedRow);
     }
+
+    /*
+     * public static List<QueryResult> getPreData(){ return PREDATA.get(); }
+     */
 
     /**
      * 包权限，构造ResultSet时，用这个方法提取预设数据
@@ -313,6 +225,24 @@ public class MockDataSource implements DataSource, Cloneable {
         return pre.size() == 0 ? null : pre.remove(0);
     }
 
+    public void checkState() throws SQLException {
+        if (isClosed) {
+            throw genFatalSQLException();
+        }
+    }
+
+    public SQLException genFatalSQLException() throws SQLException {
+        if (DBType.MYSQL.equals(dbType)) {
+            return new SQLException("dsClosed", "08001");// 来自MySQLExceptionSorter
+        } else if (DBType.ORACLE.equals(dbType)) {
+            return new SQLException("dsClosed", "28");// 来自OracleExceptionSorter
+            // //28 session has been
+            // killed
+        } else {
+            throw new RuntimeException("有了新的dbType而这里没有更新");
+        }
+    }
+
     /**
      * ==============================================================
      * 以下为jdbc接口实现
@@ -341,11 +271,11 @@ public class MockDataSource implements DataSource, Cloneable {
         throw new NotSupportException("");
     }
 
-    public int getLoginTimeout() throws SQLException {
+    public void setLogWriter(PrintWriter out) throws SQLException {
         throw new NotSupportException("");
     }
 
-    public void setLogWriter(PrintWriter out) throws SQLException {
+    public int getLoginTimeout() throws SQLException {
         throw new NotSupportException("");
     }
 
@@ -393,11 +323,11 @@ public class MockDataSource implements DataSource, Cloneable {
     @Override
     public String toString() {
         return new StringBuilder(super.toString().substring(getClass().getPackage().getName().length() + 1)).append("{dbIndex:")
-            .append(dbIndex)
-            .append(",name:")
-            .append(name)
-            .append("}")
-            .toString();
+                .append(dbIndex)
+                .append(",name:")
+                .append(name)
+                .append("}")
+                .toString();
     }
 
     public <T> T unwrap(Class<T> iface) throws SQLException {
@@ -408,6 +338,67 @@ public class MockDataSource implements DataSource, Cloneable {
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
 
         return false;
+    }
+
+    public static class ExecuteInfo {
+
+        public MockDataSource ds;
+        public String method;
+        public String sql;
+        public Object[] args;
+        public ExecuteInfo(MockDataSource dataSource, String method, String sql, Object[] args) {
+            this.ds = dataSource;
+            this.method = method;
+            this.sql = sql;
+            this.args = args;
+        }
+
+        @Override
+        public String toString() {
+            return new StringBuilder("ExecuteInfo:{ds:").append(ds)
+                    .append(",method:")
+                    .append(method)
+                    .append(",sql:")
+                    .append(sql)
+                    .append(",args:")
+                    .append(Arrays.toString(args))
+                    .append("}")
+                    .toString();
+        }
+    }
+
+    public static class QueryResult {
+
+        public final Map<String, Integer> columns;
+        public final List<Object[]> rows;
+
+        public QueryResult(Map<String, Integer> columns, List<Object[]> values) {
+            this.columns = columns;
+            this.rows = values;
+        }
+        /**
+         * 只支持放一行数据，数据类型只支持数值long和String,例如： sku_id:0,item_id:65,seller_id:63
+         * sku_id:0,item_id:65,name:'aaa'
+         */
+        public QueryResult(String row) {
+            String[] cols = row.split(",");
+            this.columns = new HashMap<String, Integer>(cols.length);
+            List<Object> colvalues = new ArrayList<Object>(cols.length);
+            for (int i = 0; i < cols.length; i++) {
+                String col = cols[i];
+                String[] nv = col.split("\\:");
+                this.columns.put(nv[0], i);
+                if (nv[1].startsWith("'") && nv[1].endsWith("'")) {
+                    colvalues.add(nv[1].substring(1, nv[1].length() - 1));// 字符串
+                } else if (nv[1].endsWith("NULL")) {
+                    colvalues.add(null);
+                } else {
+                    colvalues.add(Long.parseLong(nv[1]));// 数字
+                }
+            }
+            this.rows = new ArrayList<Object[]>(1);
+            this.rows.add(colvalues.toArray(new Object[colvalues.size()]));
+        }
     }
 
 }

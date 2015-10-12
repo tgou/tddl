@@ -4,34 +4,20 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
 public class UpdateResultWrapper implements ResultSet {
 
-    protected int                 affectRow;
     protected static final String AFFECT_ROW = "AFFECT_ROW";
-    protected boolean             first      = false;
-    protected boolean             closed     = false;
-    protected boolean             wasNull    = true;
-    protected My_JdbcHandler      handler;
+    protected int affectRow;
+    protected boolean first = false;
+    protected boolean closed = false;
+    protected boolean wasNull = true;
+    protected My_JdbcHandler handler;
 
-    public UpdateResultWrapper(int affectRow, My_JdbcHandler handler){
+    public UpdateResultWrapper(int affectRow, My_JdbcHandler handler) {
         super();
         this.affectRow = affectRow;
         this.handler = handler;
@@ -415,25 +401,25 @@ public class UpdateResultWrapper implements ResultSet {
     }
 
     @Override
-    public void setFetchDirection(int direction) throws SQLException {
-        throw new SQLException("not supported yet");
-
-    }
-
-    @Override
     public int getFetchDirection() throws SQLException {
         throw new SQLException("not supported yet");
 
     }
 
     @Override
-    public void setFetchSize(int rows) throws SQLException {
+    public void setFetchDirection(int direction) throws SQLException {
         throw new SQLException("not supported yet");
 
     }
 
     @Override
     public int getFetchSize() throws SQLException {
+        throw new SQLException("not supported yet");
+
+    }
+
+    @Override
+    public void setFetchSize(int rows) throws SQLException {
         throw new SQLException("not supported yet");
 
     }

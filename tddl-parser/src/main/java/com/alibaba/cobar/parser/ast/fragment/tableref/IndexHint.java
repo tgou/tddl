@@ -18,37 +18,23 @@
  */
 package com.alibaba.cobar.parser.ast.fragment.tableref;
 
+import com.alibaba.cobar.parser.ast.ASTNode;
+import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.alibaba.cobar.parser.ast.ASTNode;
-import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
 
 /**
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class IndexHint implements ASTNode {
 
-    public static enum IndexAction {
-        USE, IGNORE, FORCE
-    }
-
-    public static enum IndexType {
-        INDEX, KEY
-    }
-
-    public static enum IndexScope {
-        /** not specified */
-        ALL, JOIN, GROUP_BY, ORDER_BY
-    }
-
-    private final IndexAction  action;
-    private final IndexType    type;
-    private final IndexScope   scope;
+    private final IndexAction action;
+    private final IndexType type;
+    private final IndexScope scope;
     private final List<String> indexList;
-
-    public IndexHint(IndexAction action, IndexType type, IndexScope scope, List<String> indexList){
+    public IndexHint(IndexAction action, IndexType type, IndexScope scope, List<String> indexList) {
         super();
         if (action == null) throw new IllegalArgumentException("index hint action is null");
         if (type == null) throw new IllegalArgumentException("index hint type is null");
@@ -84,5 +70,20 @@ public class IndexHint implements ASTNode {
     @Override
     public void accept(SQLASTVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public static enum IndexAction {
+        USE, IGNORE, FORCE
+    }
+
+    public static enum IndexType {
+        INDEX, KEY
+    }
+
+    public static enum IndexScope {
+        /**
+         * not specified
+         */
+        ALL, JOIN, GROUP_BY, ORDER_BY
     }
 }

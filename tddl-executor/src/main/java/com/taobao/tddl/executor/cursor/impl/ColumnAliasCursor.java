@@ -1,9 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.common.utils.TStringUtil;
@@ -22,22 +18,26 @@ import com.taobao.tddl.optimizer.core.expression.IColumn;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 用于做别名替换和select操作
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-3 上午10:54:30
  * @since 5.0.0
  */
 public class ColumnAliasCursor extends SchematicCursor implements IColumnAliasCursor {
 
-    private final String            tableAlias;
+    private final String tableAlias;
     private final List<ISelectable> retColumns;
-    private List<ColumnMeta>        colMessages;
-    private boolean                 schemaInited = false;
-    private ICursorMeta             newMeta;
-    private List<ColumnMeta>        returnColumnMetas;
+    private List<ColumnMeta> colMessages;
+    private boolean schemaInited = false;
+    private ICursorMeta newMeta;
+    private List<ColumnMeta> returnColumnMetas;
 
-    public ColumnAliasCursor(ISchematicCursor cursor, List<ISelectable> retColumns, String tableAlias){
+    public ColumnAliasCursor(ISchematicCursor cursor, List<ISelectable> retColumns, String tableAlias) {
         super(cursor);
         this.tableAlias = tableAlias;
         this.retColumns = retColumns;
@@ -94,9 +94,9 @@ public class ColumnAliasCursor extends SchematicCursor implements IColumnAliasCu
                     IColumn icol = ExecUtils.getIColumn(orderBy.getColumn());
                     IColumn icolNew = icol.copy();
                     obNew.add(ASTNodeFactory.getInstance()
-                        .createOrderBy()
-                        .setColumn(icolNew.setTableName(tableAlias).setAlias(null))
-                        .setDirection(orderBy.getDirection()));
+                            .createOrderBy()
+                            .setColumn(icolNew.setTableName(tableAlias).setAlias(null))
+                            .setDirection(orderBy.getDirection()));
                 }
                 setOrderBy(obNew);
             }

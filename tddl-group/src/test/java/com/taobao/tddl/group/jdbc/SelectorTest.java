@@ -1,18 +1,17 @@
 package com.taobao.tddl.group.jdbc;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.taobao.tddl.common.mock.MockDataSource;
+import com.taobao.tddl.common.mock.MockDataSource.ExecuteInfo;
+import com.taobao.tddl.common.model.DBType;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.taobao.tddl.common.mock.MockDataSource;
-import com.taobao.tddl.common.mock.MockDataSource.ExecuteInfo;
-import com.taobao.tddl.common.model.DBType;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SelectorTest {
 

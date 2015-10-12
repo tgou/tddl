@@ -1,12 +1,11 @@
 package com.taobao.tddl.matrix.test;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.executor.common.ExecutorContext;
 import com.taobao.tddl.executor.common.TopologyHandler;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class TopologyHandlerTest {
 

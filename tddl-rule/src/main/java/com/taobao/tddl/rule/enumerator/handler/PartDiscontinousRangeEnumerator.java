@@ -1,14 +1,14 @@
 package com.taobao.tddl.rule.enumerator.handler;
 
-import java.util.Set;
-
 import com.taobao.tddl.rule.model.sqljep.Comparative;
+
+import java.util.Set;
 
 public abstract class PartDiscontinousRangeEnumerator implements CloseIntervalFieldsEnumeratorHandler {
 
     /**
      * 一次自增
-     * 
+     *
      * @param source
      * @param atomIncVal
      * @return
@@ -17,7 +17,7 @@ public abstract class PartDiscontinousRangeEnumerator implements CloseIntervalFi
 
     /**
      * 根据不同数据的最小单位将>变为>=
-     * 
+     *
      * @param to
      * @return
      */
@@ -25,7 +25,7 @@ public abstract class PartDiscontinousRangeEnumerator implements CloseIntervalFi
 
     /**
      * 根据不同数据的最小单位将<变为<=
-     * 
+     *
      * @param to
      * @return
      */
@@ -33,9 +33,9 @@ public abstract class PartDiscontinousRangeEnumerator implements CloseIntervalFi
 
     /**
      * 如果输入的范围大于range.size() * atomIncrementvalue的值，那么就可以做短路优化
-     * 
-     * @param from 只有<=情况下的form值
-     * @param to 只有>=情况下的to 值
+     *
+     * @param from               只有<=情况下的form值
+     * @param to                 只有>=情况下的to 值
      * @param range
      * @param atomIncrementValue
      * @return

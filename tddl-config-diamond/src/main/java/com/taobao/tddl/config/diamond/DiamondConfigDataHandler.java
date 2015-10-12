@@ -1,10 +1,5 @@
 package com.taobao.tddl.config.diamond;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Executor;
-
 import com.taobao.diamond.client.impl.DiamondEnv;
 import com.taobao.diamond.client.impl.DiamondEnvRepo;
 import com.taobao.diamond.client.impl.DiamondUnitSite;
@@ -13,31 +8,35 @@ import com.taobao.diamond.manager.ManagerListener;
 import com.taobao.diamond.manager.SkipInitialCallbackListener;
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.extension.Activate;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.common.utils.mbean.TddlMBean;
 import com.taobao.tddl.common.utils.mbean.TddlMBeanServer;
 import com.taobao.tddl.config.ConfigDataListener;
 import com.taobao.tddl.config.impl.UnitConfigDataHandler;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
  * 持久配置中心diamond实现
- * 
+ *
  * @author shenxun
  * @author <a href="zylicfc@gmail.com">junyu</a>
  * @version 1.0
- * @since 1.6
  * @date 2011-1-11 11:22:29
+ * @since 1.6
  */
 @Activate(order = 1)
 public class DiamondConfigDataHandler extends UnitConfigDataHandler {
 
-    private static final Logger logger  = LoggerFactory.getLogger(DiamondConfigDataHandler.class);
-    public static final long    TIMEOUT = 10 * 1000;
-    private String              mbeanId;
-    private TddlMBean           mbean;
-    private DiamondEnv          env;
+    public static final long TIMEOUT = 10 * 1000;
+    private static final Logger logger = LoggerFactory.getLogger(DiamondConfigDataHandler.class);
+    private String mbeanId;
+    private TddlMBean mbean;
+    private DiamondEnv env;
 
     public void doInit() {
         mbean = new TddlMBean("Diamond Config Info " + System.currentTimeMillis());
@@ -119,7 +118,7 @@ public class DiamondConfigDataHandler extends UnitConfigDataHandler {
 
     /**
      * 共用的addListener处理
-     * 
+     *
      * @param configDataListenerList
      * @param executor
      * @param data
@@ -146,7 +145,7 @@ public class DiamondConfigDataHandler extends UnitConfigDataHandler {
 
     /**
      * 共用的addListener处理
-     * 
+     *
      * @param configDataListenerList
      * @param executor
      * @param data

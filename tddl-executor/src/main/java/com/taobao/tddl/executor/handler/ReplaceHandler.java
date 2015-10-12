@@ -1,7 +1,5 @@
 package com.taobao.tddl.executor.handler;
 
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.ExceptionErrorCodeUtils;
 import com.taobao.tddl.executor.codec.CodecFactory;
@@ -19,25 +17,28 @@ import com.taobao.tddl.optimizer.core.expression.IFunction;
 import com.taobao.tddl.optimizer.core.plan.IPut;
 import com.taobao.tddl.optimizer.core.plan.IPut.PUT_TYPE;
 
+import java.util.List;
+
 public class ReplaceHandler extends PutHandlerCommon {
 
-    public ReplaceHandler(){
+    public ReplaceHandler() {
         super();
     }
 
     @Override
     protected int executePut(ExecutionContext executionContext, IPut put, ITable table, IndexMeta meta)
-                                                                                                       throws Exception {
+            throws Exception {
         ITransaction transaction = executionContext.getTransaction();
         int affect_rows = 0;
         CloneableRecord key = CodecFactory.getInstance(CodecFactory.FIXED_LENGTH)
-            .getCodec(meta.getKeyColumns())
-            .newEmptyRecord();
+                .getCodec(meta.getKeyColumns())
+                .newEmptyRecord();
         CloneableRecord value = CodecFactory.getInstance(CodecFactory.FIXED_LENGTH)
-            .getCodec(meta.getValueColumns())
-            .newEmptyRecord();
+                .getCodec(meta.getValueColumns())
+                .newEmptyRecord();
         List columns = put.getUpdateColumns();
-        L: for (int i = 0; i < columns.size(); i++) {
+        L:
+        for (int i = 0; i < columns.size(); i++) {
             for (ColumnMeta cm : meta.getKeyColumns()) {
                 if (cm.getName().equals(ExecUtils.getColumn(columns.get(i)).getColumnName())) {
                     Object v = put.getUpdateValues().get(i);

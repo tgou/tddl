@@ -1,17 +1,16 @@
 package com.taobao.tddl.common.utils.logger.log4j;
 
-import org.apache.log4j.Level;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.support.FailsafeLogger;
+import org.apache.log4j.Level;
 
 public class Log4jLogger implements Logger {
 
-    private static final String           FQCN = FailsafeLogger.class.getName();
+    private static final String FQCN = FailsafeLogger.class.getName();
 
     private final org.apache.log4j.Logger logger;
 
-    public Log4jLogger(org.apache.log4j.Logger logger){
+    public Log4jLogger(org.apache.log4j.Logger logger) {
         this.logger = logger;
     }
 

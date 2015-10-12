@@ -1,27 +1,26 @@
 package com.taobao.tddl.rule.model;
 
+import com.taobao.tddl.common.utils.TddlToStringStyle;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import com.taobao.tddl.common.utils.TddlToStringStyle;
-
 /**
  * <pre>
  * 存放列名->sourceKey的映射，比如支持id in (xx)时，根据param计算后得出了目标库地址，可将该记录的sourceKey的发送到目标库上进行执行.
  * </pre>
- * 
+ *
  * @author shenxun
  */
 public class Field {
 
-    public static final Field                                EMPTY_FIELD = new Field(0);
+    public static final Field EMPTY_FIELD = new Field(0);
     private Map<String/* 列名 */, Set<Object>/* 得到该结果的描点值名 */> sourceKeys;
 
-    public Field(int capacity){
+    public Field(int capacity) {
         sourceKeys = new HashMap<String, Set<Object>>(capacity);
     }
 

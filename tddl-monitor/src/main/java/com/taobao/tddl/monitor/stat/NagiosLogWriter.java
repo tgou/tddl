@@ -6,7 +6,7 @@ import com.taobao.tddl.monitor.utils.NagiosUtils;
 /**
  * 基于 Nagios 格式的统计日志输出类。 <br />
  * 兼容 StatMonitor 的代码。
- * 
+ *
  * @author changyuan.lh
  */
 public class NagiosLogWriter extends StatLogWriter {

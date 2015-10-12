@@ -1,5 +1,15 @@
 package com.taobao.tddl.repo.mysql.spi;
 
+import com.taobao.tddl.common.exception.TddlException;
+import com.taobao.tddl.common.utils.ExceptionErrorCodeUtils;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import com.taobao.tddl.executor.common.AtomicNumberCreator;
+import com.taobao.tddl.executor.spi.ITHLog;
+import com.taobao.tddl.executor.spi.ITransaction;
+import com.taobao.tddl.group.jdbc.TGroupConnection;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -7,52 +17,49 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
-import com.taobao.tddl.common.exception.TddlException;
-import com.taobao.tddl.common.utils.ExceptionErrorCodeUtils;
-import com.taobao.tddl.executor.common.AtomicNumberCreator;
-import com.taobao.tddl.executor.spi.ITHLog;
-import com.taobao.tddl.executor.spi.ITransaction;
-import com.taobao.tddl.group.jdbc.TGroupConnection;
-
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
-
 /**
  * @author mengshi.sunmengshi 2013-12-6 上午11:31:29
  * @since 5.0.0
  */
 public class My_Transaction implements ITransaction {
 
-    protected final static Logger           logger                = LoggerFactory.getLogger(My_Transaction.class);
-    private AtomicNumberCreator             idGen                 = AtomicNumberCreator.getNewInstance();
-    private Integer                         id                    = idGen.getIntegerNextNumber();
-
+    protected final static Logger logger = LoggerFactory.getLogger(My_Transaction.class);
     /**
      * 处于事务中的连接管理
      */
-    protected Map<String, List<Connection>> connMap               = new HashMap<String, List<Connection>>(1);
-
+    protected Map<String, List<Connection>> connMap = new HashMap<String, List<Connection>>(1);
     /**
      * 当前进行事务的节点
      */
-    protected String                        transactionalNodeName = null;
-    protected boolean                       autoCommit            = true;
-    protected Stragety                      stragety              = Stragety.STRONG;
+    protected String transactionalNodeName = null;
+    protected boolean autoCommit = true;
+    protected Stragety stragety = Stragety.STRONG;
+    private AtomicNumberCreator idGen = AtomicNumberCreator.getNewInstance();
+    private Integer id = idGen.getIntegerNextNumber();
 
-    public enum Stragety {
-
-        /** 跨机允许读不允许写 */
-        ALLOW_READ,
-        /** 跨机读写都不允许 */
-        STRONG,
-        /** 随意跨机 */
-        NONE
+    public My_Transaction(boolean autoCommit) {
+        this.autoCommit = autoCommit;
     }
 
-    public My_Transaction(boolean autoCommit){
-        this.autoCommit = autoCommit;
+    public static void closeStreaming(My_Transaction trans, String groupName, DataSource ds) throws SQLException {
+        List<Connection> conns = trans.getConnections(groupName, ds);
+        for (Connection con : conns) {
+            closeStreaming(con);
+        }
+
+    }
+
+    public static void closeStreaming(Connection con) throws SQLException {
+        TGroupConnection myconn = getTGroupConnection(con);
+        myconn.cancel();
+    }
+
+    private static TGroupConnection getTGroupConnection(Connection con) {
+        if (con instanceof TGroupConnection) {
+            return (TGroupConnection) con;
+        }
+
+        throw new RuntimeException("impossible,connection is not TGroupConnection:" + con.getClass());
     }
 
     public void beginTransaction() {
@@ -73,12 +80,12 @@ public class My_Transaction implements ITransaction {
 
     /**
      * 策略两种：1. 强一致策略，事务中不允许跨机查询。2.弱一致策略，事务中允许跨机查询；
-     * 
+     *
      * @param groupName
      * @param ds
      * @param strongConsistent 这个请求是否是强一致的，这个与ALLOW_READ一起作用。
-     * 当ALLOW_READ的情况下，strongConsistent =
-     * true时，会创建事务链接，而如果sConsistent=false则会创建非事务链接
+     *                         当ALLOW_READ的情况下，strongConsistent =
+     *                         true时，会创建事务链接，而如果sConsistent=false则会创建非事务链接
      * @return
      */
     public Connection getConnection(String groupName, DataSource ds) throws SQLException {
@@ -208,27 +215,6 @@ public class My_Transaction implements ITransaction {
         }
     }
 
-    public static void closeStreaming(My_Transaction trans, String groupName, DataSource ds) throws SQLException {
-        List<Connection> conns = trans.getConnections(groupName, ds);
-        for (Connection con : conns) {
-            closeStreaming(con);
-        }
-
-    }
-
-    public static void closeStreaming(Connection con) throws SQLException {
-        TGroupConnection myconn = getTGroupConnection(con);
-        myconn.cancel();
-    }
-
-    private static TGroupConnection getTGroupConnection(Connection con) {
-        if (con instanceof TGroupConnection) {
-            return (TGroupConnection) con;
-        }
-
-        throw new RuntimeException("impossible,connection is not TGroupConnection:" + con.getClass());
-    }
-
     public boolean isAutoCommit() {
         return autoCommit;
     }
@@ -251,6 +237,22 @@ public class My_Transaction implements ITransaction {
 
     public void setTransactionalNodeName(String transactionalNodeName) {
         this.transactionalNodeName = transactionalNodeName;
+    }
+
+    public enum Stragety {
+
+        /**
+         * 跨机允许读不允许写
+         */
+        ALLOW_READ,
+        /**
+         * 跨机读写都不允许
+         */
+        STRONG,
+        /**
+         * 随意跨机
+         */
+        NONE
     }
 
 }

@@ -1,57 +1,28 @@
 package com.taobao.tddl.optimizer.costbased.esitimater.stat;
 
+import com.taobao.tddl.common.exception.TddlException;
+import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
+import com.taobao.tddl.common.utils.TddlToStringStyle;
+import com.taobao.tddl.optimizer.costbased.esitimater.stat.parse.TableIndexStatParser;
+import com.taobao.tddl.optimizer.costbased.esitimater.stat.parse.TableStatParser;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import com.taobao.tddl.common.exception.TddlException;
-import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
-import com.taobao.tddl.common.utils.TddlToStringStyle;
-import com.taobao.tddl.optimizer.costbased.esitimater.stat.parse.TableIndexStatParser;
-import com.taobao.tddl.optimizer.costbased.esitimater.stat.parse.TableStatParser;
-
 /**
  * 本地文件的schema manager实现
- * 
+ *
  * @since 5.0.0
  */
 public class LocalStatManager extends AbstractLifecycle implements StatManager {
 
     protected Map<String, KVIndexStat> kvIndexCache;
-    protected Map<String, TableStat>   tableCache;
-
-    protected void doInit() throws TddlException {
-        super.doInit();
-        kvIndexCache = new ConcurrentHashMap<String, KVIndexStat>();
-        tableCache = new ConcurrentHashMap<String, TableStat>();
-    }
-
-    protected void doDestory() throws TddlException {
-        super.doDestory();
-        kvIndexCache.clear();
-        tableCache.clear();
-    }
-
-    public KVIndexStat getKVIndex(String indexName) {
-        return kvIndexCache.get(indexName);
-    }
-
-    public TableStat getTable(String tableName) {
-        return tableCache.get(tableName);
-    }
-
-    public void putKVIndex(String indexName, KVIndexStat stat) {
-        this.kvIndexCache.put(indexName, stat);
-    }
-
-    public void putTable(String tableName, TableStat stat) {
-        this.tableCache.put(tableName, stat);
-    }
+    protected Map<String, TableStat> tableCache;
 
     public static LocalStatManager parseConfig(String table, String index) throws TddlException {
         if (table == null || table.isEmpty()) {
@@ -105,6 +76,34 @@ public class LocalStatManager extends AbstractLifecycle implements StatManager {
             IOUtils.closeQuietly(table);
         }
 
+    }
+
+    protected void doInit() throws TddlException {
+        super.doInit();
+        kvIndexCache = new ConcurrentHashMap<String, KVIndexStat>();
+        tableCache = new ConcurrentHashMap<String, TableStat>();
+    }
+
+    protected void doDestory() throws TddlException {
+        super.doDestory();
+        kvIndexCache.clear();
+        tableCache.clear();
+    }
+
+    public KVIndexStat getKVIndex(String indexName) {
+        return kvIndexCache.get(indexName);
+    }
+
+    public TableStat getTable(String tableName) {
+        return tableCache.get(tableName);
+    }
+
+    public void putKVIndex(String indexName, KVIndexStat stat) {
+        this.kvIndexCache.put(indexName, stat);
+    }
+
+    public void putTable(String tableName, TableStat stat) {
+        this.tableCache.put(tableName, stat);
     }
 
     public String toString() {

@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.parse.cobar.visitor;
 
-import java.util.List;
-
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.ast.expression.primary.Identifier;
 import com.alibaba.cobar.parser.ast.fragment.tableref.TableReference;
@@ -14,9 +12,11 @@ import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
 import com.taobao.tddl.optimizer.core.ast.dml.UpdateNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
 
+import java.util.List;
+
 /**
  * update类型处理
- * 
+ *
  * @since 5.0.0
  */
 public class MySqlUpdateVisitor extends EmptySQLASTVisitor {

@@ -9,12 +9,8 @@ public enum DBType {
 
     private int i;
 
-    private DBType(int i){
+    private DBType(int i) {
         this.i = i;
-    }
-
-    public int value() {
-        return this.i;
     }
 
     public static DBType valueOf(int i) {
@@ -24,5 +20,9 @@ public enum DBType {
             }
         }
         throw new IllegalArgumentException("Invalid SqlType:" + i);
+    }
+
+    public int value() {
+        return this.i;
     }
 }

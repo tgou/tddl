@@ -1,16 +1,15 @@
 package com.taobao.tddl.qatest.group.selector;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
+import com.taobao.diamond.mockserver.MockServer;
+import com.taobao.tddl.common.GroupDataSourceRouteHelper;
+import com.taobao.tddl.qatest.group.GroupTestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.taobao.diamond.mockserver.MockServer;
-import com.taobao.tddl.common.GroupDataSourceRouteHelper;
-import com.taobao.tddl.qatest.group.GroupTestCase;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Comment for GroupSelectDbUseWeightTest
@@ -50,30 +49,30 @@ public class GroupUpdateDbUseWeightTest extends GroupTestCase {
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
             // 插入数据
-            int rs = tddlJT.update("insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID,
-                    time });
+            int rs = tddlJT.update("insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID,
+                    time});
             Assert.assertTrue(rs > 0);
 
             GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-            List list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            List list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (list.size() == 1) {
                 firstCnt++;
                 GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-                clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             } else {
                 GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-                list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                 if (list.size() == 1) {
                     secondCnt++;
                     GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-                    clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                    clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                 } else {
                     GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-                    list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                    list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                     if (list.size() == 1) {
                         thirdCnt++;
                         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-                        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                     } else {
                         Assert.fail("查不到数据。");
                     }
@@ -98,7 +97,7 @@ public class GroupUpdateDbUseWeightTest extends GroupTestCase {
         // 设置权重(确保推送成功)
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:w1r10,qatest_normal_0_bac:w1r10,qatest_normal_1_bac:w1r10");
+                    "qatest_normal_0:w1r10,qatest_normal_0_bac:w1r10,qatest_normal_1_bac:w1r10");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
@@ -108,31 +107,31 @@ public class GroupUpdateDbUseWeightTest extends GroupTestCase {
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
             // 插入数据
-            int rs = tddlJT.update("insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID,
-                    time });
+            int rs = tddlJT.update("insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID,
+                    time});
             Assert.assertTrue(rs > 0);
 
             // 确认更新的atomDS
             GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-            List list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            List list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (list.size() == 1) {
                 firstCnt++;
                 GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-                clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             } else {
                 GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-                list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                 if (list.size() == 1) {
                     secondCnt++;
                     GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-                    clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                    clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                 } else {
                     GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-                    list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                    list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                     if (list.size() == 1) {
                         thirdCnt++;
                         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-                        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                     } else {
                         Assert.fail("查不到数据。");
                     }
@@ -157,7 +156,7 @@ public class GroupUpdateDbUseWeightTest extends GroupTestCase {
         // 设置权重(确保推送成功)
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:w1r10,qatest_normal_0_bac:w2r10,qatest_normal_1_bac:w3r10");
+                    "qatest_normal_0:w1r10,qatest_normal_0_bac:w2r10,qatest_normal_1_bac:w3r10");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
@@ -167,31 +166,31 @@ public class GroupUpdateDbUseWeightTest extends GroupTestCase {
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
             // 插入数据
-            int rs = tddlJT.update("insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID,
-                    time });
+            int rs = tddlJT.update("insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID,
+                    time});
             Assert.assertTrue(rs > 0);
 
             // 确认更新的atomDS
             GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-            List list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            List list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (list.size() == 1) {
                 firstCnt++;
                 GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-                clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             } else {
                 GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-                list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                 if (list.size() == 1) {
                     secondCnt++;
                     GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-                    clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                    clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                 } else {
                     GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-                    list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                    list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                     if (list.size() == 1) {
                         thirdCnt++;
                         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-                        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                     } else {
                         Assert.fail("查不到数据。");
                     }
@@ -216,7 +215,7 @@ public class GroupUpdateDbUseWeightTest extends GroupTestCase {
         /* 默认权重(确保推送成功) */
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:wr10,qatest_normal_0_bac:wr10,qatest_normal_1_bac:wr10");
+                    "qatest_normal_0:wr10,qatest_normal_0_bac:wr10,qatest_normal_1_bac:wr10");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
@@ -226,31 +225,31 @@ public class GroupUpdateDbUseWeightTest extends GroupTestCase {
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
             // 插入数据
-            int rs = tddlJT.update("insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID,
-                    time });
+            int rs = tddlJT.update("insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID,
+                    time});
             Assert.assertTrue(rs > 0);
 
             // 确认更新的atomDS
             GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-            List list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            List list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (list.size() == 1) {
                 firstCnt++;
                 GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-                clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             } else {
                 GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-                list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                 if (list.size() == 1) {
                     secondCnt++;
                     GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-                    clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                    clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                 } else {
                     GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-                    list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                    list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                     if (list.size() == 1) {
                         thirdCnt++;
                         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-                        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                     } else {
                         Assert.fail("查不到数据。");
                     }
@@ -275,7 +274,7 @@ public class GroupUpdateDbUseWeightTest extends GroupTestCase {
         // 设置权重(确保推送成功)
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:w1r10,qatest_normal_0_bac:w0r10,qatest_normal_1_bac:w3r10");
+                    "qatest_normal_0:w1r10,qatest_normal_0_bac:w0r10,qatest_normal_1_bac:w3r10");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
@@ -285,31 +284,31 @@ public class GroupUpdateDbUseWeightTest extends GroupTestCase {
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
             // 插入数据
-            int rs = tddlJT.update("insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[] { RANDOM_ID,
-                    time });
+            int rs = tddlJT.update("insert into normaltbl_0001 (pk,gmt_create) values (?,?)", new Object[]{RANDOM_ID,
+                    time});
             Assert.assertTrue(rs > 0);
 
             // 确认更新的atomDS
             GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-            List list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            List list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (list.size() == 1) {
                 firstCnt++;
                 GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-                clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             } else {
                 GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-                list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                 if (list.size() == 1) {
                     secondCnt++;
                     GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-                    clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                    clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                 } else {
                     GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-                    list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                    list = tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                     if (list.size() == 1) {
                         thirdCnt++;
                         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-                        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+                        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
                     } else {
                         Assert.fail("查不到数据。");
                     }

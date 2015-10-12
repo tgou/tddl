@@ -4,9 +4,18 @@ import java.util.Map;
 
 public interface ExceptionSorter<T> {
 
+    /**
+     * 是否是个FatalException;
+     *
+     * @param exception   对应的exception
+     * @param excludeKeys 排除key,如果是fatal exception.那么excludeKeys就会被填入对应的key
+     * @return
+     */
+    ReturnVal<T> isRetryException(String exception, Map<T, String/* exception */> excludeKeys, T t);
+
     public static class ReturnVal<T> {
 
-        public boolean                retryException;
+        public boolean retryException;
         Map<T, String/* exception */> excludeKeys;
 
         public boolean isRetryException() {
@@ -28,13 +37,4 @@ public interface ExceptionSorter<T> {
         }
 
     }
-
-    /**
-     * 是否是个FatalException;
-     * 
-     * @param exception 对应的exception
-     * @param excludeKeys 排除key,如果是fatal exception.那么excludeKeys就会被填入对应的key
-     * @return
-     */
-    ReturnVal<T> isRetryException(String exception, Map<T, String/* exception */> excludeKeys, T t);
 }

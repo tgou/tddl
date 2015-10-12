@@ -1,17 +1,17 @@
 package com.taobao.tddl.config.impl;
 
-import java.util.List;
-import java.util.concurrent.Executor;
-
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.config.ConfigDataHandler;
 import com.taobao.tddl.config.ConfigDataListener;
+
+import java.util.List;
+import java.util.concurrent.Executor;
 
 public class StaticConfigDataHandler extends AbstractLifecycle implements ConfigDataHandler {
 
     String value;
 
-    public StaticConfigDataHandler(String value){
+    public StaticConfigDataHandler(String value) {
         this.value = value;
     }
 

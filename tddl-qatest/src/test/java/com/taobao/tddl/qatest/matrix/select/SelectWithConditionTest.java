@@ -1,10 +1,9 @@
 package com.taobao.tddl.qatest.matrix.select;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -12,10 +11,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 带条件的选择查询
@@ -25,14 +24,14 @@ import com.taobao.tddl.qatest.util.EclipseParameterized;
 @RunWith(EclipseParameterized.class)
 public class SelectWithConditionTest extends BaseMatrixTestCase {
 
+    public SelectWithConditionTest(String normaltblTableName, String studentTableName) {
+        BaseTestCase.normaltblTableName = normaltblTableName;
+        BaseTestCase.studentTableName = studentTableName;
+    }
+
     @Parameters(name = "{index}:table0={0},table1={1}")
     public static List<String[]> prepare() {
         return Arrays.asList(ExecuteTableName.normaltblStudentTable(dbType));
-    }
-
-    public SelectWithConditionTest(String normaltblTableName, String studentTableName){
-        BaseTestCase.normaltblTableName = normaltblTableName;
-        BaseTestCase.studentTableName = studentTableName;
     }
 
     @Before
@@ -44,7 +43,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     @Test
     public void inTest() throws Exception {
         String sql = "select * from " + normaltblTableName + " where pk in (1,2,3)";
-        String[] columnParam = { "PK", "NAME" };
+        String[] columnParam = {"PK", "NAME"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -56,49 +55,49 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         List<Object> param = new ArrayList<Object>();
         param.add(start);
         param.add(end);
-        String[] columnParam = { "PK", "NAME", "ID" };
+        String[] columnParam = {"PK", "NAME", "ID"};
         selectContentSameAssert(sql, columnParam, param);
     }
 
     @Test
     public void constant() throws Exception {
         String sql = "select 1 a,2 from " + normaltblTableName;
-        String[] columnParam = { "a", "2" };
+        String[] columnParam = {"a", "2"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
     @Test
     public void selectFilterTest() throws Exception {
         String sql = "select id=id as a from " + normaltblTableName;
-        String[] columnParam = { "a" };
+        String[] columnParam = {"a"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
     @Test
     public void selectFilterTest2() throws Exception {
         String sql = "select id=1 a from " + normaltblTableName;
-        String[] columnParam = { "a" };
+        String[] columnParam = {"a"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
     @Test
     public void selectFilterTest3() throws Exception {
         String sql = "select id and 1 a from " + normaltblTableName;
-        String[] columnParam = { "a" };
+        String[] columnParam = {"a"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
     @Test
     public void selectFilterTest4() throws Exception {
         String sql = "select 1=1 a from " + normaltblTableName;
-        String[] columnParam = { "a" };
+        String[] columnParam = {"a"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
     @Test
     public void selectFilterTest5() throws Exception {
         String sql = "select id in (1,2,3) a from " + normaltblTableName;
-        String[] columnParam = { "a" };
+        String[] columnParam = {"a"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -109,7 +108,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         param.add(Long.parseLong(1 + ""));
         param.add(Long.parseLong(2 + ""));
         param.add(Long.parseLong(3 + ""));
-        String[] columnParam = { "PK", "NAME" };
+        String[] columnParam = {"PK", "NAME"};
         selectContentSameAssert(sql, columnParam, param);
     }
 
@@ -120,7 +119,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         param.add(Long.parseLong(1 + ""));
         param.add(Long.parseLong(2 + ""));
         param.add(Long.parseLong(3 + ""));
-        String[] columnParam = { "ID", "NAME" };
+        String[] columnParam = {"ID", "NAME"};
         selectContentSameAssert(sql, columnParam, param);
     }
 
@@ -128,10 +127,10 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     public void isTrue() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = "select * from " + normaltblTableName + " where pk is true";
-            String[] columnParam = { "ID", "NAME", "PK" };
+            String[] columnParam = {"ID", "NAME", "PK"};
             selectContentSameAssert(sql, columnParam, null);
             sql = "select id is true a,name from " + normaltblTableName;
-            String[] columnParam1 = { "a", "NAME", };
+            String[] columnParam1 = {"a", "NAME",};
             selectContentSameAssert(sql, columnParam1, null);
         }
     }
@@ -139,13 +138,13 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     @Test
     public void selectNot() throws Exception {
         String sql = "select not pk a from " + normaltblTableName;
-        String[] columnParam = { "a" };
+        String[] columnParam = {"a"};
         selectContentSameAssert(sql, columnParam, null);
     }
 
     @Test
     public void selectNotFun() throws Exception {
-        String[] columnParam = { "a" };
+        String[] columnParam = {"a"};
         String sql = "select not max(pk) a from " + normaltblTableName;
         selectContentSameAssert(sql, columnParam, null);
     }
@@ -153,73 +152,73 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     @Test
     public void selectNotConstant() throws Exception {
         String sql = "select not (1+1) a from " + normaltblTableName;
-        String[] columnParam = { "a" };
+        String[] columnParam = {"a"};
         selectContentSameAssert(sql, columnParam, null);
     }
 
     @Test
     public void selectNotWhereConstant() throws Exception {
         String sql = "select * from " + normaltblTableName + " where not (id=1)";
-        String[] columnParam = { "ID", "NAME", "PK" };
+        String[] columnParam = {"ID", "NAME", "PK"};
         selectContentSameAssert(sql, columnParam, null);
     }
 
     @Test
     public void selectNotWhereConstantOr() throws Exception {
         String sql = "select * from " + normaltblTableName + " where not (id=1 or id=2)";
-        String[] columnParam = { "ID", "NAME", "PK" };
+        String[] columnParam = {"ID", "NAME", "PK"};
         selectContentSameAssert(sql, columnParam, null);
     }
 
     @Test
     public void isNotTrue() throws Exception {
         String sql = "select * from " + normaltblTableName + " where pk is not true";
-        String[] columnParam = { "ID", "NAME", "PK" };
+        String[] columnParam = {"ID", "NAME", "PK"};
         selectContentSameAssert(sql, columnParam, null);
     }
 
     @Test
     public void groupByWithCountTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         mysqlUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         String sql = "select count(pk),name from " + normaltblTableName + " group by name";
-        String[] columnParam = { "COUNT(PK)", "NAME" };
+        String[] columnParam = {"COUNT(PK)", "NAME"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
     @Test
     public void groupByWithAscTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         String sql = "select count(pk),name from " + normaltblTableName + " group by name asc";
 
-        selectOrderAssert(sql, new String[] {}, Collections.EMPTY_LIST);
+        selectOrderAssert(sql, new String[]{}, Collections.EMPTY_LIST);
     }
 
     @Ignore("ob暂时不支持desc排序，而mysql会计算desc")
     @Test
     public void groupByWithDescTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         String sql = "select count(pk),name from " + normaltblTableName + " group by name desc";
-        selectOrderAssert(sql, new String[] {}, Collections.EMPTY_LIST);
+        selectOrderAssert(sql, new String[]{}, Collections.EMPTY_LIST);
     }
 
     @Test
     public void groupByWithMinMaxTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         mysqlUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         String sql = "select name,min(pk) from " + normaltblTableName + " group by name";
 
-        String[] columnParam = { "name", "min(pk)" };
+        String[] columnParam = {"name", "min(pk)"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
 
         sql = "select name,max(pk) from " + normaltblTableName + " group by name";
-        String[] param = { "name", "max(pk)" };
+        String[] param = {"name", "max(pk)"};
         selectOrderAssert(sql, param, Collections.EMPTY_LIST);
 
     }
@@ -227,34 +226,34 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     @Test
     public void groupByAvgTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         mysqlUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
 
         String sql = "select name,avg(pk) from " + normaltblTableName + " group by name";
-        String[] columnParam = { "name", "avg(pk)" };
+        String[] columnParam = {"name", "avg(pk)"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
     @Test
     public void groupBySumTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         mysqlUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
 
         String sql = "select name,sum(pk) from " + normaltblTableName + " group by name";
-        String[] columnParam = { "name", "sum(pk)" };
+        String[] columnParam = {"name", "sum(pk)"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
     @Test
     public void havingTest() throws Exception {
         String sql = "select name,count(pk) from " + normaltblTableName
-                     + " group by name having count(pk)>? order by name ";
+                + " group by name having count(pk)>? order by name ";
         List<Object> param = new ArrayList<Object>();
         param.add(5L);
-        String[] columnParam = { "NAME", "COUNT(pk)" };
+        String[] columnParam = {"NAME", "COUNT(pk)"};
         selectOrderAssert(sql, columnParam, param);
     }
 
@@ -267,7 +266,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
             String sql = "select name from " + normaltblTableName + " group by name having sum(pk) > ?";
             List<Object> param = new ArrayList<Object>();
             param.add(40l);
-            String[] columnParam = { "name" };
+            String[] columnParam = {"name"};
             selectContentSameAssert(sql, columnParam, param);
         }
     }
@@ -277,7 +276,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         String sql = "select * from " + normaltblTableName + " where name= ? order by pk";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columnParam = { "PK", "ID", "NAME" };
+        String[] columnParam = {"PK", "ID", "NAME"};
         selectOrderAssert(sql, columnParam, param);
     }
 
@@ -286,7 +285,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         String sql = "select * from " + normaltblTableName + " where name= ? order by id asc";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columnParam = { "PK", "ID", "NAME" };
+        String[] columnParam = {"PK", "ID", "NAME"};
         selectOrderAssertNotKeyCloumn(sql, columnParam, param, "id");
     }
 
@@ -295,7 +294,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         String sql = "select * from " + normaltblTableName + " where name= ? order by id desc";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columnParam = { "PK", "ID", "NAME" };
+        String[] columnParam = {"PK", "ID", "NAME"};
         selectOrderAssertNotKeyCloumn(sql, columnParam, param, "id");
     }
 
@@ -304,7 +303,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         String sql = "select name,pk from " + normaltblTableName + " where name= ? order by id";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columnParam = { "name", "pk" };
+        String[] columnParam = {"name", "pk"};
         selectContentSameAssert(sql, columnParam, param);
     }
 
@@ -316,32 +315,32 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         String sql = "select name,pk from " + normaltblTableName + " where name= ? order by gmt_create,id";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columnParam = { "name", "pk" };
+        String[] columnParam = {"name", "pk"};
         selectContentSameAssert(sql, columnParam, param);
     }
 
     @Test
     public void groupByOrderbyTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         mysqlUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
 
         String sql = "select name,count(a.pk) as c from " + normaltblTableName + " as a group by name order by name";
-        String[] columnParam = { "name", "c" };
+        String[] columnParam = {"name", "c"};
         selectOrderAssertNotKeyCloumn(sql, columnParam, Collections.EMPTY_LIST, "name");
     }
 
     @Test
     public void groupByOrderbyFunctionCloumTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         mysqlUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
 
         String sql = "/* ANDOR ALLOW_TEMPORARY_TABLE=True */select name,count(pk) from " + normaltblTableName
-                     + " group by name order by count(pk)";
-        String[] columnParam = { "name", "count(pk)" };
+                + " group by name order by count(pk)";
+        String[] columnParam = {"name", "count(pk)"};
         selectOrderAssertNotKeyCloumn(sql, columnParam, Collections.EMPTY_LIST, "count(pk)");
     }
 
@@ -352,7 +351,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         List<Object> param = new ArrayList<Object>();
         param.add(name);
         param.add(i);
-        String[] columnParam = { "name", "pk" };
+        String[] columnParam = {"name", "pk"};
         selectContentSameAssert(sql, columnParam, param);
     }
 
@@ -365,14 +364,14 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         List<Object> param = new ArrayList<Object>();
         param.add(pk);
         param.add(opk);
-        String[] columnParam = { "name", "pk", "id" };
+        String[] columnParam = {"name", "pk", "id"};
         selectContentSameAssert(sql, columnParam, param);
     }
 
     @Test
     public void distinctTest() throws Exception {
         String sql = "select distinct name from " + normaltblTableName;
-        String[] columnParam = { "name" };
+        String[] columnParam = {"name"};
         selectContentSameAssert(sql, columnParam, null);
     }
 
@@ -380,19 +379,19 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     public void distinctWithCountDistinctTest() throws Exception {
         {
             String sql = "select count(distinct id) from " + normaltblTableName + " as t1 where pk>1";
-            String[] columnParam = { "count(distinct id)" };
+            String[] columnParam = {"count(distinct id)"};
             selectContentSameAssert(sql, columnParam, null);
         }
 
         {
             String sql = "select count(distinct id) from " + normaltblTableName + " where pk>1";
-            String[] columnParam = { "count(distinct id)" };
+            String[] columnParam = {"count(distinct id)"};
             selectContentSameAssert(sql, columnParam, null);
         }
 
         {
             String sql = "select count(distinct id) k from " + normaltblTableName + " as t1 where pk>1";
-            String[] columnParam = { "k" };
+            String[] columnParam = {"k"};
             selectContentSameAssert(sql, columnParam, null);
         }
 
@@ -402,7 +401,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     public void distinctOrderByTest() throws Exception {
         // order by和distinct不一致，只能用临时表
         String sql = "/* ANDOR ALLOW_TEMPORARY_TABLE=True */select  distinct name from " + normaltblTableName
-                     + " where name=? order by id";
+                + " where name=? order by id";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
         try {
@@ -439,7 +438,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         List<Object> param = new ArrayList<Object>();
         param.add(pk);
         param.add(id);
-        String[] columnParam = { "name", "pk", "id" };
+        String[] columnParam = {"name", "pk", "id"};
         selectContentSameAssert(sql, columnParam, param);
     }
 
@@ -448,7 +447,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         int start = 5;
         int limit = 6;
         String sql = "SELECT * FROM " + normaltblTableName + " order by pk LIMIT " + start + "," + limit;
-        String[] columnParam = { "name", "pk", "id" };
+        String[] columnParam = {"name", "pk", "id"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
 
     }
@@ -458,7 +457,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         int start = 5;
         int limit = 1;
         String sql = "select * from " + studentTableName + " as nor1 ,(select pk from " + normaltblTableName
-                     + " where name=? limit ?,?) as nor2 where nor1.id=nor2.pk";
+                + " where name=? limit ?,?) as nor2 where nor1.id=nor2.pk";
 
         List<Object> param = new ArrayList<Object>();
         param.add(name);
@@ -471,7 +470,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     public void limitWithoutStart() throws Exception {
         int limit = 50;
         String sql = "SELECT * FROM " + normaltblTableName + " LIMIT " + limit;
-        String[] columnParam = { "name", "pk", "id" };
+        String[] columnParam = {"name", "pk", "id"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -480,8 +479,8 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     public void groupByScalarFunction() throws Exception {
         if (!normaltblTableName.startsWith("ob")) { // ob不支持
             String sql = "SELECT  COUNT(1) daily_illegal,DATE_FORMAT(gmt_create, '%Y-%m-%d') d ,name FROM "
-                         + normaltblTableName + " group by DATE_FORMAT(gmt_create, '%Y-%m-%d'),name";
-            String[] columnParam = { "daily_illegal", "d", "name" };
+                    + normaltblTableName + " group by DATE_FORMAT(gmt_create, '%Y-%m-%d'),name";
+            String[] columnParam = {"daily_illegal", "d", "name"};
             selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
         }
     }
@@ -489,12 +488,12 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     @Test
     public void groupByLimitTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         mysqlUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
 
         String sql = "select name,count(pk) from " + normaltblTableName + " group by name limit 1";
-        String[] columnParam = { "name", "count(pk)" };
+        String[] columnParam = {"name", "count(pk)"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
 
     }
@@ -502,14 +501,14 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     @Test
     public void orderByLimitTest() throws Exception {
         andorUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
         mysqlUpdateData("insert into " + normaltblTableName + " (pk,name) values(?,?)",
-            Arrays.asList(new Object[] { RANDOM_ID, newName }));
+                Arrays.asList(new Object[]{RANDOM_ID, newName}));
 
         String sql = "select * from " + normaltblTableName + " where name=? order by pk limit 10 ";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columnParam = { "name", "pk" };
+        String[] columnParam = {"name", "pk"};
         selectOrderAssert(sql, columnParam, param);
 
         sql = "select * from " + normaltblTableName + " where name=? order by pk desc limit 10 ";
@@ -519,8 +518,8 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     @Test
     public void dateTypeWithLimit() throws Exception {
         String sql = "select * from "
-                     + normaltblTableName
-                     + " where gmt_timestamp>? and gmt_timestamp <? and name like ? order by gmt_timestamp desc limit 2,5";
+                + normaltblTableName
+                + " where gmt_timestamp>? and gmt_timestamp <? and name like ? order by gmt_timestamp desc limit 2,5";
         List<Object> param = new ArrayList<Object>();
         param.add(gmtBefore);
         param.add(gmtNext);
@@ -528,7 +527,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         selectConutAssert(sql, param);
 
         sql = "select * from " + normaltblTableName
-              + " where gmt_timestamp>=? and gmt_timestamp <=? and name like ? order by gmt_timestamp desc limit 2,5";
+                + " where gmt_timestamp>=? and gmt_timestamp <=? and name like ? order by gmt_timestamp desc limit 2,5";
         param.clear();
         param.add(gmtBefore);
         param.add(gmtNext);
@@ -536,7 +535,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         selectConutAssert(sql, param);
 
         sql = "select * from " + normaltblTableName
-              + " where gmt_timestamp>? and gmt_timestamp <? and name like ? order by gmt_timestamp desc limit 10,5";
+                + " where gmt_timestamp>? and gmt_timestamp <? and name like ? order by gmt_timestamp desc limit 10,5";
 
         param.clear();
         param.add(gmtBefore);
@@ -548,8 +547,8 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     @Test
     public void timestampTypeWithLimit() throws Exception {
         String sql = "select * from "
-                     + normaltblTableName
-                     + " where gmt_timestamp>? and gmt_timestamp <? and name like ? order by gmt_timestamp desc limit 2,5";
+                + normaltblTableName
+                + " where gmt_timestamp>? and gmt_timestamp <? and name like ? order by gmt_timestamp desc limit 2,5";
         List<Object> param = new ArrayList<Object>();
         param.add(gmtBefore);
         param.add(gmtNext);
@@ -557,7 +556,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         selectConutAssert(sql, param);
 
         sql = "select * from " + normaltblTableName
-              + " where gmt_timestamp>=? and gmt_timestamp <=? and name like ? order by gmt_timestamp desc limit 2,5";
+                + " where gmt_timestamp>=? and gmt_timestamp <=? and name like ? order by gmt_timestamp desc limit 2,5";
         param.clear();
         param.add(gmtBefore);
         param.add(gmtNext);
@@ -565,7 +564,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         selectConutAssert(sql, param);
 
         sql = "select * from " + normaltblTableName
-              + " where gmt_timestamp>? and gmt_timestamp <? and name like ? order by gmt_timestamp desc limit 10,5";
+                + " where gmt_timestamp>? and gmt_timestamp <? and name like ? order by gmt_timestamp desc limit 10,5";
         param.clear();
         param.add(gmtBefore);
         param.add(gmtNext);
@@ -576,7 +575,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
     @Test
     public void datetimeTypeWithLimit() throws Exception {
         String sql = "select * from " + normaltblTableName
-                     + " where gmt_datetime>? and gmt_datetime <? and name like ? order by gmt_datetime desc limit 2,5";
+                + " where gmt_datetime>? and gmt_datetime <? and name like ? order by gmt_datetime desc limit 2,5";
         List<Object> param = new ArrayList<Object>();
         param.add(gmtBefore);
         param.add(gmtNext);
@@ -584,7 +583,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         selectConutAssert(sql, param);
 
         sql = "select * from " + normaltblTableName
-              + " where gmt_datetime>=? and gmt_datetime <=? and name like ? order by gmt_datetime desc limit 2,5";
+                + " where gmt_datetime>=? and gmt_datetime <=? and name like ? order by gmt_datetime desc limit 2,5";
         param.clear();
         param.add(gmtBefore);
         param.add(gmtNext);
@@ -592,7 +591,7 @@ public class SelectWithConditionTest extends BaseMatrixTestCase {
         selectConutAssert(sql, param);
 
         sql = "select * from " + normaltblTableName
-              + " where gmt_datetime>? and gmt_datetime <? and name like ? order by gmt_datetime desc limit 10,5";
+                + " where gmt_datetime>? and gmt_datetime <? and name like ? order by gmt_datetime desc limit 10,5";
         param.clear();
         param.add(gmtBefore);
         param.add(gmtNext);

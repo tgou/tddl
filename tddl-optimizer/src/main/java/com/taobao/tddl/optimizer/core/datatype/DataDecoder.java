@@ -18,20 +18,18 @@
 
 package com.taobao.tddl.optimizer.core.datatype;
 
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.EMPTY_BYTE_ARRAY;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NULL_BYTE_HIGH;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NULL_BYTE_LOW;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.*;
+
 /**
  * A very low-level class that decodes key components encoded by methods of
  * {@link DataEncoder}.
- * 
+ *
  * @author Brian S O'Neill
  * @see KeyDecoder
  */
@@ -39,15 +37,15 @@ public class DataDecoder {
 
     /**
      * Decodes a signed integer from exactly 4 bytes.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed integer value
      */
     public static int decodeInt(byte[] src, int srcOffset) throws CorruptEncodingException {
         try {
             int value = (src[srcOffset] << 24) | ((src[srcOffset + 1] & 0xff) << 16)
-                        | ((src[srcOffset + 2] & 0xff) << 8) | (src[srcOffset + 3] & 0xff);
+                    | ((src[srcOffset + 2] & 0xff) << 8) | (src[srcOffset + 3] & 0xff);
             return value ^ 0x80000000;
         } catch (IndexOutOfBoundsException e) {
             throw new CorruptEncodingException(null, e);
@@ -57,8 +55,8 @@ public class DataDecoder {
     /**
      * Decodes a signed Integer object from exactly 1 or 5 bytes. If null is
      * returned, then 1 byte was read.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed Integer object or null
      */
@@ -76,17 +74,17 @@ public class DataDecoder {
 
     /**
      * Decodes a signed long from exactly 8 bytes.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed long value
      */
     public static long decodeLong(byte[] src, int srcOffset) throws CorruptEncodingException {
         try {
             return (((long) (((src[srcOffset]) << 24) | ((src[srcOffset + 1] & 0xff) << 16)
-                             | ((src[srcOffset + 2] & 0xff) << 8) | ((src[srcOffset + 3] & 0xff))) ^ 0x80000000) << 32)
-                   | (((((src[srcOffset + 4]) << 24) | ((src[srcOffset + 5] & 0xff) << 16)
-                        | ((src[srcOffset + 6] & 0xff) << 8) | ((src[srcOffset + 7] & 0xff))) & 0xffffffffL));
+                    | ((src[srcOffset + 2] & 0xff) << 8) | ((src[srcOffset + 3] & 0xff))) ^ 0x80000000) << 32)
+                    | (((((src[srcOffset + 4]) << 24) | ((src[srcOffset + 5] & 0xff) << 16)
+                    | ((src[srcOffset + 6] & 0xff) << 8) | ((src[srcOffset + 7] & 0xff))) & 0xffffffffL));
         } catch (IndexOutOfBoundsException e) {
             throw new CorruptEncodingException(null, e);
         }
@@ -95,8 +93,8 @@ public class DataDecoder {
     /**
      * Decodes a signed Long object from exactly 1 or 9 bytes. If null is
      * returned, then 1 byte was read.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed Long object or null
      */
@@ -114,8 +112,8 @@ public class DataDecoder {
 
     /**
      * Decodes a signed byte from exactly 1 byte.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed byte value
      */
@@ -130,8 +128,8 @@ public class DataDecoder {
     /**
      * Decodes a signed Byte object from exactly 1 or 2 bytes. If null is
      * returned, then 1 byte was read.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed Byte object or null
      */
@@ -149,8 +147,8 @@ public class DataDecoder {
 
     /**
      * Decodes a signed short from exactly 2 bytes.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed short value
      */
@@ -165,8 +163,8 @@ public class DataDecoder {
     /**
      * Decodes a signed Short object from exactly 1 or 3 bytes. If null is
      * returned, then 1 byte was read.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return signed Short object or null
      */
@@ -184,8 +182,8 @@ public class DataDecoder {
 
     /**
      * Decodes a char from exactly 2 bytes.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return char value
      */
@@ -200,8 +198,8 @@ public class DataDecoder {
     /**
      * Decodes a Character object from exactly 1 or 3 bytes. If null is
      * returned, then 1 byte was read.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return Character object or null
      */
@@ -219,8 +217,8 @@ public class DataDecoder {
 
     /**
      * Decodes a boolean from exactly 1 byte.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return boolean value
      */
@@ -234,8 +232,8 @@ public class DataDecoder {
 
     /**
      * Decodes a Boolean object from exactly 1 byte.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return Boolean object or null
      */
@@ -257,8 +255,8 @@ public class DataDecoder {
 
     /**
      * Decodes a float from exactly 4 bytes.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return float value
      */
@@ -270,8 +268,8 @@ public class DataDecoder {
 
     /**
      * Decodes a Float object from exactly 4 bytes.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return Float object or null
      */
@@ -284,7 +282,7 @@ public class DataDecoder {
     protected static int decodeFloatBits(byte[] src, int srcOffset) throws CorruptEncodingException {
         try {
             return (src[srcOffset] << 24) | ((src[srcOffset + 1] & 0xff) << 16) | ((src[srcOffset + 2] & 0xff) << 8)
-                   | (src[srcOffset + 3] & 0xff);
+                    | (src[srcOffset + 3] & 0xff);
         } catch (IndexOutOfBoundsException e) {
             throw new CorruptEncodingException(null, e);
         }
@@ -292,8 +290,8 @@ public class DataDecoder {
 
     /**
      * Decodes a double from exactly 8 bytes.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return double value
      */
@@ -305,8 +303,8 @@ public class DataDecoder {
 
     /**
      * Decodes a Double object from exactly 8 bytes.
-     * 
-     * @param src source of encoded bytes
+     *
+     * @param src       source of encoded bytes
      * @param srcOffset offset into source array
      * @return Double object or null
      */
@@ -319,9 +317,9 @@ public class DataDecoder {
     protected static long decodeDoubleBits(byte[] src, int srcOffset) throws CorruptEncodingException {
         try {
             return (((long) (((src[srcOffset]) << 24) | ((src[srcOffset + 1] & 0xff) << 16)
-                             | ((src[srcOffset + 2] & 0xff) << 8) | ((src[srcOffset + 3] & 0xff)))) << 32)
-                   | (((((src[srcOffset + 4]) << 24) | ((src[srcOffset + 5] & 0xff) << 16)
-                        | ((src[srcOffset + 6] & 0xff) << 8) | ((src[srcOffset + 7] & 0xff))) & 0xffffffffL));
+                    | ((src[srcOffset + 2] & 0xff) << 8) | ((src[srcOffset + 3] & 0xff)))) << 32)
+                    | (((((src[srcOffset + 4]) << 24) | ((src[srcOffset + 5] & 0xff) << 16)
+                    | ((src[srcOffset + 6] & 0xff) << 8) | ((src[srcOffset + 7] & 0xff))) & 0xffffffffL));
         } catch (IndexOutOfBoundsException e) {
             throw new CorruptEncodingException(null, e);
         }
@@ -329,11 +327,11 @@ public class DataDecoder {
 
     /**
      * Decodes a BigInteger.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded BigInteger is stored in element 0, which may be
-     * null
+     * @param valueRef  decoded BigInteger is stored in element 0, which may be
+     *                  null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      * @since 1.2
@@ -347,11 +345,11 @@ public class DataDecoder {
 
     /**
      * Decodes a BigDecimal.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded BigDecimal is stored in element 0, which may be
-     * null
+     * @param valueRef  decoded BigDecimal is stored in element 0, which may be
+     *                  null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      * @since 1.2
@@ -400,11 +398,11 @@ public class DataDecoder {
 
     /**
      * Decodes the given byte array.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded byte array is stored in element 0, which may be
-     * null
+     * @param valueRef  decoded byte array is stored in element 0, which may be
+     *                  null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      */
@@ -427,10 +425,10 @@ public class DataDecoder {
                 valueLength = ((b & 0x1f) << 16) | ((src[srcOffset++] & 0xff) << 8) | (src[srcOffset++] & 0xff);
             } else if (b <= 0xef) {
                 valueLength = ((b & 0x0f) << 24) | ((src[srcOffset++] & 0xff) << 16) | ((src[srcOffset++] & 0xff) << 8)
-                              | (src[srcOffset++] & 0xff);
+                        | (src[srcOffset++] & 0xff);
             } else {
                 valueLength = ((src[srcOffset++] & 0xff) << 24) | ((src[srcOffset++] & 0xff) << 16)
-                              | ((src[srcOffset++] & 0xff) << 8) | (src[srcOffset++] & 0xff);
+                        | ((src[srcOffset++] & 0xff) << 8) | (src[srcOffset++] & 0xff);
             }
 
             if (valueLength == 0) {
@@ -449,10 +447,10 @@ public class DataDecoder {
 
     /**
      * Decodes an encoded string from the given byte array.
-     * 
-     * @param src source of encoded data
+     *
+     * @param src       source of encoded data
      * @param srcOffset offset into encoded data
-     * @param valueRef decoded string is stored in element 0, which may be null
+     * @param valueRef  decoded string is stored in element 0, which may be null
      * @return amount of bytes read from source
      * @throws CorruptEncodingException if source data is corrupt
      */
@@ -475,10 +473,10 @@ public class DataDecoder {
                 valueLength = ((b & 0x1f) << 16) | ((src[srcOffset++] & 0xff) << 8) | (src[srcOffset++] & 0xff);
             } else if (b <= 0xef) {
                 valueLength = ((b & 0x0f) << 24) | ((src[srcOffset++] & 0xff) << 16) | ((src[srcOffset++] & 0xff) << 8)
-                              | (src[srcOffset++] & 0xff);
+                        | (src[srcOffset++] & 0xff);
             } else {
                 valueLength = ((src[srcOffset++] & 0xff) << 24) | ((src[srcOffset++] & 0xff) << 16)
-                              | ((src[srcOffset++] & 0xff) << 8) | (src[srcOffset++] & 0xff);
+                        | ((src[srcOffset++] & 0xff) << 8) | (src[srcOffset++] & 0xff);
             }
 
             if (valueLength == 0) {
@@ -528,7 +526,7 @@ public class DataDecoder {
                         // 111xxxxx
                         // Illegal.
                         throw new CorruptEncodingException("Corrupt encoded string data (source offset = "
-                                                           + (srcOffset - 1) + ')');
+                                + (srcOffset - 1) + ')');
                 }
             }
 
@@ -543,7 +541,7 @@ public class DataDecoder {
     /**
      * Decodes a length value which was encoded by
      * {@link DataEncoder#writeLength}.
-     * 
+     *
      * @return length value
      * @since 1.2
      */
@@ -586,7 +584,7 @@ public class DataDecoder {
     /**
      * Reads as many bytes from the stream as is necessary to fill the given
      * byte array. An EOFException is thrown if the stream end is encountered.
-     * 
+     *
      * @since 1.2
      */
     public static void readFully(InputStream in, byte[] b) throws IOException, EOFException {
@@ -605,11 +603,11 @@ public class DataDecoder {
      * Decodes the given byte array which was encoded by
      * {@link DataEncoder#encodeSingle}. Always returns a new byte array
      * instance.
-     * 
+     *
      * @param prefixPadding amount of extra bytes to skip from start of encoded
-     * byte array
+     *                      byte array
      * @param suffixPadding amount of extra bytes to skip at end of encoded byte
-     * array
+     *                      array
      */
     public static byte[] decodeSingle(byte[] src, int prefixPadding, int suffixPadding) throws CorruptEncodingException {
         try {
@@ -642,14 +640,14 @@ public class DataDecoder {
      * Decodes the given byte array which was encoded by
      * {@link DataEncoder#encodeSingleNullable}. Always returns a new byte array
      * instance.
-     * 
+     *
      * @param prefixPadding amount of extra bytes to skip from start of encoded
-     * byte array
+     *                      byte array
      * @param suffixPadding amount of extra bytes to skip at end of encoded byte
-     * array
+     *                      array
      */
     public static byte[] decodeSingleNullable(byte[] src, int prefixPadding, int suffixPadding)
-                                                                                               throws CorruptEncodingException {
+            throws CorruptEncodingException {
         try {
             byte b = src[prefixPadding];
             if (b == NULL_BYTE_HIGH || b == NULL_BYTE_LOW) {

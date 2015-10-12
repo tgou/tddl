@@ -1,11 +1,9 @@
 package com.taobao.tddl.qatest.matrix.transaction;
 
-import java.sql.Connection;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -14,21 +12,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RunWith(EclipseParameterized.class)
 public class TranscationSingleTableTest extends BaseMatrixTestCase {
 
+    public TranscationSingleTableTest(String normaltblTableName) {
+        BaseTestCase.normaltblTableName = normaltblTableName;
+    }
+
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepare() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public TranscationSingleTableTest(String normaltblTableName){
-        BaseTestCase.normaltblTableName = normaltblTableName;
     }
 
     @Before
@@ -56,7 +55,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
 
         andorCon = us.getConnection();
         andorCon.setAutoCommit(false);
-        String[] columnParam = { "PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL" };
+        String[] columnParam = {"PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL"};
         con = getConnection();
         con.setAutoCommit(false);
         try {
@@ -106,7 +105,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
 
         andorCon = us.getConnection();
         andorCon.setAutoCommit(false);
-        String[] columnParam = { "PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL" };
+        String[] columnParam = {"PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL"};
         con = getConnection();
         con.setAutoCommit(false);
         try {
@@ -172,7 +171,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
 
             // 在事物内内查到数据
             sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-            String[] columnParam = { "PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL" };
+            String[] columnParam = {"PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL"};
             selectOrderAssertTranscation(sql, columnParam, null);
 
             con.rollback();
@@ -222,7 +221,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
 
             // 在事物内内查到数据
             sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-            String[] columnParam = { "PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL" };
+            String[] columnParam = {"PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL"};
             selectOrderAssertTranscation(sql, columnParam, null);
 
             // 未提交，使用不同连接失败
@@ -258,7 +257,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
 
     /**
      * 多次插入共享一个连接
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -277,7 +276,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
         param1.add(gmt);
         param1.add(name);
         param1.add(fl);
-        String[] columnParam = { "PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL" };
+        String[] columnParam = {"PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL"};
         andorCon = us.getConnection();
         andorCon.setAutoCommit(false);
         try {
@@ -323,7 +322,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
 
     /**
      * 插入和查询共一个连接
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -356,7 +355,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
         }
         // 在事物内内查到数据
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "ID" };
+        String[] columnParam = {"PK", "ID"};
         selectOrderAssertTranscation(sql, columnParam, null);
 
         con.setAutoCommit(true);
@@ -406,7 +405,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
             }
         }
         sql = "select * from " + normaltblTableName + " where pk=" + pk;
-        String[] columnParam = { "ID", "NAME", "FLOATCOL" };
+        String[] columnParam = {"ID", "NAME", "FLOATCOL"};
         selectOrderAssertTranscation(sql, columnParam, null);
     }
 
@@ -436,7 +435,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
             Assert.assertEquals(mysqlAffectRow, andorAffectRow);
 
             sql = "select * from " + normaltblTableName + " where pk=" + pk;
-            String[] columnParam = { "ID", "NAME", "FLOATCOL" };
+            String[] columnParam = {"ID", "NAME", "FLOATCOL"};
             // 没有提交验证查询的到数据
             selectOrderAssertTranscation(sql, columnParam, null);
 
@@ -453,7 +452,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
         }
         // 验证查询不到数据
         sql = "select * from " + normaltblTableName + " where pk=" + pk;
-        String[] columnParam1 = { "ID", "NAME", "FLOATCOL" };
+        String[] columnParam1 = {"ID", "NAME", "FLOATCOL"};
         selectOrderAssertTranscation(sql, columnParam1, null);
     }
 
@@ -461,7 +460,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
     public void deleteCommitTest() throws Exception {
         long pk = 0l;
         normaltblPrepare(0, 1);
-        String[] columnParam = { "ID", "GMT_CREATE", "NAME", "FLOATCOL" };
+        String[] columnParam = {"ID", "GMT_CREATE", "NAME", "FLOATCOL"};
         String sql = "DELETE FROM " + normaltblTableName + " WHERE pk = " + pk;
 
         andorCon = us.getConnection();
@@ -497,7 +496,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
 
         long pk = 0l;
         normaltblPrepare(0, 1);
-        String[] columnParam1 = { "ID", "NAME", "FLOATCOL" };
+        String[] columnParam1 = {"ID", "NAME", "FLOATCOL"};
         selectOrderAssertTranscation("select * from " + normaltblTableName + " where pk=" + pk, columnParam1, null);
 
         String sql = "DELETE FROM " + normaltblTableName + " WHERE pk = " + pk;
@@ -513,7 +512,7 @@ public class TranscationSingleTableTest extends BaseMatrixTestCase {
         Assert.assertEquals(mysqlAffectRow, andorAffectRow);
 
         sql = "select * from " + normaltblTableName + " where pk=" + pk;
-        String[] columnParam = { "ID", "GMT_CREATE", "NAME", "FLOATCOL" };
+        String[] columnParam = {"ID", "GMT_CREATE", "NAME", "FLOATCOL"};
         // 没有提交验证查询不到数据
         selectOrderAssertTranscation(sql, columnParam, null);
 

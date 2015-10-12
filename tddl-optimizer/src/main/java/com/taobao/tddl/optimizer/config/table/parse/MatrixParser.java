@@ -1,17 +1,5 @@
 package com.taobao.tddl.optimizer.config.table.parse;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.google.common.collect.Lists;
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.model.Atom;
@@ -19,10 +7,21 @@ import com.taobao.tddl.common.model.Group;
 import com.taobao.tddl.common.model.Group.GroupType;
 import com.taobao.tddl.common.model.Matrix;
 import com.taobao.tddl.common.utils.XmlHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 解析matrix配置
- * 
+ *
  * @author jianghang 2013-11-28 下午6:08:57
  * @since 5.0.0
  */
@@ -37,7 +36,7 @@ public class MatrixParser {
 
     public static Matrix parse(InputStream in) {
         Document doc = XmlHelper.createDocument(in,
-            Thread.currentThread().getContextClassLoader().getResourceAsStream(XSD_SCHEMA));
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(XSD_SCHEMA));
         Element root = doc.getDocumentElement();
         return parseMatrix(root);
     }

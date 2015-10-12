@@ -1,10 +1,10 @@
 package com.taobao.tddl.common.utils.convertor;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class DateAndSqlDateTest {
 

@@ -1,21 +1,21 @@
 package com.taobao.tddl.optimizer.utils.range;
 
-import java.io.Serializable;
-
 import com.taobao.tddl.optimizer.core.datatype.DataType;
+
+import java.io.Serializable;
 
 /**
  * A class to represent ranges of values. A range is defined to contain all the
  * values between the minimum and maximum values, where the minimum/maximum
  * value can be considered either included or excluded from the range.
- * <p>
+ * <p/>
  * This example creates a range of <code>Integer</code>s whose minimum value is
  * 1 and the maximum value is 5. The range is inclusive at both ends:
- * <p>
+ * <p/>
  * <code>
- * Range intRange = new Range(Integer.class, new Integer(1), new Integer(5)); 
+ * Range intRange = new Range(Integer.class, new Integer(1), new Integer(5));
  * </code>
- * <p>
+ * <p/>
  * A <code>Range</code> can be unbounded at either or both of its ends. An
  * unbounded end is specified by passing null for the value of that end. A
  * <code>Range</code> unbounded at both of its ends represents a range of all
@@ -24,52 +24,48 @@ import com.taobao.tddl.optimizer.core.datatype.DataType;
  * return true for a <code>Range</code> unbounded on the minimum side and
  * correspondingly the <code>isMaxIncluded()</code> method will always return
  * true for a <code>Range</code> unbounded on the maximum side.
- * <p>
+ * <p/>
  * An empty range is defined as a <code>Range</code> whose minimum value is
  * greater than it's maximum value if the ends are included, or as a
  * <code>Range</code> whose minimum value is greater than or equal to it's
  * maximum value, if the minimum or the maximum value is excluded.
- * 
+ *
  * @since JAI 1.1
  */
 public class Range implements Serializable {
 
     private static final long serialVersionUID = 2457011772528137531L;
-
-    // The class of the elements in this Range.
-    private Class             elementClass;
-
     // The minimum and maximum values of the range.
-    private final Comparable  minValue, maxValue;
-
+    private final Comparable minValue, maxValue;
+    private final DataType type;
+    // The class of the elements in this Range.
+    private Class elementClass;
     // The the minimum/maximum value is included in the range.i
     // The default value is true, that is, included.
-    private boolean           isMinIncluded    = true, isMaxIncluded = true;
-
-    private final DataType    type;
+    private boolean isMinIncluded = true, isMaxIncluded = true;
 
     /**
      * Constructs a <code>Range</code> object given the <code>Class</code> of
      * the elements in the <code>Range</code>, the minimum value and the maximum
      * value. The minimum and the maximum value are considered inclusive.
-     * <p>
+     * <p/>
      * An unbounded range can be specified by passing in a null for either of
      * the two values, in which case the <code>Range</code> is unbounded on one
      * side, or for both, in which case the <code>Range</code> represents an all
      * inclusive set.
-     * 
+     *
      * @param elementClass The <code>Class</code> of the <code>Range</code>
-     * elements.
-     * @param minValue The lowest value included in the <code>Range</code>.
-     * @param maxValue The highest value included in the <code>Range</code>.
+     *                     elements.
+     * @param minValue     The lowest value included in the <code>Range</code>.
+     * @param maxValue     The highest value included in the <code>Range</code>.
      * @throws IllegalArgumentException if minValue and maxValue are both null,
-     * and elementClass is not one of the subclasses of <code>Comparable</code>.
+     *                                  and elementClass is not one of the subclasses of <code>Comparable</code>.
      * @throws IllegalArgumentException if minValue is not the same
-     * <code>Class</code> as elementClass.
+     *                                  <code>Class</code> as elementClass.
      * @throws IllegalArgumentException if maxValue is not the same
-     * <code>Class</code> as elementClass.
+     *                                  <code>Class</code> as elementClass.
      */
-    public Range(Class elementClassNoUsed, DataType type, Comparable minValue, Comparable maxValue){
+    public Range(Class elementClassNoUsed, DataType type, Comparable minValue, Comparable maxValue) {
 
         // If both minValue and maxValue are null, check whether elementClass
         // is an instanceof Comparable.
@@ -106,30 +102,30 @@ public class Range implements Serializable {
      * value. Whether the minimum value and the maximum value are considered
      * inclusive is specified via the <code>isMinIncluded</code> and
      * <code>isMaxIncluded</code> variables.
-     * <p>
+     * <p/>
      * An unbounded range can be specified by passing in a null for either of
      * the two values, in which case the <code>Range</code> is unbounded at one
      * end, or for both, in which case the <code>Range</code> represents an all
      * inclusive set. If null is passed in for either variable, the
      * <code>boolean</code> variables have no effect.
-     * 
-     * @param elementClass The <code>Class</code> of the <code>Range</code>
-     * elements.
-     * @param minValue The lowest value for the <code>Range</code>.
+     *
+     * @param elementClass  The <code>Class</code> of the <code>Range</code>
+     *                      elements.
+     * @param minValue      The lowest value for the <code>Range</code>.
      * @param isMinIncluded A boolean that defines whether the minimum value is
-     * included in the <code>Range</code>.
-     * @param maxValue The highest value for the <code>Range</code>.
+     *                      included in the <code>Range</code>.
+     * @param maxValue      The highest value for the <code>Range</code>.
      * @param isMaxIncluded A boolean that defines whether the maximum value is
-     * included in the <code>Range</code>.
+     *                      included in the <code>Range</code>.
      * @throws IllegalArgumentException if minValue and maxValue are both null,
-     * and elementClass is not one of the subclasses of <code>Comparable</code>.
+     *                                  and elementClass is not one of the subclasses of <code>Comparable</code>.
      * @throws IllegalArgumentException if minValue is not the same
-     * <code>Class</code> as elementClass.
+     *                                  <code>Class</code> as elementClass.
      * @throws IllegalArgumentException if maxValue is not the same
-     * <code>Class</code> as elementClass.
+     *                                  <code>Class</code> as elementClass.
      */
     public Range(Class elementClass, DataType type, Comparable minValue, boolean isMinIncluded, Comparable maxValue,
-                 boolean isMaxIncluded){
+                 boolean isMaxIncluded) {
         this(elementClass, type, minValue, maxValue);
         this.isMinIncluded = isMinIncluded;
         this.isMaxIncluded = isMaxIncluded;
@@ -186,11 +182,11 @@ public class Range implements Serializable {
      * i.e. is either equal to or greater than the minimum value of this
      * <code>Range</code> and is either lesser than or equal to the maximum
      * value of this <code>Range</code>.
-     * 
+     *
      * @param value The value to be checked for being within this
-     * <code>Range</code>.
+     *              <code>Range</code>.
      * @throws IllegalArgumentException if the <code>Class</code> of the value
-     * parameter is not the same as the elementClass of this <code>Range</code>.
+     *                                  parameter is not the same as the elementClass of this <code>Range</code>.
      */
     public boolean contains(Comparable value) {
 
@@ -255,10 +251,10 @@ public class Range implements Serializable {
      * this <code>Range</code>. Fully contained is defined as having the minimum
      * and maximum values of the fully contained range lie within the range of
      * values of the containing <code>Range</code>.
-     * 
+     *
      * @throws IllegalArgumentException if the <code>Class</code> of the
-     * elements of the given <code>Range</code> is not the same as the
-     * <code>Class</code> of the elements of this <code>Range</code>.
+     *                                  elements of the given <code>Range</code> is not the same as the
+     *                                  <code>Class</code> of the elements of this <code>Range</code>.
      * @throws IllegalArgumentException if the given <code>Range</code> is null
      */
     public boolean contains(Range range) {
@@ -278,11 +274,11 @@ public class Range implements Serializable {
 
         if (max == null) maxSide = (maxValue == null);
         else maxSide = isUnderUpperBound(max)
-                       || (isMaxIncluded == range.isMaxIncluded() && type.compare(max, maxValue) == 0);
+                || (isMaxIncluded == range.isMaxIncluded() && type.compare(max, maxValue) == 0);
 
         if (min == null) minSide = (minValue == null);
         else minSide = isOverLowerBound(min)
-                       || (isMinIncluded == range.isMinIncluded() && type.compare(min, minValue) == 0);
+                || (isMinIncluded == range.isMinIncluded() && type.compare(min, minValue) == 0);
         // if (min == null) minSide = (minValue == null);
         // else minSide = isOverLowerBound(min) || (isMinIncluded ==
         // range.isMinIncluded() && min.equals(minValue));
@@ -292,10 +288,10 @@ public class Range implements Serializable {
     /**
      * Returns true if this <code>Range</code> intersects the given
      * <code>Range</code>.
-     * 
+     *
      * @throws IllegalArgumentException if the <code>Class</code> of the
-     * elements of the given <code>Range</code> is not the same as the
-     * <code>Class</code> of the elements of this <code>Range</code>.
+     *                                  elements of the given <code>Range</code> is not the same as the
+     *                                  <code>Class</code> of the elements of this <code>Range</code>.
      * @throws IllegalArgumentException if the given <code>Range</code> is null
      */
     public boolean intersects(Range range) {
@@ -313,10 +309,10 @@ public class Range implements Serializable {
      * two disjoint range's minimum values, and the maximum set to the maximum
      * of the two disjoint range's maximum values, thus including the disjoint
      * range within it.
-     * 
+     *
      * @throws IllegalArgumentException if the <code>Class</code> of the
-     * elements of the given <code>Range</code> is not the same as the
-     * <code>Class</code> of the elements of this <code>Range</code>.
+     *                                  elements of the given <code>Range</code> is not the same as the
+     *                                  <code>Class</code> of the elements of this <code>Range</code>.
      * @throws IllegalArgumentException if the given <code>Range</code> is null
      */
     public Range union(Range range) {
@@ -325,18 +321,18 @@ public class Range implements Serializable {
         if (elementClass != range.getElementClass()) throw new IllegalArgumentException(("Range4"));
 
         if (this.isEmpty()) return new Range(elementClass,
-            type,
-            range.getMinValue(),
-            range.isMinIncluded(),
-            range.getMaxValue(),
-            range.isMaxIncluded());
+                type,
+                range.getMinValue(),
+                range.isMinIncluded(),
+                range.getMaxValue(),
+                range.isMaxIncluded());
 
         if (range.isEmpty()) return new Range(elementClass,
-            type,
-            this.minValue,
-            this.isMinIncluded,
-            this.maxValue,
-            this.isMaxIncluded);
+                type,
+                this.minValue,
+                this.isMinIncluded,
+                this.maxValue,
+                this.isMaxIncluded);
 
         boolean containMin = !isOverLowerBound(range.getMinValue());
         boolean containMax = !isUnderUpperBound(range.getMaxValue());
@@ -355,10 +351,10 @@ public class Range implements Serializable {
     /**
      * Returns the intersection of this <code>Range</code> with the given
      * <code>Range</code>.
-     * 
+     *
      * @throws IllegalArgumentException if the <code>Class</code> of the
-     * elements of the given <code>Range</code> is not the same as the
-     * <code>Class</code> of the elements of this <code>Range</code>.
+     *                                  elements of the given <code>Range</code> is not the same as the
+     *                                  <code>Class</code> of the elements of this <code>Range</code>.
      * @throws IllegalArgumentException if the given <code>Range</code> is null
      */
     public Range intersect(Range range) {
@@ -411,10 +407,10 @@ public class Range implements Serializable {
      * the first element of one element array, as a result of the subtraction.
      * When this <code>Range</code> is completely contained in the given
      * <code>Range</code>, an empty <code>Range</code> is returned.
-     * 
+     *
      * @throws IllegalArgumentException if the <code>Class</code> of the
-     * elements of the given <code>Range</code> is not the same as the
-     * <code>Class</code> of the elements of this <code>Range</code>.
+     *                                  elements of the given <code>Range</code> is not the same as the
+     *                                  <code>Class</code> of the elements of this <code>Range</code>.
      */
     public Range[] subtract(Range range) {
 
@@ -424,12 +420,12 @@ public class Range implements Serializable {
         // if this range is empty, return an empty range by copying this range;
         // if the given range is empty, return this range
         if (this.isEmpty() || range.isEmpty()) {
-            Range[] ra = { new Range(elementClass,
-                type,
-                this.minValue,
-                this.isMinIncluded,
-                this.maxValue,
-                this.isMaxIncluded) };
+            Range[] ra = {new Range(elementClass,
+                    type,
+                    this.minValue,
+                    this.isMinIncluded,
+                    this.maxValue,
+                    this.isMaxIncluded)};
             return ra;
         }
 
@@ -439,7 +435,7 @@ public class Range implements Serializable {
         boolean maxIn = range.isMaxIncluded();
 
         if (this.minValue == null && this.maxValue == null && min == null && max == null) {
-            Range[] ra = { null };
+            Range[] ra = {null};
             return ra;
         }
 
@@ -457,50 +453,50 @@ public class Range implements Serializable {
             // should be empty. so we need to treat it as a special case;
             // otherwise, a full range is returned
             if (r1.isEmpty() || (this.minValue == null && min == null)) {
-                Range[] ra = { r2 };
+                Range[] ra = {r2};
                 return ra;
             }
             // similar to above
             if (r2.isEmpty() || (this.maxValue == null && max == null)) {
-                Range[] ra = { r1 };
+                Range[] ra = {r1};
                 return ra;
             }
-            Range[] ra = { r1, r2 };
+            Range[] ra = {r1, r2};
             return ra;
         }
         // if the max of the given range is in this range, return the range
         // from max of given range to the max of this range
         else if (containMax) {
-            Range[] ra = { new Range(elementClass, type, max, !maxIn, this.maxValue, this.isMaxIncluded) };
+            Range[] ra = {new Range(elementClass, type, max, !maxIn, this.maxValue, this.isMaxIncluded)};
             return ra;
         }
         // if the min of the given range is in this range, return the range
         // from the min of this range to the min of the given range
         else if (containMin) {
-            Range[] ra = { new Range(elementClass, type, this.minValue, this.isMinIncluded, min, !minIn) };
+            Range[] ra = {new Range(elementClass, type, this.minValue, this.isMinIncluded, min, !minIn)};
             return ra;
         }
 
         // no overlap, just copy this range
         if ((min != null && !isUnderUpperBound(min)) || (max != null && !isOverLowerBound(max))) {
-            Range[] ra = { new Range(elementClass,
-                type,
-                this.minValue,
-                this.isMinIncluded,
-                this.maxValue,
-                this.isMaxIncluded) };
+            Range[] ra = {new Range(elementClass,
+                    type,
+                    this.minValue,
+                    this.isMinIncluded,
+                    this.maxValue,
+                    this.isMaxIncluded)};
             return ra;
         }
 
         // this range is contained in the given range, return an empty range
         min = (this.minValue == null) ? this.maxValue : this.minValue;
-        Range[] ra = { new Range(elementClass, type, min, false, min, false) };
+        Range[] ra = {new Range(elementClass, type, min, false, min, false)};
         return ra;
     }
 
     /**
      * Compute a hash code value for this <code>Range</code> object.
-     * 
+     *
      * @return a hash code value for this <code>Range</code> object.
      */
 
@@ -610,7 +606,7 @@ public class Range implements Serializable {
     public boolean isSingleValue() {
 
         if (this.maxValue != null && this.minValue != null && this.isMaxIncluded && this.isMinIncluded
-            && this.type.compare(maxValue, minValue) == 0) return true;
+                && this.type.compare(maxValue, minValue) == 0) return true;
         // if (this.maxValue != null && this.minValue != null &&
         // this.isMaxIncluded && this.isMinIncluded
         // && this.maxValue.equals(minValue)) return true;
@@ -629,7 +625,7 @@ public class Range implements Serializable {
 
         // if both ends are bounded
         if (minValue != null && maxValue != null) return new String(c1 + this.minValue.toString() + ", "
-                                                                    + this.maxValue.toString() + c2);
+                + this.maxValue.toString() + c2);
 
         // if the maximum end is bounded
         if (maxValue != null) return new String(c1 + "-∞, " + this.maxValue.toString() + c2);

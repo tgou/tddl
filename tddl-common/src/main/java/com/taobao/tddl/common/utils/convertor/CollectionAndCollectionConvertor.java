@@ -1,24 +1,11 @@
 package com.taobao.tddl.common.utils.convertor;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Collection <-> Collection 的转化器 , Collection范围包括Array(几种原型数组),List,Set各种实现类
- * 
+ *
  * @author jianghang 2011-5-26 上午09:23:00
  */
 public class CollectionAndCollectionConvertor {
@@ -133,7 +120,7 @@ public class CollectionAndCollectionConvertor {
                     componentClass = componentClasses[0];
                 }
 
-                for (Iterator iter = collection.iterator(); iter.hasNext();) {
+                for (Iterator iter = collection.iterator(); iter.hasNext(); ) {
                     Object item = iter.next();
                     Class componentSrcClass = item.getClass();
 
@@ -159,7 +146,7 @@ public class CollectionAndCollectionConvertor {
         protected Class getComponentClass(Object src, Class destClass) {
             if (Collection.class.isAssignableFrom(src.getClass()) && Collection.class.isAssignableFrom(destClass)) { // 必须都是Collection
                 Collection collection = (Collection) src;
-                for (Iterator iter = collection.iterator(); iter.hasNext();) {
+                for (Iterator iter = collection.iterator(); iter.hasNext(); ) {
                     Object item = iter.next();
                     if (item != null) {
                         return item.getClass();
@@ -191,7 +178,7 @@ public class CollectionAndCollectionConvertor {
 
                 if (componentDestClass != componentClass) {
                     throw new ConvertorException("error ComponentClasses config for [" + componentDestClass.getName()
-                                                 + "] to [" + componentDestClass.getName() + "]");
+                            + "] to [" + componentDestClass.getName() + "]");
                 }
 
                 if (componentClass != null && componentSrcClass != componentClass) { // 处理下类型转化
@@ -289,11 +276,11 @@ public class CollectionAndCollectionConvertor {
 
                 if (componentDestClass != componentClass) {
                     throw new ConvertorException("error ComponentClasses config for [" + componentDestClass.getName()
-                                                 + "] to [" + componentDestClass.getName() + "]");
+                            + "] to [" + componentDestClass.getName() + "]");
                 }
 
                 int i = 0;
-                for (Iterator iter = collection.iterator(); iter.hasNext();) {
+                for (Iterator iter = collection.iterator(); iter.hasNext(); ) {
                     Object item = iter.next();
                     Class componentSrcClass = item.getClass();
                     if (componentClass != null && componentSrcClass != componentDestClass) {
@@ -329,7 +316,7 @@ public class CollectionAndCollectionConvertor {
 
 class MappingConfig {
 
-    Convertor convertor        = null;
-    Class[]   componentClasses = null;
+    Convertor convertor = null;
+    Class[] componentClasses = null;
 
 }

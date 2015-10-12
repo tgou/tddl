@@ -15,6 +15,10 @@ import com.taobao.tddl.optimizer.core.plan.query.IQuery;
  */
 public abstract class HandlerCommon implements ICommandHandler {
 
+    public HandlerCommon() {
+        super();
+    }
+
     protected TableMeta getTableMeta(String tableName) {
         TableMeta ts = OptimizerContext.getContext().getSchemaManager().getTable(tableName);
         return ts;
@@ -35,7 +39,7 @@ public abstract class HandlerCommon implements ICommandHandler {
 
     /**
      * 取逻辑indexKey,而非实际index
-     * 
+     *
      * @param query
      * @param executionContext
      * @throws Exception
@@ -57,9 +61,5 @@ public abstract class HandlerCommon implements ICommandHandler {
             executionContext.setMeta(ts.getIndexMeta(indexName));
             executionContext.setTable(executionContext.getCurrentRepository().getTable(ts, groupDataNode));
         }
-    }
-
-    public HandlerCommon(){
-        super();
     }
 }

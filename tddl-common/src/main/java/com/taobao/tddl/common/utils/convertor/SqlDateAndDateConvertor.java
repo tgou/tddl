@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * Date <-> SqlDate 之间的转化
- * 
+ *
  * @author jianghang 2011-11-16 上午09:47:01
  */
 public class SqlDateAndDateConvertor {

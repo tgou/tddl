@@ -18,38 +18,30 @@
  */
 package com.alibaba.cobar.parser.ast.fragment.tableref;
 
+import com.alibaba.cobar.parser.ast.expression.Expression;
+import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.alibaba.cobar.parser.ast.expression.Expression;
-import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
-
 /**
  * left or right join
- * 
+ *
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class OuterJoin implements TableReference {
 
-    private static List<String> ensureListType(List<String> list) {
-        if (list == null) return null;
-        if (list.isEmpty()) return Collections.emptyList();
-        if (list instanceof ArrayList) return list;
-        return new ArrayList<String>(list);
-    }
-
     /**
      * for MySQL, only <code>LEFT</code> and <code>RIGHT</code> outer join are supported
      */
-    private final boolean        isLeftJoin;
+    private final boolean isLeftJoin;
     private final TableReference leftTableRef;
     private final TableReference rightTableRef;
-    private final Expression     onCond;
-    private final List<String>   using;
-
+    private final Expression onCond;
+    private final List<String> using;
     private OuterJoin(boolean isLeftJoin, TableReference leftTableRef, TableReference rightTableRef, Expression onCond,
-                      List<String> using){
+                      List<String> using) {
         super();
         this.isLeftJoin = isLeftJoin;
         this.leftTableRef = leftTableRef;
@@ -58,12 +50,19 @@ public class OuterJoin implements TableReference {
         this.using = ensureListType(using);
     }
 
-    public OuterJoin(boolean isLeftJoin, TableReference leftTableRef, TableReference rightTableRef, Expression onCond){
+    public OuterJoin(boolean isLeftJoin, TableReference leftTableRef, TableReference rightTableRef, Expression onCond) {
         this(isLeftJoin, leftTableRef, rightTableRef, onCond, null);
     }
 
-    public OuterJoin(boolean isLeftJoin, TableReference leftTableRef, TableReference rightTableRef, List<String> using){
+    public OuterJoin(boolean isLeftJoin, TableReference leftTableRef, TableReference rightTableRef, List<String> using) {
         this(isLeftJoin, leftTableRef, rightTableRef, null, using);
+    }
+
+    private static List<String> ensureListType(List<String> list) {
+        if (list == null) return null;
+        if (list.isEmpty()) return Collections.emptyList();
+        if (list instanceof ArrayList) return list;
+        return new ArrayList<String>(list);
     }
 
     public boolean isLeftJoin() {

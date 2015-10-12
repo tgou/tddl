@@ -5,22 +5,21 @@ package com.taobao.tddl.qatest.matrix.select;
  *  通用产品测试
  */
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
-import com.taobao.tddl.qatest.ExecuteTableName;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Comment for SelcetAmountLimit
@@ -32,17 +31,17 @@ public class SelectAmountLimit extends BaseMatrixTestCase {
 
     private final int AMOUNT_DATA = 100;
     private final int thread_size = 5;
-    long              pk          = 1l;
-    int               id          = 1;
-    int               i           = 0;
+    long pk = 1l;
+    int id = 1;
+    int i = 0;
+
+    public SelectAmountLimit(String normaltblTableName) {
+        BaseTestCase.normaltblTableName = normaltblTableName;
+    }
 
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectAmountLimit(String normaltblTableName){
-        BaseTestCase.normaltblTableName = normaltblTableName;
     }
 
     @Before
@@ -76,7 +75,7 @@ public class SelectAmountLimit extends BaseMatrixTestCase {
         int start = 5;
         int limit = 1;
         String sql = "select * from " + normaltblTableName + " as nor1 ,(select pk from " + normaltblTableName
-                     + " limit ?,?) as nor2 where nor1.pk=nor2.pk";
+                + " limit ?,?) as nor2 where nor1.pk=nor2.pk";
         List<Object> param = new ArrayList<Object>();
         param.add(start);
         param.add(limit);
@@ -88,7 +87,7 @@ public class SelectAmountLimit extends BaseMatrixTestCase {
 
         private final CountDownLatch latch;
 
-        public InsertTask(CountDownLatch latch){
+        public InsertTask(CountDownLatch latch) {
             this.latch = latch;
         }
 

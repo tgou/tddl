@@ -25,6 +25,38 @@ import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
  */
 public class Identifier extends PrimaryExpression {
 
+    /**
+     * trim not happen because parent in given level is not exist
+     */
+    public static final int PARENT_ABSENT = 0;
+    /**
+     * trim happen
+     */
+    public static final int PARENT_TRIMED = 1;
+    /**
+     * trim not happen because parent in given not equals to given name
+     */
+    public static final int PARENT_IGNORED = 2;
+    /**
+     * e.g. "id1", "`id1`"
+     */
+    protected final String idText;
+    protected final String idTextUpUnescape;
+    /**
+     * null if no parent
+     */
+    protected Identifier parent;
+
+    public Identifier(Identifier parent, String idText) {
+        this(parent, idText, idText.toUpperCase());
+    }
+
+    public Identifier(Identifier parent, String idText, String idTextUp) {
+        this.parent = parent;
+        this.idText = idText;
+        this.idTextUpUnescape = unescapeName(idTextUp);
+    }
+
     public static String unescapeName(String name) {
         return unescapeName(name, false);
     }
@@ -57,20 +89,10 @@ public class Identifier extends PrimaryExpression {
         return sb.toString();
     }
 
-    /** null if no parent */
-    protected Identifier   parent;
-    /** e.g. "id1", "`id1`" */
-    protected final String idText;
-    protected final String idTextUpUnescape;
-
-    public Identifier(Identifier parent, String idText){
-        this(parent, idText, idText.toUpperCase());
-    }
-
-    public Identifier(Identifier parent, String idText, String idTextUp){
-        this.parent = parent;
-        this.idText = idText;
-        this.idTextUpUnescape = unescapeName(idTextUp);
+    private static boolean objEquals(Object obj, Object obj2) {
+        if (obj == obj2) return true;
+        if (obj == null) return obj2 == null;
+        return obj.equals(obj2);
     }
 
     public String getLevelUnescapeUpName(int level) {
@@ -84,16 +106,9 @@ public class Identifier extends PrimaryExpression {
         return null;
     }
 
-    /** trim not happen because parent in given level is not exist */
-    public static final int PARENT_ABSENT  = 0;
-    /** trim happen */
-    public static final int PARENT_TRIMED  = 1;
-    /** trim not happen because parent in given not equals to given name */
-    public static final int PARENT_IGNORED = 2;
-
     /**
-     * @param level At most how many levels left after trim, must be a positive integer. e.g. level = 2 for
-     * "schema1.tb1.c1", "tb1.c1" is left
+     * @param level      At most how many levels left after trim, must be a positive integer. e.g. level = 2 for
+     *                   "schema1.tb1.c1", "tb1.c1" is left
      * @param trimSchema upper-case. Assumed that top trimmed parent is schema, if that equals given schema, do not trim
      * @return {@link #PARENT_ABSENT} or {@link #PARENT_TRIMED}or {@link #PARENT_IGNORED}
      */
@@ -116,12 +131,12 @@ public class Identifier extends PrimaryExpression {
         }
     }
 
-    public void setParent(Identifier parent) {
-        this.parent = parent;
-    }
-
     public Identifier getParent() {
         return parent;
+    }
+
+    public void setParent(Identifier parent) {
+        this.parent = parent;
     }
 
     public String getIdText() {
@@ -166,12 +181,6 @@ public class Identifier extends PrimaryExpression {
             return objEquals(this.parent, that.parent) && objEquals(this.idText, that.idText);
         }
         return false;
-    }
-
-    private static boolean objEquals(Object obj, Object obj2) {
-        if (obj == obj2) return true;
-        if (obj == null) return obj2 == null;
-        return obj.equals(obj2);
     }
 
     @Override

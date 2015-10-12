@@ -1,15 +1,15 @@
 package com.taobao.tddl.common.utils;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * TDDL专用的字符处理便捷类，集成了apache common StringUtils类，方便字符串处理
- * 
+ *
  * @author linxuan
  * @author jianghang 2013-10-24 下午4:02:24
  * @since 5.0.0
@@ -18,7 +18,7 @@ public class TStringUtil extends StringUtils {
 
     /**
      * 获得第一个start，end之间的字串， 不包括start，end本身。返回值已做了trim
-     * 
+     * <p/>
      * <pre>
      * TStringUtil.getBetween("wx[ b ]yz", "[", "]") = "b"
      * TStringUtil.getBetween(null, *, *)          = null
@@ -50,11 +50,11 @@ public class TStringUtil extends StringUtils {
 
     /**
      * 去除第一个start,end之间的字符串，包括start,end本身
-     * 
+     * <p/>
      * <pre>
      * TStringUtil.removeBetween(&quot;abc[xxx]bc&quot;, &quot;[&quot;, &quot;]&quot;) = &quot;abc bc&quot;
      * </pre>
-     * 
+     *
      * @param sql
      * @param start
      * @param end
@@ -86,14 +86,14 @@ public class TStringUtil extends StringUtils {
 
     /**
      * 只做一次切分
-     * 
+     * <p/>
      * <pre>
      * TStringUtil.twoPartSplit("abc:bc:bc", ":") = ["abc","bc:bc"]
      * TStringUtil.twoPartSplit(null, *)          = [null]
      * TStringUtil.twoPartSplit("abc:bc", null)   = ["abc:bc"]
      * TStringUtil.twoPartSplit("abc:bc", ";")    = ["abc:bc:bc"]
      * </pre>
-     * 
+     *
      * @param str
      * @param splitor
      * @return
@@ -104,25 +104,25 @@ public class TStringUtil extends StringUtils {
             if (index != -1) {
                 String first = str.substring(0, index);
                 String sec = str.substring(index + splitor.length());
-                return new String[] { first, sec };
+                return new String[]{first, sec};
             } else {
-                return new String[] { str };
+                return new String[]{str};
             }
         } else {
-            return new String[] { str };
+            return new String[]{str};
         }
     }
 
     /**
      * 递归调用twoPartSplit进行切分
-     * 
+     * <p/>
      * <pre>
      * TStringUtil.twoPartSplit("abc:bc:bc", ":") = ["abc","bc","bc"]
      * TStringUtil.twoPartSplit(null, *)          = [null]
      * TStringUtil.twoPartSplit("abc:bc", null)   = ["abc:bc"]
      * TStringUtil.twoPartSplit("abc:bc", ";")    = ["abc:bc"]
      * </pre>
-     * 
+     *
      * @param str
      * @param splitor
      * @return
@@ -141,7 +141,7 @@ public class TStringUtil extends StringUtils {
 
     /**
      * 将所有/t/s/n等空白符全部替换为空格，并且去除多余空白
-     * 
+     * <p/>
      * <pre>
      * TStringUtil.fillTabWithSpace(&quot;abc   bc  &quot;) = &quot;abc bc &quot;
      * </pre>
@@ -183,8 +183,8 @@ public class TStringUtil extends StringUtils {
     /**
      * Determines whether or not the sting 'searchIn' contains the string
      * 'searchFor', disregarding case and leading whitespace
-     * 
-     * @param searchIn the string to search in
+     *
+     * @param searchIn  the string to search in
      * @param searchFor the string to search for
      * @return true if the string starts with 'searchFor' ignoring whitespace
      */
@@ -195,10 +195,10 @@ public class TStringUtil extends StringUtils {
     /**
      * Determines whether or not the sting 'searchIn' contains the string
      * 'searchFor', disregarding case and leading whitespace
-     * 
-     * @param searchIn the string to search in
+     *
+     * @param searchIn  the string to search in
      * @param searchFor the string to search for
-     * @param beginPos where to start searching
+     * @param beginPos  where to start searching
      * @return true if the string starts with 'searchFor' ignoring whitespace
      */
     public static boolean startsWithIgnoreCaseAndWs(String searchIn, String searchFor, int beginPos) {
@@ -221,9 +221,9 @@ public class TStringUtil extends StringUtils {
      * Determines whether or not the string 'searchIn' contains the string
      * 'searchFor', dis-regarding case starting at 'startAt' Shorthand for a
      * String.regionMatch(...)
-     * 
-     * @param searchIn the string to search in
-     * @param startAt the position to start at
+     *
+     * @param searchIn  the string to search in
+     * @param startAt   the position to start at
      * @param searchFor the string to search for
      * @return whether searchIn starts with searchFor, ignoring case
      */
@@ -233,16 +233,16 @@ public class TStringUtil extends StringUtils {
 
     /**
      * Returns the given string, with comments removed
-     * 
-     * @param src the source string
-     * @param stringOpens characters which delimit the "open" of a string
-     * @param stringCloses characters which delimit the "close" of a string, in
-     * counterpart order to <code>stringOpens</code>
-     * @param slashStarComments strip slash-star type "C" style comments
+     *
+     * @param src                the source string
+     * @param stringOpens        characters which delimit the "open" of a string
+     * @param stringCloses       characters which delimit the "close" of a string, in
+     *                           counterpart order to <code>stringOpens</code>
+     * @param slashStarComments  strip slash-star type "C" style comments
      * @param slashSlashComments strip slash-slash C++ style comments to
-     * end-of-line
-     * @param hashComments strip #-style comments to end-of-line
-     * @param dashDashComments strip "--" style comments to end-of-line
+     *                           end-of-line
+     * @param hashComments       strip #-style comments to end-of-line
+     * @param dashDashComments   strip "--" style comments to end-of-line
      * @return the input string with all comment-delimited data removed
      */
     public static String stripComments(String src, String stringOpens, String stringCloses, boolean slashStarComments,
@@ -278,13 +278,13 @@ public class TStringUtil extends StringUtils {
                     contextMarker = Character.MIN_VALUE;
                     markerTypeFound = -1;
                 } else if ((ind = stringOpens.indexOf(currentChar)) != -1 && !escaped
-                           && contextMarker == Character.MIN_VALUE) {
+                        && contextMarker == Character.MIN_VALUE) {
                     markerTypeFound = ind;
                     contextMarker = currentChar;
                 }
 
                 if (contextMarker == Character.MIN_VALUE && currentChar == '/'
-                    && (slashSlashComments || slashStarComments)) {
+                        && (slashSlashComments || slashStarComments)) {
                     currentChar = sourceReader.read();
                     if (currentChar == '*' && slashStarComments) {
                         int prevChar = 0;
@@ -345,7 +345,7 @@ public class TStringUtil extends StringUtils {
 
     /**
      * 去除第一个start,end之间的字符串，包括start,end本身
-     * 
+     *
      * @param sql
      * @param start
      * @param end
@@ -385,7 +385,7 @@ public class TStringUtil extends StringUtils {
 
     /**
      * 简单地检查是否是逻辑表与具体子表的关系。子表名满足父表名+"_数字";
-     * 
+     *
      * @param fatherTable
      * @param sonTable
      * @return

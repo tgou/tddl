@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.utils.range;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
 import com.taobao.tddl.optimizer.core.datatype.DataTypeUtil;
@@ -10,6 +7,9 @@ import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
 import com.taobao.tddl.optimizer.core.expression.IFilter;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author jianghang 2013-11-13 下午4:11:25
@@ -24,7 +24,7 @@ public abstract class AbstractRangeProcessor {
 
     /**
      * 构造Range对象
-     * 
+     *
      * @param f
      * @return
      */
@@ -62,7 +62,7 @@ public abstract class AbstractRangeProcessor {
 
     /**
      * 根据range结果，构造filter
-     * 
+     *
      * @param range
      * @param column
      * @return

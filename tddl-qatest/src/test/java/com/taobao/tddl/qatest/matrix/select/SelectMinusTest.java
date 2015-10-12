@@ -5,19 +5,18 @@ package com.taobao.tddl.qatest.matrix.select;
  *  通用产品测试
  */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
-import com.taobao.tddl.qatest.ExecuteTableName;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Comment for SelcetAmountLimit
@@ -27,13 +26,13 @@ import com.taobao.tddl.qatest.ExecuteTableName;
 @RunWith(EclipseParameterized.class)
 public class SelectMinusTest extends BaseMatrixTestCase {
 
+    public SelectMinusTest(String normaltblTableName) {
+        BaseTestCase.normaltblTableName = normaltblTableName;
+    }
+
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectMinusTest(String normaltblTableName){
-        BaseTestCase.normaltblTableName = normaltblTableName;
     }
 
     @Before
@@ -46,7 +45,7 @@ public class SelectMinusTest extends BaseMatrixTestCase {
         String sql = String.format("select -id as a from %s where name=?", normaltblTableName);
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columnParam = { "a" };
+        String[] columnParam = {"a"};
         selectContentSameAssert(sql, columnParam, param);
 
         sql = String.format("select pk-id as a from %s where name=?", normaltblTableName);
@@ -69,7 +68,7 @@ public class SelectMinusTest extends BaseMatrixTestCase {
         String sql = String.format("select * from %s where id<pk-?", normaltblTableName);
         List<Object> param = new ArrayList<Object>();
         param.add(50);
-        String[] columnParam = { "PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME" };
+        String[] columnParam = {"PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME"};
         selectContentSameAssert(sql, columnParam, param);
 
         // sql = String.format("select * from %s where pk<id--?",

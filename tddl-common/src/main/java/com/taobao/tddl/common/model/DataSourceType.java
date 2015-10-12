@@ -5,12 +5,8 @@ public enum DataSourceType {
 
     private int i;
 
-    private DataSourceType(int i){
+    private DataSourceType(int i) {
         this.i = i;
-    }
-
-    public int value() {
-        return this.i;
     }
 
     public static DataSourceType valueOf(int i) {
@@ -20,5 +16,9 @@ public enum DataSourceType {
             }
         }
         throw new IllegalArgumentException("Invalid DataSouceType:" + i);
+    }
+
+    public int value() {
+        return this.i;
     }
 }

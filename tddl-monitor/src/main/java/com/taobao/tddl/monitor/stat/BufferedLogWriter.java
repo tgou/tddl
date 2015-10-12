@@ -1,5 +1,8 @@
 package com.taobao.tddl.monitor.stat;
 
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,45 +12,43 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
-
 /**
  * 带内存汇总功能的日志输出工具。解决高 TPS 场景统计日志量太大的问题。 <br />
  * 工具的功能是针对 Key 相同的统计记录, 汇总计算出 sum/min/max, 再定时刷出到日志。 <br />
  * 目前遗留的问题是 BufferedLogWriter 在 flushAll 丢弃缓存的日志对象, 因为这些对象生存期长已经进入 Old Gen,
  * 长时间运行会造成 Old Gen 爆掉触发 Full GC. <br />
  * 使用方法是：
- * 
+ * <p/>
  * <pre>
  * BufferStatLogWriter.write(
- *     new Object[] { key1, key2, key3, ... },  // 统计的目标 
+ *     new Object[] { key1, key2, key3, ... },  // 统计的目标
  *     count, value);                           // 统计值
- * 
+ *
  * BufferStatLogWriter.write(
- *     new Object[] { key1, key2, key3, ... },  // 统计的目标 
+ *     new Object[] { key1, key2, key3, ... },  // 统计的目标
  *     new Object[] { obj1, obj2, obj3, ... },  // 附加的对象
  *     count, value);                           // 统计值
  * </pre>
- * 
+ *
  * @author changyuan.lh
  */
 public class BufferedLogWriter extends AbstractStatLogWriter {
 
-    protected static final Logger                            logger        = LoggerFactory.getLogger(BufferedLogWriter.class);
-    public volatile int                                      flushInterval = 300;                                             // 单位秒,默认5分钟全量刷出一次
-    protected volatile int                                   minKeySize    = 1024;
-    public volatile int                                      maxKeySize    = 65536;
-
+    protected static final Logger logger = LoggerFactory.getLogger(BufferedLogWriter.class);
+    protected final StatLogWriter nestLog;
+    protected final Lock flushLock = new ReentrantLock();
+    public volatile int flushInterval = 300;                                             // 单位秒,默认5分钟全量刷出一次
+    public volatile int maxKeySize = 65536;
+    protected volatile int minKeySize = 1024;
     protected volatile ConcurrentHashMap<LogKey, LogCounter> map;
+    protected volatile TimerTask flushTask = null;
+    protected volatile boolean flushing = false;
 
-    protected final StatLogWriter                            nestLog;
-
-    public BufferedLogWriter(int flushInterval, int minKeySize, int maxKeySize, StatLogWriter nestLog){
+    public BufferedLogWriter(int flushInterval, int minKeySize, int maxKeySize, StatLogWriter nestLog) {
         this.map = new ConcurrentHashMap<LogKey, LogCounter>( // NL
-        minKeySize,
-            0.75f,
-            32);
+                minKeySize,
+                0.75f,
+                32);
         this.flushInterval = flushInterval;
         this.minKeySize = minKeySize;
         this.maxKeySize = maxKeySize;
@@ -55,40 +56,44 @@ public class BufferedLogWriter extends AbstractStatLogWriter {
         schdeuleFlush();
     }
 
-    public BufferedLogWriter(int minKeySize, int maxKeySize, StatLogWriter nestLog){
+    public BufferedLogWriter(int minKeySize, int maxKeySize, StatLogWriter nestLog) {
         this.map = new ConcurrentHashMap<LogKey, LogCounter>( // NL
-        minKeySize,
-            0.75f,
-            32);
+                minKeySize,
+                0.75f,
+                32);
         this.minKeySize = minKeySize;
         this.maxKeySize = maxKeySize;
         this.nestLog = nestLog;
         schdeuleFlush();
     }
 
-    public BufferedLogWriter(StatLogWriter nestLog){
+    public BufferedLogWriter(StatLogWriter nestLog) {
         this.map = new ConcurrentHashMap<LogKey, LogCounter>( // NL
-        minKeySize,
-            0.75f,
-            32);
+                minKeySize,
+                0.75f,
+                32);
         this.nestLog = nestLog;
         schdeuleFlush();
-    }
-
-    public void setMinKeySize(int minKeySize) {
-        this.minKeySize = minKeySize;
     }
 
     public int getMinKeySize() {
         return minKeySize;
     }
 
-    public void setMaxKeySize(int maxKeySize) {
-        this.maxKeySize = maxKeySize;
+    public void setMinKeySize(int minKeySize) {
+        this.minKeySize = minKeySize;
     }
 
     public int getMaxKeySize() {
         return maxKeySize;
+    }
+
+    public void setMaxKeySize(int maxKeySize) {
+        this.maxKeySize = maxKeySize;
+    }
+
+    public int getFlushInterval() {
+        return flushInterval;
     }
 
     public void setFlushInterval(int flushInterval) {
@@ -96,10 +101,6 @@ public class BufferedLogWriter extends AbstractStatLogWriter {
             this.flushInterval = flushInterval;
             schdeuleFlush();
         }
-    }
-
-    public int getFlushInterval() {
-        return flushInterval;
     }
 
     /**
@@ -130,12 +131,6 @@ public class BufferedLogWriter extends AbstractStatLogWriter {
             flush(false);
         }
     }
-
-    protected volatile TimerTask flushTask = null;
-
-    protected final Lock         flushLock = new ReentrantLock();
-
-    protected volatile boolean   flushing  = false;
 
     public boolean flush(final boolean flushAll) {
         if (!flushing && flushLock.tryLock()) {
@@ -201,9 +196,9 @@ public class BufferedLogWriter extends AbstractStatLogWriter {
         final int initKeySize = Math.max(minKeySize, (int) (map.size() / 0.75f));
         Map<LogKey, LogCounter> map = this.map;
         this.map = new ConcurrentHashMap<LogKey, LogCounter>( // NL
-        initKeySize,
-            0.75f,
-            32);
+                initKeySize,
+                0.75f,
+                32);
         // 等待正在添加记录的线程执行完毕
         LockSupport.parkNanos(5000);
         // XXX: 输出的日志按 Key 进行排序 -- 先取消
@@ -211,7 +206,7 @@ public class BufferedLogWriter extends AbstractStatLogWriter {
         int count = flushLog(map);
         if (count > 0 && logger.isDebugEnabled()) {
             logger.debug("flushAll: " + map.size() + " logs in " + (System.currentTimeMillis() - flushMillis)
-                         + " milliseconds.");
+                    + " milliseconds.");
         }
     }
 
@@ -261,7 +256,7 @@ public class BufferedLogWriter extends AbstractStatLogWriter {
         // flushLog(flushLogs);
         if (count > 0 && logger.isDebugEnabled()) {
             logger.debug("flushLRU: " + count + " logs in " + (System.currentTimeMillis() - flushMillis)
-                         + " milliseconds.");
+                    + " milliseconds.");
         }
     }
 }

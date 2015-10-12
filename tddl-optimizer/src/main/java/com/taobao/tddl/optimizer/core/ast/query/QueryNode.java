@@ -1,11 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast.query;
 
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendField;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendln;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.printFilterString;
-
-import java.util.List;
-
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
@@ -18,6 +12,10 @@ import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
 
+import java.util.List;
+
+import static com.taobao.tddl.optimizer.utils.OptimizerToString.*;
+
 /**
  * @author Dreamond 对于一个单个逻辑表的query，处理node.
  * @author whisper
@@ -26,11 +24,11 @@ public class QueryNode extends QueryTreeNode {
 
     private QueryNodeBuilder builder;
 
-    public QueryNode(QueryTreeNode child){
+    public QueryNode(QueryTreeNode child) {
         this(child, null);
     }
 
-    public QueryNode(QueryTreeNode child, IFilter filter){
+    public QueryNode(QueryTreeNode child, IFilter filter) {
         this.builder = new QueryNodeBuilder(this);
         this.whereFilter = filter;
         this.setChild(child);
@@ -146,7 +144,7 @@ public class QueryNode extends QueryTreeNode {
         appendField(sb, "having", printFilterString(this.getHavingFilter(), inden + 2), tabContent);
 
         if (!(this.getLimitFrom() != null && this.getLimitFrom().equals(0L) && this.getLimitTo() != null && this.getLimitTo()
-            .equals(0L))) {
+                .equals(0L))) {
             appendField(sb, "limitFrom", this.getLimitFrom(), tabContent);
             appendField(sb, "limitTo", this.getLimitTo(), tabContent);
         }

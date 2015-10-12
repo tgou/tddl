@@ -1,25 +1,25 @@
 package com.taobao.tddl.rule.virtualnode;
 
+import com.google.common.collect.Maps;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.google.common.collect.Maps;
-
 /**
  * 构造group的一致性hash的slot
- * 
+ *
  * @author <a href="junyu@taobao.com">junyu</a>
  * @version 1.0
- * @since 1.6
  * @date 2011-6-2 03:12:39
+ * @since 1.6
  */
 public class DBTableMap extends WrappedLogic implements VirtualNodeMap {
 
-    private Map<String/* slot number */, String/* group_0 */> dbContext  = Maps.newConcurrentMap();
-    private Map<String, String>                               dbTableMap = Maps.newHashMap();
-    private String                                            logicTable;
+    private Map<String/* slot number */, String/* group_0 */> dbContext = Maps.newConcurrentMap();
+    private Map<String, String> dbTableMap = Maps.newHashMap();
+    private String logicTable;
 
-    private Map<String/* group */, PartitionFunction>         parFuncMap;
+    private Map<String/* group */, PartitionFunction> parFuncMap;
 
     public void init() {
         this.initDbTableMap(this.dbTableMap);

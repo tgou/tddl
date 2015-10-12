@@ -11,7 +11,7 @@ import com.taobao.tddl.optimizer.exceptions.FunctionException;
  */
 public class Min extends AggregateFunction {
 
-    public Min(){
+    public Min() {
     }
 
     @Override

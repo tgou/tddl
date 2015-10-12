@@ -1,5 +1,13 @@
 package com.taobao.tddl.rule.utils;
 
+import com.taobao.tddl.common.utils.TStringUtil;
+import com.taobao.tddl.rule.exceptions.TddlRuleException;
+import com.taobao.tddl.rule.model.sqljep.Comparative;
+import com.taobao.tddl.rule.model.sqljep.ComparativeAND;
+import com.taobao.tddl.rule.model.sqljep.ComparativeBaseList;
+import com.taobao.tddl.rule.model.sqljep.ComparativeOR;
+import org.apache.commons.lang.time.DateFormatUtils;
+
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -8,25 +16,16 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang.time.DateFormatUtils;
-
-import com.taobao.tddl.common.utils.TStringUtil;
-import com.taobao.tddl.rule.exceptions.TddlRuleException;
-import com.taobao.tddl.rule.model.sqljep.Comparative;
-import com.taobao.tddl.rule.model.sqljep.ComparativeAND;
-import com.taobao.tddl.rule.model.sqljep.ComparativeBaseList;
-import com.taobao.tddl.rule.model.sqljep.ComparativeOR;
-
 /**
  * 提供一种机制，允许业务自定义condition，通过该解析类转化为Rule锁需要的{@linkplain Comparative}对象
- * 
+ * <p/>
  * <pre>
  * 简单语法： KEY CMP VALUE [:TYPE]
  * 1. KEY： 类似字段名字，用户随意定义
  * 2. CMP： 链接符，比如< = > 等，具体可查看{@linkplain Comparative}
  * 3. VALUE: 对应的值，比如1
  * 4. TYPE: 描述VALUE的类型，可选型，如果不填默认为Long类型。支持: int/long/string/date，可以使用首字母做为缩写，比如i/l/s/d。
- * 
+ *
  * 几个例子：
  * 1. id = 1
  * 2. id = 1 : long
@@ -34,17 +33,17 @@ import com.taobao.tddl.rule.model.sqljep.ComparativeOR;
  * 4. gmt_create = 2011-11-11 : date
  * 5. id in (1,2,3,4) : long
  * </pre>
- * 
+ *
  * @author jianghang 2013-11-6 下午5:23:02
  * @since 5.0.0
  */
 public class ComparativeStringAnalyser {
 
-    private static final String   TYPE_SPLIT   = ":";
-    private static final String[] DATE_FORMATS = new String[] { "yyyy-MM-dd", "HH:mm:ss", "yyyy-MM-dd HH:mm:ss",
+    private static final String TYPE_SPLIT = ":";
+    private static final String[] DATE_FORMATS = new String[]{"yyyy-MM-dd", "HH:mm:ss", "yyyy-MM-dd HH:mm:ss",
             "yyyy-MM-dd hh:mm:ss.S", "EEE MMM dd HH:mm:ss zzz yyyy", DateFormatUtils.ISO_DATETIME_FORMAT.getPattern(),
             DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.getPattern(),
-            DateFormatUtils.SMTP_DATETIME_FORMAT.getPattern(), };
+            DateFormatUtils.SMTP_DATETIME_FORMAT.getPattern(),};
 
     public static Map<String, Comparative> decodeComparativeString2Map(String conditionStr) {
         Map<String, Comparative> comparativeMap = new HashMap<String, Comparative>();
@@ -79,7 +78,7 @@ public class ComparativeStringAnalyser {
                             key = temp;
                         } else if (!temp.equals(key)) {
                             throw new RuntimeException("decodeComparative not support ComparativeBaseList value:"
-                                                       + value);
+                                    + value);
                         }
                     }
                     comparativeMap.put(key, comparativeBaseList); // 必须大写
@@ -98,7 +97,7 @@ public class ComparativeStringAnalyser {
 
     /**
      * 解析类似: =1:int or in(1,2,3):long
-     * 
+     *
      * @param compValue
      * @return
      */
@@ -148,7 +147,7 @@ public class ComparativeStringAnalyser {
 
     /**
      * 根据类型解析下数据
-     * 
+     *
      * @param type
      * @param compEnum
      * @param value
@@ -157,7 +156,7 @@ public class ComparativeStringAnalyser {
     private static Comparative decodeComparative(String type, int compEnum, String value) {
         if (value == null) {
             throw new RuntimeException("decodeComparative Error notSupport Comparative valueType value: " + value
-                                       + TYPE_SPLIT + type);
+                    + TYPE_SPLIT + type);
         }
 
         if (type == null) {
@@ -186,7 +185,7 @@ public class ComparativeStringAnalyser {
             comparative = new Comparative(compEnum, date);
         } else {
             throw new TddlRuleException("decodeComparative Error notSupport Comparative valueType value: " + value
-                                        + TYPE_SPLIT + type);
+                    + TYPE_SPLIT + type);
         }
 
         return comparative;

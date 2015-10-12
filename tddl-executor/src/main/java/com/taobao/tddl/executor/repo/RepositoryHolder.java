@@ -1,21 +1,21 @@
 package com.taobao.tddl.executor.repo;
 
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.utils.extension.ExtensionLoader;
 import com.taobao.tddl.executor.spi.IRepository;
 import com.taobao.tddl.executor.spi.IRepositoryFactory;
 
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 public class RepositoryHolder {
 
     public static final MessageFormat repoNotFoundError = new MessageFormat("repository is not loaded, name is: {0}");
-    private Map<String, IRepository>  repository        = new HashMap<String, IRepository>();
+    private Map<String, IRepository> repository = new HashMap<String, IRepository>();
 
     public boolean containsKey(Object repoName) {
         return repository.containsKey(repoName);

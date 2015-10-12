@@ -1,9 +1,8 @@
 package com.taobao.tddl.common.extension;
 
+import com.taobao.tddl.common.utils.extension.ExtensionLoader;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.taobao.tddl.common.utils.extension.ExtensionLoader;
 
 public class ExtensionLoaderTest {
 

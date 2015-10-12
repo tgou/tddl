@@ -1,14 +1,7 @@
 package com.taobao.tddl.group.dbselector;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import javax.sql.DataSource;
-
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.group.config.GroupConfigManager;
 import com.taobao.tddl.group.config.GroupExtraConfig;
 import com.taobao.tddl.group.exception.NoMoreDataSourceException;
@@ -16,13 +9,14 @@ import com.taobao.tddl.group.jdbc.DataSourceWrapper;
 import com.taobao.tddl.group.utils.WeightRandom;
 import com.taobao.tddl.monitor.utils.NagiosUtils;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * 对等数据库管理器 可以是读对等：如多个读库，每个库的数据完全相同。对等读取 可以是写对等：如日志库，每个库数据不同，一条数据写入哪个库都可以。对等写入
  * 支持动态推送权重，动态加减库
- * 
+ *
  * @author linxuan
  * @author yangzhu
  */
@@ -31,12 +25,12 @@ import com.taobao.tddl.common.utils.logger.LoggerFactory;
 // 所以原有的与"动态改变"相关的代码在新的EquityDbManager实现中已全部删除
 public class EquityDbManager extends AbstractDBSelector {
 
-    private static final Logger                       logger = LoggerFactory.getLogger(EquityDbManager.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(EquityDbManager.class);
+    private final Random random = new Random();
     private Map<String /* dsKey */, DataSourceHolder> dataSourceMap;
-    private WeightRandom                              weightRandom;
+    private WeightRandom weightRandom;
 
-    public EquityDbManager(Map<String, DataSourceWrapper> dataSourceWrapperMap, Map<String, Integer> weightMap){
+    public EquityDbManager(Map<String, DataSourceWrapper> dataSourceWrapperMap, Map<String, Integer> weightMap) {
         this.dataSourceMap = new HashMap<String, DataSourceHolder>(dataSourceWrapperMap.size());
         for (Map.Entry<String, DataSourceWrapper> e : dataSourceWrapperMap.entrySet()) {
             this.dataSourceMap.put(e.getKey(), new DataSourceHolder(e.getValue()));
@@ -45,7 +39,7 @@ public class EquityDbManager extends AbstractDBSelector {
     }
 
     public EquityDbManager(Map<String, DataSourceWrapper> dataSourceWrapperMap, Map<String, Integer> weightMap,
-                           GroupExtraConfig groupExtraConfig){
+                           GroupExtraConfig groupExtraConfig) {
         super.groupExtraConfig = groupExtraConfig;
         this.dataSourceMap = new HashMap<String, DataSourceHolder>(dataSourceWrapperMap.size());
         for (Map.Entry<String, DataSourceWrapper> e : dataSourceWrapperMap.entrySet()) {
@@ -75,7 +69,7 @@ public class EquityDbManager extends AbstractDBSelector {
 
     /**
      * 返回指定dsKey对应的数据源。若对应数据源的当前权重为0，则返回null
-     * 
+     *
      * @param dsKey 内部和每一个物理DataSource对应的key, 在初始化dbSelector时指定
      * @return 返回dsKey对应的数据源
      */
@@ -104,9 +98,9 @@ public class EquityDbManager extends AbstractDBSelector {
     /**
      * 在所管理的数据库上重试执行一个回调操作。失败了根据权重选下一个库重试 以根据权重选择到的DataSource，和用户传入的自用参数args，
      * 重试调用DataSourceTryer的tryOnDataSource方法
-     * 
+     *
      * @param failedDataSources 已知的失败DS及其异常
-     * @param args 透传到DataSourceTryer的tryOnDataSource方法中
+     * @param args              透传到DataSourceTryer的tryOnDataSource方法中
      * @return null表示执行成功。否则表示重试次内执行失败，返回SQLException列表
      */
     protected <T> T tryExecuteInternal(Map<DataSource, SQLException> failedDataSources, DataSourceTryer<T> tryer,
@@ -134,7 +128,7 @@ public class EquityDbManager extends AbstractDBSelector {
             if (name == null) {
                 // 为了扩展
                 exceptions.add(new NoMoreDataSourceException("tryTime:" + i + ", excludeKeys:" + excludeKeys
-                                                             + ", weightConfig:" + wr.getWeightConfig()));
+                        + ", weightConfig:" + wr.getWeightConfig()));
                 break;
             }
 
@@ -187,18 +181,16 @@ public class EquityDbManager extends AbstractDBSelector {
                     break;
                 }
                 logger.warn(new StringBuilder().append(i + 1)
-                    .append("th try locate on [")
-                    .append(name)
-                    .append("] failed:")
-                    .append(e.getMessage())
-                    .toString()); // 这里不打异常栈了,全部重试失败才由调用者打
+                        .append("th try locate on [")
+                        .append(name)
+                        .append("] failed:")
+                        .append(e.getMessage())
+                        .toString()); // 这里不打异常栈了,全部重试失败才由调用者打
                 excludeKeys.add(name);
             }
         }
         return tryer.onSQLException(exceptions, exceptionSorter, args);
     }
-
-    private final Random random = new Random();
 
     /**
      * <pre>
@@ -208,7 +200,7 @@ public class EquityDbManager extends AbstractDBSelector {
      * 例如权重串= db0:rwi0i2, db1:ri1, db2:ri1, db3:ri2
      * a. 用户指定dataSourceIndex=0，路由到db0；（只有db0有i0）
      * b. 用户指定dataSourceIndex=1，随机路由到db1和db2；（db1和db2都有i1）
-     * c. 用户指定dataSourceIndex=2，随机路由到db0和db3；（db0和db3都有i2） 
+     * c. 用户指定dataSourceIndex=2，随机路由到db0和db3；（db0和db3都有i2）
      * d. 如果没有配置i，例如db0:rw, db1:r;指定dataSourceIndex=1则路由到db1
      * </pre>
      */

@@ -5,43 +5,43 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 将时间片分为多个槽，每个槽一个计数器。游标按时间循环遍历每个槽。游标移动时才清零并且只清零当前的槽； 因为采用mod计算(cursor =
  * currentTime % timeslice/aSlotTime)，游标到头会自动折回来，事实上是一个环
- * 
+ * <p/>
  * <pre>
  *                     cursor
- *                       | 
+ *                       |
  * +---------------------+-------------------------+
  * |   |   |   |   |   | C |   |   |   |   |   |   |
  * +-----------------------------------------------+
  * |                                               |
  *  \-----------------timeslice-------------------/
- * 
+ *
  * </pre>
- * 
+ *
  * @author linxuan
  */
 public class TimesliceFlowControl {
 
-    private final static int      MAX_SLOT         = 20;                        // 最多20片
-    private final static int      MIN_SLOT_TIME    = 500;                       // slot时间最少500毫秒
+    private final static int MAX_SLOT = 20;                        // 最多20片
+    private final static int MIN_SLOT_TIME = 500;                       // slot时间最少500毫秒
 
-    private final String          name;
+    private final String name;
     private final AtomicInteger[] slots;                                        // 槽数组，最小的时间粒度数组
-    private final int             aSlotTimeMillis;                              // 一个槽的时间，最小的时间单位
-    private final int             timesliceMillis;                              // 总的时间窗口（时间片）大小
-    private final int             timesliceMaxIns;                              // 时间片内允许的最大访问次数(进入个数)
+    private final int aSlotTimeMillis;                              // 一个槽的时间，最小的时间单位
+    private final int timesliceMillis;                              // 总的时间窗口（时间片）大小
+    private final int timesliceMaxIns;                              // 时间片内允许的最大访问次数(进入个数)
 
-    private final AtomicInteger   total            = new AtomicInteger();       // 总的计数
-    private final AtomicInteger   totalReject      = new AtomicInteger();       // 总的拒绝/超限计数
-    private volatile int          cursor           = 0;                         // 游标
-    private volatile long         cursorTimeMillis = System.currentTimeMillis(); // 当前slot的开始时间
+    private final AtomicInteger total = new AtomicInteger();       // 总的计数
+    private final AtomicInteger totalReject = new AtomicInteger();       // 总的拒绝/超限计数
+    private volatile int cursor = 0;                         // 游标
+    private volatile long cursorTimeMillis = System.currentTimeMillis(); // 当前slot的开始时间
 
     /**
-     * @param name 流控的名称
+     * @param name           流控的名称
      * @param slotTimeMillis //一个槽的时间
-     * @param slotCount //槽的数目
-     * @param limit //时间窗口内最多允许执行的次数，设为0则不限制
+     * @param slotCount      //槽的数目
+     * @param limit          //时间窗口内最多允许执行的次数，设为0则不限制
      */
-    public TimesliceFlowControl(String name, int aSlotTimeMillis, int slotCount, int timesliceMaxIns){
+    public TimesliceFlowControl(String name, int aSlotTimeMillis, int slotCount, int timesliceMaxIns) {
         if (slotCount < 2) {
             throw new IllegalArgumentException("slot至少要有两个");
         }
@@ -58,12 +58,12 @@ public class TimesliceFlowControl {
 
     /**
      * 最小的时间单位取默认的500毫秒
-     * 
-     * @param name 流控的名称
+     *
+     * @param name            流控的名称
      * @param timesliceMillis 时间片; 传0表示使用默认值1分钟
-     * @param limit 时间片内最多允许执行多少次，设为0则不限制
+     * @param limit           时间片内最多允许执行多少次，设为0则不限制
      */
-    public TimesliceFlowControl(String name, int timesliceMillis, int timesliceMaxIns){
+    public TimesliceFlowControl(String name, int timesliceMillis, int timesliceMaxIns) {
         if (timesliceMillis == 0) {
             timesliceMillis = 60 * 1000; // 时间片默认1分钟
         }

@@ -7,11 +7,11 @@ import java.util.Map;
 
 public class MockResultSetMetaData implements ResultSetMetaData {
 
-    private String                                     tableName;
     public final Map<String/* 列名 */, Integer/* 列序号 */> columnName2Index;
     public final Map<Integer/* 列序号 */, String/* 列名 */> columnIndex2Name;
+    private String tableName;
 
-    public MockResultSetMetaData(Map<String, Integer> columns){
+    public MockResultSetMetaData(Map<String, Integer> columns) {
         this.columnName2Index = columns;
         this.columnIndex2Name = new HashMap<Integer, String>(columns.size());
         for (Map.Entry<String, Integer> e : columns.entrySet()) {

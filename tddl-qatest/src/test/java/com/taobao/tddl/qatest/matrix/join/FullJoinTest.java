@@ -1,18 +1,17 @@
 package com.taobao.tddl.qatest.matrix.join;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
-import com.taobao.tddl.qatest.ExecuteTableName;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Comment for FullJoin
@@ -23,15 +22,15 @@ import com.taobao.tddl.qatest.ExecuteTableName;
 @RunWith(EclipseParameterized.class)
 public class FullJoinTest extends BaseMatrixTestCase {
 
-    @Parameters(name = "{index}:table0={0},table1={1}")
-    public static List<String[]> prepare() {
-        return Arrays.asList(ExecuteTableName.normaltblStudentTable(dbType));
-    }
-
-    public FullJoinTest(String normaltblTableName, String studentTableName) throws Exception{
+    public FullJoinTest(String normaltblTableName, String studentTableName) throws Exception {
         BaseTestCase.normaltblTableName = normaltblTableName;
         BaseTestCase.studentTableName = studentTableName;
         prepareDate();
+    }
+
+    @Parameters(name = "{index}:table0={0},table1={1}")
+    public static List<String[]> prepare() {
+        return Arrays.asList(ExecuteTableName.normaltblStudentTable(dbType));
     }
 
     public void prepareDate() throws Exception {

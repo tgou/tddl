@@ -1,9 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
@@ -16,22 +12,26 @@ import com.taobao.tddl.optimizer.core.expression.bean.NullValue;
 import com.taobao.tddl.optimizer.utils.OptimizerToString;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * DML操作树
- * 
+ *
  * @since 5.0.0
  */
 public abstract class DMLNode<RT extends DMLNode> extends ASTNode<RT> {
 
-    protected static final Logger            logger            = LoggerFactory.getLogger(DMLNode.class);
-    protected List<ISelectable>              columns;
-    protected List<Object>                   values;
+    protected static final Logger logger = LoggerFactory.getLogger(DMLNode.class);
+    protected List<ISelectable> columns;
+    protected List<Object> values;
     // 直接依赖为tableNode，如果涉及多库操作，会是一个Merge下面挂多个DML
-    protected TableNode                      table             = null;
+    protected TableNode table = null;
     protected Map<Integer, ParameterContext> parameterSettings = null;
-    protected boolean                        needBuild         = true;
+    protected boolean needBuild = true;
 
-    public DMLNode(TableNode table){
+    public DMLNode(TableNode table) {
         this.table = table;
     }
 
@@ -49,23 +49,23 @@ public abstract class DMLNode<RT extends DMLNode> extends ASTNode<RT> {
         return this;
     }
 
+    public List<ISelectable> getColumns() {
+        return this.columns;
+    }
+
     public DMLNode setColumns(List<ISelectable> columns) {
         this.columns = columns;
         return this;
     }
 
-    public List<ISelectable> getColumns() {
-        return this.columns;
+    public List<Object> getValues() {
+        return this.values;
     }
 
     public DMLNode setValues(List<Object> values) {
         this.values = values;
         return this;
 
-    }
-
-    public List<Object> getValues() {
-        return this.values;
     }
 
     public TableMeta getTableMeta() {
@@ -88,20 +88,20 @@ public abstract class DMLNode<RT extends DMLNode> extends ASTNode<RT> {
         }
 
         if ((this.getColumns() == null || this.getColumns().isEmpty())
-            && (this.getValues() == null || this.getValues().isEmpty())) {
+                && (this.getValues() == null || this.getValues().isEmpty())) {
             return;
         }
 
         if (columns == null || columns.isEmpty()) { // 如果字段为空，默认为所有的字段数据的,比如insert所有字段
             columns = OptimizerUtils.columnMetaListToIColumnList(this.getTableMeta().getAllColumns(),
-                this.getTableMeta().getTableName());
+                    this.getTableMeta().getTableName());
         }
 
         if (columns.size() != values.size()) {
             if (!columns.isEmpty()) {
                 throw new IllegalArgumentException("The size of the columns and values is not matched."
-                                                   + " columns' size is " + columns.size() + ". values' size is "
-                                                   + values.size());
+                        + " columns' size is " + columns.size() + ". values' size is "
+                        + values.size());
             }
 
         }
@@ -118,7 +118,7 @@ public abstract class DMLNode<RT extends DMLNode> extends ASTNode<RT> {
 
             if (res == null) {
                 throw new IllegalArgumentException("column: " + s.getColumnName() + " is not existed in either "
-                                                   + table.getName() + " or select clause");
+                        + table.getName() + " or select clause");
             }
         }
 

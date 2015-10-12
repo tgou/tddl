@@ -1,15 +1,15 @@
 package com.taobao.tddl.repo.bdb.executor;
 
+import com.taobao.tddl.common.exception.TddlException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.taobao.tddl.common.exception.TddlException;
-
 /**
  * 读库选择器
- * 
+ *
  * @author Whisper
  */
 public class SlaveResourceSelector extends CommonResourceSelector {
@@ -17,11 +17,10 @@ public class SlaveResourceSelector extends CommonResourceSelector {
     // private static final Log logger =
     // LogFactory.getLog(SlaveResourceSelector.class);
 
-    private final Random               random = new Random();
-
     protected final ArrayList<Integer> rExecutorList;
+    private final Random random = new Random();
 
-    public SlaveResourceSelector(Integer executorSize, List<Integer> rWeight){
+    public SlaveResourceSelector(Integer executorSize, List<Integer> rWeight) {
         super(executorSize);
         this.rExecutorList = new ArrayList<Integer>();
         int rweightIndex = 0;

@@ -1,27 +1,27 @@
 package com.taobao.tddl.optimizer.core.datatype;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.model.BaseRowSet;
 import com.taobao.tddl.common.utils.convertor.Convertor;
 
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  * {@link Date}类型
- * 
+ *
  * @author jianghang 2014-1-21 下午5:20:32
  * @since 5.0.0
  */
 public class DateType extends AbstractDataType<java.sql.Date> {
 
-    private static final Date maxDate    = Date.valueOf("9999-12-31");
-    private static final Date minDate    = Date.valueOf("1900-01-01");
-    private Convertor         longToDate = null;
+    private static final Date maxDate = Date.valueOf("9999-12-31");
+    private static final Date minDate = Date.valueOf("1900-01-01");
+    private Convertor longToDate = null;
 
-    public DateType(){
+    public DateType() {
         longToDate = this.getConvertor(Long.class);
     }
 

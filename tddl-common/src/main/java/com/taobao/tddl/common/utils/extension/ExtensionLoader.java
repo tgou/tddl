@@ -1,40 +1,33 @@
 package com.taobao.tddl.common.utils.extension;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang.exception.ExceptionUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import java.util.*;
 
 /**
  * 包装{@linkplain ServiceLoader}，提供SPI的获取方式 <br/>
  * jdk自带的{@linkplain ServiceLoader}
  * 存在一些局限，无法为SPI扩展定义排序规则，如果classpath存在多个SPI配置时，加载无法确定，所以包装一下允许以后替换实现
- * 
+ *
+ * @author jianghang 2013-9-13 下午3:38:30
  * @see <a
  * href="http://java.sun.com/j2se/1.5.0/docs/guide/jar/jar.html#Service%20Provider">JDK5.0的自动发现机制实现</a>
- * @author jianghang 2013-9-13 下午3:38:30
  * @since 5.0.0
  */
 public class ExtensionLoader<S> {
 
-    private static final String      SERVICES_DIRECTORY = "META-INF/services/";
-    private static final String      TDDL_DIRECTORY     = "META-INF/tddl/";
-    private static Map<Class, Class> providers          = Maps.newConcurrentMap();
+    private static final String SERVICES_DIRECTORY = "META-INF/services/";
+    private static final String TDDL_DIRECTORY = "META-INF/tddl/";
+    private static Map<Class, Class> providers = Maps.newConcurrentMap();
 
     /**
      * 指定classloader加载server provider
-     * 
+     *
      * @param service
      * @param loader
      * @return
@@ -46,7 +39,7 @@ public class ExtensionLoader<S> {
 
     /**
      * 加载server provider
-     * 
+     *
      * @param service
      * @return
      * @throws ExtensionNotFoundException
@@ -57,7 +50,7 @@ public class ExtensionLoader<S> {
 
     /**
      * 加载server provider
-     * 
+     *
      * @param service
      * @return
      * @throws ExtensionNotFoundException
@@ -68,20 +61,20 @@ public class ExtensionLoader<S> {
 
     /**
      * 指定classloader加载server provider
-     * 
+     *
      * @param service
      * @param loader
      * @return
      * @throws ExtensionNotFoundException
      */
     public static <S> S load(Class<S> service, String activateName, ClassLoader loader)
-                                                                                       throws ExtensionNotFoundException {
+            throws ExtensionNotFoundException {
         return loadFile(service, activateName, loader);
     }
 
     /**
      * 获取所有的扩展类，按照{@linkplain Activate}定义的order顺序进行排序
-     * 
+     *
      * @return
      */
     public static <S> List<Class> getAllExtendsionClass(Class<S> service) {
@@ -90,7 +83,7 @@ public class ExtensionLoader<S> {
 
     /**
      * 获取所有的扩展类，按照{@linkplain Activate}定义的order顺序进行排序
-     * 
+     *
      * @return
      */
     public static <S> List<Class> getAllExtendsionClass(Class<S> service, ClassLoader loader) {
@@ -116,10 +109,10 @@ public class ExtensionLoader<S> {
             return service.cast(extension.newInstance());
         } catch (InstantiationException e) {
             throw new ExtensionNotFoundException("not found service provider for : " + service.getName()
-                                                 + " caused by " + ExceptionUtils.getFullStackTrace(e));
+                    + " caused by " + ExceptionUtils.getFullStackTrace(e));
         } catch (IllegalAccessException e) {
             throw new ExtensionNotFoundException("not found service provider for : " + service.getName()
-                                                 + " caused by " + ExceptionUtils.getFullStackTrace(e));
+                    + " caused by " + ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -130,7 +123,7 @@ public class ExtensionLoader<S> {
             loadFile(service, TDDL_DIRECTORY, loader, extensions);
         } catch (IOException e) {
             throw new ExtensionNotFoundException("not found service provider for : " + service.getName()
-                                                 + " caused by " + ExceptionUtils.getFullStackTrace(e));
+                    + " caused by " + ExceptionUtils.getFullStackTrace(e));
         }
 
         if (extensions.isEmpty()) {
@@ -169,7 +162,7 @@ public class ExtensionLoader<S> {
             }
 
             throw new ExtensionNotFoundException("not found service provider for : " + service.getName()
-                                                 + " activateName : " + activateName);
+                    + " activateName : " + activateName);
         } else {
             return extensions;
         }
@@ -177,7 +170,7 @@ public class ExtensionLoader<S> {
     }
 
     private static void loadFile(Class<?> service, String dir, ClassLoader classLoader, List<Class> extensions)
-                                                                                                               throws IOException {
+            throws IOException {
         String fileName = dir + service.getName();
         Enumeration<java.net.URL> urls;
         if (classLoader != null) {

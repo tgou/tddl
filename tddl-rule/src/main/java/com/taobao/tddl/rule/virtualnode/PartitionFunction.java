@@ -2,14 +2,14 @@ package com.taobao.tddl.rule.virtualnode;
 
 /**
  * 虚拟节点的节点区间标识
- * 
+ * <p/>
  * <pre>
  * count 表示定义的分区数
  * length 表示对应每个分区的取值长度
  * 注意：其中count,length两个数组的长度必须是一致的。
  * 约束：1024 = sum((count[i]*length[i])). count和length两个向量的点积恒等于1024
  * </pre>
- * 
+ * <p/>
  * <pre>
  * 分区策略例子：希望将数据水平分成3份，前两份各占25%，第三份占50%。（故本例非均匀分区）
  *         // |<---------------------1024------------------------>|
@@ -19,7 +19,7 @@ package com.taobao.tddl.rule.virtualnode;
  *         int[] count = new int[] { 2, 1 };
  *         int[] length = new int[] { 256, 512 };
  * </pre>
- * 
+ *
  * @author jianghang 2013-11-4 上午11:43:07
  * @since 5.0.0
  */
@@ -28,11 +28,7 @@ public class PartitionFunction {
     private int[] count;
     private int[] length;
 
-    private int   firstValue = -1;
-
-    public void setFirstValue(int firstValue) {
-        this.firstValue = firstValue;
-    }
+    private int firstValue = -1;
 
     public void setPartitionCount(String partitionCount) {
         this.count = this.toIntArray(partitionCount);
@@ -52,6 +48,10 @@ public class PartitionFunction {
 
     public int getFirstValue() {
         return firstValue;
+    }
+
+    public void setFirstValue(int firstValue) {
+        this.firstValue = firstValue;
     }
 
     private int[] toIntArray(String string) {

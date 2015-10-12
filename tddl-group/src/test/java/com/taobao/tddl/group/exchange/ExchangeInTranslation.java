@@ -1,24 +1,22 @@
 package com.taobao.tddl.group.exchange;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
+import com.taobao.tddl.group.jdbc.TGroupDataSource;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.taobao.tddl.group.jdbc.TGroupDataSource;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class ExchangeInTranslation {
 
     private static JdbcTemplate jdbcTemplate = null;
 
-    private static DataSource   dataSource   = null;
+    private static DataSource dataSource = null;
 
     @BeforeClass
     public static void setBeforeClass() {

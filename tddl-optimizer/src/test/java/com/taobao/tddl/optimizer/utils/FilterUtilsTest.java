@@ -1,16 +1,15 @@
 package com.taobao.tddl.optimizer.utils;
 
-import java.util.Arrays;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
 import com.taobao.tddl.optimizer.core.expression.IFilter;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
 import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
 import com.taobao.tddl.optimizer.exceptions.EmptyResultFilterException;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.Arrays;
 
 /**
  * @author jianghang 2013-11-13 下午4:57:52
@@ -24,15 +23,15 @@ public class FilterUtilsTest {
         IFilter filter = and(or(and(filter("A"), filter("D")), filter("B")), filter("C"));
         // 结果： ((A and D) and C) or (B and C)，没有拉平
         Assert.assertEquals(or(newAnd(and(filter("A"), filter("D")), filter("C")), and(filter("B"), filter("C"))),
-            FilterUtils.toDNF(filter));
+                FilterUtils.toDNF(filter));
 
         // 结果： (A and D and C) or (B and C)， 拉平处理
         Assert.assertEquals(or(and(and(filter("A"), filter("D")), filter("C")), and(filter("B"), filter("C"))),
-            FilterUtils.toDNFAndFlat(filter));
+                FilterUtils.toDNFAndFlat(filter));
 
         Assert.assertEquals(Arrays.asList(Arrays.asList(filter("A"), filter("D"), filter("C")),
-            Arrays.asList(filter("B"), filter("C"))),
-            FilterUtils.toDNFNodesArray(FilterUtils.toDNF(filter)));
+                        Arrays.asList(filter("B"), filter("C"))),
+                FilterUtils.toDNFNodesArray(FilterUtils.toDNF(filter)));
     }
 
     @Test
@@ -111,8 +110,8 @@ public class FilterUtilsTest {
     private IFilter filter(Comparable column, Comparable value, OPERATION op) {
         IBooleanFilter booleanFilter = ASTNodeFactory.getInstance().createBooleanFilter();
         booleanFilter.setColumn(ASTNodeFactory.getInstance().createColumn().setColumnName((String) column))
-            .setValue(value)
-            .setOperation(op);
+                .setValue(value)
+                .setOperation(op);
         return booleanFilter;
     }
 

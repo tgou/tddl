@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.parse.cobar;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-
 import com.alibaba.cobar.parser.ast.stmt.SQLStatement;
 import com.alibaba.cobar.parser.recognizer.SQLParserDelegate;
 import com.google.common.cache.Cache;
@@ -13,21 +10,24 @@ import com.taobao.tddl.optimizer.exceptions.SqlParserException;
 import com.taobao.tddl.optimizer.parse.SqlAnalysisResult;
 import com.taobao.tddl.optimizer.parse.SqlParseManager;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+
 /**
  * 基于cobar解析器实现parse
  */
 public class CobarSqlParseManager extends AbstractLifecycle implements SqlParseManager {
 
-    private int                                cacheSize  = 1000;
-    private long                               expireTime = TddlConstants.DEFAULT_OPTIMIZER_EXPIRE_TIME;
-    private static Cache<String, SQLStatement> cache      = null;
+    private static Cache<String, SQLStatement> cache = null;
+    private int cacheSize = 1000;
+    private long expireTime = TddlConstants.DEFAULT_OPTIMIZER_EXPIRE_TIME;
 
     @Override
     protected void doInit() {
         cache = CacheBuilder.newBuilder()
-            .maximumSize(cacheSize)
-            .expireAfterWrite(expireTime, TimeUnit.MILLISECONDS)
-            .build();
+                .maximumSize(cacheSize)
+                .expireAfterWrite(expireTime, TimeUnit.MILLISECONDS)
+                .build();
     }
 
     @Override

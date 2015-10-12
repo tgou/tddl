@@ -11,7 +11,7 @@ import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 
 public class SortMergeJoinHandler extends QueryHandlerCommon {
 
-    public SortMergeJoinHandler(){
+    public SortMergeJoinHandler() {
         super();
     }
 
@@ -30,44 +30,44 @@ public class SortMergeJoinHandler extends QueryHandlerCommon {
         IRepository repo = executionContext.getCurrentRepository();
         // 查询左面节点。
         cursor_left = ExecutorContext.getContext()
-            .getTopologyExecutor()
-            .execByExecPlanNode(leftQuery, executionContext);
+                .getTopologyExecutor()
+                .execByExecPlanNode(leftQuery, executionContext);
         /*
          * 如果左边的join on 【columns】 里面的columns,和数据的自然排序相同，则可以直接使用。 否则，使用临时表。
          */
         left_match = matchIndex(getOrderBy(join.getLeftJoinOnColumns()), cursor_left.getOrderBy());
         if (left_match == NOT_MATCH) {
             cursor_left = repo.getCursorFactory().tempTableSortCursor(executionContext,
-                cursor_left,
-                getOrderBy(join.getLeftJoinOnColumns()),
-                true,
-                executor.getRequestID());
+                    cursor_left,
+                    getOrderBy(join.getLeftJoinOnColumns()),
+                    true,
+                    executor.getRequestID());
             left_match = MATCH;
         }
         /*
          * 同上
          */
         cursor_right = ExecutorContext.getContext()
-            .getTopologyExecutor()
-            .execByExecPlanNode(rightQuery, executionContext);
+                .getTopologyExecutor()
+                .execByExecPlanNode(rightQuery, executionContext);
         right_match = matchIndex(getOrderBy(join.getRightJoinOnColumns()), cursor_right.getOrderBy());
         if (right_match == NOT_MATCH) {
             // 这里是，排序不匹配，所以使用leftJoinOnColumns进行临时表构建。
             cursor_right = repo.getCursorFactory().tempTableSortCursor(executionContext,
-                cursor_right,
-                getOrderBy(join.getRightJoinOnColumns()),
-                true,
-                executor.getRequestID());
+                    cursor_right,
+                    getOrderBy(join.getRightJoinOnColumns()),
+                    true,
+                    executor.getRequestID());
 
             right_match = MATCH;
         }
         // 构造sortMerge Join的cursor
         cursor = repo.getCursorFactory().sortMergeJoinCursor(executionContext,
-            cursor_left,
-            cursor_right,
-            join.getLeftJoinOnColumns(),
-            join.getRightJoinOnColumns(),
-            join);
+                cursor_left,
+                cursor_right,
+                join.getLeftJoinOnColumns(),
+                join.getRightJoinOnColumns(),
+                join);
         return cursor;
     }
 

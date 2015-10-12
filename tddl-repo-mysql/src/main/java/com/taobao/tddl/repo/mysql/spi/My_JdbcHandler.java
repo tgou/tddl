@@ -1,18 +1,10 @@
 package com.taobao.tddl.repo.mysql.spi;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.jdbc.ParameterMethod;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.executor.common.ExecutionContext;
 import com.taobao.tddl.executor.cursor.ICursorMeta;
 import com.taobao.tddl.executor.cursor.ISchematicCursor;
@@ -31,38 +23,36 @@ import com.taobao.tddl.repo.mysql.common.ResultSetRemeberIfClosed;
 import com.taobao.tddl.repo.mysql.sqlconvertor.MysqlPlanVisitorImpl;
 import com.taobao.tddl.repo.mysql.sqlconvertor.SqlAndParam;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * jdbc 方法执行相关的数据封装. 每个需要执行的cursor都可以持有这个对象进行数据库操作。 ps .. fuxk java
  * ，没有多继承。。只能用组合。。你懂的。。 类不是线程安全的哦亲
- * 
+ *
  * @author whisper
  */
 public class My_JdbcHandler implements GeneralQueryHandler {
 
-    private static final Logger logger           = LoggerFactory.getLogger(My_JdbcHandler.class);
-    protected My_Transaction    myTransaction    = null;
-    protected Connection        connection       = null;
-    protected ResultSet         resultSet        = null;
-    protected PreparedStatement ps               = null;
-    protected ExecutionType     executionType    = null;
-    protected IRowSet           current          = null;
-    protected IRowSet           prev_kv          = null;
-    protected ICursorMeta       cursorMeta;
-    protected boolean           isStreaming      = false;
-    protected String            groupName        = null;
-    protected DataSource        ds               = null;
-    protected ExecutionContext  executionContext = null;
-    protected boolean           initPrev         = false;
+    private static final Logger logger = LoggerFactory.getLogger(My_JdbcHandler.class);
+    protected My_Transaction myTransaction = null;
+    protected Connection connection = null;
+    protected ResultSet resultSet = null;
+    protected PreparedStatement ps = null;
+    protected ExecutionType executionType = null;
+    protected IRowSet current = null;
+    protected IRowSet prev_kv = null;
+    protected ICursorMeta cursorMeta;
+    protected boolean isStreaming = false;
+    protected String groupName = null;
+    protected DataSource ds = null;
+    protected ExecutionContext executionContext = null;
+    protected boolean initPrev = false;
     protected IDataNodeExecutor plan;
 
-    public enum ExecutionType {
-        PUT, GET
-    }
-
-    public My_JdbcHandler(ExecutionContext executionContext){
+    public My_JdbcHandler(ExecutionContext executionContext) {
         this.executionContext = executionContext;
     }
 
@@ -124,12 +114,12 @@ public class My_JdbcHandler implements GeneralQueryHandler {
             }
 
             if (e.getMessage()
-                .contains("only select, insert, update, delete,replace,truncate,create,drop,load,merge sql is supported")) {
+                    .contains("only select, insert, update, delete,replace,truncate,create,drop,load,merge sql is supported")) {
                 // 返回一个空结果
                 ps = connection.prepareStatement("select 1");
                 this.resultSet = new ResultSetRemeberIfClosed(new ResultSetAutoCloseConnection(ps.executeQuery(),
-                    connection,
-                    ps));
+                        connection,
+                        ps));
             } else {
                 throw new TddlRuntimeException("sql generated is :\n" + sqlAndParam.toString(), e);
             }
@@ -138,7 +128,7 @@ public class My_JdbcHandler implements GeneralQueryHandler {
 
     @Override
     public void executeUpdate(ExecutionContext executionContext, IPut put, ITable table, IndexMeta meta)
-                                                                                                        throws SQLException {
+            throws SQLException {
         SqlAndParam sqlAndParam = new SqlAndParam();
         if (put.getSql() != null) {
             sqlAndParam.sql = put.getSql();
@@ -233,6 +223,10 @@ public class My_JdbcHandler implements GeneralQueryHandler {
 
     public DataSource getDs() {
         return ds;
+    }
+
+    public void setDs(DataSource ds) {
+        this.ds = ds;
     }
 
     @Override
@@ -402,10 +396,6 @@ public class My_JdbcHandler implements GeneralQueryHandler {
     public void cancel(boolean interruptedIfRunning) {
     }
 
-    public void setMyTransaction(My_Transaction myTransaction) {
-        this.myTransaction = myTransaction;
-    }
-
     @Override
     public boolean isCanceled() {
         return false;
@@ -415,16 +405,16 @@ public class My_JdbcHandler implements GeneralQueryHandler {
         return myTransaction;
     }
 
+    public void setMyTransaction(My_Transaction myTransaction) {
+        this.myTransaction = myTransaction;
+    }
+
     public String getGroupName() {
         return groupName;
     }
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
-    }
-
-    public void setDs(DataSource ds) {
-        this.ds = ds;
     }
 
     public Boolean getIsStreaming() {
@@ -439,12 +429,12 @@ public class My_JdbcHandler implements GeneralQueryHandler {
         return this.resultSet;
     }
 
-    public void setPlan(IDataNodeExecutor plan) {
-        this.plan = plan;
-    }
-
     public IDataNodeExecutor getPlan() {
         return this.plan;
+    }
+
+    public void setPlan(IDataNodeExecutor plan) {
+        this.plan = plan;
     }
 
     public ExecutionContext getExecutionContext() {
@@ -453,6 +443,10 @@ public class My_JdbcHandler implements GeneralQueryHandler {
 
     public void setExecutionContext(ExecutionContext executionContext) {
         this.executionContext = executionContext;
+    }
+
+    public enum ExecutionType {
+        PUT, GET
     }
 
 }

@@ -7,14 +7,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class MD5Maker {
 
-    private static MD5Maker      md5Maker = new MD5Maker();
-    private static char[]        digits   = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
-            'e', 'f'                     };
+    private static MD5Maker md5Maker = new MD5Maker();
+    private static char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
+            'e', 'f'};
     private static MessageDigest mHasher;
 
-    private ReentrantLock        opLock   = new ReentrantLock();
+    private ReentrantLock opLock = new ReentrantLock();
 
-    public MD5Maker(){
+    public MD5Maker() {
         try {
             mHasher = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
@@ -28,7 +28,7 @@ public class MD5Maker {
 
     /**
      * ��һ���ֽ�����ת��Ϊ�ɼ���ַ�
-     * 
+     *
      * @param bt
      * @return
      */
@@ -47,7 +47,7 @@ public class MD5Maker {
 
     /**
      * 获取字符窗的md5信息
-     * 
+     *
      * @param str
      * @return md5 byte[16]
      */

@@ -1,5 +1,16 @@
 package com.taobao.tddl.repo.bdb.spi;
 
+import com.sleepycat.je.*;
+import com.sleepycat.je.rep.ReplicaWriteException;
+import com.taobao.tddl.common.exception.NotSupportException;
+import com.taobao.tddl.common.exception.TddlException;
+import com.taobao.tddl.common.model.Group;
+import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
+import com.taobao.tddl.common.utils.ExceptionErrorCodeUtils;
+import com.taobao.tddl.executor.common.TransactionConfig;
+import com.taobao.tddl.executor.spi.*;
+import com.taobao.tddl.optimizer.config.table.TableMeta;
+
 import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,43 +20,27 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.sleepycat.je.Database;
-import com.sleepycat.je.DatabaseConfig;
-import com.sleepycat.je.Durability;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.rep.ReplicaWriteException;
-import com.taobao.tddl.common.exception.NotSupportException;
-import com.taobao.tddl.common.exception.TddlException;
-import com.taobao.tddl.common.model.Group;
-import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
-import com.taobao.tddl.common.utils.ExceptionErrorCodeUtils;
-import com.taobao.tddl.executor.common.TransactionConfig;
-import com.taobao.tddl.executor.spi.ICommandHandlerFactory;
-import com.taobao.tddl.executor.spi.ICursorFactory;
-import com.taobao.tddl.executor.spi.IGroupExecutor;
-import com.taobao.tddl.executor.spi.IRepository;
-import com.taobao.tddl.executor.spi.ITHLog;
-import com.taobao.tddl.executor.spi.ITable;
-import com.taobao.tddl.executor.spi.ITransaction;
-import com.taobao.tddl.optimizer.config.table.TableMeta;
-
 /**
  * @author jianxing <jianxing.qx@taobao.com>
  */
 public class JE_Repository extends AbstractLifecycle implements IRepository {
 
+    static AtomicLong currentID = new AtomicLong(0L);
     protected final AtomicReference<ITHLog> historyLog = new AtomicReference<ITHLog>();
-    protected ICommandHandlerFactory        cef        = null;
-    protected BDBConfig                     config;
-    protected Environment                   env;
-    protected Map<String, ITable>           tables     = new ConcurrentHashMap<String, ITable>();
-    protected ICursorFactory                cursorFactoryBDBImp;
-    protected Environment                   env_tmp;
-    protected Durability                    durability;
-    protected Random                        r          = new Random();
+    protected ICommandHandlerFactory cef = null;
+    protected BDBConfig config;
+    protected Environment env;
+    protected Map<String, ITable> tables = new ConcurrentHashMap<String, ITable>();
+    protected ICursorFactory cursorFactoryBDBImp;
+    protected Environment env_tmp;
+    protected Durability durability;
+    protected Random r = new Random();
 
-    public JE_Repository(){
+    public JE_Repository() {
+    }
+
+    public static long genRequestID() {
+        return currentID.addAndGet(1L);
     }
 
     public void commonConfig(EnvironmentConfig envConfig, BDBConfig config) {
@@ -56,7 +51,7 @@ public class JE_Repository extends AbstractLifecycle implements IRepository {
         envConfig.setConfigParam(EnvironmentConfig.EVICTOR_LRU_ONLY, "false");
         envConfig.setConfigParam(EnvironmentConfig.EVICTOR_FORCED_YIELD, "true");
         envConfig.setConfigParam(EnvironmentConfig.EVICTOR_CORE_THREADS, Runtime.getRuntime().availableProcessors()
-                                                                         + "");
+                + "");
         envConfig.setConfigParam(EnvironmentConfig.EVICTOR_MAX_THREADS, Runtime.getRuntime().availableProcessors() + "");
         envConfig.setConfigParam(EnvironmentConfig.CHECKPOINTER_BYTES_INTERVAL, 1024 * 1024 * 200 + "");
 
@@ -128,7 +123,7 @@ public class JE_Repository extends AbstractLifecycle implements IRepository {
         envConfig.setConfigParam(EnvironmentConfig.EVICTOR_LRU_ONLY, "false");
         envConfig.setConfigParam(EnvironmentConfig.EVICTOR_FORCED_YIELD, "true");
         envConfig.setConfigParam(EnvironmentConfig.EVICTOR_CORE_THREADS, Runtime.getRuntime().availableProcessors()
-                                                                         + "");
+                + "");
         envConfig.setConfigParam(EnvironmentConfig.EVICTOR_MAX_THREADS, Runtime.getRuntime().availableProcessors() + "");
         envConfig.setConfigParam(EnvironmentConfig.CHECKPOINTER_BYTES_INTERVAL, 1024 * 1024 * 200 + "");
         envConfig.setConfigParam(EnvironmentConfig.CLEANER_LAZY_MIGRATION, "true");
@@ -227,7 +222,7 @@ public class JE_Repository extends AbstractLifecycle implements IRepository {
             envConfig.setCachePercent(20);
             envConfig.setAllowCreate(true);
             File repo_dir = new File(System.getProperty("user.dir") + "/bdbtmp/" + System.currentTimeMillis()
-                                     + r.nextInt() + "requestID." + genRequestID() + "/");
+                    + r.nextInt() + "requestID." + genRequestID() + "/");
             if (!repo_dir.exists()) {
                 repo_dir.mkdirs();
             }
@@ -274,12 +269,6 @@ public class JE_Repository extends AbstractLifecycle implements IRepository {
 
     public ITable getTempTable(TableMeta meta) throws TddlException {
         return initTable(meta);
-    }
-
-    static AtomicLong currentID = new AtomicLong(0L);
-
-    public static long genRequestID() {
-        return currentID.addAndGet(1L);
     }
 
 }

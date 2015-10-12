@@ -1,5 +1,8 @@
 package com.taobao.tddl.optimizer.utils;
 
+import com.google.common.collect.Lists;
+import com.taobao.tddl.optimizer.exceptions.FunctionException;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -11,9 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import com.google.common.collect.Lists;
-import com.taobao.tddl.optimizer.exceptions.FunctionException;
 
 /**
  * @author jianghang 2013-11-8 下午7:55:16

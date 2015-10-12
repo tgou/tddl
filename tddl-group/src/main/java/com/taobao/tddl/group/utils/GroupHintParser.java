@@ -1,16 +1,15 @@
 package com.taobao.tddl.group.utils;
 
 import com.taobao.tddl.common.utils.TStringUtil;
-import com.taobao.tddl.group.config.GroupIndex;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import com.taobao.tddl.group.config.GroupIndex;
 
 /**
  * @author <a href="junyu@taobao.com">junyu</a>
  * @version 1.0
- * @since 1.6
  * @date 2010-12-24上午10:32:16
+ * @since 1.6
  */
 public class GroupHintParser {
 
@@ -29,7 +28,7 @@ public class GroupHintParser {
                 return new GroupIndex(index, retry);
             } else {
                 throw new IllegalArgumentException("the standard group hint is:'groupIndex:12[,failRetry:true]'"
-                                                   + ",current hint is:" + groupIndexHint);
+                        + ",current hint is:" + groupIndexHint);
             }
         } else {
             return null;
@@ -42,7 +41,7 @@ public class GroupHintParser {
             return Integer.valueOf(piece[1]);
         } else {
             throw new IllegalArgumentException("the standard group hint is:'groupIndex:12[,failRetry:true]'"
-                                               + ",current index hint is:" + indexPiece);
+                    + ",current index hint is:" + indexPiece);
         }
     }
 
@@ -52,7 +51,7 @@ public class GroupHintParser {
             return Boolean.valueOf(piece[1]);
         } else {
             throw new IllegalArgumentException("the standard group hint is:'groupIndex:12[,failRetry:true]'"
-                                               + ",current retry hint is:" + retryPiece);
+                    + ",current retry hint is:" + retryPiece);
         }
     }
 

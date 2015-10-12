@@ -1,11 +1,11 @@
 package com.taobao.tddl.repo.mysql.cursor;
 
-import java.util.List;
-
 import com.taobao.tddl.executor.cursor.Cursor;
 import com.taobao.tddl.executor.cursor.ICursorMeta;
 import com.taobao.tddl.executor.cursor.SchematicCursor;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
+
+import java.util.List;
 
 /**
  * @author mengshi.sunmengshi 2013-12-5 下午6:18:24
@@ -13,11 +13,11 @@ import com.taobao.tddl.optimizer.core.expression.IOrderBy;
  */
 public class SchematicMyCursor extends SchematicCursor {
 
-    public SchematicMyCursor(Cursor cursor, ICursorMeta meta){
+    public SchematicMyCursor(Cursor cursor, ICursorMeta meta) {
         super(cursor);
     }
 
-    public SchematicMyCursor(Cursor cursor, ICursorMeta meta, List<IOrderBy> orderBys){
+    public SchematicMyCursor(Cursor cursor, ICursorMeta meta, List<IOrderBy> orderBys) {
         super(cursor, meta, orderBys);
     }
 

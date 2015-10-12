@@ -1,30 +1,5 @@
 package com.taobao.tddl.matrix.jdbc;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.utils.GeneralUtil;
@@ -34,39 +9,42 @@ import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.sql.*;
+import java.sql.Date;
+import java.util.*;
+
 /**
  * @author mengshi.sunmengshi 2013-11-22 下午3:26:23
  * @since 5.0.0
  */
 public class TResultSet implements ResultSet {
 
-    /** Has this result set been closed? */
-    protected boolean             isClosed                   = false;
+    private final ResultCursor resultCursor;
+    private final Map columnToIndexCache = new HashMap();
+    /**
+     * Has this result set been closed?
+     */
+    protected boolean isClosed = false;
+    private IRowSet currentKVPair;
+    private IRowSet cacheRowSetToBuildMeta = null;
+    private TResultSetMetaData resultSetMetaData = null;
+    private boolean wasNull;
+    private boolean isLoigcalIndexEqualActualIndex;
+    private Map<Integer, Integer> logicalIndexToActualIndex = null;
+    private Map columnLabelToIndex;
+    private Map fullColumnNameToIndex;
+    private Map columnNameToIndex;
+    private boolean hasBuiltIndexMapping = false;
+    private boolean useColumnNamesInFindColumn = false;
 
-    private final ResultCursor    resultCursor;
-    private IRowSet               currentKVPair;
-    private IRowSet               cacheRowSetToBuildMeta     = null;
-    private TResultSetMetaData    resultSetMetaData          = null;
-    private boolean               wasNull;
-    private boolean               isLoigcalIndexEqualActualIndex;
-    private Map<Integer, Integer> logicalIndexToActualIndex  = null;
-
-    private Map                   columnLabelToIndex;
-
-    private Map                   fullColumnNameToIndex;
-
-    private Map                   columnNameToIndex;
-
-    private boolean               hasBuiltIndexMapping       = false;
-
-    private final Map             columnToIndexCache         = new HashMap();
-
-    private boolean               useColumnNamesInFindColumn = false;
-
-    public TResultSet(ResultCursor resultCursor){
+    public TResultSet(ResultCursor resultCursor) {
         this.resultCursor = resultCursor;
         if (this.resultCursor != null && this.resultCursor.getOriginalSelectColumns() != null
-            && !this.resultCursor.getOriginalSelectColumns().isEmpty()) {
+                && !this.resultCursor.getOriginalSelectColumns().isEmpty()) {
             this.resultSetMetaData = new TResultSetMetaData(ExecUtils.convertIColumnsToColumnMeta(this.resultCursor.getOriginalSelectColumns()));
         }
 
@@ -692,23 +670,23 @@ public class TResultSet implements ResultSet {
     }
 
     @Override
-    public void setFetchDirection(int direction) throws SQLException {
-        return;
-    }
-
-    @Override
     public int getFetchDirection() throws SQLException {
         return ResultSet.FETCH_FORWARD;
     }
 
     @Override
-    public void setFetchSize(int rows) throws SQLException {
+    public void setFetchDirection(int direction) throws SQLException {
         return;
     }
 
     @Override
     public int getFetchSize() throws SQLException {
         return 0;
+    }
+
+    @Override
+    public void setFetchSize(int rows) throws SQLException {
+        return;
     }
 
     @Override

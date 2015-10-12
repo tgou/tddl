@@ -1,9 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.common.DuplicateKVPair;
@@ -13,33 +9,37 @@ import com.taobao.tddl.executor.record.CloneableRecord;
 import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.executor.utils.ExecUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * n个cursor的归并排序，假设子cursor都是有序的
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-3 上午10:57:02
  * @since 5.0.0
  */
 public class MergeSortedCursors extends SortCursor {
 
-    private ValueMappingIRowSetConvertor valueMappingIRowSetConvertor;
     private final List<ISchematicCursor> cursors;
-
+    boolean allowDuplicated = false;
+    IRowSet current = null;
+    boolean inited = false;
+    IRowSet currentMaxOrMin = null;
+    private ValueMappingIRowSetConvertor valueMappingIRowSetConvertor;
     /**
      * 保存每个cursor当前的值得wrapper
      */
-    private List<IRowSet>                values;
-
-    private boolean                      templateIsLeft = true;
-
-    public MergeSortedCursors(List<ISchematicCursor> cursors, boolean duplicated) throws TddlException{
+    private List<IRowSet> values;
+    private boolean templateIsLeft = true;
+    public MergeSortedCursors(List<ISchematicCursor> cursors, boolean duplicated) throws TddlException {
         super(cursors.get(0), null);
         this.cursors = cursors;
         this.allowDuplicated = duplicated;
         values = new ArrayList(cursors.size());
         this.orderBys = cursors.get(0).getOrderBy();
     }
-
-    public MergeSortedCursors(ISchematicCursor cursor, boolean duplicated) throws TddlException{
+    public MergeSortedCursors(ISchematicCursor cursor, boolean duplicated) throws TddlException {
         super(cursor, null);
         List<ISchematicCursor> cursors = new ArrayList(1);
         cursors.add(cursor);
@@ -59,10 +59,6 @@ public class MergeSortedCursors extends SortCursor {
         }
     }
 
-    boolean allowDuplicated = false;
-    IRowSet current         = null;
-    boolean inited          = false;
-
     @Override
     public void init() throws TddlException {
         if (inited) {
@@ -76,8 +72,6 @@ public class MergeSortedCursors extends SortCursor {
             values.add(row);
         }
     }
-
-    IRowSet currentMaxOrMin = null;
 
     /**
      * values中存着每个cursor的当前值 每次调用next，从values中找出最小的值，并且将对应的cursor前移 将新值存到values中

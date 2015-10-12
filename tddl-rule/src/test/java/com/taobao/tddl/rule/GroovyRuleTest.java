@@ -1,23 +1,22 @@
 package com.taobao.tddl.rule;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.rule.impl.GroovyRule;
 import com.taobao.tddl.rule.model.MatcherResult;
 import com.taobao.tddl.rule.model.TargetDB;
 import com.taobao.tddl.rule.model.sqljep.Comparative;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 public class GroovyRuleTest extends BaseRuleTest {
 
@@ -91,7 +90,7 @@ public class GroovyRuleTest extends BaseRuleTest {
         Comparative d2 = new Comparative(Comparative.LessThan, df.parse("2010-11-03"));
         choicer.addComparative("TIME", and(d1, d2));
         VirtualTableRuleMatcher vtrm = new VirtualTableRuleMatcher();
-        MatcherResult mr = vtrm.match(choicer, Arrays.asList(new Object[] { 18 }), vt, false);
+        MatcherResult mr = vtrm.match(choicer, Arrays.asList(new Object[]{18}), vt, false);
         List<TargetDB> targetDb = mr.getCalculationResult();
         Assert.assertEquals(2, targetDb.size());
     }

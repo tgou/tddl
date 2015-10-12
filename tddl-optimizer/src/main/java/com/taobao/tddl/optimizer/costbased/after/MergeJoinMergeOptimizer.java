@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.after;
 
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.utils.GeneralUtil;
@@ -14,12 +11,19 @@ import com.taobao.tddl.optimizer.core.plan.query.IJoin.JoinStrategy;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 如果设置了MergeConcurrent 并且值为True，则将所有的Merge变为并行
- * 
+ *
  * @since 5.0.0
  */
 public class MergeJoinMergeOptimizer implements QueryPlanOptimizer {
+
+    private static boolean isMergeExpand(Map<String, Object> extraCmd) {
+        return GeneralUtil.getExtraCmdBoolean(extraCmd, ExtraCmd.MERGE_EXPAND, false);
+    }
 
     /**
      * 如果设置了MergeConcurrent 并且值为True，则将所有的Merge变为并行
@@ -47,11 +51,11 @@ public class MergeJoinMergeOptimizer implements QueryPlanOptimizer {
             return dne;
         } else if (dne instanceof IJoin) {
             ((IJoin) dne).setLeftNode((IQueryTree) this.findEveryJoin(((IJoin) dne).getLeftNode(),
-                isExpandLeft,
-                isExpandRight));
+                    isExpandLeft,
+                    isExpandRight));
             ((IJoin) dne).setRightNode((IQueryTree) this.findEveryJoin(((IJoin) dne).getRightNode(),
-                isExpandLeft,
-                isExpandRight));
+                    isExpandLeft,
+                    isExpandRight));
             return this.processJoin((IJoin) dne, isExpandLeft, isExpandRight);
         }
 
@@ -89,7 +93,7 @@ public class MergeJoinMergeOptimizer implements QueryPlanOptimizer {
     private boolean canExpand(IQueryTree query) {
         // 如果一个节点包含limit，group by，order by等条件
         if (query.getLimitFrom() != null || query.getLimitTo() != null || query.getGroupBys() != null
-            || query.getOrderBys() != null) {
+                || query.getOrderBys() != null) {
             return false;
         } else {
             return true;
@@ -132,7 +136,7 @@ public class MergeJoinMergeOptimizer implements QueryPlanOptimizer {
 
     /**
      * 将右边的merge展开，依次和左边做join
-     * 
+     *
      * @param j
      * @return
      */
@@ -168,7 +172,7 @@ public class MergeJoinMergeOptimizer implements QueryPlanOptimizer {
 
     /**
      * 左右都展开做笛卡尔积
-     * 
+     *
      * @param j
      * @return
      */
@@ -209,9 +213,5 @@ public class MergeJoinMergeOptimizer implements QueryPlanOptimizer {
         newMerge.setValueFilter(j.getValueFilter());
         newMerge.executeOn(j.getDataNode());
         return newMerge;
-    }
-
-    private static boolean isMergeExpand(Map<String, Object> extraCmd) {
-        return GeneralUtil.getExtraCmdBoolean(extraCmd, ExtraCmd.MERGE_EXPAND, false);
     }
 }

@@ -1,12 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
@@ -16,6 +9,12 @@ import com.taobao.tddl.optimizer.core.expression.IFilter;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.costbased.chooser.IndexChooser;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FilterSpliterTest extends BaseOptimizerTest {
 
@@ -26,7 +25,7 @@ public class FilterSpliterTest extends BaseOptimizerTest {
         build(table);
 
         Map<FilterType, IFilter> result = FilterSpliter.splitByIndex(FilterUtils.toDNFNode(table.getWhereFilter()),
-            table);
+                table);
         Assert.assertEquals("TABLE1.ID = 1", result.get(FilterType.IndexQueryKeyFilter).toString());
         Assert.assertEquals(null, result.get(FilterType.IndexQueryValueFilter));
         Assert.assertEquals(null, result.get(FilterType.ResultFilter));
@@ -39,10 +38,10 @@ public class FilterSpliterTest extends BaseOptimizerTest {
         build(table);
 
         Map<FilterType, IFilter> result = FilterSpliter.splitByIndex(FilterUtils.toDNFNode(table.getWhereFilter()),
-            table);
+                table);
         Assert.assertEquals("TABLE1.ID = 2", result.get(FilterType.IndexQueryKeyFilter).toString());
         Assert.assertEquals("(TABLE1.ID != 1 AND TABLE1.ID IS NULL AND TABLE1.ID IS NOT NULL AND TABLE1.ID LIKE %A)",
-            result.get(FilterType.IndexQueryValueFilter).toString());
+                result.get(FilterType.IndexQueryValueFilter).toString());
         Assert.assertEquals(null, result.get(FilterType.ResultFilter));
     }
 
@@ -53,7 +52,7 @@ public class FilterSpliterTest extends BaseOptimizerTest {
         build(table);
 
         Map<FilterType, IFilter> result = FilterSpliter.splitByIndex(FilterUtils.toDNFNode(table.getWhereFilter()),
-            table);
+                table);
         Assert.assertEquals("TABLE1.NAME = 1", result.get(FilterType.IndexQueryKeyFilter).toString());
         Assert.assertEquals(null, result.get(FilterType.IndexQueryValueFilter));
         Assert.assertEquals(null, result.get(FilterType.ResultFilter));
@@ -66,7 +65,7 @@ public class FilterSpliterTest extends BaseOptimizerTest {
         build(table); // 会选择NAME做索引，因为=的选择度高，优先选择
 
         Map<FilterType, IFilter> result = FilterSpliter.splitByIndex(FilterUtils.toDNFNode(table.getWhereFilter()),
-            table);
+                table);
         Assert.assertEquals("TABLE1.NAME = 1", result.get(FilterType.IndexQueryKeyFilter).toString());
         Assert.assertEquals("TABLE1.ID > 3", result.get(FilterType.IndexQueryValueFilter).toString());
         Assert.assertEquals("TABLE1.SCHOOL = 2", result.get(FilterType.ResultFilter).toString());
@@ -79,7 +78,7 @@ public class FilterSpliterTest extends BaseOptimizerTest {
         build(table); // 无索引，默认选择主键做遍历
 
         Map<FilterType, IFilter> result = FilterSpliter.splitByIndex(FilterUtils.toDNFNode(table.getWhereFilter()),
-            table);
+                table);
         Assert.assertEquals(null, result.get(FilterType.IndexQueryKeyFilter));
         Assert.assertEquals("TABLE1.SCHOOL = 2", result.get(FilterType.IndexQueryValueFilter).toString());
         Assert.assertEquals(null, result.get(FilterType.ResultFilter));
@@ -91,10 +90,10 @@ public class FilterSpliterTest extends BaseOptimizerTest {
         Map<String, Object> extraCmd = new HashMap<String, Object>();
         extraCmd.put(ExtraCmd.CHOOSE_INDEX, true);
         IndexMeta index = IndexChooser.findBestIndex(table.getTableMeta(),
-            new ArrayList<ISelectable>(),
-            FilterUtils.toDNFNode(table.getWhereFilter()),
-            table.getTableName(),
-            extraCmd);
+                new ArrayList<ISelectable>(),
+                FilterUtils.toDNFNode(table.getWhereFilter()),
+                table.getTableName(),
+                extraCmd);
 
         table.useIndex(index);
     }

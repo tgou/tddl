@@ -1,8 +1,8 @@
 package com.taobao.tddl.executor.codec;
 
-import java.util.List;
-
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
+
+import java.util.List;
 
 /**
  * @author mengshi.sunmengshi 2013-12-2 下午6:24:37
@@ -10,11 +10,11 @@ import com.taobao.tddl.optimizer.config.table.ColumnMeta;
  */
 public abstract class CodecFactory {
 
-    public static final String AVRO         = "avro";
+    public static final String AVRO = "avro";
     public static final String FIXED_LENGTH = "fixedLength";
 
     // public static CodecFactory avro = new AvroCodecFactory();
-    public static CodecFactory fixedLength  = new FixedLengthCodecFactory();
+    public static CodecFactory fixedLength = new FixedLengthCodecFactory();
 
     public static CodecFactory getInstance(String s) {
         if (AVRO.equals(s)) {

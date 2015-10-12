@@ -6,7 +6,7 @@ public interface ITopologyExecutor extends IExecutor {
 
     /**
      * 该executor所在节点的名字
-     * 
+     *
      * @return
      */
     public String getDataNode();

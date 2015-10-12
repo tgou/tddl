@@ -1,13 +1,5 @@
 package com.taobao.tddl.optimizer.core.plan.bean;
 
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendField;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendln;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.printFilterString;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.PlanVisitor;
@@ -16,11 +8,17 @@ import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.utils.OptimizerToString;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static com.taobao.tddl.optimizer.utils.OptimizerToString.*;
+
 public class Merge extends QueryTree implements IMerge {
 
-    protected List<IDataNodeExecutor> subNodes  = new LinkedList<IDataNodeExecutor>();
-    protected Boolean                 isSharded = true;
-    protected Boolean                 isUnion   = false;
+    protected List<IDataNodeExecutor> subNodes = new LinkedList<IDataNodeExecutor>();
+    protected Boolean isSharded = true;
+    protected Boolean isUnion = false;
 
     public IMerge assignment(Map<Integer, ParameterContext> parameterSettings) {
         super.assignment(parameterSettings);
@@ -91,7 +89,7 @@ public class Merge extends QueryTree implements IMerge {
         appendField(sb, "valueFilter", printFilterString(this.getValueFilter()), tabContent);
         appendField(sb, "having", printFilterString(this.getHavingFilter()), tabContent);
         if (!(this.getLimitFrom() != null && this.getLimitFrom().equals(-1L) && this.getLimitTo() != null && this.getLimitTo()
-            .equals(-1L))) {
+                .equals(-1L))) {
             appendField(sb, "limitFrom", this.getLimitFrom(), tabContent);
             appendField(sb, "limitTo", this.getLimitTo(), tabContent);
         }

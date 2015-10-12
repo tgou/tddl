@@ -20,7 +20,7 @@ public interface Lifecycle {
 
     /**
      * 是否存储运行运行状态
-     * 
+     *
      * @return
      */
     boolean isInited() throws TddlException;

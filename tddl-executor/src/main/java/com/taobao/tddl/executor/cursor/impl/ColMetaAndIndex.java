@@ -4,7 +4,7 @@ import com.taobao.tddl.executor.cursor.impl.CursorMetaImp.ColumnHolder;
 
 public class ColMetaAndIndex {
 
-    String       name;
+    String name;
     ColumnHolder columnHolder;
 
     public String getTable() {

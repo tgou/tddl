@@ -10,7 +10,7 @@ public interface QueryTreeCostEstimater {
 
     /**
      * 根据查询树，预估一下执行代价，如果统计状态服务不可用，抛出异常
-     * 
+     *
      * @param query
      * @return
      * @throws StatisticsUnavailableException

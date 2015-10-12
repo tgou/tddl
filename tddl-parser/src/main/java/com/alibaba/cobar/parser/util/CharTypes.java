@@ -24,6 +24,7 @@ import com.alibaba.cobar.parser.recognizer.mysql.lexer.MySQLLexer;
 public class CharTypes {
 
     private final static boolean[] hexFlags = new boolean[256];
+
     static {
         for (char c = 0; c < hexFlags.length; ++c) {
             if (c >= 'A' && c <= 'F') {
@@ -35,15 +36,6 @@ public class CharTypes {
             }
         }
     }
-
-    public static boolean isHex(char c) {
-        return c < 256 && hexFlags[c];
-    }
-
-    public static boolean isDigit(char c) {
-        return c >= '0' && c <= '9';
-    }
-
     private final static boolean[] identifierFlags = new boolean[256];
     static {
         for (char c = 0; c < identifierFlags.length; ++c) {
@@ -59,11 +51,6 @@ public class CharTypes {
         identifierFlags['_'] = true;
         identifierFlags['$'] = true;
     }
-
-    public static boolean isIdentifierChar(char c) {
-        return c > identifierFlags.length || identifierFlags[c];
-    }
-
     private final static boolean[] whitespaceFlags = new boolean[256];
     static {
         whitespaceFlags[' '] = true;
@@ -72,6 +59,18 @@ public class CharTypes {
         whitespaceFlags['\t'] = true;
         whitespaceFlags['\f'] = true;
         whitespaceFlags['\b'] = true;
+    }
+
+    public static boolean isHex(char c) {
+        return c < 256 && hexFlags[c];
+    }
+
+    public static boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    public static boolean isIdentifierChar(char c) {
+        return c > identifierFlags.length || identifierFlags[c];
     }
 
     /**

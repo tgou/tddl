@@ -1,12 +1,12 @@
 package com.taobao.tddl.repo.mysql.sqlconvertor.functions;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.expression.IFunction;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.repo.mysql.sqlconvertor.MysqlPlanVisitorImpl;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TimestampDiff implements FunctionStringConstructor {
 
@@ -16,7 +16,7 @@ public class TimestampDiff implements FunctionStringConstructor {
                                                  Map<Integer, ParameterContext> paramMap, IFunction func,
                                                  MysqlPlanVisitorImpl parentVisitor) {
         StringBuilder sb = new StringBuilder();
-        
+
         sb.append(IFunction.BuiltInFunction.TIMESTAMPDIFF).append("(");
         sb.append(func.getArgs().get(0));
         sb.append(",");
@@ -24,7 +24,7 @@ public class TimestampDiff implements FunctionStringConstructor {
         sb.append(",");
         sb.append(parentVisitor.getNewVisitor(func.getArgs().get(2)).getString());
         sb.append(")");
-       
+
 
         return sb.toString();
 

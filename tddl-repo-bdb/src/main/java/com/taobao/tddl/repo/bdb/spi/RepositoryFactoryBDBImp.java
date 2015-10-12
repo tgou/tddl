@@ -1,7 +1,5 @@
 package com.taobao.tddl.repo.bdb.spi;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.TddlRuntimeException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.common.utils.extension.Activate;
@@ -9,6 +7,8 @@ import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.executor.spi.IRepository;
 import com.taobao.tddl.executor.spi.IRepositoryFactory;
+
+import java.util.Map;
 
 @Activate(name = "BDB_JE")
 public class RepositoryFactoryBDBImp implements IRepositoryFactory {

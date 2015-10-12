@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.parse;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.model.SqlType;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
@@ -10,6 +8,8 @@ import com.taobao.tddl.optimizer.core.ast.dml.DeleteNode;
 import com.taobao.tddl.optimizer.core.ast.dml.InsertNode;
 import com.taobao.tddl.optimizer.core.ast.dml.PutNode;
 import com.taobao.tddl.optimizer.core.ast.dml.UpdateNode;
+
+import java.util.Map;
 
 /**
  * 语法树构建结果

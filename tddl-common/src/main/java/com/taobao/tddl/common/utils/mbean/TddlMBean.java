@@ -1,35 +1,25 @@
 package com.taobao.tddl.common.utils.mbean;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.AttributeNotFoundException;
-import javax.management.DynamicMBean;
-import javax.management.IntrospectionException;
-import javax.management.InvalidAttributeValueException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.ReflectionException;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
 
+import javax.management.*;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * @description
  * @author <a href="junyu@taobao.com">junyu</a>
  * @version 1.0
+ * @description
  * @since 1.6
  */
 public class TddlMBean implements DynamicMBean {
 
-    private static Logger          logger        = LoggerFactory.getLogger(TddlMBean.class);
+    private static Logger logger = LoggerFactory.getLogger(TddlMBean.class);
     private Map<String, Attribute> attributesMap = new HashMap<String, Attribute>();
-    private String                 desc;
+    private String desc;
 
-    public TddlMBean(String desc){
+    public TddlMBean(String desc) {
         this.desc = desc;
     }
 
@@ -45,7 +35,7 @@ public class TddlMBean implements DynamicMBean {
 
     @Override
     public void setAttribute(Attribute attribute) throws AttributeNotFoundException, InvalidAttributeValueException,
-                                                 MBeanException, ReflectionException {
+            MBeanException, ReflectionException {
         String name = attribute.getName();
         this.attributesMap.put(name, attribute);
     }
@@ -78,7 +68,7 @@ public class TddlMBean implements DynamicMBean {
 
     @Override
     public Object invoke(String actionName, Object[] params, String[] signature) throws MBeanException,
-                                                                                ReflectionException {
+            ReflectionException {
         return null;
     }
 
@@ -90,9 +80,9 @@ public class TddlMBean implements DynamicMBean {
             MBeanAttributeInfo info = null;
             try {
                 info = new MBeanAttributeInfo(attribute.getValue().getName(), "", attribute.getValue()
-                    .getValue()
-                    .getClass()
-                    .getMethod("toString"), null);
+                        .getValue()
+                        .getClass()
+                        .getMethod("toString"), null);
             } catch (IntrospectionException e) {
                 logger.error(e);
             } catch (SecurityException e) {

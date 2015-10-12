@@ -1,26 +1,24 @@
 package com.taobao.tddl.common.utils;
 
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
+
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
-
 public final class Version {
 
-    private Version(){
-    }
-
-    private static final Logger logger  = LoggerFactory.getLogger(Version.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(Version.class);
     private static final String VERSION = getVersion(Version.class, "5.0.0");
-
     static {
         // 检查是否存在重复的jar包
         Version.checkDuplicate(Version.class);
+    }
+
+    private Version() {
     }
 
     public static String getVersion() {
@@ -39,7 +37,7 @@ public final class Version {
                 CodeSource codeSource = cls.getProtectionDomain().getCodeSource();
                 if (codeSource == null) {
                     logger.info("No codeSource for class " + cls.getName() + " when getVersion, use default version "
-                                + defaultVersion);
+                            + defaultVersion);
                 } else {
                     String file = codeSource.getLocation().getFile();
                     if (file != null && file.length() > 0 && file.endsWith(".jar")) {

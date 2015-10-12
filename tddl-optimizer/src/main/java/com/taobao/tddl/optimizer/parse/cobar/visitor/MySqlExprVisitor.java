@@ -1,82 +1,21 @@
 package com.taobao.tddl.optimizer.parse.cobar.visitor;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.reflect.MethodUtils;
-
 import com.alibaba.cobar.parser.ast.expression.BinaryOperatorExpression;
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.ast.expression.PolyadicOperatorExpression;
 import com.alibaba.cobar.parser.ast.expression.UnaryOperatorExpression;
-import com.alibaba.cobar.parser.ast.expression.arithmeic.ArithmeticAddExpression;
-import com.alibaba.cobar.parser.ast.expression.arithmeic.ArithmeticDivideExpression;
-import com.alibaba.cobar.parser.ast.expression.arithmeic.ArithmeticIntegerDivideExpression;
-import com.alibaba.cobar.parser.ast.expression.arithmeic.ArithmeticModExpression;
-import com.alibaba.cobar.parser.ast.expression.arithmeic.ArithmeticMultiplyExpression;
-import com.alibaba.cobar.parser.ast.expression.arithmeic.ArithmeticSubtractExpression;
-import com.alibaba.cobar.parser.ast.expression.arithmeic.MinusExpression;
-import com.alibaba.cobar.parser.ast.expression.bit.BitAndExpression;
-import com.alibaba.cobar.parser.ast.expression.bit.BitInvertExpression;
-import com.alibaba.cobar.parser.ast.expression.bit.BitOrExpression;
-import com.alibaba.cobar.parser.ast.expression.bit.BitShiftExpression;
-import com.alibaba.cobar.parser.ast.expression.bit.BitXORExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.BetweenAndExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.ComparisionEqualsExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.ComparisionGreaterThanExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.ComparisionGreaterThanOrEqualsExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.ComparisionIsExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.ComparisionLessOrGreaterThanExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.ComparisionLessThanExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.ComparisionLessThanOrEqualsExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.ComparisionNotEqualsExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.ComparisionNullSafeEqualsExpression;
-import com.alibaba.cobar.parser.ast.expression.comparison.InExpression;
-import com.alibaba.cobar.parser.ast.expression.logical.LogicalAndExpression;
-import com.alibaba.cobar.parser.ast.expression.logical.LogicalNotExpression;
-import com.alibaba.cobar.parser.ast.expression.logical.LogicalOrExpression;
-import com.alibaba.cobar.parser.ast.expression.logical.LogicalXORExpression;
-import com.alibaba.cobar.parser.ast.expression.logical.NegativeValueExpression;
-import com.alibaba.cobar.parser.ast.expression.misc.AssignmentExpression;
-import com.alibaba.cobar.parser.ast.expression.misc.InExpressionList;
-import com.alibaba.cobar.parser.ast.expression.misc.QueryExpression;
-import com.alibaba.cobar.parser.ast.expression.misc.SubqueryAllExpression;
-import com.alibaba.cobar.parser.ast.expression.misc.SubqueryAnyExpression;
-import com.alibaba.cobar.parser.ast.expression.primary.CaseWhenOperatorExpression;
-import com.alibaba.cobar.parser.ast.expression.primary.ExistsPrimary;
-import com.alibaba.cobar.parser.ast.expression.primary.Identifier;
-import com.alibaba.cobar.parser.ast.expression.primary.MatchExpression;
-import com.alibaba.cobar.parser.ast.expression.primary.ParamMarker;
-import com.alibaba.cobar.parser.ast.expression.primary.RowExpression;
+import com.alibaba.cobar.parser.ast.expression.arithmeic.*;
+import com.alibaba.cobar.parser.ast.expression.bit.*;
+import com.alibaba.cobar.parser.ast.expression.comparison.*;
+import com.alibaba.cobar.parser.ast.expression.logical.*;
+import com.alibaba.cobar.parser.ast.expression.misc.*;
+import com.alibaba.cobar.parser.ast.expression.primary.*;
 import com.alibaba.cobar.parser.ast.expression.primary.function.FunctionExpression;
-import com.alibaba.cobar.parser.ast.expression.primary.function.groupby.Avg;
-import com.alibaba.cobar.parser.ast.expression.primary.function.groupby.Count;
-import com.alibaba.cobar.parser.ast.expression.primary.function.groupby.Max;
-import com.alibaba.cobar.parser.ast.expression.primary.function.groupby.Min;
-import com.alibaba.cobar.parser.ast.expression.primary.function.groupby.Sum;
-import com.alibaba.cobar.parser.ast.expression.primary.literal.IntervalPrimary;
-import com.alibaba.cobar.parser.ast.expression.primary.literal.LiteralBitField;
-import com.alibaba.cobar.parser.ast.expression.primary.literal.LiteralBoolean;
-import com.alibaba.cobar.parser.ast.expression.primary.literal.LiteralHexadecimal;
-import com.alibaba.cobar.parser.ast.expression.primary.literal.LiteralNull;
-import com.alibaba.cobar.parser.ast.expression.primary.literal.LiteralNumber;
-import com.alibaba.cobar.parser.ast.expression.primary.literal.LiteralString;
+import com.alibaba.cobar.parser.ast.expression.primary.function.groupby.*;
+import com.alibaba.cobar.parser.ast.expression.primary.literal.*;
 import com.alibaba.cobar.parser.ast.expression.string.LikeExpression;
 import com.alibaba.cobar.parser.ast.expression.type.CastBinaryExpression;
-import com.alibaba.cobar.parser.ast.fragment.tableref.Dual;
-import com.alibaba.cobar.parser.ast.fragment.tableref.IndexHint;
-import com.alibaba.cobar.parser.ast.fragment.tableref.InnerJoin;
-import com.alibaba.cobar.parser.ast.fragment.tableref.NaturalJoin;
-import com.alibaba.cobar.parser.ast.fragment.tableref.OuterJoin;
-import com.alibaba.cobar.parser.ast.fragment.tableref.StraightJoin;
-import com.alibaba.cobar.parser.ast.fragment.tableref.SubqueryFactor;
-import com.alibaba.cobar.parser.ast.fragment.tableref.TableRefFactor;
-import com.alibaba.cobar.parser.ast.fragment.tableref.TableReference;
+import com.alibaba.cobar.parser.ast.fragment.tableref.*;
 import com.alibaba.cobar.parser.ast.stmt.dml.DMLSelectStatement;
 import com.alibaba.cobar.parser.recognizer.mysql.lexer.MySQLLexer;
 import com.alibaba.cobar.parser.recognizer.mysql.syntax.MySQLExprParser;
@@ -88,35 +27,70 @@ import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
 import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
-import com.taobao.tddl.optimizer.core.expression.IBindVal;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.core.expression.bean.LobVal;
 import com.taobao.tddl.optimizer.core.expression.bean.NullValue;
 import com.taobao.tddl.optimizer.exceptions.OptimizerException;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.reflect.MethodUtils;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 解析mysql表达式
- * 
+ * <p/>
  * <pre>
  * 参考资料：
  * 1. https://dev.mysql.com/doc/refman/5.6/en/comparison-operators.html
  * </pre>
- * 
+ *
  * @since 5.0.0
  */
 public class MySqlExprVisitor extends EmptySQLASTVisitor {
 
-    private static Map    emptyMap  = Maps.newHashMap();
-    private Comparable    columnOrValue;
+    private static Map emptyMap = Maps.newHashMap();
+    private Comparable columnOrValue;
     private QueryTreeNode tableNode = null;
-    private String        valueForLike;
-    private IFilter       filter;
+    private String valueForLike;
+    private IFilter filter;
+
+    public static MySqlExprVisitor parser(String condition) {
+        if (StringUtils.isEmpty(condition)) {
+            return null;
+        }
+
+        condition = condition.toUpperCase();
+        try {
+            // 调用cobar的expression解析器
+            MySQLExprParser expr = new MySQLExprParser(new MySQLLexer(condition));
+            Expression expression = expr.expression();
+            // 反射调用visit构造IFilter
+            MySqlExprVisitor parser = new MySqlExprVisitor();
+            Class args = expression.getClass();
+            Method method = null;
+            while (true) {
+                method = MethodUtils.getAccessibleMethod(parser.getClass(), "visit", args);
+                if (method == null) {
+                    args = args.getSuperclass();
+                    if (args == null) {
+                        throw new NotSupportException("parse failed : " + condition);
+                    }
+                } else {
+                    break;
+                }
+            }
+            method.invoke(parser, expression);
+            return parser;
+        } catch (Exception e) {
+            throw new OptimizerException(e);
+        }
+    }
 
     @Override
     public void visit(BetweenAndExpression node) {
@@ -587,43 +561,11 @@ public class MySqlExprVisitor extends EmptySQLASTVisitor {
         throw new NotSupportException("IndexHint");
     }
 
+    // ================== helper =====================
+
     @Override
     public void visit(Dual dual) {
         throw new NotSupportException("Dual");
-    }
-
-    // ================== helper =====================
-
-    public static MySqlExprVisitor parser(String condition) {
-        if (StringUtils.isEmpty(condition)) {
-            return null;
-        }
-
-        condition = condition.toUpperCase();
-        try {
-            // 调用cobar的expression解析器
-            MySQLExprParser expr = new MySQLExprParser(new MySQLLexer(condition));
-            Expression expression = expr.expression();
-            // 反射调用visit构造IFilter
-            MySqlExprVisitor parser = new MySqlExprVisitor();
-            Class args = expression.getClass();
-            Method method = null;
-            while (true) {
-                method = MethodUtils.getAccessibleMethod(parser.getClass(), "visit", args);
-                if (method == null) {
-                    args = args.getSuperclass();
-                    if (args == null) {
-                        throw new NotSupportException("parse failed : " + condition);
-                    }
-                } else {
-                    break;
-                }
-            }
-            method.invoke(parser, expression);
-            return parser;
-        } catch (Exception e) {
-            throw new OptimizerException(e);
-        }
     }
 
     public IBooleanFilter buildBooleanFilter(Object column, Object value, OPERATION operation, Expression exp) {
@@ -731,7 +673,7 @@ public class MySqlExprVisitor extends EmptySQLASTVisitor {
 
     /**
      * get function arg is distinct
-     * 
+     *
      * @param node
      * @return
      */

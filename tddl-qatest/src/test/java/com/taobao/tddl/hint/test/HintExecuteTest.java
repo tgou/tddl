@@ -1,9 +1,5 @@
 package com.taobao.tddl.hint.test;
 
-import java.util.concurrent.Executors;
-
-import org.junit.Test;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.executor.MatrixExecutor;
 import com.taobao.tddl.executor.common.ExecutionContext;
@@ -13,6 +9,9 @@ import com.taobao.tddl.matrix.config.MatrixConfigHolder;
 import com.taobao.tddl.optimizer.core.plan.bean.DataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.bean.Merge;
 import com.taobao.tddl.optimizer.core.plan.bean.Query;
+import org.junit.Test;
+
+import java.util.concurrent.Executors;
 
 public class HintExecuteTest {
 

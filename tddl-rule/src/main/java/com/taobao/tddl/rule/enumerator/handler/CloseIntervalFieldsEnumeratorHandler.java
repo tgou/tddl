@@ -1,14 +1,14 @@
 package com.taobao.tddl.rule.enumerator.handler;
 
-import java.util.Set;
-
 import com.taobao.tddl.rule.model.sqljep.Comparative;
+
+import java.util.Set;
 
 public interface CloseIntervalFieldsEnumeratorHandler {
 
     /**
      * 穷举出从source，根据自增value和自增次数Times，将结果写入retValue参数中
-     * 
+     *
      * @param source
      * @param retValue
      * @param cumulativeTimes
@@ -19,7 +19,7 @@ public interface CloseIntervalFieldsEnumeratorHandler {
 
     /**
      * 穷举出从from到to中的所有值，根据自增value和自增次数Times，将结果写入retValue参数中
-     * 
+     *
      * @param from
      * @param to
      */

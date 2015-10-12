@@ -1,33 +1,48 @@
 package com.taobao.tddl.atom;
 
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import com.taobao.tddl.atom.common.TAtomConstants;
 import com.taobao.tddl.atom.config.TAtomDsConfHandle;
 import com.taobao.tddl.atom.config.listener.AtomDbStatusListener;
 import com.taobao.tddl.atom.exception.AtomAlreadyInitException;
 import com.taobao.tddl.common.utils.TStringUtil;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 动态数据源，支持数据源参数动态修改
- * 
+ *
  * @author qihao
  */
 public class TAtomDataSource extends AbstractTAtomDataSource {
 
-    protected static Logger                       logger             = LoggerFactory.getLogger(TAtomDataSource.class);
+    protected static Logger logger = LoggerFactory.getLogger(TAtomDataSource.class);
 
     private static Map<String, TAtomDsConfHandle> cacheConfHandleMap = new HashMap<String, TAtomDsConfHandle>();
 
-    private volatile TAtomDsConfHandle            dsConfHandle       = new TAtomDsConfHandle();
+    private volatile TAtomDsConfHandle dsConfHandle = new TAtomDsConfHandle();
+
+    /**
+     * 清除掉所有数据源
+     */
+    public static void cleanAllDataSource() {
+        synchronized (cacheConfHandleMap) {
+            for (TAtomDsConfHandle handles : cacheConfHandleMap.values()) {
+                try {
+                    handles.destroyDataSource();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    continue;
+                }
+            }
+            cacheConfHandleMap.clear();
+        }
+    }
 
     @Override
     public void init(String appName, String dsKey, String unitName) throws Exception {
@@ -54,23 +69,6 @@ public class TAtomDataSource extends AbstractTAtomDataSource {
     }
 
     /**
-     * 清除掉所有数据源
-     */
-    public static void cleanAllDataSource() {
-        synchronized (cacheConfHandleMap) {
-            for (TAtomDsConfHandle handles : cacheConfHandleMap.values()) {
-                try {
-                    handles.destroyDataSource();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    continue;
-                }
-            }
-            cacheConfHandleMap.clear();
-        }
-    }
-
-    /**
      * 刷新数据源
      */
     public void flushDataSource() {
@@ -79,7 +77,7 @@ public class TAtomDataSource extends AbstractTAtomDataSource {
 
     /**
      * 销毁数据源，慎用
-     * 
+     *
      * @throws Exception
      */
     public void destroyDataSource() throws Exception {
@@ -94,24 +92,24 @@ public class TAtomDataSource extends AbstractTAtomDataSource {
         return this.dsConfHandle.getAppName();
     }
 
-    public String getDbKey() {
-        return this.dsConfHandle.getDbKey();
-    }
-
     public void setAppName(String appName) throws AtomAlreadyInitException {
         this.dsConfHandle.setAppName(TStringUtil.trim(appName));
+    }
+
+    public String getDbKey() {
+        return this.dsConfHandle.getDbKey();
     }
 
     public void setDbKey(String dbKey) throws AtomAlreadyInitException {
         this.dsConfHandle.setDbKey(TStringUtil.trim(dbKey));
     }
 
-    public void setUnitName(String unitName) {
-        this.dsConfHandle.setUnitName(unitName);
-    }
-
     public String getUnitName() {
         return this.dsConfHandle.getUnitName();
+    }
+
+    public void setUnitName(String unitName) {
+        this.dsConfHandle.setUnitName(unitName);
     }
 
     public TAtomDbStatusEnum getDbStatus() {
@@ -126,7 +124,9 @@ public class TAtomDataSource extends AbstractTAtomDataSource {
         this.dsConfHandle.setSingleInGroup(isSingleInGroup);
     }
 
-    /** =======以下是设置本地优先的配置属性，如果设置了会忽略推送的配置而使用本地的配置======= */
+    /**
+     * =======以下是设置本地优先的配置属性，如果设置了会忽略推送的配置而使用本地的配置=======
+     */
     public void setPasswd(String passwd) throws AtomAlreadyInitException {
         this.dsConfHandle.setLocalPasswd(passwd);
     }

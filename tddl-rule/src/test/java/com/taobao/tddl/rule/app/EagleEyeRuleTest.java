@@ -1,13 +1,12 @@
 package com.taobao.tddl.rule.app;
 
+import com.taobao.tddl.rule.TddlRule;
+import com.taobao.tddl.rule.model.MatcherResult;
+import com.taobao.tddl.rule.model.TargetDB;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.taobao.tddl.rule.TddlRule;
-import com.taobao.tddl.rule.model.MatcherResult;
-import com.taobao.tddl.rule.model.TargetDB;
 
 public class EagleEyeRuleTest {
 

@@ -1,30 +1,29 @@
 package com.taobao.tddl.sequence.impl;
 
-import java.sql.SQLException;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.monitor.eagleeye.EagleeyeHelper;
 import com.taobao.tddl.sequence.Sequence;
 import com.taobao.tddl.sequence.SequenceDao;
 import com.taobao.tddl.sequence.SequenceRange;
 import com.taobao.tddl.sequence.exception.SequenceException;
+import org.apache.commons.lang.StringUtils;
+
+import java.sql.SQLException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class GroupSequence implements Sequence {
 
-    private final Lock             lock = new ReentrantLock();
-    private SequenceDao            sequenceDao;
+    private final Lock lock = new ReentrantLock();
+    private SequenceDao sequenceDao;
 
-    private String                 name;
+    private String name;
     private volatile SequenceRange currentRange;
     // 全链路压测需求
     private volatile SequenceRange testCurrentRange;
 
     /**
      * 初始化一下，如果name不存在，则给其初始值<br>
-     * 
+     *
      * @throws SequenceException
      * @throws SQLException
      */
@@ -56,7 +55,7 @@ public class GroupSequence implements Sequence {
         if (value == -1) {
             lock.lock();
             try {
-                for (;;) {
+                for (; ; ) {
                     if (getSequenceRange(isTest).isOver()) {
                         setSequenceRange(sequenceDao.nextRange(name), isTest);
                     }

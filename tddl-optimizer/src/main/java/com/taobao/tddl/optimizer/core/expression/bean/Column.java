@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.core.expression.bean;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.utils.TStringUtil;
@@ -11,25 +9,27 @@ import com.taobao.tddl.optimizer.core.datatype.DataType;
 import com.taobao.tddl.optimizer.core.expression.IColumn;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
+import java.util.Map;
+
 /**
  * 描述一个列
- * 
+ *
  * @author jianghang 2013-11-13 下午5:03:15
  * @since 5.0.0
  */
 public class Column implements IColumn {
 
-    protected String   alias;
-    protected String   columName;
-    protected String   tableName;
+    protected String alias;
+    protected String columName;
+    protected String tableName;
     protected DataType dataType;
-    protected boolean  distinct;
-    private boolean    isNot = false;
+    protected boolean distinct;
+    private boolean isNot = false;
 
-    public Column(){
+    public Column() {
     }
 
-    public Column(String columName, String alias, DataType dataType){
+    public Column(String columName, String alias, DataType dataType) {
         this.columName = columName;
         this.alias = alias;
         this.dataType = dataType;
@@ -130,11 +130,11 @@ public class Column implements IColumn {
     public IColumn copy() {
         IColumn newColumn = ASTNodeFactory.getInstance().createColumn();
         newColumn.setColumnName(columName)
-            .setAlias(alias)
-            .setDataType(dataType)
-            .setTableName(tableName)
-            .setDistinct(isDistinct())
-            .setIsNot(isNot);
+                .setAlias(alias)
+                .setDataType(dataType)
+                .setTableName(tableName)
+                .setDistinct(isDistinct())
+                .setIsNot(isNot);
         return newColumn;
     }
 

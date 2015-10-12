@@ -1,30 +1,29 @@
 package com.taobao.tddl.qatest.matrix.select.function;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RunWith(EclipseParameterized.class)
 public class SelectDateFunctionTest extends BaseMatrixTestCase {
 
+    public SelectDateFunctionTest(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
+
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectDateFunctionTest(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -43,11 +42,11 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
     public void to_daysTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = "select id,name from " + normaltblTableName
-                         + " where TO_DAYS(gmt_create)-TO_DAYS('2011-05-15')>30";
+                    + " where TO_DAYS(gmt_create)-TO_DAYS('2011-05-15')>30";
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "id", "name" };
+            String[] columnParam1 = {"id", "name"};
             assertContentSame(rs, rc, columnParam1);
 
             sql = "select TO_DAYS(gmt_create) as da,name from " + normaltblTableName + " where pk=1";
@@ -55,7 +54,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam2 = { "da", "name" };
+            String[] columnParam2 = {"da", "name"};
             assertContentSame(rs, rc, columnParam2);
         }
     }
@@ -68,7 +67,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
 
@@ -81,7 +80,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -94,7 +93,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -107,7 +106,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -120,7 +119,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -133,7 +132,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -146,7 +145,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -159,7 +158,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -167,7 +166,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
     @Test
     public void timeTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             String sql = "select YEAR(gmt_create)  as da from " + normaltblTableName + " where pk=0";
 
             rs = mysqlQueryData(sql, null);
@@ -203,7 +202,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -216,7 +215,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -225,12 +224,12 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
     public void date_subTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = "select DATE_SUB(gmt_create,INTERVAL 31 DAY)  as da from " + normaltblTableName
-                         + " where pk=1";
+                    + " where pk=1";
 
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
 
@@ -243,7 +242,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
         rs = mysqlQueryData(sql, param);
         rc = andorQueryData(sql, param);
 
-        String[] columnParam1 = { "da" };
+        String[] columnParam1 = {"da"};
         assertContentSame(rs, rc, columnParam1);
 
     }
@@ -252,7 +251,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
     public void date_addTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = "select DATE_ADD(gmt_create,INTERVAL 31 DAY) as da from " + normaltblTableName + " where pk=1";
-            String[] columnParam = { "da" };
+            String[] columnParam = {"da"};
             selectContentSameAssert(sql, columnParam, null);
 
             sql = "select ADDDATE(gmt_create,INTERVAL 31 DAY) as da from " + normaltblTableName + " where pk=1";
@@ -261,7 +260,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             sql = "select * from " + normaltblTableName + " where gmt_create > DATE_ADD(Date(?),INTERVAL 31 DAY)";
             List<Object> param = new ArrayList<Object>();
             param.add("2011-5-5");
-            String[] columnParam1 = { "name", "id", "pk" };
+            String[] columnParam1 = {"name", "id", "pk"};
             selectContentSameAssert(sql, columnParam1, param);
 
             sql = "select * from " + normaltblTableName + " where gmt_create > ADDDATE(Date(?),INTERVAL 31 DAY)";
@@ -277,7 +276,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -286,12 +285,12 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
     public void addtimeTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = "select ADDTIME(gmt_create,'1 1:1:1.000002')  as da from " + normaltblTableName
-                         + " where pk=1";
+                    + " where pk=1";
 
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -304,7 +303,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             rs = mysqlQueryData(sql, null);
             rc = andorQueryData(sql, null);
 
-            String[] columnParam1 = { "da" };
+            String[] columnParam1 = {"da"};
             assertContentSame(rs, rc, columnParam1);
         }
     }
@@ -318,7 +317,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
             String sql = "select * from " + normaltblTableName + " where gmt_create >=Date(?)";
             List<Object> param = new ArrayList<Object>();
             param.add("2011-1-1");
-            String[] columnParam = { "name", "pk", "id" };
+            String[] columnParam = {"name", "pk", "id"};
             selectContentSameAssert(sql, columnParam, param);
         }
     }
@@ -341,13 +340,13 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
         rs = mysqlQueryData(sql, null);
         rc = andorQueryData(sql, null);
 
-        String[] columnParam1 = { "dd", "id" };
+        String[] columnParam1 = {"dd", "id"};
         assertContentSame(rs, rc, columnParam1);
 
         sql = "select * from " + normaltblTableName + " where gmt_create = now()";
         rs = mysqlQueryData(sql, null);
         rc = andorQueryData(sql, null);
-        String[] columnParam2 = { "gmt_create", "id" };
+        String[] columnParam2 = {"gmt_create", "id"};
         assertContentSame(rs, rc, columnParam2);
 
         sql = "select * from " + normaltblTableName + " where now()>gmt_create";
@@ -358,7 +357,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
         sql = "select * from " + normaltblTableName + " where gmt_timestamp = now()";
         rs = mysqlQueryData(sql, null);
         rc = andorQueryData(sql, null);
-        String[] columnParamTimestamp = { "gmt_timestamp", "id" };
+        String[] columnParamTimestamp = {"gmt_timestamp", "id"};
         assertContentSame(rs, rc, columnParamTimestamp);
 
         sql = "select * from " + normaltblTableName + " where now()<=gmt_timestamp";
@@ -369,7 +368,7 @@ public class SelectDateFunctionTest extends BaseMatrixTestCase {
         sql = "select * from " + normaltblTableName + " where gmt_datetime = now()";
         rs = mysqlQueryData(sql, null);
         rc = andorQueryData(sql, null);
-        String[] columnParamDatetime = { "gmt_datetime", "id" };
+        String[] columnParamDatetime = {"gmt_datetime", "id"};
         assertContentSame(rs, rc, columnParamDatetime);
 
         sql = "select * from " + normaltblTableName + " where now()>=gmt_datetime";

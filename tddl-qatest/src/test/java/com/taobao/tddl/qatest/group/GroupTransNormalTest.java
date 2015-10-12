@@ -1,16 +1,15 @@
 package com.taobao.tddl.qatest.group;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import com.taobao.tddl.common.GroupDataSourceRouteHelper;
+import com.taobao.tddl.qatest.util.DateUtil;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.taobao.tddl.common.GroupDataSourceRouteHelper;
-import com.taobao.tddl.qatest.util.DateUtil;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Comment for GroupTransNormalTest

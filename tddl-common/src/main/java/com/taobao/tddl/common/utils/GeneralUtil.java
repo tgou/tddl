@@ -1,5 +1,8 @@
 package com.taobao.tddl.common.utils;
 
+import com.taobao.tddl.common.exception.TddlException;
+import org.apache.commons.lang.BooleanUtils;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -8,17 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.BooleanUtils;
-
-import com.taobao.tddl.common.exception.TddlException;
-
 /**
  * 公共方便方法
- * 
+ *
  * @author whisper
  */
 public class GeneralUtil {
 
+    public static StackTraceElement split = new StackTraceElement("------- one sql exceptions-----", "", "", 0);
     static Pattern pattern = Pattern.compile("\\d+$");
 
     public static boolean isEmpty(Collection collection) {
@@ -82,12 +82,10 @@ public class GeneralUtil {
 
     public static void printAFieldToStringBuilder(StringBuilder sb, String field, Object v, String inden) {
         if (v == null || v.toString().equals("") || v.toString().equals("[]") || v.toString().equals("SEQUENTIAL")
-            || v.toString().equals("SHARED_LOCK")) return;
+                || v.toString().equals("SHARED_LOCK")) return;
 
         printlnToStringBuilder(sb, inden + field + ":" + v);
     }
-
-    public static StackTraceElement split = new StackTraceElement("------- one sql exceptions-----", "", "", 0);
 
     public static TddlException mergeException(List<TddlException> exceptions) {
         // return new OneToManySQLExceptionsWrapper(exceptions);

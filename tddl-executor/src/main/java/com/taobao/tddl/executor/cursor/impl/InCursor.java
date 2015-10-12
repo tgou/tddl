@@ -1,11 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.executor.codec.CodecFactory;
 import com.taobao.tddl.executor.codec.RecordCodec;
@@ -22,9 +16,11 @@ import com.taobao.tddl.optimizer.core.expression.IColumn;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 
+import java.util.*;
+
 /**
  * 专门处理 id in (xx,xx,xx,xx)的cursor 接受一大批的id in请求，然后分批，batch的方式，调用mget拿到具体的值。
- * 
+ *
  * @author whisper
  */
 public class InCursor extends SchematicCursor implements IInCursor {
@@ -34,21 +30,22 @@ public class InCursor extends SchematicCursor implements IInCursor {
      * :目前实现，是限制性的，下次可以设计成分批取多次的模式，以平衡性能和内存消耗。
      * 我一看一坨代码的东西就想哭啊。。妈的，所以简单实现一下，估计目前用不到这么复杂的算法
      */
-    public int                sizeInOneGo        = 4000;
-    IColumn                   c                  = null;
+    public int sizeInOneGo = 4000;
+    IColumn c = null;
     /**
      * 需要查找的数据
      */
-    List<Object>              valuesToFind       = null;
-    OPERATION                 op                 = null; ;
-    RecordCodec               keyCodec;
+    List<Object> valuesToFind = null;
+    OPERATION op = null;
+    ;
+    RecordCodec keyCodec;
 
-    IRowSet                   current            = null;
+    IRowSet current = null;
 
     /**
      * 一组返回的记录（size应该<=sizeInOneGo)，分批取出
      */
-    List<DuplicateKVPair>     pairToReturn;
+    List<DuplicateKVPair> pairToReturn;
 
     /**
      * 一组返回记录的指针
@@ -58,12 +55,13 @@ public class InCursor extends SchematicCursor implements IInCursor {
     /**
      * 如果有相同的数据，那么一次取出后。 将这个值缓存在这里，下次可以取出。
      */
-    DuplicateKVPair           duplicatePairCache = null;
+    DuplicateKVPair duplicatePairCache = null;
+    Iterator<KVPair> duplicatePairIterator = null;
 
-    public InCursor(Cursor cursor, List<IOrderBy> orderBys, IColumn c, List<Object> v, OPERATION op){
+    public InCursor(Cursor cursor, List<IOrderBy> orderBys, IColumn c, List<Object> v, OPERATION op) {
         super(cursor, null, orderBys);
         keyCodec = CodecFactory.getInstance(CodecFactory.FIXED_LENGTH)
-            .getCodec(Arrays.asList(ExecUtils.getColumnMeta(c)));
+                .getCodec(Arrays.asList(ExecUtils.getColumnMeta(c)));
         this.c = c;
 
         // if (c.getDataType() == DATA_TYPE.DATE_VAL) {
@@ -110,8 +108,6 @@ public class InCursor extends SchematicCursor implements IInCursor {
     public IRowSet current() throws TddlException {
         return current;
     }
-
-    Iterator<KVPair> duplicatePairIterator = null;
 
     @Override
     public IRowSet next() throws TddlException {

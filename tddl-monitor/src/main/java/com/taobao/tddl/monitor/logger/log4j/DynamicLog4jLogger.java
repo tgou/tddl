@@ -1,15 +1,10 @@
 package com.taobao.tddl.monitor.logger.log4j;
 
-import java.io.File;
-
-import org.apache.log4j.Appender;
-import org.apache.log4j.DailyRollingFileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-
 import com.taobao.tddl.monitor.logger.DynamicLogger;
 import com.taobao.tddl.monitor.logger.LoggerInit;
+import org.apache.log4j.*;
+
+import java.io.File;
 
 public class DynamicLog4jLogger extends DynamicLogger {
 
@@ -18,17 +13,17 @@ public class DynamicLog4jLogger extends DynamicLogger {
         Appender md5sqlAppender = buildAppender("TDDL_MD5_TO_SQL_Appender", "tddl.md5sql.log", "%d %p [%c{10}] - %m%n");
         Appender nagiosAppender = buildAppender("TDDL_Nagios_Appender", "Nagios.log", "%m%n");
         Appender atomStatisticAppender = buildDailyMaxRollingAppender("TDDL_Atom_Statistic_Appender",
-            "tddl-atom-statistic.log",
-            "%m",
-            6);
+                "tddl-atom-statistic.log",
+                "%m",
+                6);
         Appender matrixStatisticAppender = buildDailyMaxRollingAppender("TDDL_Matrix_Statistic_Appender",
-            "tddl-matrix-statistic.log",
-            "%m",
-            12);
+                "tddl-matrix-statistic.log",
+                "%m",
+                12);
         Appender connStatisticAppender = buildDailyMaxRollingAppender("TDDL_Conn_Statistic_Appender",
-            "tddl-conn-statistic.log",
-            "%m",
-            6);
+                "tddl-conn-statistic.log",
+                "%m",
+                6);
 
         Appender statisticAppender = buildAppender("TDDL_Statistic_Appender", "tddl-statistic.log", "%m");
         Appender snapshotAppender = buildAppender("TDDL_Snapshot_Appender", "tddl-snapshot.log", "%m");

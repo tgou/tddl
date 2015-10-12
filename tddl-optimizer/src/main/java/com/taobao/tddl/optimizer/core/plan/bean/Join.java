@@ -1,13 +1,5 @@
 package com.taobao.tddl.optimizer.core.plan.bean;
 
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendField;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendln;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.printFilterString;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.PlanVisitor;
@@ -17,42 +9,49 @@ import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 import com.taobao.tddl.optimizer.utils.OptimizerToString;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static com.taobao.tddl.optimizer.utils.OptimizerToString.*;
+
 public class Join extends QueryTree implements IJoin {
 
     /**
      * 左面join 子树 所有join都以key-value对的形式存在
      */
-    protected IQueryTree        left;
+    protected IQueryTree left;
     /**
      * 右面join 子树 所有join的子节点都以key-value对的形式存在
      */
-    protected IQueryTree        right;
+    protected IQueryTree right;
     /**
      * 左面join的列
      */
-    protected List<ISelectable> leftColumns  = new LinkedList<ISelectable>();
+    protected List<ISelectable> leftColumns = new LinkedList<ISelectable>();
     /**
      * 右面join的对应列
      */
-    protected List<ISelectable> rightColumns = new LinkedList<ISelectable>(); ;
+    protected List<ISelectable> rightColumns = new LinkedList<ISelectable>();
+    ;
 
     /**
      * 非column=column的join列
      */
-    protected IFilter           otherJoinOnFilter;
+    protected IFilter otherJoinOnFilter;
     /**
      * join的策略 ，具体请看对应解说
      */
-    protected JoinStrategy      joinStrategy;
+    protected JoinStrategy joinStrategy;
     /**
      * 左outer join,即使右表没有匹配的对应行，也输出左行 默认是false,也就是内联join
      */
-    protected Boolean           leftOuter;
+    protected Boolean leftOuter;
     /**
      * 右outer join 即使左表没有匹配的对应行，也输出右行 默认是false，也就是内联join
      */
-    protected Boolean           rightOuter;
-    protected IFilter           whereFilter;
+    protected Boolean rightOuter;
+    protected IFilter whereFilter;
 
     public IJoin copy() {
         IJoin join = ASTNodeFactory.getInstance().createJoin();
@@ -214,7 +213,7 @@ public class Join extends QueryTree implements IJoin {
         appendField(sb, "otherJoinOnFilter", printFilterString(this.getOtherJoinOnFilter()), tabContent);
         appendField(sb, "having", printFilterString(this.getHavingFilter()), tabContent);
         if (!(this.getLimitFrom() != null && this.getLimitFrom().equals(-1L) && this.getLimitTo() != null && this.getLimitTo()
-            .equals(-1L))) {
+                .equals(-1L))) {
             appendField(sb, "limitFrom", this.getLimitFrom(), tabContent);
             appendField(sb, "limitTo", this.getLimitTo(), tabContent);
         }

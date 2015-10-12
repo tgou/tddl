@@ -6,105 +6,105 @@ public class ShortType extends CommonType<Short> {
 
     private final Calculator calculator = new AbstractCalculator() {
 
-                                            @Override
-                                            public Object doAdd(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
-                                                return i1 + i2;
-                                            }
+        @Override
+        public Object doAdd(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
+            return i1 + i2;
+        }
 
-                                            @Override
-                                            public Object doSub(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
-                                                return i1 - i2;
-                                            }
+        @Override
+        public Object doSub(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
+            return i1 - i2;
+        }
 
-                                            @Override
-                                            public Object doMultiply(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
-                                                return i1 * i2;
-                                            }
+        @Override
+        public Object doMultiply(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
+            return i1 * i2;
+        }
 
-                                            @Override
-                                            public Object doDivide(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
+        @Override
+        public Object doDivide(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
 
-                                                if (i2 == 0) {
-                                                    return null;
-                                                }
+            if (i2 == 0) {
+                return null;
+            }
 
-                                                return i1 / i2;
-                                            }
+            return i1 / i2;
+        }
 
-                                            @Override
-                                            public Object doMod(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
+        @Override
+        public Object doMod(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
 
-                                                if (i2 == 0) {
-                                                    return null;
-                                                }
-                                                return i1 % i2;
-                                            }
+            if (i2 == 0) {
+                return null;
+            }
+            return i1 % i2;
+        }
 
-                                            @Override
-                                            public Object doAnd(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
-                                                return (i1 != 0) && (i2 != 0);
-                                            }
+        @Override
+        public Object doAnd(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
+            return (i1 != 0) && (i2 != 0);
+        }
 
-                                            @Override
-                                            public Object doOr(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
-                                                return (i1 != 0) || (i2 != 0);
-                                            }
+        @Override
+        public Object doOr(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
+            return (i1 != 0) || (i2 != 0);
+        }
 
-                                            @Override
-                                            public Object doNot(Object v1) {
-                                                Short i1 = convertFrom(v1);
+        @Override
+        public Object doNot(Object v1) {
+            Short i1 = convertFrom(v1);
 
-                                                return i1 == 0;
-                                            }
+            return i1 == 0;
+        }
 
-                                            @Override
-                                            public Object doBitAnd(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
-                                                return i1 & i2;
-                                            }
+        @Override
+        public Object doBitAnd(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
+            return i1 & i2;
+        }
 
-                                            @Override
-                                            public Object doBitOr(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
-                                                return i1 | i2;
-                                            }
+        @Override
+        public Object doBitOr(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
+            return i1 | i2;
+        }
 
-                                            @Override
-                                            public Object doBitNot(Object v1) {
-                                                Short i1 = convertFrom(v1);
-                                                return ~i1;
-                                            }
+        @Override
+        public Object doBitNot(Object v1) {
+            Short i1 = convertFrom(v1);
+            return ~i1;
+        }
 
-                                            @Override
-                                            public Object doXor(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
-                                                return (i1 != 0) ^ (i2 != 0);
-                                            }
+        @Override
+        public Object doXor(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
+            return (i1 != 0) ^ (i2 != 0);
+        }
 
-                                            @Override
-                                            public Object doBitXor(Object v1, Object v2) {
-                                                Short i1 = convertFrom(v1);
-                                                Short i2 = convertFrom(v2);
-                                                return i1 ^ i2;
-                                            }
-                                        };
+        @Override
+        public Object doBitXor(Object v1, Object v2) {
+            Short i1 = convertFrom(v1);
+            Short i2 = convertFrom(v2);
+            return i1 ^ i2;
+        }
+    };
 
     @Override
     public int encodeToBytes(Object value, byte[] dst, int offset) {

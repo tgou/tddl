@@ -48,12 +48,8 @@ public enum SqlType {
 
     private int i;
 
-    private SqlType(int i){
+    private SqlType(int i) {
         this.i = i;
-    }
-
-    public int value() {
-        return this.i;
     }
 
     public static SqlType valueOf(int i) {
@@ -63,5 +59,9 @@ public enum SqlType {
             }
         }
         throw new IllegalArgumentException("Invalid SqlType:" + i);
+    }
+
+    public int value() {
+        return this.i;
     }
 }

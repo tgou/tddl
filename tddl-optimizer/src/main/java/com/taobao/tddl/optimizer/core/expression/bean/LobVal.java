@@ -8,7 +8,7 @@ public class LobVal implements Comparable<String> {
     private String str;
     private String introducer;
 
-    public LobVal(String str, String introducer){
+    public LobVal(String str, String introducer) {
         this.str = str;
         this.introducer = introducer;
     }

@@ -18,32 +18,25 @@
  */
 package com.alibaba.cobar.parser.ast.expression.primary;
 
+import com.alibaba.cobar.parser.ast.expression.Expression;
+import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.alibaba.cobar.parser.ast.expression.Expression;
-import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
 
 /**
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class MatchExpression extends PrimaryExpression {
 
-    public static enum Modifier {
-        /** no modifier */
-        _DEFAULT, IN_BOOLEAN_MODE, IN_NATURAL_LANGUAGE_MODE, IN_NATURAL_LANGUAGE_MODE_WITH_QUERY_EXPANSION,
-        WITH_QUERY_EXPANSION
-    }
-
     private final List<Expression> columns;
-    private final Expression       pattern;
-    private final Modifier         modifier;
-
+    private final Expression pattern;
+    private final Modifier modifier;
     /**
      * @param modifier never null
      */
-    public MatchExpression(List<Expression> columns, Expression pattern, Modifier modifier){
+    public MatchExpression(List<Expression> columns, Expression pattern, Modifier modifier) {
         if (columns == null || columns.isEmpty()) {
             this.columns = Collections.emptyList();
         } else if (columns instanceof ArrayList) {
@@ -70,5 +63,13 @@ public class MatchExpression extends PrimaryExpression {
     @Override
     public void accept(SQLASTVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public static enum Modifier {
+        /**
+         * no modifier
+         */
+        _DEFAULT, IN_BOOLEAN_MODE, IN_NATURAL_LANGUAGE_MODE, IN_NATURAL_LANGUAGE_MODE_WITH_QUERY_EXPANSION,
+        WITH_QUERY_EXPANSION
     }
 }

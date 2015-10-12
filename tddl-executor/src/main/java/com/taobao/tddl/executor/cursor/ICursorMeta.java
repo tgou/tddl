@@ -1,23 +1,23 @@
 package com.taobao.tddl.executor.cursor;
 
-import java.util.Iterator;
-import java.util.List;
-
 import com.taobao.tddl.executor.common.IRowsValueScaner;
 import com.taobao.tddl.executor.cursor.impl.ColMetaAndIndex;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * cursor中所有行数据的源信息。
- * 
+ *
  * @author Whisper
  */
 public interface ICursorMeta {
 
     /**
      * 当前Cursor中间表的别名
-     * 
+     *
      * @return
      */
     // String getName();
@@ -26,7 +26,7 @@ public interface ICursorMeta {
 
     /**
      * 返回index,为null则表示未找到
-     * 
+     *
      * @param tableName
      * @param columnName
      * @return
@@ -40,14 +40,14 @@ public interface ICursorMeta {
      * column可能只有2个(因为有columnFilter)
      * 但实际上ArrayRowSet里面有10列的数据(因为原本是取出了10个记录的，又没有走一层网络，所以在数组内还保持了原有的整行数据。
      * 这样，如果只靠返回值，那么只能拿到2.用2做偏移量，是肯定不对的。 所以，需要拿真正数据的偏移量出来。所以这个数据在这时候应该返回10.
-     * 
+     *
      * @return
      */
     Integer getIndexRange();
 
     /**
      * 按照缩进输出String的方法
-     * 
+     *
      * @param inden
      * @return
      */
@@ -60,7 +60,7 @@ public interface ICursorMeta {
     /**
      * 是否确定UResultSet中的index和resultCusror中的index相等?
      * 这个属性的主要作用在于提升ResultSet在进行单值查询时候的性能。 为true表示一定相等，为false未必不相等
-     * 
+     *
      * @return
      */
     boolean isSureLogicalIndexEqualActualIndex();

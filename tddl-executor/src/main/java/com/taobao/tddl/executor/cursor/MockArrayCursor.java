@@ -1,10 +1,5 @@
 package com.taobao.tddl.executor.cursor;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.executor.common.DuplicateKVPair;
@@ -16,17 +11,22 @@ import com.taobao.tddl.executor.rowset.IRowSet;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 public class MockArrayCursor extends AbstractLifecycle implements Cursor {
 
-    List<IRowSet>        rows    = new ArrayList();
-    Iterator<IRowSet>    iter    = null;
-    private ICursorMeta  meta;
     private final String tableName;
-    List<ColumnMeta>     columns = new ArrayList();
-    private IRowSet      current;
-    private boolean      closed  = false;
+    List<IRowSet> rows = new ArrayList();
+    Iterator<IRowSet> iter = null;
+    List<ColumnMeta> columns = new ArrayList();
+    private ICursorMeta meta;
+    private IRowSet current;
+    private boolean closed = false;
 
-    public MockArrayCursor(String tableName){
+    public MockArrayCursor(String tableName) {
         this.tableName = tableName;
     }
 

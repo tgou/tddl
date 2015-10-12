@@ -4,36 +4,23 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
 
 /**
  * ResultSet包装类
- * 
+ *
  * @author shenxun
  */
 public class TResultSetWrapper implements ResultSet {
 
     private final TStatementWrapper tStatementWrapper;
     // private final TConnectionWrapper tConnectionWrapper;
-    private final ResultSet         targetResultSet;
+    private final ResultSet targetResultSet;
+    private boolean isClosed = false;
 
-    public TResultSetWrapper(TStatementWrapper tStatementWrapper, ResultSet resultSet){
+    public TResultSetWrapper(TStatementWrapper tStatementWrapper, ResultSet resultSet) {
         super();
         this.tStatementWrapper = tStatementWrapper;
         // this.tConnectionWrapper = tConnectionWrapper;
@@ -59,8 +46,6 @@ public class TResultSetWrapper implements ResultSet {
     public void clearWarnings() throws SQLException {
         this.targetResultSet.clearWarnings();
     }
-
-    private boolean isClosed = false;
 
     public void close() throws SQLException {
         if (isClosed) {
@@ -213,8 +198,16 @@ public class TResultSetWrapper implements ResultSet {
         return this.targetResultSet.getFetchDirection();
     }
 
+    public void setFetchDirection(int direction) throws SQLException {
+        this.targetResultSet.setFetchDirection(direction);
+    }
+
     public int getFetchSize() throws SQLException {
         return this.targetResultSet.getFetchSize();
+    }
+
+    public void setFetchSize(int rows) throws SQLException {
+        this.targetResultSet.setFetchSize(rows);
     }
 
     public float getFloat(int columnIndex) throws SQLException {
@@ -410,14 +403,6 @@ public class TResultSetWrapper implements ResultSet {
 
     public boolean rowUpdated() throws SQLException {
         return this.targetResultSet.rowUpdated();
-    }
-
-    public void setFetchDirection(int direction) throws SQLException {
-        this.targetResultSet.setFetchDirection(direction);
-    }
-
-    public void setFetchSize(int rows) throws SQLException {
-        this.targetResultSet.setFetchSize(rows);
     }
 
     public void updateArray(int columnIndex, Array x) throws SQLException {

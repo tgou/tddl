@@ -1,41 +1,37 @@
 package com.taobao.tddl.optimizer.core.expression.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.utils.TStringUtil;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.PlanVisitor;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
-import com.taobao.tddl.optimizer.core.expression.ExtraFunctionManager;
-import com.taobao.tddl.optimizer.core.expression.IBindVal;
-import com.taobao.tddl.optimizer.core.expression.IExtraFunction;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
+import com.taobao.tddl.optimizer.core.expression.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 采取代理模式，将function处理转移到执行器中进行处理，比如处理分库的count/max等
- * 
+ *
  * @since 5.0.0
  */
 public class Function<RT extends IFunction> implements IFunction<RT> {
 
-    public static final Object[] emptyArgs       = new Object[0];
+    public static final Object[] emptyArgs = new Object[0];
     // count
-    protected String             functionName;
-    protected List               args            = new ArrayList();
-    protected String             alias;
-    protected boolean            distinct        = false;
-    protected String             tablename;
+    protected String functionName;
+    protected List args = new ArrayList();
+    protected String alias;
+    protected boolean distinct = false;
+    protected String tablename;
 
     // count(id)
-    protected String             columnName;
-    protected IExtraFunction     extraFunction;
-    private boolean              isNot;
-    private boolean              needDistinctArg = false;
+    protected String columnName;
+    protected IExtraFunction extraFunction;
+    private boolean isNot;
+    private boolean needDistinctArg = false;
 
     @Override
     public String getFunctionName() {
@@ -154,11 +150,11 @@ public class Function<RT extends IFunction> implements IFunction<RT> {
     public RT copy() {
         IFunction funcNew = ASTNodeFactory.getInstance().createFunction();
         funcNew.setFunctionName(getFunctionName())
-            .setAlias(this.getAlias())
-            .setTableName(this.getTableName())
-            .setColumnName(this.getColumnName())
-            .setDistinct(this.isDistinct())
-            .setIsNot(this.isNot());
+                .setAlias(this.getAlias())
+                .setTableName(this.getTableName())
+                .setColumnName(this.getColumnName())
+                .setDistinct(this.isDistinct())
+                .setIsNot(this.isNot());
 
         if (getArgs() != null) {
             List<Object> argsNew = new ArrayList(getArgs().size());
@@ -182,11 +178,11 @@ public class Function<RT extends IFunction> implements IFunction<RT> {
      */
     protected void copy(IFunction funcNew) {
         funcNew.setFunctionName(getFunctionName())
-            .setAlias(this.getAlias())
-            .setTableName(this.getTableName())
-            .setColumnName(this.getColumnName())
-            .setDistinct(this.isDistinct())
-            .setIsNot(this.isNot());
+                .setAlias(this.getAlias())
+                .setTableName(this.getTableName())
+                .setColumnName(this.getColumnName())
+                .setDistinct(this.isDistinct())
+                .setIsNot(this.isNot());
 
         if (getArgs() != null) {
             List<Object> argsNew = new ArrayList(getArgs().size());

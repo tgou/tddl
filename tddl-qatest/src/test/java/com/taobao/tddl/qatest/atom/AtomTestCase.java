@@ -1,20 +1,19 @@
 package com.taobao.tddl.qatest.atom;
 
-import java.util.HashMap;
-
+import com.taobao.diamond.mockserver.MockServer;
+import com.taobao.tddl.atom.TAtomDataSource;
+import com.taobao.tddl.qatest.BaseAtomGroupTestCase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.taobao.diamond.mockserver.MockServer;
-import com.taobao.tddl.atom.TAtomDataSource;
-import com.taobao.tddl.qatest.BaseAtomGroupTestCase;
+import java.util.HashMap;
 
 public class AtomTestCase extends BaseAtomGroupTestCase {
 
-    protected static JdbcTemplate    tddlJT;
+    protected static JdbcTemplate tddlJT;
     protected static TAtomDataSource tds;
 
     @BeforeClass
@@ -31,16 +30,6 @@ public class AtomTestCase extends BaseAtomGroupTestCase {
     public static void tearDown() throws Exception {
         tds = null;
         tddlJT = null;
-    }
-
-    @Before
-    public void init() throws Exception {
-        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
-    }
-
-    @After
-    public void destroy() throws Exception {
-        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
     }
 
     protected static JdbcTemplate getJT() {
@@ -64,5 +53,15 @@ public class AtomTestCase extends BaseAtomGroupTestCase {
 
         // -----------------MockServer
         MockServer.setConfigInfos(dataMap);
+    }
+
+    @Before
+    public void init() throws Exception {
+        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
+    }
+
+    @After
+    public void destroy() throws Exception {
+        clearData(tddlJT, "delete from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
     }
 }

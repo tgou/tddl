@@ -1,67 +1,32 @@
 package com.taobao.tddl.executor.spi;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.model.Group;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.common.ExecutionContext;
 import com.taobao.tddl.executor.common.ExecutorContext;
-import com.taobao.tddl.executor.cursor.Cursor;
-import com.taobao.tddl.executor.cursor.IAggregateCursor;
-import com.taobao.tddl.executor.cursor.IBlockNestedLoopCursor;
-import com.taobao.tddl.executor.cursor.IColumnAliasCursor;
-import com.taobao.tddl.executor.cursor.ICursorMeta;
-import com.taobao.tddl.executor.cursor.IInCursor;
-import com.taobao.tddl.executor.cursor.IIndexNestLoopCursor;
-import com.taobao.tddl.executor.cursor.ILimitFromToCursor;
-import com.taobao.tddl.executor.cursor.IMergeCursor;
-import com.taobao.tddl.executor.cursor.IMergeSortJoinCursor;
-import com.taobao.tddl.executor.cursor.IRangeCursor;
-import com.taobao.tddl.executor.cursor.IReverseOrderCursor;
-import com.taobao.tddl.executor.cursor.ISchematicCursor;
-import com.taobao.tddl.executor.cursor.ISetOrderCursor;
-import com.taobao.tddl.executor.cursor.ITempTableSortCursor;
-import com.taobao.tddl.executor.cursor.ResultCursor;
-import com.taobao.tddl.executor.cursor.SchematicCursor;
-import com.taobao.tddl.executor.cursor.impl.AffectRowCursor;
-import com.taobao.tddl.executor.cursor.impl.AggregateCursor;
-import com.taobao.tddl.executor.cursor.impl.BlockNestedtLoopCursor;
-import com.taobao.tddl.executor.cursor.impl.ColumnAliasCursor;
-import com.taobao.tddl.executor.cursor.impl.InCursor;
-import com.taobao.tddl.executor.cursor.impl.IndexNestedLoopMgetImpCursor;
-import com.taobao.tddl.executor.cursor.impl.LimitFromToCursor;
-import com.taobao.tddl.executor.cursor.impl.MergeCursor;
-import com.taobao.tddl.executor.cursor.impl.MergeSortedCursors;
-import com.taobao.tddl.executor.cursor.impl.RangeCursor;
-import com.taobao.tddl.executor.cursor.impl.ReverseOrderCursor;
-import com.taobao.tddl.executor.cursor.impl.SetOrderByCursor;
-import com.taobao.tddl.executor.cursor.impl.SortCursor;
-import com.taobao.tddl.executor.cursor.impl.SortMergeJoinCursor;
-import com.taobao.tddl.executor.cursor.impl.TempTableSortCursor;
-import com.taobao.tddl.executor.cursor.impl.ValueFilterCursor;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.executor.cursor.*;
+import com.taobao.tddl.executor.cursor.impl.*;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * 默认的cursor工厂
- * 
+ *
  * @author mengshi.sunmengshi 2013-11-27 下午3:56:20
  * @since 5.0.0
  */
 @SuppressWarnings("rawtypes")
 public class CursorFactoryDefaultImpl implements ICursorFactory {
 
-    public CursorFactoryDefaultImpl(){
+    public CursorFactoryDefaultImpl() {
         super();
     }
 
@@ -125,21 +90,21 @@ public class CursorFactoryDefaultImpl implements ICursorFactory {
     @Override
     public ITempTableSortCursor tempTableSortCursor(ExecutionContext executionContext, ISchematicCursor cursor,
                                                     List<IOrderBy> orderBys, boolean sortedDuplicates, long requestID)
-                                                                                                                      throws TddlException {
+            throws TddlException {
         try {
             if ("True".equalsIgnoreCase(GeneralUtil.getExtraCmdString(executionContext.getExtraCmds(),
-                ExtraCmd.ALLOW_TEMPORARY_TABLE))) {
+                    ExtraCmd.ALLOW_TEMPORARY_TABLE))) {
 
                 IRepository bdbRepo = ExecutorContext.getContext()
-                    .getRepositoryHolder()
-                    .getOrCreateRepository(Group.GroupType.BDB_JE.name(), Collections.EMPTY_MAP);
+                        .getRepositoryHolder()
+                        .getOrCreateRepository(Group.GroupType.BDB_JE.name(), Collections.EMPTY_MAP);
                 return new TempTableSortCursor(this,
-                    bdbRepo,
-                    cursor,
-                    orderBys,
-                    sortedDuplicates,
-                    requestID,
-                    executionContext);
+                        bdbRepo,
+                        cursor,
+                        orderBys,
+                        sortedDuplicates,
+                        requestID,
+                        executionContext);
             }
 
             throw new IllegalStateException("not allow to use temporary table . allow first ");
@@ -152,7 +117,7 @@ public class CursorFactoryDefaultImpl implements ICursorFactory {
 
     @Override
     public IReverseOrderCursor reverseOrderCursor(ExecutionContext executionContext, ISchematicCursor cursor)
-                                                                                                             throws TddlException {
+            throws TddlException {
         try {
             return new ReverseOrderCursor(cursor);
         } catch (Exception e) {
@@ -182,14 +147,14 @@ public class CursorFactoryDefaultImpl implements ICursorFactory {
                                                     List columns, boolean prefix, IJoin executor) throws TddlException {
         try {
             return new IndexNestedLoopMgetImpCursor(leftCursor,
-                rightCursor,
-                leftColumns,
-                rightColumns,
-                columns,
-                prefix,
-                executor.getLeftNode().getColumns(),
-                executor.getRightNode().getColumns(),
-                executor);
+                    rightCursor,
+                    leftColumns,
+                    rightColumns,
+                    columns,
+                    prefix,
+                    executor.getLeftNode().getColumns(),
+                    executor.getRightNode().getColumns(),
+                    executor);
         } catch (Exception e) {
             closeParentCursor(leftCursor);
             closeParentCursor(rightCursor);
@@ -247,7 +212,7 @@ public class CursorFactoryDefaultImpl implements ICursorFactory {
     @Override
     public IMergeCursor mergeCursor(ExecutionContext executionContext, List<ISchematicCursor> cursors,
                                     ICursorMeta indexMeta, IDataNodeExecutor currentExecotor, List<IOrderBy> orderBys)
-                                                                                                                      throws TddlException {
+            throws TddlException {
         try {
             return new MergeCursor(cursors, indexMeta, currentExecotor, executionContext, orderBys);
         } catch (Exception e) {
@@ -265,19 +230,19 @@ public class CursorFactoryDefaultImpl implements ICursorFactory {
                                                             ISchematicCursor left_cursor,
                                                             ISchematicCursor right_cursor, List left_columns,
                                                             List right_columns, List columns, IJoin join)
-                                                                                                         throws TddlException {
+            throws TddlException {
 
         try {
             return new BlockNestedtLoopCursor(left_cursor,
-                right_cursor,
-                left_columns,
-                right_columns,
-                columns,
-                this,
-                join,
-                executionContext,
-                join.getLeftNode().getColumns(),
-                join.getRightNode().getColumns());
+                    right_cursor,
+                    left_columns,
+                    right_columns,
+                    columns,
+                    this,
+                    join,
+                    executionContext,
+                    join.getLeftNode().getColumns(),
+                    join.getRightNode().getColumns());
         } catch (Exception e) {
             closeParentCursor(left_cursor);
             closeParentCursor(right_cursor);
@@ -287,7 +252,7 @@ public class CursorFactoryDefaultImpl implements ICursorFactory {
 
     @Override
     public IRangeCursor rangeCursor(ExecutionContext executionContext, ISchematicCursor cursor, IFilter lf)
-                                                                                                           throws TddlException {
+            throws TddlException {
         try {
             return new RangeCursor(cursor, lf);
         } catch (Exception e) {
@@ -309,7 +274,7 @@ public class CursorFactoryDefaultImpl implements ICursorFactory {
 
     @Override
     public ResultCursor resultCursor(ExecutionContext context, ISchematicCursor cursor, List<Object> retColumns)
-                                                                                                                throws TddlException {
+            throws TddlException {
         return new ResultCursor(cursor, context, retColumns);
     }
 

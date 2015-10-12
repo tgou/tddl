@@ -1,14 +1,15 @@
 package com.taobao.tddl.rule.enumerator.handler;
 
-import java.util.Set;
-
 import com.taobao.tddl.rule.model.sqljep.Comparative;
+
+import java.util.Set;
 
 public abstract class NumberPartDiscontinousRangeEnumerator extends PartDiscontinousRangeEnumerator {
 
-    protected static final int     LIMIT_UNIT_OF_LONG        = 1;
-    protected static final int     DEFAULT_LONG_ATOMIC_VALUE = 1;
+    protected static final int LIMIT_UNIT_OF_LONG = 1;
+    protected static final int DEFAULT_LONG_ATOMIC_VALUE = 1;
     protected static final boolean isAllowNegative;
+
     static {
         /**
          * 大多数整形的ID/分库分表字段默认都是大于零的。如果有小于0的系统，那么将这个参数设为true，
@@ -22,7 +23,7 @@ public abstract class NumberPartDiscontinousRangeEnumerator extends PartDisconti
         if (from.getComparison() == Comparative.GreaterThan) {
             Number fromComparable = cast2Number(from.getValue());
             return new Comparative(Comparative.GreaterThanOrEqual,
-                (Comparable) plus(fromComparable, LIMIT_UNIT_OF_LONG));
+                    (Comparable) plus(fromComparable, LIMIT_UNIT_OF_LONG));
         } else {
             return from;
         }
@@ -33,7 +34,7 @@ public abstract class NumberPartDiscontinousRangeEnumerator extends PartDisconti
         if (to.getComparison() == Comparative.LessThan) {
             Number toComparable = cast2Number(to.getValue());
             return new Comparative(Comparative.LessThanOrEqual,
-                (Comparable) plus(toComparable, -1 * LIMIT_UNIT_OF_LONG));
+                    (Comparable) plus(toComparable, -1 * LIMIT_UNIT_OF_LONG));
         } else {
             return to;
         }

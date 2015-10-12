@@ -1,17 +1,17 @@
 package com.taobao.tddl.monitor.unit;
 
+import com.taobao.tddl.common.jdbc.ParameterContext;
+
 import java.sql.SQLException;
 import java.util.Map;
-
-import com.taobao.tddl.common.jdbc.ParameterContext;
 
 public interface TddlUnitDeployProtect {
 
     void unitDeployProtect(String sql, Map<Integer, ParameterContext> params) throws SQLException;
 
     void unitDeployProtectWithCause(String sql, Map<Integer, ParameterContext> params)
-                                                                                      throws UnitDeployInvalidException,
-                                                                                      SQLException;
+            throws UnitDeployInvalidException,
+            SQLException;
 
     void eagleEyeRecord(boolean result, Object c) throws UnitDeployInvalidException;
 

@@ -7,7 +7,7 @@ import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
 /**
  * mysql的Minus函数,取负数操作
- * 
+ *
  * @author jianghang 2014-2-13 上午11:43:32
  * @since 5.0.0
  */

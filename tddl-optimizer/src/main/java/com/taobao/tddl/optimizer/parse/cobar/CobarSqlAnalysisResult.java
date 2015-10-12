@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.parse.cobar;
 
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.ast.expression.primary.SysVarPrimary;
 import com.alibaba.cobar.parser.ast.fragment.tableref.TableReferences;
@@ -12,11 +9,7 @@ import com.alibaba.cobar.parser.ast.stmt.dal.ShowCreate;
 import com.alibaba.cobar.parser.ast.stmt.dal.ShowCreate.Type;
 import com.alibaba.cobar.parser.ast.stmt.dal.ShowIndex;
 import com.alibaba.cobar.parser.ast.stmt.ddl.DDLStatement;
-import com.alibaba.cobar.parser.ast.stmt.dml.DMLDeleteStatement;
-import com.alibaba.cobar.parser.ast.stmt.dml.DMLInsertStatement;
-import com.alibaba.cobar.parser.ast.stmt.dml.DMLReplaceStatement;
-import com.alibaba.cobar.parser.ast.stmt.dml.DMLSelectStatement;
-import com.alibaba.cobar.parser.ast.stmt.dml.DMLUpdateStatement;
+import com.alibaba.cobar.parser.ast.stmt.dml.*;
 import com.alibaba.cobar.parser.util.Pair;
 import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
 import com.taobao.tddl.common.exception.NotSupportException;
@@ -30,23 +23,22 @@ import com.taobao.tddl.optimizer.core.ast.dml.PutNode;
 import com.taobao.tddl.optimizer.core.ast.dml.UpdateNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
 import com.taobao.tddl.optimizer.parse.SqlAnalysisResult;
-import com.taobao.tddl.optimizer.parse.cobar.visitor.MySqlDeleteVisitor;
-import com.taobao.tddl.optimizer.parse.cobar.visitor.MySqlInsertVisitor;
-import com.taobao.tddl.optimizer.parse.cobar.visitor.MySqlReplaceIntoVisitor;
-import com.taobao.tddl.optimizer.parse.cobar.visitor.MySqlSelectVisitor;
-import com.taobao.tddl.optimizer.parse.cobar.visitor.MySqlUpdateVisitor;
+import com.taobao.tddl.optimizer.parse.cobar.visitor.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 基于cobar构造的parse结果
  */
 public class CobarSqlAnalysisResult implements SqlAnalysisResult {
 
-    private SqlType       sqlType;
+    private SqlType sqlType;
     private SQLASTVisitor visitor;
     private QueryTreeNode dalQueryTreeNode;
-    private SQLStatement  statement;
-    private boolean       hasVisited;
-    private String        sql;
+    private SQLStatement statement;
+    private boolean hasVisited;
+    private String sql;
 
     public void build(String sql, SQLStatement statement) {
         if (sql != null) {
@@ -109,7 +101,7 @@ public class CobarSqlAnalysisResult implements SqlAnalysisResult {
                     SysVarPrimary pri = (SysVarPrimary) exprs.get(0).getKey();
                     if ("AUTOCOMMIT".equals(pri.getVarTextUp()) || "LASTINSERTID".equals(pri.getVarTextUp())) {
                         throw new IllegalArgumentException("not support such SysVarPrimary:'" + pri.getVarTextUp()
-                                                           + "'");
+                                + "'");
                     } else {
                         return true;
                     }

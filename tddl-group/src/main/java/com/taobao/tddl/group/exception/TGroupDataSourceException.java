@@ -7,19 +7,19 @@ public class TGroupDataSourceException extends RuntimeException {
 
     private static final long serialVersionUID = -1L;
 
-    public TGroupDataSourceException(){
+    public TGroupDataSourceException() {
         super();
     }
 
-    public TGroupDataSourceException(String msg){
+    public TGroupDataSourceException(String msg) {
         super(msg);
     }
 
-    public TGroupDataSourceException(Throwable cause){
+    public TGroupDataSourceException(Throwable cause) {
         super(cause);
     }
 
-    public TGroupDataSourceException(String msg, Throwable cause){
+    public TGroupDataSourceException(String msg, Throwable cause) {
         super(msg, cause);
     }
 

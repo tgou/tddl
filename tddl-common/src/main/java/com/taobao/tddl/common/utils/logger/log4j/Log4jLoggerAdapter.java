@@ -1,22 +1,21 @@
 package com.taobao.tddl.common.utils.logger.log4j;
 
-import java.io.File;
-import java.util.Enumeration;
-
+import com.taobao.tddl.common.utils.logger.Level;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerAdapter;
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.LogManager;
 
-import com.taobao.tddl.common.utils.logger.Level;
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerAdapter;
+import java.io.File;
+import java.util.Enumeration;
 
 public class Log4jLoggerAdapter implements LoggerAdapter {
 
     private File file;
 
     @SuppressWarnings("unchecked")
-    public Log4jLoggerAdapter(){
+    public Log4jLoggerAdapter() {
         try {
             org.apache.log4j.Logger logger = LogManager.getRootLogger();
             if (logger != null) {
@@ -35,26 +34,6 @@ public class Log4jLoggerAdapter implements LoggerAdapter {
             }
         } catch (Throwable t) {
         }
-    }
-
-    public Logger getLogger(Class<?> key) {
-        return new Log4jLogger(LogManager.getLogger(key));
-    }
-
-    public Logger getLogger(String key) {
-        return new Log4jLogger(LogManager.getLogger(key));
-    }
-
-    public void setLevel(Level level) {
-        LogManager.getRootLogger().setLevel(toLog4jLevel(level));
-    }
-
-    public Level getLevel() {
-        return fromLog4jLevel(LogManager.getRootLogger().getLevel());
-    }
-
-    public File getFile() {
-        return file;
     }
 
     private static org.apache.log4j.Level toLog4jLevel(Level level) {
@@ -77,6 +56,26 @@ public class Log4jLoggerAdapter implements LoggerAdapter {
         if (level == org.apache.log4j.Level.ERROR) return Level.ERROR;
         // if (level == org.apache.log4j.Level.OFF)
         return Level.OFF;
+    }
+
+    public Logger getLogger(Class<?> key) {
+        return new Log4jLogger(LogManager.getLogger(key));
+    }
+
+    public Logger getLogger(String key) {
+        return new Log4jLogger(LogManager.getLogger(key));
+    }
+
+    public Level getLevel() {
+        return fromLog4jLevel(LogManager.getRootLogger().getLevel());
+    }
+
+    public void setLevel(Level level) {
+        LogManager.getRootLogger().setLevel(toLog4jLevel(level));
+    }
+
+    public File getFile() {
+        return file;
     }
 
     public void setFile(File file) {

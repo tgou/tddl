@@ -7,13 +7,13 @@ import com.taobao.tddl.optimizer.exceptions.QueryException;
 
 /**
  * 预先处理join
- * 
+ * <p/>
  * <pre>
  * 1. 会遍历所有节点将right join的左右节点进行调换，转换成left join.
- * 
+ *
  * 比如 A right join B on A.id = B.id
  * 转化为 B left join B on A.id = B.id
- * 
+ *
  * </pre>
  */
 public class JoinPreProcessor {
@@ -25,7 +25,7 @@ public class JoinPreProcessor {
 
     /**
      * 会遍历所有节点将right join的左右节点进行调换，转换成left join.
-     * 
+     * <p/>
      * <pre>
      * 比如 A right join B on A.id = B.id
      * 转化为 B left join B on A.id = B.id

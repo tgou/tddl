@@ -1,15 +1,5 @@
 package com.taobao.tddl.repo.mysql.spi;
 
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.common.DuplicateKVPair;
@@ -33,6 +23,11 @@ import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
+import org.apache.commons.lang.StringUtils;
+
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * @author mengshi.sunmengshi 2013-12-6 下午6:13:21
@@ -40,16 +35,16 @@ import com.taobao.tddl.optimizer.utils.FilterUtils;
  */
 public class My_Cursor implements Cursor {
 
-    protected My_JdbcHandler    myJdbcHandler;
+    public int sizeLimination = 10000;
+    protected My_JdbcHandler myJdbcHandler;
     protected IDataNodeExecutor query;
-    protected ICursorMeta       meta;
-    protected boolean           inited        = false;
+    protected ICursorMeta meta;
     // private boolean directlyExecuteSql = false;
+    protected boolean inited = false;
+    protected boolean isStreaming = false;
+    protected List<ColumnMeta> returnColumns = null;
 
-    protected boolean           isStreaming   = false;
-    protected List<ColumnMeta>  returnColumns = null;
-
-    public My_Cursor(My_JdbcHandler myJdbcHandler, ICursorMeta meta, IDataNodeExecutor executor, boolean isStreaming){
+    public My_Cursor(My_JdbcHandler myJdbcHandler, ICursorMeta meta, IDataNodeExecutor executor, boolean isStreaming) {
         super();
         this.myJdbcHandler = myJdbcHandler;
         this.query = executor;
@@ -198,8 +193,6 @@ public class My_Cursor implements Cursor {
         return exs;
     }
 
-    public int sizeLimination = 10000;
-
     @Override
     public Map<CloneableRecord, DuplicateKVPair> mgetWithDuplicate(List<CloneableRecord> keys, boolean prefixMatch,
                                                                    boolean keyFilterOrValueFilter) throws TddlException {
@@ -298,9 +291,9 @@ public class My_Cursor implements Cursor {
         GeneralUtil.printAFieldToStringBuilder(sb, "isStreaming", this.isStreaming, tabContent);
 
         if (this.myJdbcHandler != null) GeneralUtil.printAFieldToStringBuilder(sb,
-            "plan",
-            this.myJdbcHandler.getPlan(),
-            tabContent);
+                "plan",
+                this.myJdbcHandler.getPlan(),
+                tabContent);
 
         return sb.toString();
     }

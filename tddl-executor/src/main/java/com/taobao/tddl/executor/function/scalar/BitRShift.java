@@ -1,18 +1,18 @@
 package com.taobao.tddl.executor.function.scalar;
 
-import java.math.BigInteger;
-
 import com.taobao.tddl.executor.function.ScalarFunction;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
+
+import java.math.BigInteger;
 
 /**
  * <pre>
  * Shifts a longlong (BIGINT) number to the right.
- * 
+ *
  * mysql> SELECT 4 >> 2;
  *         -> 1
  * </pre>
- * 
+ *
  * @author jianghang 2014-2-13 下午1:13:06
  * @since 5.0.0
  */

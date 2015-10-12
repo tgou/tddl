@@ -1,32 +1,31 @@
 package com.taobao.tddl.group.jdbc;
 
+import com.taobao.tddl.common.model.DBType;
+import com.taobao.tddl.group.config.Weight;
+
+import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
-import com.taobao.tddl.common.model.DBType;
-import com.taobao.tddl.group.config.Weight;
-
 /**
  * 一个线程安全的DataSource包装类 DataSource包装类，因为一个GroupDataSource由多个AtomDataSource组成，
  * 且每个AtomDataSource都有对应的读写权重等信息，所以将每一个AtomDataSource封装起来。---add by mazhidan.pt
- * 
+ *
  * @author yangzhu
  * @author linxuan refactor as immutable class; dataSourceIndex extends
  */
 public class DataSourceWrapper implements DataSource {
 
-    private final String     dataSourceKey;    // 这个DataSource对应的dbKey
-    private final String     weightStr;        // 权重信息字符串
-    private final Weight     weight;           // 权重信息
+    private final String dataSourceKey;    // 这个DataSource对应的dbKey
+    private final String weightStr;        // 权重信息字符串
+    private final Weight weight;           // 权重信息
     private final DataSource wrappedDataSource; // 被封装的目标DataSource
-    private final DBType     dbType;           // 数据库类型
-    private final int        dataSourceIndex;  // DataSourceIndex是指这个DataSource在Group中的位置
+    private final DBType dbType;           // 数据库类型
+    private final int dataSourceIndex;  // DataSourceIndex是指这个DataSource在Group中的位置
 
     public DataSourceWrapper(String dataSourceKey, String weightStr, DataSource wrappedDataSource, DBType dbType,
-                             int dataSourceIndex){
+                             int dataSourceIndex) {
         this.dataSourceKey = dataSourceKey;
         this.weight = new Weight(weightStr);
         this.weightStr = weightStr;
@@ -36,7 +35,7 @@ public class DataSourceWrapper implements DataSource {
         this.dataSourceIndex = dataSourceIndex;
     }
 
-    public DataSourceWrapper(String dataSourceKey, String weightStr, DataSource wrappedDataSource, DBType dbType){
+    public DataSourceWrapper(String dataSourceKey, String weightStr, DataSource wrappedDataSource, DBType dbType) {
         this(dataSourceKey, weightStr, wrappedDataSource, dbType, -1);
     }
 
@@ -67,12 +66,12 @@ public class DataSourceWrapper implements DataSource {
 
     public String toString() {
         return new StringBuilder("DataSourceWrapper{dataSourceKey=").append(dataSourceKey)
-            .append(", dataSourceIndex=")
-            .append(dataSourceIndex)
-            .append(",weight=")
-            .append(weight)
-            .append("}")
-            .toString();
+                .append(", dataSourceIndex=")
+                .append(dataSourceIndex)
+                .append(",weight=")
+                .append(weight)
+                .append("}")
+                .toString();
     }
 
     public String getDataSourceKey() {
@@ -125,12 +124,12 @@ public class DataSourceWrapper implements DataSource {
         return wrappedDataSource.getLogWriter();
     }
 
-    public int getLoginTimeout() throws SQLException {
-        return wrappedDataSource.getLoginTimeout();
-    }
-
     public void setLogWriter(PrintWriter out) throws SQLException {
         wrappedDataSource.setLogWriter(out);
+    }
+
+    public int getLoginTimeout() throws SQLException {
+        return wrappedDataSource.getLoginTimeout();
     }
 
     public void setLoginTimeout(int seconds) throws SQLException {

@@ -1,9 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.chooser;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
@@ -14,11 +10,7 @@ import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
 import com.taobao.tddl.optimizer.core.ast.query.MergeNode;
 import com.taobao.tddl.optimizer.core.ast.query.QueryNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
-import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin.JoinStrategy;
 import com.taobao.tddl.optimizer.costbased.FilterSpliter;
 import com.taobao.tddl.optimizer.costbased.esitimater.Cost;
@@ -27,9 +19,13 @@ import com.taobao.tddl.optimizer.costbased.pusher.OrderByPusher;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 优化一下join
- * 
+ * <p/>
  * <pre>
  * 优化策略：
  * 1. 选择合适的索引
@@ -43,7 +39,7 @@ import com.taobao.tddl.optimizer.utils.FilterUtils;
  *          策略：NestLoop，内表使用全表扫描
  *       1.2内表进行Join的列存在索引
  *          策略：IndexNestLoop,在Join列里面选择索引，原本的全表扫描会分裂成一个Join
- *          
+ *
  *     2.内表已经选定了索引（KeyFilter存在）
  *       2.1内表进行Join的列不存在索引
  *          策略：NestLoop，内表使用原来的索引
@@ -54,7 +50,7 @@ import com.taobao.tddl.optimizer.utils.FilterUtils;
  *          如果内表经约束后的大小比较小，则可以使用方案二，反之，则应使用方案一,不过此开销目前很难估算。
  *          或者枚举所有可能的情况，貌似也比较麻烦，暂时只采用方案二，实现简单一些。
  * 5. 下推join/merge的order by条件
- * 
+ *
  * 如果设置了join节点顺序选择，会对可join的节点进行全排列，选择最合适的join，比如左表的数据最小
  * </pre>
  */
@@ -147,7 +143,7 @@ public class JoinChooser {
 
     /**
      * 判断是否需要调整join顺序
-     * 
+     * <p/>
      * <pre>
      * 比如mysql: select xx from a,b,c where a.id = c.id and b.name = c.name
      * 这时的结构树为 (a join b) join c ， a join b上不存在join条件，需要调整join顺序为 (a join c) join b 或者 (b join c) join a
@@ -177,7 +173,7 @@ public class JoinChooser {
      * 遍历每个节点 分解Query 为Query选择索引与Join策略 只遍历一棵子查询树
      */
     private static QueryTreeNode chooseStrategyAndIndexAndSplitQuery(QueryTreeNode node, Map<String, Object> extraCmd)
-                                                                                                                      throws QueryException {
+            throws QueryException {
         if (node instanceof JoinNode) {
             for (int i = 0; i < node.getChildren().size(); i++) {
                 QueryTreeNode child = (QueryTreeNode) node.getChildren().get(i);
@@ -226,8 +222,8 @@ public class JoinChooser {
                 // 出现了ss为null，即代表需要全表扫描
                 // 查找可以包含所有选择列的索引
                 IndexMeta indexWithAllColumnsSelected = IndexChooser.findBestIndexByAllColumnsSelected(((TableNode) node).getTableMeta(),
-                    ((TableNode) node).getColumnsRefered(),
-                    extraCmd);
+                        ((TableNode) node).getColumnsRefered(),
+                        extraCmd);
 
                 if (indexWithAllColumnsSelected != null) {
                     // 如果存在索引，则可以使用index value filter
@@ -264,14 +260,14 @@ public class JoinChooser {
              * 2. left outter/right outter join
              *      a. 对应的outter表上存在order by字段时，join列是一个orderBy列的子集，并且是一个前序匹配，选择SortMergeJoin
              *      b. 对应的outter表上存在group by字段时，join列是一个orderBy列的子集，调整groupBy顺序，选择SortMergeJoin
-             * 
+             *
              * 其余case考虑约束条件，而不考虑Join条件分以下两种大类情况：
              * 1.内表没有选定索引(约束条件里没有用到索引的列)
              *   1.1内表进行Join的列不存在索引
              *      策略：NestLoop，内表使用全表扫描
              *   1.2内表进行Join的列存在索引
              *      策略：IndexNestLoop,在Join列里面选择索引，原本的全表扫描会分裂成一个Join
-             *      
+             *
              * 2.内表已经选定了索引（KeyFilter存在）
              *   2.1内表进行Join的列不存在索引
              *      策略：NestLoop，内表使用原来的索引
@@ -306,10 +302,10 @@ public class JoinChooser {
                     }
                     // 找到对应join字段的索引
                     IndexMeta index = IndexChooser.findBestIndex((((TableNode) innerNode).getTableMeta()),
-                        ((JoinNode) node).getRightKeys(),
-                        Collections.<IFilter> emptyList(),
-                        tablename,
-                        extraCmd);
+                            ((JoinNode) node).getRightKeys(),
+                            Collections.<IFilter>emptyList(),
+                            tablename,
+                            extraCmd);
                     ((TableNode) innerNode).useIndex(index);
                     buildTableFilter(((TableNode) innerNode));
 
@@ -329,7 +325,7 @@ public class JoinChooser {
                                 ((JoinNode) node).getJoinFilter().remove(node.getResultFilter());
                             } else {
                                 ((JoinNode) node).getJoinFilter()
-                                    .removeAll(((ILogicalFilter) ((JoinNode) node).getResultFilter()).getSubFilter());
+                                        .removeAll(((ILogicalFilter) ((JoinNode) node).getResultFilter()).getSubFilter());
                             }
 
                             node.build();

@@ -1,74 +1,104 @@
 package com.taobao.tddl.sequence.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-
-import javax.sql.DataSource;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.sequence.SequenceDao;
 import com.taobao.tddl.sequence.SequenceRange;
 import com.taobao.tddl.sequence.exception.SequenceException;
 
+import javax.sql.DataSource;
+import java.sql.*;
+
 /**
  * 序列DAO默认实现，JDBC方式
- * 
+ *
  * @author nianbing
  */
 public class DefaultSequenceDao implements SequenceDao {
 
-    private static final Logger logger                           = LoggerFactory.getLogger(DefaultSequenceDao.class);
-    private static final int    MIN_STEP                         = 1;
-    private static final int    MAX_STEP                         = 100000;
-    private static final int    DEFAULT_STEP                     = 1000;
-    private static final int    DEFAULT_RETRY_TIMES              = 150;
+    private static final Logger logger = LoggerFactory.getLogger(DefaultSequenceDao.class);
+    private static final int MIN_STEP = 1;
+    private static final int MAX_STEP = 100000;
+    private static final int DEFAULT_STEP = 1000;
+    private static final int DEFAULT_RETRY_TIMES = 150;
 
-    private static final String DEFAULT_TABLE_NAME               = "sequence";
-    private static final String DEFAULT_NAME_COLUMN_NAME         = "name";
-    private static final String DEFAULT_VALUE_COLUMN_NAME        = "value";
+    private static final String DEFAULT_TABLE_NAME = "sequence";
+    private static final String DEFAULT_NAME_COLUMN_NAME = "name";
+    private static final String DEFAULT_VALUE_COLUMN_NAME = "value";
     private static final String DEFAULT_GMT_MODIFIED_COLUMN_NAME = "gmt_modified";
 
-    private static final long   DELTA                            = 100000000L;
+    private static final long DELTA = 100000000L;
 
-    private DataSource          dataSource;
+    private DataSource dataSource;
 
     /**
      * 重试次数
      */
-    private int                 retryTimes                       = DEFAULT_RETRY_TIMES;
+    private int retryTimes = DEFAULT_RETRY_TIMES;
 
     /**
      * 步长
      */
-    private int                 step                             = DEFAULT_STEP;
+    private int step = DEFAULT_STEP;
 
     /**
      * 序列所在的表名
      */
-    private String              tableName                        = DEFAULT_TABLE_NAME;
+    private String tableName = DEFAULT_TABLE_NAME;
 
     /**
      * 存储序列名称的列名
      */
-    private String              nameColumnName                   = DEFAULT_NAME_COLUMN_NAME;
+    private String nameColumnName = DEFAULT_NAME_COLUMN_NAME;
 
     /**
      * 存储序列值的列名
      */
-    private String              valueColumnName                  = DEFAULT_VALUE_COLUMN_NAME;
+    private String valueColumnName = DEFAULT_VALUE_COLUMN_NAME;
 
     /**
      * 存储序列最后更新时间的列名
      */
-    private String              gmtModifiedColumnName            = DEFAULT_GMT_MODIFIED_COLUMN_NAME;
+    private String gmtModifiedColumnName = DEFAULT_GMT_MODIFIED_COLUMN_NAME;
 
-    private volatile String     selectSql;
-    private volatile String     updateSql;
+    private volatile String selectSql;
+    private volatile String updateSql;
+
+    private static void closeResultSet(ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                logger.debug("Could not close JDBC ResultSet", e);
+            } catch (Throwable e) {
+                logger.debug("Unexpected exception on closing JDBC ResultSet", e);
+            }
+        }
+    }
+
+    private static void closeStatement(Statement stmt) {
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                logger.debug("Could not close JDBC Statement", e);
+            } catch (Throwable e) {
+                logger.debug("Unexpected exception on closing JDBC Statement", e);
+            }
+        }
+    }
+
+    private static void closeConnection(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                logger.debug("Could not close JDBC Connection", e);
+            } catch (Throwable e) {
+                logger.debug("Unexpected exception on closing JDBC Connection", e);
+            }
+        }
+    }
 
     public SequenceRange nextRange(String name) throws SequenceException {
         if (name == null) {
@@ -182,42 +212,6 @@ public class DefaultSequenceDao implements SequenceDao {
         return updateSql;
     }
 
-    private static void closeResultSet(ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                logger.debug("Could not close JDBC ResultSet", e);
-            } catch (Throwable e) {
-                logger.debug("Unexpected exception on closing JDBC ResultSet", e);
-            }
-        }
-    }
-
-    private static void closeStatement(Statement stmt) {
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                logger.debug("Could not close JDBC Statement", e);
-            } catch (Throwable e) {
-                logger.debug("Unexpected exception on closing JDBC Statement", e);
-            }
-        }
-    }
-
-    private static void closeConnection(Connection conn) {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                logger.debug("Could not close JDBC Connection", e);
-            } catch (Throwable e) {
-                logger.debug("Unexpected exception on closing JDBC Connection", e);
-            }
-        }
-    }
-
     public DataSource getDataSource() {
         return dataSource;
     }
@@ -233,7 +227,7 @@ public class DefaultSequenceDao implements SequenceDao {
     public void setRetryTimes(int retryTimes) {
         if (retryTimes < 0) {
             throw new IllegalArgumentException("Property retryTimes cannot be less than zero, retryTimes = "
-                                               + retryTimes);
+                    + retryTimes);
         }
 
         this.retryTimes = retryTimes;

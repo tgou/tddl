@@ -1,15 +1,12 @@
 package com.taobao.tddl.group.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
 
-import org.junit.Test;
-
-import com.taobao.tddl.group.jdbc.TGroupConnection;
-import com.taobao.tddl.group.jdbc.TGroupDataSource;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author yangzhu

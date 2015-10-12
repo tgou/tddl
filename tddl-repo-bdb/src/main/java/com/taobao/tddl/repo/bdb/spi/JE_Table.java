@@ -1,15 +1,6 @@
 package com.taobao.tddl.repo.bdb.spi;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.sleepycat.je.CursorConfig;
-import com.sleepycat.je.Database;
-import com.sleepycat.je.DatabaseEntry;
-import com.sleepycat.je.LockMode;
-import com.sleepycat.je.LockTimeoutException;
-import com.sleepycat.je.OperationStatus;
+import com.sleepycat.je.*;
 import com.sleepycat.je.rep.ReplicaWriteException;
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.ExceptionErrorCodeUtils;
@@ -28,31 +19,24 @@ import com.taobao.tddl.optimizer.config.table.IndexMeta;
 import com.taobao.tddl.optimizer.config.table.TableMeta;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * @author jianxing <jianxing.qx@taobao.com>
  */
 public class JE_Table extends AbstractTable {
 
-    boolean               isTempTable = false;
-    Map<String, Database> databases   = new HashMap();
-
-    public Map<String, Database> getDatabases() {
-        return databases;
-    }
-
-    public void setDatabases(Map<String, Database> databases) {
-        this.databases = databases;
-    }
-
+    boolean isTempTable = false;
+    Map<String, Database> databases = new HashMap();
     Map<String/** index **/
-    , KVCodec>    indexCodecMap;
+            , KVCodec> indexCodecMap;
     DatabaseEntry emptyValueEntry = new DatabaseEntry();
-
     {
         emptyValueEntry.setData(new byte[1]);
     }
-
-    public JE_Table(TableMeta schema, IRepository repo){
+    public JE_Table(TableMeta schema, IRepository repo) {
         super(schema, repo);
         indexCodecMap = new HashMap<String, KVCodec>();
 
@@ -62,10 +46,10 @@ public class JE_Table extends AbstractTable {
         if (pkCodec == null) {
             pkCodec = new KVCodec();
             pkCodec.setKey_codec(CodecFactory.getInstance(CodecFactory.FIXED_LENGTH)
-                .getCodec((pkIndex.getKeyColumns())));
+                    .getCodec((pkIndex.getKeyColumns())));
             if (pkIndex.getValueColumns() != null) {
                 pkCodec.setValue_codec(CodecFactory.getInstance(CodecFactory.FIXED_LENGTH)
-                    .getCodec((pkIndex.getValueColumns())));
+                        .getCodec((pkIndex.getValueColumns())));
             }
         }
 
@@ -74,14 +58,22 @@ public class JE_Table extends AbstractTable {
         for (IndexMeta secondIndex : getSchema().getSecondaryIndexes()) {
             KVCodec secCodec = new KVCodec();
             secCodec.setKey_codec(CodecFactory.getInstance(CodecFactory.FIXED_LENGTH)
-                .getCodec((secondIndex.getKeyColumns())));
+                    .getCodec((secondIndex.getKeyColumns())));
             if (secondIndex.getValueColumns() != null) {
                 secCodec.setValue_codec(CodecFactory.getInstance(CodecFactory.FIXED_LENGTH)
-                    .getCodec((secondIndex.getValueColumns())));
+                        .getCodec((secondIndex.getValueColumns())));
             }
             indexCodecMap.put(secondIndex.getName(), secCodec);
         }
 
+    }
+
+    public Map<String, Database> getDatabases() {
+        return databases;
+    }
+
+    public void setDatabases(Map<String, Database> databases) {
+        this.databases = databases;
     }
 
     public Database getDatabase(String name) {
@@ -105,7 +97,7 @@ public class JE_Table extends AbstractTable {
     }
 
     public ISchematicCursor getCursor(ITransaction txn, IndexMeta indexMeta, String isolation, String actualTableName)
-                                                                                                                      throws TddlException {
+            throws TddlException {
         Database db = getDatabase(actualTableName);
         if (db == null) {
             throw new TddlException("table don't contains indexName:" + actualTableName);
@@ -136,7 +128,7 @@ public class JE_Table extends AbstractTable {
         }
         JE_Cursor je_cursor = new JE_Cursor(indexMeta,
 
-        db.openCursor(txn == null ? null : ((JE_Transaction) txn).txn, cc), lm);
+                db.openCursor(txn == null ? null : ((JE_Transaction) txn).txn, cc), lm);
         if (txn != null) {
             ((JE_Transaction) txn).addCursor(je_cursor);
         }
@@ -145,7 +137,7 @@ public class JE_Table extends AbstractTable {
 
     /**
      * todo:触发更新二级索引
-     * 
+     *
      * @param key
      * @param value
      * @throws TddlException
@@ -206,13 +198,13 @@ public class JE_Table extends AbstractTable {
 
     @Override
     public void delete(ExecutionContext context, CloneableRecord key, IndexMeta indexMeta, String dbName)
-                                                                                                         throws TddlException {
+            throws TddlException {
 
         DatabaseEntry keyEntry = new DatabaseEntry();
         keyEntry.setData(indexCodecMap.get(indexMeta.getName()).getKey_codec().encode(key));
         try {
             getDatabase(dbName).delete(context.getTransaction() == null ? null : ((JE_Transaction) context.getTransaction()).txn,
-                keyEntry);
+                    keyEntry);
         } catch (LockTimeoutException ex) {
 
             throw ex;
@@ -228,9 +220,9 @@ public class JE_Table extends AbstractTable {
         DatabaseEntry valueEntry = new DatabaseEntry();
         keyEntry.setData(indexCodecMap.get(indexMeta.getName()).getKey_codec().encode(key));
         OperationStatus status = getDatabase(dbName).get(context.getTransaction() == null ? null : ((JE_Transaction) context.getTransaction()).txn,
-            keyEntry,
-            valueEntry,
-            LockMode.DEFAULT);
+                keyEntry,
+                valueEntry,
+                LockMode.DEFAULT);
         if (OperationStatus.SUCCESS != status) {
             return null;
         }
@@ -247,14 +239,14 @@ public class JE_Table extends AbstractTable {
 
     @Override
     public ISchematicCursor getCursor(ExecutionContext executionContext, IndexMeta meta, IQuery iQuery)
-                                                                                                       throws TddlException {
+            throws TddlException {
         String actualTable = iQuery.getTableName();
         return getCursor(executionContext.getTransaction(), meta, executionContext.getIsolation(), actualTable);
     }
 
     @Override
     public ISchematicCursor getCursor(ExecutionContext executionContext, IndexMeta indexMeta, String actualTableName)
-                                                                                                                     throws TddlException {
+            throws TddlException {
         Database db = getDatabase(actualTableName);
         if (db == null) {
             throw new TddlException("table don't contains indexName:" + actualTableName);
@@ -278,7 +270,7 @@ public class JE_Table extends AbstractTable {
         }
         JE_Cursor je_cursor = new JE_Cursor(indexMeta,
 
-        db.openCursor(txn == null ? null : ((JE_Transaction) txn).txn, cc), lm);
+                db.openCursor(txn == null ? null : ((JE_Transaction) txn).txn, cc), lm);
         if (txn != null) {
             ((JE_Transaction) txn).addCursor(je_cursor);
         }

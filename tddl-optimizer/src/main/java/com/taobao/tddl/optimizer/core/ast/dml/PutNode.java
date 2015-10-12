@@ -9,7 +9,7 @@ import com.taobao.tddl.optimizer.core.plan.dml.IReplace;
 
 public class PutNode extends DMLNode<PutNode> {
 
-    public PutNode(TableNode table){
+    public PutNode(TableNode table) {
         super(table);
     }
 

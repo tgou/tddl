@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.after;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.TddlConstants;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.model.ExtraCmd;
@@ -13,22 +11,45 @@ import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 
+import java.util.Map;
+
 /**
  * streaming模式处理
- * 
+ * <p/>
  * <pre>
  * 几种情况需要使用streaming
  * 1. merge节点中带limit，需要设置子节点为streaming模式
  * 2. join节点+不可下推，需要设置左右节点为streaming模式
  * 3. query节点+不可下推，需要设置子节点为streaming模式
  * </pre>
- * 
+ *
  * @author Whisper
  * @author <a href="jianghang.loujh@taobao.com">jianghang</a>
  */
 public class StreamingOptimizer implements QueryPlanOptimizer {
 
-    public StreamingOptimizer(){
+    public StreamingOptimizer() {
+    }
+
+    private static boolean isNeedStreaming(IQueryTree query, Map<String, Object> extraCmd) {
+        Comparable from = query.getLimitFrom();
+        Comparable to = query.getLimitTo();
+        boolean useStreaming = false;
+        if ((from instanceof IBindVal) || (to instanceof IBindVal)) {
+            useStreaming = true;
+        }
+
+        if (from instanceof Long && isNeedStreaming((Long) from, extraCmd)
+                || (to instanceof Long && isNeedStreaming((Long) to, extraCmd))) {
+            useStreaming = true;
+        }
+        return useStreaming;
+    }
+
+    private static boolean isNeedStreaming(Long limit, Map<String, Object> extraCmd) {
+        return limit > GeneralUtil.getExtraCmdLong(extraCmd,
+                ExtraCmd.STREAMI_THRESHOLD,
+                TddlConstants.DEFAULT_STREAM_THRESOLD);
     }
 
     @Override
@@ -79,26 +100,5 @@ public class StreamingOptimizer implements QueryPlanOptimizer {
             }
         }
 
-    }
-
-    private static boolean isNeedStreaming(IQueryTree query, Map<String, Object> extraCmd) {
-        Comparable from = query.getLimitFrom();
-        Comparable to = query.getLimitTo();
-        boolean useStreaming = false;
-        if ((from instanceof IBindVal) || (to instanceof IBindVal)) {
-            useStreaming = true;
-        }
-
-        if (from instanceof Long && isNeedStreaming((Long) from, extraCmd)
-            || (to instanceof Long && isNeedStreaming((Long) to, extraCmd))) {
-            useStreaming = true;
-        }
-        return useStreaming;
-    }
-
-    private static boolean isNeedStreaming(Long limit, Map<String, Object> extraCmd) {
-        return limit > GeneralUtil.getExtraCmdLong(extraCmd,
-            ExtraCmd.STREAMI_THRESHOLD,
-            TddlConstants.DEFAULT_STREAM_THRESOLD);
     }
 }

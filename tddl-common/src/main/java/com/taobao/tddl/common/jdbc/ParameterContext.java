@@ -2,13 +2,13 @@ package com.taobao.tddl.common.jdbc;
 
 /**
  * 参数上下文
- * 
+ * <p/>
  * <pre>
  * 包含两个对象：
  * 1. parameterMethod枚举类型，表明对应的set方法类型，比如setString
  * 2. args数组，代表传递给setXXX的参数内容
  * </pre>
- * 
+ *
  * @author shenxun
  */
 public class ParameterContext {
@@ -19,12 +19,12 @@ public class ParameterContext {
      * 适用于：setAsciiStream、setBinaryStream、setCharacterStream、setUnicodeStream
      * 。。。
      */
-    private Object[]        args;
+    private Object[] args;
 
-    public ParameterContext(){
+    public ParameterContext() {
     }
 
-    public ParameterContext(ParameterMethod parameterMethod, Object[] args){
+    public ParameterContext(ParameterMethod parameterMethod, Object[] args) {
         this.parameterMethod = parameterMethod;
         this.args = args;
     }

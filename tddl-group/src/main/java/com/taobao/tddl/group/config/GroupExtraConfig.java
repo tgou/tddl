@@ -18,7 +18,7 @@ public class GroupExtraConfig {
      * tableDsIndexMap,sqlDsIndexMap),higher than weight select. add by
      * junyu,2011-11-01
      */
-    private boolean                                              defaultMain     = false;
+    private boolean defaultMain = false;
 
     /**
      * this map define the actual_table and dataSourceIndex relation add by
@@ -30,12 +30,12 @@ public class GroupExtraConfig {
      * this map define the sql and dataSourceIndex relation add by
      * junyu,2011-11-01
      */
-    private Map<String/* sql */, Integer/* dataSourceIndex */>   sqlDsIndexMap   = new HashMap<String, Integer>();
+    private Map<String/* sql */, Integer/* dataSourceIndex */> sqlDsIndexMap = new HashMap<String, Integer>();
 
     /**
      * this list contain the sqls whitch are forbidden add by jiechen,2011-12-29
      */
-    private Set<String/* sql */>                                 sqlForbidSet    = new HashSet<String>();
+    private Set<String/* sql */> sqlForbidSet = new HashSet<String>();
 
     public boolean isDefaultMain() {
         return defaultMain;

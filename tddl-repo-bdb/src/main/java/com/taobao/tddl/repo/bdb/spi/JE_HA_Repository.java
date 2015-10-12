@@ -1,26 +1,18 @@
 package com.taobao.tddl.repo.bdb.spi;
 
+import com.sleepycat.je.Durability;
+import com.sleepycat.je.Durability.ReplicaAckPolicy;
+import com.sleepycat.je.Durability.SyncPolicy;
+import com.sleepycat.je.EnvironmentConfig;
+import com.sleepycat.je.rep.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.sleepycat.je.Durability;
-import com.sleepycat.je.Durability.ReplicaAckPolicy;
-import com.sleepycat.je.Durability.SyncPolicy;
-import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.rep.InsufficientLogException;
-import com.sleepycat.je.rep.NetworkRestore;
-import com.sleepycat.je.rep.NetworkRestoreConfig;
-import com.sleepycat.je.rep.NoConsistencyRequiredPolicy;
-import com.sleepycat.je.rep.QuorumPolicy;
-import com.sleepycat.je.rep.ReplicatedEnvironment;
-import com.sleepycat.je.rep.ReplicationConfig;
-import com.sleepycat.je.rep.UnknownMasterException;
 
 /**
  * @author jianxing <jianxing.qx@taobao.com>
@@ -82,11 +74,11 @@ public class JE_HA_Repository extends JE_Repository {
             }
             StringBuilder sb = new StringBuilder();
             sb.append("I am not master node , My node name is (")
-                .append(config.getNodeName())
-                .append("-->")
-                .append(nodesMap.get(config.getNodeName()))
-                .append(")")
-                .append(", first node is (");
+                    .append(config.getNodeName())
+                    .append("-->")
+                    .append(nodesMap.get(config.getNodeName()))
+                    .append(")")
+                    .append(", first node is (");
             sb.append(firstNode).append("-->").append(nodesMap.get(config.getNodeName())).append(")");
             sb.append(" . helper hosts :").append(helperHosts);
             logger.warn(sb.toString());
@@ -100,8 +92,8 @@ public class JE_HA_Repository extends JE_Repository {
         envConfig.setAllowCreate(true);
         String[] _durability = config.getDurability();
         this.durability = new Durability(SyncPolicy.valueOf(_durability[0]),
-            SyncPolicy.valueOf(_durability[1]),
-            ReplicaAckPolicy.valueOf(_durability[2]));
+                SyncPolicy.valueOf(_durability[1]),
+                ReplicaAckPolicy.valueOf(_durability[2]));
         envConfig.setCachePercent(config.getCachePercent());
         if (config.isTransactional()) {
             envConfig.setTransactional(config.isTransactional());
@@ -118,10 +110,10 @@ public class JE_HA_Repository extends JE_Repository {
             try {
                 logger.info(repConfig.getHelperHosts());
                 env = new ReplicatedEnvironment(repo_dir,
-                    repConfig,
-                    envConfig,
-                    new NoConsistencyRequiredPolicy(),
-                    QuorumPolicy.SIMPLE_MAJORITY);
+                        repConfig,
+                        envConfig,
+                        new NoConsistencyRequiredPolicy(),
+                        QuorumPolicy.SIMPLE_MAJORITY);
                 logger.info("nodeName:" + config.getNodeName() + ", ReplicatedEnvironment init successful.");
                 logger.info("state:" + ((ReplicatedEnvironment) env).getState());
                 break;
@@ -163,8 +155,7 @@ public class JE_HA_Repository extends JE_Repository {
                * NameIdPair.NOCHECK, true, fm); try { backup.execute(); } catch
                * (Exception ex) { ex.printStackTrace(); } }
                * System.out.println("backup end"); } // retry continue; }
-               */
-            catch (Throwable e) {
+               */ catch (Throwable e) {
                 System.err.println("error " + e + ". class" + e.getClass());
             }
         }

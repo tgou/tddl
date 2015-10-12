@@ -1,25 +1,25 @@
 package com.taobao.tddl.monitor.stat;
 
-import java.util.Date;
-
 import com.taobao.tddl.common.utils.logger.Logger;
+
+import java.util.Date;
 
 /**
  * 扩展 Log4j Logger 的统计日志输出类, 唯一的区别是在输出 count/sum/min/max 后增加平均值。
- * 
+ *
  * @author changyuan.lh
  */
 public class MinMaxAvgLogWriter extends LoggerLogWriter {
 
-    public MinMaxAvgLogWriter(Logger statLogger){
+    public MinMaxAvgLogWriter(Logger statLogger) {
         super(statLogger);
     }
 
-    public MinMaxAvgLogWriter(String fieldSeperator, Logger statLogger){
+    public MinMaxAvgLogWriter(String fieldSeperator, Logger statLogger) {
         super(fieldSeperator, statLogger);
     }
 
-    public MinMaxAvgLogWriter(String fieldSeperator, String lineSeperator, Logger statLogger){
+    public MinMaxAvgLogWriter(String fieldSeperator, String lineSeperator, Logger statLogger) {
         super(fieldSeperator, lineSeperator, statLogger);
     }
 

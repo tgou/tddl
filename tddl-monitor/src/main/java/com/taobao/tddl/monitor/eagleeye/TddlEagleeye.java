@@ -6,7 +6,7 @@ public interface TddlEagleeye {
 
     /**
      * execute之前写日志
-     * 
+     *
      * @param datasourceWrapper
      * @param sqlType
      * @throws Exception

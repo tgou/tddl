@@ -1,10 +1,5 @@
 package com.taobao.tddl.repo.bdb.executor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.Group;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
@@ -15,23 +10,28 @@ import com.taobao.tddl.executor.spi.IAtomExecutor;
 import com.taobao.tddl.executor.spi.IGroupExecutor;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+
 @SuppressWarnings("rawtypes")
 public class BDBGroupExecutor extends AbstractLifecycle implements IGroupExecutor {
 
     private final ArrayList<IAtomExecutor> executorList;
 
-    private ResourceSelector               slaveSelector;
-    private ExceptionSorter<Integer>       slaveExceptionSorter;
+    private ResourceSelector slaveSelector;
+    private ExceptionSorter<Integer> slaveExceptionSorter;
 
-    private ResourceSelector               masterSelector;
-    private ExceptionSorter<Integer>       masterExceptionSorter;
+    private ResourceSelector masterSelector;
+    private ExceptionSorter<Integer> masterExceptionSorter;
 
     /**
      * @param resultSetMap 结果集对应Map
      * @param executorList 执行client的list
-     * @param rWeight 读权重
+     * @param rWeight      读权重
      */
-    public BDBGroupExecutor(ArrayList<IAtomExecutor> executorList, List<Integer> rWeight){
+    public BDBGroupExecutor(ArrayList<IAtomExecutor> executorList, List<Integer> rWeight) {
         this.executorList = executorList;
         this.masterExceptionSorter = new MasterExceptionSorter<Integer>();
         this.slaveExceptionSorter = new SlaveExceptionSorter<Integer>();
@@ -40,7 +40,7 @@ public class BDBGroupExecutor extends AbstractLifecycle implements IGroupExecuto
     }
 
     private static int findIndexToExecute(ResourceSelector selector, Map<Integer, String> excludeKeys)
-                                                                                                      throws TddlException {
+            throws TddlException {
         int index = 0;
         // Integer specIndex = null;
         // if (specIndex != null) {
@@ -90,7 +90,7 @@ public class BDBGroupExecutor extends AbstractLifecycle implements IGroupExecuto
 
     @Override
     public ISchematicCursor execByExecPlanNode(IDataNodeExecutor qc, ExecutionContext executionContext)
-                                                                                                       throws TddlException {
+            throws TddlException {
 
         // IAtomExecutor atomExecutor = this.selectAtomExecutor(executeType,
         // executionContext);
@@ -112,10 +112,6 @@ public class BDBGroupExecutor extends AbstractLifecycle implements IGroupExecuto
 
     }
 
-    enum ExecuteType {
-        READ, WRITE
-    };
-
     IAtomExecutor selectAtomExecutor(ExecuteType executeType, ExecutionContext executionContext) throws TddlException {
         Map<Integer, String/* exception */> excludeKeys = null;
         IAtomExecutor atomExecutor = null;
@@ -132,6 +128,8 @@ public class BDBGroupExecutor extends AbstractLifecycle implements IGroupExecuto
         return atomExecutor;
     }
 
+    ;
+
     @Override
     public ResultCursor commit(ExecutionContext executionContext) throws TddlException {
         // TODO Auto-generated method stub
@@ -146,7 +144,7 @@ public class BDBGroupExecutor extends AbstractLifecycle implements IGroupExecuto
 
     @Override
     public Future<ISchematicCursor> execByExecPlanNodeFuture(IDataNodeExecutor qc, ExecutionContext executionContext)
-                                                                                                                     throws TddlException {
+            throws TddlException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -173,6 +171,10 @@ public class BDBGroupExecutor extends AbstractLifecycle implements IGroupExecuto
     public Object getRemotingExecutableObject() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    enum ExecuteType {
+        READ, WRITE
     }
 
 }

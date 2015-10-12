@@ -1,10 +1,6 @@
 package com.taobao.tddl.matrix.jdbc;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.RowIdLifetime;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * @author mengshi.sunmengshi 2013-12-6 下午3:38:38
@@ -42,7 +38,7 @@ public class TDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getBestRowIdentifier(String catalog, String schema, String table, int scope, boolean nullable)
-                                                                                                                   throws SQLException {
+            throws SQLException {
         return null;
     }
 
@@ -59,12 +55,12 @@ public class TDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getColumnPrivileges(String catalog, String schema, String table, String columnNamePattern)
-                                                                                                               throws SQLException {
+            throws SQLException {
         return null;
     }
 
     public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern)
-                                                                                                                        throws SQLException {
+            throws SQLException {
         return null;
     }
 
@@ -74,7 +70,7 @@ public class TDatabaseMetaData implements DatabaseMetaData {
 
     public ResultSet getCrossReference(String primaryCatalog, String primarySchema, String primaryTable,
                                        String foreignCatalog, String foreignSchema, String foreignTable)
-                                                                                                        throws SQLException {
+            throws SQLException {
         return null;
     }
 
@@ -131,7 +127,7 @@ public class TDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getIndexInfo(String catalog, String schema, String table, boolean unique, boolean approximate)
-                                                                                                                   throws SQLException {
+            throws SQLException {
         return null;
     }
 
@@ -241,7 +237,7 @@ public class TDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getProcedures(String catalog, String schemaPattern, String procedureNamePattern)
-                                                                                                     throws SQLException {
+            throws SQLException {
         return null;
     }
 
@@ -286,7 +282,7 @@ public class TDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getTablePrivileges(String catalog, String schemaPattern, String tableNamePattern)
-                                                                                                      throws SQLException {
+            throws SQLException {
         return null;
     }
 
@@ -295,7 +291,7 @@ public class TDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types)
-                                                                                                             throws SQLException {
+            throws SQLException {
         return null;
     }
 
@@ -308,7 +304,7 @@ public class TDatabaseMetaData implements DatabaseMetaData {
     }
 
     public ResultSet getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types)
-                                                                                                       throws SQLException {
+            throws SQLException {
         return null;
     }
 

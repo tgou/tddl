@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * Long <-> Date对象之间的转换
- * 
+ *
  * @author jianghang 2014-2-18 下午1:59:25
  * @since 5.0.0
  */

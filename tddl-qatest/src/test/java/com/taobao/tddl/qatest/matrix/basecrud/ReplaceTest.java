@@ -1,12 +1,9 @@
 package com.taobao.tddl.qatest.matrix.basecrud;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -14,10 +11,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Comment for ReplaceTest
@@ -27,13 +26,13 @@ import com.taobao.tddl.qatest.util.EclipseParameterized;
 @RunWith(EclipseParameterized.class)
 public class ReplaceTest extends BaseMatrixTestCase {
 
+    public ReplaceTest(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
+
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public ReplaceTest(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -60,7 +59,7 @@ public class ReplaceTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME" };
+        String[] columnParam = {"PK", "ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -74,7 +73,7 @@ public class ReplaceTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "GMT_TIMESTAMP", "FLOATCOL" };
+        String[] columnParam = {"PK", "GMT_TIMESTAMP", "FLOATCOL"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -88,7 +87,7 @@ public class ReplaceTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "NAME" };
+        String[] columnParam = {"PK", "NAME"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -122,12 +121,12 @@ public class ReplaceTest extends BaseMatrixTestCase {
         if (!(normaltblTableName.contains("mysql") || normaltblTableName.startsWith("ob"))) {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String sql = "replace into " + normaltblTableName + "(pk,gmt_create,gmt_timestamp,gmt_datetime,id) values("
-                         + RANDOM_ID + ",'" + df.format(gmt) + "','" + df.format(gmt) + "','" + df.format(gmt) + "',"
-                         + RANDOM_INT + ")";
+                    + RANDOM_ID + ",'" + df.format(gmt) + "','" + df.format(gmt) + "','" + df.format(gmt) + "',"
+                    + RANDOM_INT + ")";
             execute(sql, Collections.EMPTY_LIST);
 
             sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-            String[] columnParam = { "PK", "GMT_CREATE", "ID", "GMT_TIMESTAMP", "GMT_DATETIME" };
+            String[] columnParam = {"PK", "GMT_CREATE", "ID", "GMT_TIMESTAMP", "GMT_DATETIME"};
             selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
         }
     }
@@ -142,7 +141,7 @@ public class ReplaceTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "GMT_CREATE", "FLOATCOL" };
+        String[] columnParam = {"PK", "GMT_CREATE", "FLOATCOL"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -156,7 +155,7 @@ public class ReplaceTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + RANDOM_ID;
-        String[] columnParam = { "PK", "GMT_CREATE", "FLOATCOL" };
+        String[] columnParam = {"PK", "GMT_CREATE", "FLOATCOL"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -189,10 +188,10 @@ public class ReplaceTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + pk;
-        String[] columnParam = { "PK", "ID" };
+        String[] columnParam = {"PK", "ID"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
 
-        andorUpdateData("delete from " + normaltblTableName + " where pk=?", Arrays.asList(new Object[] { pk }));
+        andorUpdateData("delete from " + normaltblTableName + " where pk=?", Arrays.asList(new Object[]{pk}));
         mysqlUpdateData("delete from " + normaltblTableName + " where pk=" + pk, null);
 
         pk = 0;
@@ -218,10 +217,10 @@ public class ReplaceTest extends BaseMatrixTestCase {
         execute(sql, param);
 
         sql = "select * from " + normaltblTableName + " where pk=" + pk;
-        String[] columnParam = { "PK", "ID" };
+        String[] columnParam = {"PK", "ID"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
 
-        andorUpdateData("delete from " + normaltblTableName + " where pk=?", Arrays.asList(new Object[] { pk }));
+        andorUpdateData("delete from " + normaltblTableName + " where pk=?", Arrays.asList(new Object[]{pk}));
         mysqlUpdateData("delete from " + normaltblTableName + " where pk=" + pk, null);
 
         pk = Long.MIN_VALUE;

@@ -1,9 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.esitimater;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
@@ -19,14 +15,18 @@ import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
 import com.taobao.tddl.optimizer.costbased.esitimater.stat.KVIndexStat;
 import com.taobao.tddl.optimizer.exceptions.StatisticsUnavailableException;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 计算结构树的cost
- * 
+ *
  * @since 5.0.0
  */
 public class CostEsitimaterFactory {
 
-    private static JoinNodeCostEstimater  joinNodeCostEstimater  = new JoinNodeCostEstimater();
+    private static JoinNodeCostEstimater joinNodeCostEstimater = new JoinNodeCostEstimater();
     private static MergeNodeCostEstimater mergeNodeCostEstimater = new MergeNodeCostEstimater();
     private static QueryNodeCostEstimater queryNodeCostEstimater = new QueryNodeCostEstimater();
 
@@ -45,11 +45,11 @@ public class CostEsitimaterFactory {
 
     /**
      * 根据索引和查询的filter条件，估算记录数
-     * 
+     *
      * @param tableRowCount 表记录数
-     * @param filters 查询条件
-     * @param index 选择的索引
-     * @param indexStat 索引的统计信息，如果为null则按照经验值预算
+     * @param filters       查询条件
+     * @param index         选择的索引
+     * @param indexStat     索引的统计信息，如果为null则按照经验值预算
      * @return
      */
     public static long estimateRowCount(long tableRowCount, List<IFilter> filters, IndexMeta index,
@@ -62,7 +62,7 @@ public class CostEsitimaterFactory {
         Map<String, Double> columnAndColumnCountItSelectivity = new HashMap();
         if (index != null && indexStat != null) {
             Double columnCountEveryKeyColumnSelect = ((double) index.getKeyColumns().size())
-                                                     * (1.0 / indexStat.getDistinctKeys());
+                    * (1.0 / indexStat.getDistinctKeys());
             for (ColumnMeta cm : index.getKeyColumns()) {
                 columnAndColumnCountItSelectivity.put(cm.getName(), columnCountEveryKeyColumnSelect);
             }

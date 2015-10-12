@@ -1,25 +1,20 @@
 package com.taobao.tddl.qatest.group;
 
-import java.io.File;
-import java.util.HashMap;
-
-import org.apache.commons.lang.StringUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import com.taobao.diamond.mockserver.MockServer;
 import com.taobao.tddl.common.GroupDataSourceRouteHelper;
 import com.taobao.tddl.group.jdbc.TGroupDataSource;
 import com.taobao.tddl.qatest.BaseAtomGroupTestCase;
 import com.taobao.tddl.qatest.util.LoadPropsUtil;
+import org.apache.commons.lang.StringUtils;
+import org.junit.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.io.File;
+import java.util.HashMap;
 
 public class GroupTestCase extends BaseAtomGroupTestCase {
 
-    protected static JdbcTemplate     tddlJT;
+    protected static JdbcTemplate tddlJT;
     protected static TGroupDataSource tds;
 
     @BeforeClass
@@ -31,30 +26,6 @@ public class GroupTestCase extends BaseAtomGroupTestCase {
     public static void tearDown() {
         tds = null;
         tddlJT = null;
-    }
-
-    @Before
-    public void init() throws Exception {
-        // 清数据防止干扰
-        String sql = "delete from normaltbl_0001 where pk=?";
-        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-        clearData(tddlJT, sql, new Object[] { RANDOM_ID });
-        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-        clearData(tddlJT, sql, new Object[] { RANDOM_ID });
-        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-        clearData(tddlJT, sql, new Object[] { RANDOM_ID });
-    }
-
-    @After
-    public void destroy() {
-        // 清数据防止干扰
-        String sql = "delete from normaltbl_0001 where pk=?";
-        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-        clearData(tddlJT, sql, new Object[] { RANDOM_ID });
-        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-        clearData(tddlJT, sql, new Object[] { RANDOM_ID });
-        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-        clearData(tddlJT, sql, new Object[] { RANDOM_ID });
     }
 
     protected static void setGroupMockInfo(String groupPath, String key) throws Exception {
@@ -89,6 +60,30 @@ public class GroupTestCase extends BaseAtomGroupTestCase {
         tds.setDbGroupKey(dbGroupKey);
         tds.init();
         return new JdbcTemplate(tds);
+    }
+
+    @Before
+    public void init() throws Exception {
+        // 清数据防止干扰
+        String sql = "delete from normaltbl_0001 where pk=?";
+        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
+        clearData(tddlJT, sql, new Object[]{RANDOM_ID});
+        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
+        clearData(tddlJT, sql, new Object[]{RANDOM_ID});
+        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
+        clearData(tddlJT, sql, new Object[]{RANDOM_ID});
+    }
+
+    @After
+    public void destroy() {
+        // 清数据防止干扰
+        String sql = "delete from normaltbl_0001 where pk=?";
+        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
+        clearData(tddlJT, sql, new Object[]{RANDOM_ID});
+        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
+        clearData(tddlJT, sql, new Object[]{RANDOM_ID});
+        GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
+        clearData(tddlJT, sql, new Object[]{RANDOM_ID});
     }
 
     protected void checkWeight(int total, int times, double percent) {

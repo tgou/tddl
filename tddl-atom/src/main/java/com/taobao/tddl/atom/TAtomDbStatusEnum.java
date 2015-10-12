@@ -5,28 +5,32 @@ import com.taobao.tddl.common.utils.TStringUtil;
 
 /**
  * 数据库状态变量
- * 
+ *
  * @author JIECHEN
  */
 public enum TAtomDbStatusEnum {
 
-    /** R只读 */
+    /**
+     * R只读
+     */
     R_STATUS(TAtomConstants.DB_STATUS_R),
-    /** W只写 */
+    /**
+     * W只写
+     */
     W_STATUS(TAtomConstants.DB_STATUS_W),
-    /** RW可读写 */
+    /**
+     * RW可读写
+     */
     RW_STATUS(TAtomConstants.DB_STATUS_RW),
-    /** NA不可读/写 */
+    /**
+     * NA不可读/写
+     */
     NA_STATUS(TAtomConstants.DB_STATUS_NA);
 
     private String status;
 
-    TAtomDbStatusEnum(String status){
+    TAtomDbStatusEnum(String status) {
         this.status = status;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     public static TAtomDbStatusEnum getAtomDbStatusEnumByType(String type) {
@@ -37,8 +41,8 @@ public enum TAtomDbStatusEnum {
                 if (TAtomDbStatusEnum.NA_STATUS.getStatus().equals(typeStr)) {
                     statusEnum = TAtomDbStatusEnum.NA_STATUS;
                 } else if (!TStringUtil.contains(typeStr, TAtomDbStatusEnum.NA_STATUS.getStatus())
-                           && TStringUtil.contains(typeStr, TAtomDbStatusEnum.R_STATUS.getStatus())
-                           && TStringUtil.contains(typeStr, TAtomDbStatusEnum.W_STATUS.getStatus())) {
+                        && TStringUtil.contains(typeStr, TAtomDbStatusEnum.R_STATUS.getStatus())
+                        && TStringUtil.contains(typeStr, TAtomDbStatusEnum.W_STATUS.getStatus())) {
                     statusEnum = TAtomDbStatusEnum.RW_STATUS;
                 }
             } else {
@@ -50,6 +54,10 @@ public enum TAtomDbStatusEnum {
             }
         }
         return statusEnum;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public boolean isNaStatus() {

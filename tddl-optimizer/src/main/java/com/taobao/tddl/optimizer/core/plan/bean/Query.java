@@ -1,11 +1,5 @@
 package com.taobao.tddl.optimizer.core.plan.bean;
 
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendField;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendln;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.printFilterString;
-
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.PlanVisitor;
@@ -14,12 +8,16 @@ import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.optimizer.utils.OptimizerToString;
 
+import java.util.Map;
+
+import static com.taobao.tddl.optimizer.utils.OptimizerToString.*;
+
 public class Query extends QueryTree implements IQuery {
 
-    protected IFilter    keyFilter;
+    protected IFilter keyFilter;
     protected LOCK_MODEL lockModel = LOCK_MODEL.SHARED_LOCK;
-    protected String     tableName;
-    protected String     indexName;
+    protected String tableName;
+    protected String indexName;
     protected IQueryTree subQuery;
 
     @Override
@@ -135,7 +133,7 @@ public class Query extends QueryTree implements IQuery {
         appendField(sb, "resultFilter", printFilterString(this.getValueFilter()), tabContent);
         appendField(sb, "having", printFilterString(this.getHavingFilter()), tabContent);
         if (!(this.getLimitFrom() != null && this.getLimitFrom().equals(-1L) && this.getLimitTo() != null && this.getLimitTo()
-            .equals(-1L))) {
+                .equals(-1L))) {
             appendField(sb, "limitFrom", this.getLimitFrom(), tabContent);
             appendField(sb, "limitTo", this.getLimitTo(), tabContent);
         }

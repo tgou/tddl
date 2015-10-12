@@ -1,25 +1,12 @@
 package com.taobao.tddl.repo.mysql.sqlconvertor;
 
-import java.sql.Types;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.jdbc.ParameterMethod;
 import com.taobao.tddl.common.utils.TStringUtil;
 import com.taobao.tddl.optimizer.core.CanVisit;
 import com.taobao.tddl.optimizer.core.PlanVisitor;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.core.expression.bean.NullValue;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree;
@@ -32,18 +19,13 @@ import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.repo.mysql.sqlconvertor.functions.FunctionStringConstructor;
 import com.taobao.tddl.repo.mysql.sqlconvertor.functions.FunctionStringConstructorManager;
 
+import java.sql.Types;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class MysqlPlanVisitorImpl implements PlanVisitor {
 
-    protected boolean                          bindVal        = true;
-    protected Map<Integer, ParameterContext>   paramMap;
-    protected AtomicInteger                    bindValSequence;
-    protected StringBuilder                    sqlBuilder     = new StringBuilder();
-    protected FunctionStringConstructorManager manager        = new FunctionStringConstructorManager();
-    protected IDataNodeExecutor                query;
-    protected boolean                          isGroupBy      = false;
-
-    private static Set<String>                 middleFuncName = new HashSet<String>();
-
+    private static Set<String> middleFuncName = new HashSet<String>();
     static {
         middleFuncName.add("+");
         middleFuncName.add("-");
@@ -77,14 +59,21 @@ public class MysqlPlanVisitorImpl implements PlanVisitor {
         middleFuncName.add("<=>");
         middleFuncName.add("^");
     }
+    protected boolean bindVal = true;
+    protected Map<Integer, ParameterContext> paramMap;
+    protected AtomicInteger bindValSequence;
+    protected StringBuilder sqlBuilder = new StringBuilder();
+    protected FunctionStringConstructorManager manager = new FunctionStringConstructorManager();
+    protected IDataNodeExecutor query;
+    protected boolean isGroupBy = false;
 
     public MysqlPlanVisitorImpl(IDataNodeExecutor query, Map<Integer, ParameterContext> paramMap,
-                                AtomicInteger bindValSequence, boolean bindVal){
+                                AtomicInteger bindValSequence, boolean bindVal) {
         this(query, paramMap, bindValSequence, bindVal, false);
     }
 
     public MysqlPlanVisitorImpl(IDataNodeExecutor query, Map<Integer, ParameterContext> paramMap,
-                                AtomicInteger bindValSequence, boolean bindVal, boolean isGroupBy){
+                                AtomicInteger bindValSequence, boolean bindVal, boolean isGroupBy) {
         this.query = query;
         if (paramMap != null) {
             this.paramMap = paramMap;
@@ -229,6 +218,10 @@ public class MysqlPlanVisitorImpl implements PlanVisitor {
         return paramMap;
     }
 
+    public void setParamMap(Map<Integer, ParameterContext> paramMap) {
+        this.paramMap = paramMap;
+    }
+
     public String getString() {
         return sqlBuilder.toString();
     }
@@ -244,16 +237,12 @@ public class MysqlPlanVisitorImpl implements PlanVisitor {
         }
     }
 
-    public void setParamMap(Map<Integer, ParameterContext> paramMap) {
-        this.paramMap = paramMap;
-    }
-
     @Override
     public void visit(IColumn column) {
         // 别名加在select之外，如(select * from table) as t1,列名之前不能使用这个别名
         // 别名加在select之内，如select * from table as t1，列名之前可以使用这个别名
         if (query instanceof IQueryTree && !((IQueryTree) query).isSubQuery()
-            && ((IQueryTree) query).getAlias() != null && column.getTableName() != null) {
+                && ((IQueryTree) query).getAlias() != null && column.getTableName() != null) {
             sqlBuilder.append(((IQueryTree) query).getAlias());
         } else {
             if (query instanceof IQuery && column.getTableName() != null) {
@@ -287,11 +276,11 @@ public class MysqlPlanVisitorImpl implements PlanVisitor {
         FunctionStringConstructor constructor = manager.getConstructor(func);
         if (constructor != null) {
             sqlBuilder.append(constructor.constructColumnNameForFunction(query,
-                bindVal,
-                bindValSequence,
-                paramMap,
-                func,
-                this));
+                    bindVal,
+                    bindValSequence,
+                    paramMap,
+                    func,
+                    this));
         } else {
             boolean isMiddle = isMiddle(func);
             if (isMiddle) {
@@ -304,13 +293,13 @@ public class MysqlPlanVisitorImpl implements PlanVisitor {
                 MysqlPlanVisitorImpl visitor = this.getNewVisitor(func.getArgs().get(0));
                 sqlBuilder.append(visitor.getString());// 常量，不太可能走到这一步
             } else if ((func instanceof IBooleanFilter)
-                       && (OPERATION.IS_NULL.equals(((IBooleanFilter) func).getOperation())
-                           || OPERATION.IS_NOT_NULL.equals(((IBooleanFilter) func).getOperation())
-                           || OPERATION.IS_TRUE.equals(((IBooleanFilter) func).getOperation())
-                           || OPERATION.IS_NOT_TRUE.equals(((IBooleanFilter) func).getOperation())
-                           || OPERATION.IS_FALSE.equals(((IBooleanFilter) func).getOperation()) || OPERATION.IS_NOT_FALSE.equals(((IBooleanFilter) func).getOperation())
+                    && (OPERATION.IS_NULL.equals(((IBooleanFilter) func).getOperation())
+                    || OPERATION.IS_NOT_NULL.equals(((IBooleanFilter) func).getOperation())
+                    || OPERATION.IS_TRUE.equals(((IBooleanFilter) func).getOperation())
+                    || OPERATION.IS_NOT_TRUE.equals(((IBooleanFilter) func).getOperation())
+                    || OPERATION.IS_FALSE.equals(((IBooleanFilter) func).getOperation()) || OPERATION.IS_NOT_FALSE.equals(((IBooleanFilter) func).getOperation())
 
-                       )) {
+            )) {
                 MysqlPlanVisitorImpl visitor = this.getNewVisitor(func.getArgs().get(0));
                 sqlBuilder.append(visitor.getString());
                 sqlBuilder.append(" ").append(funcName);
@@ -547,9 +536,9 @@ public class MysqlPlanVisitorImpl implements PlanVisitor {
             int index = bindValSequence.getAndIncrement();
             ParameterContext context = null;
             if (s != null && !(s instanceof NullValue)) {
-                context = new ParameterContext(ParameterMethod.setObject1, new Object[] { index, s });
+                context = new ParameterContext(ParameterMethod.setObject1, new Object[]{index, s});
             } else {
-                context = new ParameterContext(ParameterMethod.setNull1, new Object[] { index, Types.NULL });
+                context = new ParameterContext(ParameterMethod.setNull1, new Object[]{index, Types.NULL});
             }
             this.paramMap.put(index, context);
             sqlBuilder.append("?");

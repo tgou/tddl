@@ -1,10 +1,10 @@
 package com.taobao.tddl.optimizer.core.expression;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.CanVisit;
 import com.taobao.tddl.optimizer.core.PlanVisitor;
+
+import java.util.Map;
 
 /**
  * 绑定变量

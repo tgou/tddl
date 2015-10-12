@@ -1,22 +1,21 @@
 package com.taobao.tddl.optimizer.costbased.esitimater.stat.parse;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import com.taobao.tddl.common.utils.XmlHelper;
+import com.taobao.tddl.optimizer.costbased.esitimater.stat.TableStat;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.collect.Lists;
-import com.taobao.tddl.common.utils.XmlHelper;
-import com.taobao.tddl.optimizer.costbased.esitimater.stat.TableStat;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * 解析matrix配置
- * 
+ *
  * @author jianghang 2013-11-28 下午6:08:57
  * @since 5.0.0
  */
@@ -31,7 +30,7 @@ public class TableStatParser {
 
     public static List<TableStat> parse(InputStream in) {
         Document doc = XmlHelper.createDocument(in,
-            Thread.currentThread().getContextClassLoader().getResourceAsStream(XSD_SCHEMA));
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(XSD_SCHEMA));
         Element root = doc.getDocumentElement();
 
         List<TableStat> stats = Lists.newArrayList();

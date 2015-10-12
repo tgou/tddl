@@ -7,19 +7,19 @@ public class SqlForbidException extends RuntimeException {
 
     private static final long serialVersionUID = -1L;
 
-    public SqlForbidException(){
+    public SqlForbidException() {
         super();
     }
 
-    public SqlForbidException(String msg){
+    public SqlForbidException(String msg) {
         super(msg);
     }
 
-    public SqlForbidException(Throwable cause){
+    public SqlForbidException(Throwable cause) {
         super(cause);
     }
 
-    public SqlForbidException(String msg, Throwable cause){
+    public SqlForbidException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }

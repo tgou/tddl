@@ -1,10 +1,5 @@
 package com.taobao.tddl.matrix.config;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.TddlConstants;
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.ExtraCmd;
@@ -30,32 +25,37 @@ import com.taobao.tddl.optimizer.rule.RuleIndexManager;
 import com.taobao.tddl.optimizer.rule.RuleSchemaManager;
 import com.taobao.tddl.rule.TddlRule;
 
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 依赖的组件
- * 
+ *
  * @since 5.0.0
  */
 public class MatrixConfigHolder extends AbstractConfigDataHolder {
 
     private static final String GROUP_CONFIG_HOLDER_NAME = "com.taobao.tddl.group.config.GroupConfigHolder";
-    private String              appName;
-    private String              ruleFilePath;
-    private boolean             dynamicRule;
-    private String              schemaFilePath;
-    private String              topologyFilePath;
-    private String              unitName;
-    private OptimizerRule       optimizerRule;
-    private TopologyHandler     topologyHandler;
-    private TopologyExecutor    topologyExecutor;
-    private SchemaManager       schemaManager;
-    private IndexManager        indexManger;
-    private Optimizer           optimizer;
-    private OptimizerContext    optimizerContext;
-    private ExecutorContext     executorContext;
-    private StatManager         statManager;
-    private Matrix              matrix;
+    private String appName;
+    private String ruleFilePath;
+    private boolean dynamicRule;
+    private String schemaFilePath;
+    private String topologyFilePath;
+    private String unitName;
+    private OptimizerRule optimizerRule;
+    private TopologyHandler topologyHandler;
+    private TopologyExecutor topologyExecutor;
+    private SchemaManager schemaManager;
+    private IndexManager indexManger;
+    private Optimizer optimizer;
+    private OptimizerContext optimizerContext;
+    private ExecutorContext executorContext;
+    private StatManager statManager;
+    private Matrix matrix;
     private Map<String, Object> connectionProperties;
-    private boolean             createGroupExecutor      = true;
+    private boolean createGroupExecutor = true;
 
     @Override
     public void doInit() throws TddlException {
@@ -129,10 +129,10 @@ public class MatrixConfigHolder extends AbstractConfigDataHolder {
 
     public void schemaInit() throws TddlException {
         RuleSchemaManager ruleSchemaManager = new RuleSchemaManager(optimizerRule,
-            topologyHandler.getMatrix(),
-            GeneralUtil.getExtraCmdLong(this.connectionProperties,
-                ExtraCmd.TABLE_META_CACHE_EXPIRE_TIME,
-                TddlConstants.DEFAULT_TABLE_META_EXPIRE_TIME));
+                topologyHandler.getMatrix(),
+                GeneralUtil.getExtraCmdLong(this.connectionProperties,
+                        ExtraCmd.TABLE_META_CACHE_EXPIRE_TIME,
+                        TddlConstants.DEFAULT_TABLE_META_EXPIRE_TIME));
         StaticSchemaManager staticSchemaManager = new StaticSchemaManager(schemaFilePath, appName, unitName);
         ruleSchemaManager.setLocal(staticSchemaManager);
 
@@ -147,8 +147,8 @@ public class MatrixConfigHolder extends AbstractConfigDataHolder {
     public void optimizerInit() throws TddlException {
         CostBasedOptimizer optimizer = new CostBasedOptimizer();
         optimizer.setExpireTime(GeneralUtil.getExtraCmdLong(this.connectionProperties,
-            ExtraCmd.OPTIMIZER_CACHE_EXPIRE_TIME,
-            TddlConstants.DEFAULT_OPTIMIZER_EXPIRE_TIME));
+                ExtraCmd.OPTIMIZER_CACHE_EXPIRE_TIME,
+                TddlConstants.DEFAULT_OPTIMIZER_EXPIRE_TIME));
         optimizer.init();
 
         this.optimizer = optimizer;
@@ -180,8 +180,8 @@ public class MatrixConfigHolder extends AbstractConfigDataHolder {
             }
             Constructor constructor = sonHolderClass.getConstructor(String.class, List.class, String.class);
             sonConfigDataHolder = (AbstractConfigDataHolder) constructor.newInstance(this.appName,
-                groups,
-                this.unitName);
+                    groups,
+                    this.unitName);
             sonConfigDataHolder.init();
             delegateDataHolder.setSonConfigDataHolder(sonConfigDataHolder);// 传递给deletegate，由它进行son传递
         } catch (Exception e) {

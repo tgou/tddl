@@ -1,23 +1,23 @@
 package com.taobao.tddl.executor.record;
 
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.executor.common.IRecord;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jianxing <jianxing.qx@taobao.com>
  */
 public class NamedRecord extends CloneableRecord {
 
-    String          name;
+    String name;
     CloneableRecord record;
 
-    public NamedRecord(){
+    public NamedRecord() {
     }
 
-    public NamedRecord(String name, CloneableRecord record){
+    public NamedRecord(String name, CloneableRecord record) {
         this.name = name;
         this.record = record;
     }
@@ -31,12 +31,12 @@ public class NamedRecord extends CloneableRecord {
         }
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public IRecord getRecord() {

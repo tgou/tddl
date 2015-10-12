@@ -1,7 +1,5 @@
 package com.taobao.tddl.repo.mysql.handler;
 
-import java.sql.SQLException;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
@@ -12,6 +10,8 @@ import com.taobao.tddl.optimizer.config.table.IndexMeta;
 import com.taobao.tddl.optimizer.core.plan.IPut;
 import com.taobao.tddl.repo.mysql.spi.My_JdbcHandler;
 
+import java.sql.SQLException;
+
 /**
  * @author mengshi.sunmengshi 2013-12-5 下午6:28:28
  * @since 5.0.0
@@ -20,7 +20,7 @@ public class UpdateMyHandler extends PutMyHandlerCommon {
 
     private static final Logger log = LoggerFactory.getLogger(UpdateMyHandler.class);
 
-    public UpdateMyHandler(){
+    public UpdateMyHandler() {
         super();
     }
 

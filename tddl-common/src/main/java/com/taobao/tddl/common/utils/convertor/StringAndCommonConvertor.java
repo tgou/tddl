@@ -8,12 +8,12 @@ import java.util.Set;
 
 /**
  * string <-> common对象 之间的转化
- * 
+ * <p/>
  * <pre>
  * common对象范围：8种Primitive和对应的Java类型，BigDecimal, BigInteger
- * 
+ *
  * </pre>
- * 
+ *
  * @author jianghang 2011-5-25 下午11:11:25
  */
 public class StringAndCommonConvertor {
@@ -23,9 +23,9 @@ public class StringAndCommonConvertor {
      */
     public static class StringToCommon extends AbastactConvertor {
 
-        protected static final Set TRUE_STRINGS  = new HashSet(Arrays.asList(new String[] { "true", "on", "yes", "y" }));
-        protected static final Set FALSE_STRINGS = new HashSet(Arrays.asList(new String[] { "false", "null", "nul",
-                                                         "nil", "off", "no", "n" }));
+        protected static final Set TRUE_STRINGS = new HashSet(Arrays.asList(new String[]{"true", "on", "yes", "y"}));
+        protected static final Set FALSE_STRINGS = new HashSet(Arrays.asList(new String[]{"false", "null", "nul",
+                "nil", "off", "no", "n"}));
 
         protected Boolean booleanConvert(Object value) {
             if (value instanceof Boolean) {
@@ -76,7 +76,7 @@ public class StringAndCommonConvertor {
             }
 
             throw new ConvertorException("Unsupported convert: [" + String.class + "," + Character.class.getName()
-                                         + "]");
+                    + "]");
         }
 
         @Override

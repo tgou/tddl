@@ -17,15 +17,16 @@ package com.alibaba.cobar.parser.util;
 
 /**
  * (created at 2010-7-21)
- * 
+ *
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public final class Pair<K, V> {
 
+    private static final int HASH_CONST = 37;
     private final K key;
     private final V value;
 
-    public Pair(K key, V value){
+    public Pair(K key, V value) {
         this.key = key;
         this.value = value;
     }
@@ -44,8 +45,6 @@ public final class Pair<K, V> {
         sb.append("(").append(key).append(", ").append(value).append(")");
         return sb.toString();
     }
-
-    private static final int HASH_CONST = 37;
 
     @Override
     public int hashCode() {

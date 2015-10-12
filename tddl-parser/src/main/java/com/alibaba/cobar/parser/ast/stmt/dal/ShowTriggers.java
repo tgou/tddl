@@ -27,34 +27,34 @@ import com.alibaba.cobar.parser.visitor.SQLASTVisitor;
  */
 public class ShowTriggers extends DALShowStatement {
 
-    private Identifier       schema;
-    private final String     pattern;
+    private final String pattern;
     private final Expression where;
+    private Identifier schema;
 
-    public ShowTriggers(Identifier schema, String pattern){
+    public ShowTriggers(Identifier schema, String pattern) {
         this.schema = schema;
         this.pattern = pattern;
         this.where = null;
     }
 
-    public ShowTriggers(Identifier schema, Expression where){
+    public ShowTriggers(Identifier schema, Expression where) {
         this.schema = schema;
         this.pattern = null;
         this.where = where;
     }
 
-    public ShowTriggers(Identifier schema){
+    public ShowTriggers(Identifier schema) {
         this.schema = schema;
         this.pattern = null;
         this.where = null;
     }
 
-    public void setSchema(Identifier schema) {
-        this.schema = schema;
-    }
-
     public Identifier getSchema() {
         return schema;
+    }
+
+    public void setSchema(Identifier schema) {
+        this.schema = schema;
     }
 
     public String getPattern() {

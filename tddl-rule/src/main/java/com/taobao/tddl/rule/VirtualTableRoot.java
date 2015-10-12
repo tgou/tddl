@@ -1,41 +1,39 @@
 package com.taobao.tddl.rule;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.DBType;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.common.model.lifecycle.Lifecycle;
-import com.taobao.tddl.rule.exceptions.TddlRuleException;
-import com.taobao.tddl.rule.utils.RuleUtils;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import com.taobao.tddl.rule.exceptions.TddlRuleException;
+import com.taobao.tddl.rule.utils.RuleUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * 一组{@linkplain TableRule}的集合
- * 
+ *
  * @author junyu
  * @author <a href="jianghang.loujh@taobao.com">jianghang</a>
  */
 public class VirtualTableRoot extends AbstractLifecycle implements Lifecycle, ApplicationContextAware {
 
-    private static final Logger                 logger           = LoggerFactory.getLogger(VirtualTableRoot.class);
-    protected String                            dbType           = "MYSQL";
+    private static final Logger logger = LoggerFactory.getLogger(VirtualTableRoot.class);
+    protected String dbType = "MYSQL";
     protected Map<String/* 大写key */, TableRule> virtualTableMap;
-    protected Map<String/* 大写key */, String>    dbIndexMap;
+    protected Map<String/* 大写key */, String> dbIndexMap;
 
-    protected String                            defaultDbIndex;
-    protected boolean                           needIdInGroup    = false;
-    protected boolean                           completeDistinct = false;
-    protected boolean                           lazyInit         = false;
-    protected ApplicationContext                context;
+    protected String defaultDbIndex;
+    protected boolean needIdInGroup = false;
+    protected boolean completeDistinct = false;
+    protected boolean lazyInit = false;
+    protected ApplicationContext context;
 
     public void init() throws TddlException {
         if (virtualTableMap == null || virtualTableMap.isEmpty()) {
@@ -58,7 +56,7 @@ public class VirtualTableRoot extends AbstractLifecycle implements Lifecycle, Ap
 
     /**
      * 此处有个问题是Map中key对应的VirtualTableRule为null;
-     * 
+     *
      * @param virtualTableName
      * @return
      */
@@ -82,14 +80,6 @@ public class VirtualTableRoot extends AbstractLifecycle implements Lifecycle, Ap
             logicTableMap.put(entry.getKey().toUpperCase(), entry.getValue()); // 转化大写
         }
         this.virtualTableMap = logicTableMap;
-    }
-
-    public void setDbIndexMap(Map<String, String> dbIndexMap) {
-        Map<String, String> logicTableMap = new HashMap<String, String>(dbIndexMap.size());
-        for (Entry<String, String> entry : dbIndexMap.entrySet()) {
-            logicTableMap.put(entry.getKey().toUpperCase(), entry.getValue());// 转化大写
-        }
-        this.dbIndexMap = logicTableMap;
     }
 
     private void initTableRule(String tableNameKey, TableRule tableRule) throws TddlException {
@@ -117,6 +107,14 @@ public class VirtualTableRoot extends AbstractLifecycle implements Lifecycle, Ap
 
     public Map<String, String> getDbIndexMap() {
         return dbIndexMap;
+    }
+
+    public void setDbIndexMap(Map<String, String> dbIndexMap) {
+        Map<String, String> logicTableMap = new HashMap<String, String>(dbIndexMap.size());
+        for (Entry<String, String> entry : dbIndexMap.entrySet()) {
+            logicTableMap.put(entry.getKey().toUpperCase(), entry.getValue());// 转化大写
+        }
+        this.dbIndexMap = logicTableMap;
     }
 
     public DBType getDbTypeEnumObj() {

@@ -1,50 +1,49 @@
 package com.taobao.tddl.monitor.logger.log4j;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.spi.LoggingEvent;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 /**
  * @author <a href="junyu@taobao.com">junyu</a>
  * @author <a href="zylicfc@gmail.com">junyu</a>
  * @version 1.0
- * @since 1.6
  * @date 2012-3-28 05:34:37
  * @desc
+ * @since 1.6
  */
 public class DailyMaxRollingFileAppender extends FileAppender {
 
     // The code assumes that the following constants are in a increasing
     // sequence.
-    static final int      TOP_OF_TROUBLE = -1;
-    static final int      TOP_OF_MINUTE  = 0;
-    static final int      TOP_OF_HOUR    = 1;
-    static final int      HALF_DAY       = 2;
-    static final int      TOP_OF_DAY     = 3;
-    static final int      TOP_OF_WEEK    = 4;
-    static final int      TOP_OF_MONTH   = 5;
-
+    static final int TOP_OF_TROUBLE = -1;
+    static final int TOP_OF_MINUTE = 0;
+    static final int TOP_OF_HOUR = 1;
+    static final int HALF_DAY = 2;
+    static final int TOP_OF_DAY = 3;
+    static final int TOP_OF_WEEK = 4;
+    static final int TOP_OF_MONTH = 5;
+    // The gmtTimeZone is used only in computeCheckPeriod() method.
+    static final TimeZone gmtTimeZone = TimeZone.getTimeZone("GMT");
+    Date now = new Date();
+    SimpleDateFormat sdf;
+    RollingPastCalendar rpc = new RollingPastCalendar();
+    int checkPeriod = TOP_OF_TROUBLE;
     /**
      * The date pattern. By default, the pattern is set to "'.'yyyy-MM-dd"
      * meaning daily rollover.
      */
-    private String        datePattern    = "'.'yyyy-MM-dd";
-
+    private String datePattern = "'.'yyyy-MM-dd";
     /**
      * There is one backup file by default.
      */
-    private int           maxBackupIndex = 1;
-
+    private int maxBackupIndex = 1;
     /**
      * The log file will be renamed to the value of the scheduledFilename
      * variable when the next interval is entered. For example, if the rollover
@@ -52,28 +51,16 @@ public class DailyMaxRollingFileAppender extends FileAppender {
      * "scheduledFilename" at the beginning of the next hour. The precise time
      * when a rollover occurs depends on logging activity.
      */
-    private String        scheduledFilename;
-
+    private String scheduledFilename;
     /**
      * The next time we estimate a rollover should occur.
      */
-    private long          nextCheck      = System.currentTimeMillis() - 1;
-
-    Date                  now            = new Date();
-
-    SimpleDateFormat      sdf;
-
-    RollingPastCalendar   rpc            = new RollingPastCalendar();
-
-    int                   checkPeriod    = TOP_OF_TROUBLE;
-
-    // The gmtTimeZone is used only in computeCheckPeriod() method.
-    static final TimeZone gmtTimeZone    = TimeZone.getTimeZone("GMT");
+    private long nextCheck = System.currentTimeMillis() - 1;
 
     /**
      * The default constructor does nothing.
      */
-    public DailyMaxRollingFileAppender(){
+    public DailyMaxRollingFileAppender() {
     }
 
     /**
@@ -81,10 +68,43 @@ public class DailyMaxRollingFileAppender extends FileAppender {
      * designated by <code>filename</code>. The opened filename will become the
      * ouput destination for this appender.
      */
-    public DailyMaxRollingFileAppender(Layout layout, String filename, String datePattern) throws IOException{
+    public DailyMaxRollingFileAppender(Layout layout, String filename, String datePattern) throws IOException {
         super(layout, filename, true);
         this.datePattern = datePattern;
         activateOptions();
+    }
+
+    /*
+     * DEBUG
+     */
+    public static void main(String args[]) {
+        DailyMaxRollingFileAppender dmrfa = new DailyMaxRollingFileAppender();
+
+        dmrfa.setDatePattern("'.'yyyy-MM-dd-HH-mm");
+
+        dmrfa.setFile("prova");
+
+        System.out.println("dmrfa.getMaxBackupIndex():" + dmrfa.getMaxBackupIndex());
+
+        dmrfa.activateOptions();
+
+        for (int i = 0; i < 5; i++) {
+            dmrfa.subAppend(null);
+
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException ex) {
+            }
+
+            System.out.println("Fine attesa");
+        }
+    }
+
+    /**
+     * Returns the value of the <b>DatePattern</b> option.
+     */
+    public String getDatePattern() {
+        return datePattern;
     }
 
     /**
@@ -95,14 +115,16 @@ public class DailyMaxRollingFileAppender extends FileAppender {
         datePattern = pattern;
     }
 
-    /** Returns the value of the <b>DatePattern</b> option. */
-    public String getDatePattern() {
-        return datePattern;
+    /**
+     * Returns the value of the <b>MaxBackupIndex</b> option.
+     */
+    public int getMaxBackupIndex() {
+        return maxBackupIndex;
     }
 
     /**
      * Set the maximum number of backup files to keep around.
-     * <p>
+     * <p/>
      * The <b>MaxBackupIndex</b> option determines how many backup files are
      * kept before the oldest is erased. This option takes a positive integer
      * value. If set to zero, then there will be no backup files and the log
@@ -111,13 +133,6 @@ public class DailyMaxRollingFileAppender extends FileAppender {
      */
     public void setMaxBackupIndex(int maxBackups) {
         this.maxBackupIndex = maxBackups;
-    }
-
-    /**
-     * Returns the value of the <b>MaxBackupIndex</b> option.
-     */
-    public int getMaxBackupIndex() {
-        return maxBackupIndex;
     }
 
     public void activateOptions() {
@@ -137,6 +152,15 @@ public class DailyMaxRollingFileAppender extends FileAppender {
             LogLog.error("Either File or DatePattern options are not set for appender [" + name + "].");
         }
     }
+
+    // This method computes the roll over period by looping over the
+    // periods, starting with the shortest, and stopping when the r0 is
+    // different from from r1, where r0 is the epoch formatted according
+    // the datePattern (supplied by the user) and r1 is the
+    // epoch+nextMillis(i) formatted according to datePattern. All date
+    // formatting is done in GMT and not local format because the test
+    // logic is based on comparisons relative to 1970-01-01 00:00:00
+    // GMT (the epoch).
 
     void printPeriodicity(int type) {
         switch (type) {
@@ -163,15 +187,6 @@ public class DailyMaxRollingFileAppender extends FileAppender {
         }
     }
 
-    // This method computes the roll over period by looping over the
-    // periods, starting with the shortest, and stopping when the r0 is
-    // different from from r1, where r0 is the epoch formatted according
-    // the datePattern (supplied by the user) and r1 is the
-    // epoch+nextMillis(i) formatted according to datePattern. All date
-    // formatting is done in GMT and not local format because the test
-    // logic is based on comparisons relative to 1970-01-01 00:00:00
-    // GMT (the epoch).
-
     int computeCheckPeriod() {
         RollingPastCalendar rollingPastCalendar = new RollingPastCalendar(gmtTimeZone, Locale.ENGLISH);
         // set sate to 1970-01-01 00:00:00 GMT
@@ -180,7 +195,7 @@ public class DailyMaxRollingFileAppender extends FileAppender {
             for (int i = TOP_OF_MINUTE; i <= TOP_OF_MONTH; i++) {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
                 simpleDateFormat.setTimeZone(gmtTimeZone); // do all date
-                                                           // formatting in GMT
+                // formatting in GMT
                 String r0 = simpleDateFormat.format(epoch);
                 rollingPastCalendar.setType(i);
                 Date next = new Date(rollingPastCalendar.getNextCheckMillis(epoch));
@@ -262,7 +277,7 @@ public class DailyMaxRollingFileAppender extends FileAppender {
 
     /**
      * This method differentiates DailyRollingFileAppender from its super class.
-     * <p>
+     * <p/>
      * Before actually logging, this method will check whether it is time to do
      * a rollover. If it is, it will schedule the next rollover time and then
      * rollover.
@@ -283,32 +298,6 @@ public class DailyMaxRollingFileAppender extends FileAppender {
 
         super.subAppend(event);
     }
-
-    /*
-     * DEBUG
-     */
-    public static void main(String args[]) {
-        DailyMaxRollingFileAppender dmrfa = new DailyMaxRollingFileAppender();
-
-        dmrfa.setDatePattern("'.'yyyy-MM-dd-HH-mm");
-
-        dmrfa.setFile("prova");
-
-        System.out.println("dmrfa.getMaxBackupIndex():" + dmrfa.getMaxBackupIndex());
-
-        dmrfa.activateOptions();
-
-        for (int i = 0; i < 5; i++) {
-            dmrfa.subAppend(null);
-
-            try {
-                Thread.sleep(60000);
-            } catch (InterruptedException ex) {
-            }
-
-            System.out.println("Fine attesa");
-        }
-    }
 }
 
 /**
@@ -319,11 +308,11 @@ public class DailyMaxRollingFileAppender extends FileAppender {
 @SuppressWarnings("serial")
 class RollingPastCalendar extends RollingMaxCalendar {
 
-    RollingPastCalendar(){
+    RollingPastCalendar() {
         super();
     }
 
-    RollingPastCalendar(TimeZone tz, Locale locale){
+    RollingPastCalendar(TimeZone tz, Locale locale) {
         super(tz, locale);
     }
 
@@ -401,11 +390,11 @@ class RollingMaxCalendar extends GregorianCalendar {
 
     int type = DailyMaxRollingFileAppender.TOP_OF_TROUBLE;
 
-    RollingMaxCalendar(){
+    RollingMaxCalendar() {
         super();
     }
 
-    RollingMaxCalendar(TimeZone tz, Locale locale){
+    RollingMaxCalendar(TimeZone tz, Locale locale) {
         super(tz, locale);
     }
 

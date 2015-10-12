@@ -5,7 +5,7 @@ import com.taobao.tddl.executor.IExecutor;
 
 /**
  * 用于主备切换等group操作
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-6 下午1:45:56
  * @since 5.0.0
  */

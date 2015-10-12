@@ -1,5 +1,7 @@
 package com.taobao.tddl.optimizer.core.datatype;
 
+import com.taobao.tddl.common.exception.TddlRuntimeException;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Blob;
@@ -7,8 +9,6 @@ import java.sql.Clob;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
-
-import com.taobao.tddl.common.exception.TddlRuntimeException;
 
 public class DataTypeUtil {
 

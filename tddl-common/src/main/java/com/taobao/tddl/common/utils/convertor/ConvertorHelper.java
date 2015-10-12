@@ -1,53 +1,48 @@
 package com.taobao.tddl.common.utils.convertor;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Blob;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang.ObjectUtils;
+import java.util.*;
 
 /**
  * convert转化helper类，注册一些默认的convertor
- * 
+ *
  * @author jianghang 2011-5-20 下午04:44:38
  */
 public class ConvertorHelper {
 
-    // common对象范围：8种Primitive和对应的Java类型，BigDecimal, BigInteger
-    public static Map<Class, Object>        commonTypes            = new HashMap<Class, Object>();
-    public static final Convertor           stringToCommon         = new StringAndCommonConvertor.StringToCommon();
-    public static final Convertor           commonToCommon         = new CommonAndCommonConvertor.CommonToCommon();
+    public static final Convertor stringToCommon = new StringAndCommonConvertor.StringToCommon();
+    public static final Convertor commonToCommon = new CommonAndCommonConvertor.CommonToCommon();
     // toString处理
-    public static final Convertor           objectToString         = new StringAndObjectConvertor.ObjectToString();
-    // 数组处理
-    private static final Convertor          arrayToArray           = new CollectionAndCollectionConvertor.ArrayToArray();
-    private static final Convertor          arrayToCollection      = new CollectionAndCollectionConvertor.ArrayToCollection();
-    private static final Convertor          collectionToArray      = new CollectionAndCollectionConvertor.CollectionToArray();
-    private static final Convertor          collectionToCollection = new CollectionAndCollectionConvertor.CollectionToCollection();
+    public static final Convertor objectToString = new StringAndObjectConvertor.ObjectToString();
     // 枚举处理
-    public static final Convertor           stringToEnum           = new StringAndEnumConvertor.StringToEnum();
-    public static final Convertor           enumToString           = new StringAndEnumConvertor.EnumToString();
-    public static final Convertor           sqlToDate              = new SqlDateAndDateConvertor.SqlDateToDateConvertor();
-    public static final Convertor           dateToSql              = new SqlDateAndDateConvertor.DateToSqlDateConvertor();
-    public static final Convertor           blobToBytes            = new BlobAndBytesConvertor.BlobToBytes();
-    public static final Convertor           stringToBytes          = new StringAndObjectConvertor.StringToBytes();
-    public static final Convertor           bytesToString          = new StringAndObjectConvertor.BytesToString();
+    public static final Convertor stringToEnum = new StringAndEnumConvertor.StringToEnum();
+    public static final Convertor enumToString = new StringAndEnumConvertor.EnumToString();
+    public static final Convertor sqlToDate = new SqlDateAndDateConvertor.SqlDateToDateConvertor();
+    public static final Convertor dateToSql = new SqlDateAndDateConvertor.DateToSqlDateConvertor();
+    public static final Convertor blobToBytes = new BlobAndBytesConvertor.BlobToBytes();
+    public static final Convertor stringToBytes = new StringAndObjectConvertor.StringToBytes();
+    public static final Convertor bytesToString = new StringAndObjectConvertor.BytesToString();
+    // 数组处理
+    private static final Convertor arrayToArray = new CollectionAndCollectionConvertor.ArrayToArray();
+    private static final Convertor arrayToCollection = new CollectionAndCollectionConvertor.ArrayToCollection();
+    private static final Convertor collectionToArray = new CollectionAndCollectionConvertor.CollectionToArray();
+    private static final Convertor collectionToCollection = new CollectionAndCollectionConvertor.CollectionToCollection();
+    // common对象范围：8种Primitive和对应的Java类型，BigDecimal, BigInteger
+    public static Map<Class, Object> commonTypes = new HashMap<Class, Object>();
+    private static volatile ConvertorHelper singleton = null;
 
-    private static volatile ConvertorHelper singleton              = null;
+    private ConvertorRepository repository = null;
 
-    private ConvertorRepository             repository             = null;
-
-    public ConvertorHelper(){
+    public ConvertorHelper() {
         repository = new ConvertorRepository();
         initDefaultRegister();
     }
 
-    public ConvertorHelper(ConvertorRepository repository){
+    public ConvertorHelper(ConvertorRepository repository) {
         // 允许传入自定义仓库
         this.repository = repository;
         initDefaultRegister();
@@ -69,7 +64,7 @@ public class ConvertorHelper {
 
     /**
      * 根据class获取对应的convertor
-     * 
+     *
      * @return
      */
     public Convertor getConvertor(Class src, Class dest) {
@@ -130,7 +125,7 @@ public class ConvertorHelper {
 
     /**
      * 根据alias获取对应的convertor
-     * 
+     *
      * @return
      */
     public Convertor getConvertor(String alias) {

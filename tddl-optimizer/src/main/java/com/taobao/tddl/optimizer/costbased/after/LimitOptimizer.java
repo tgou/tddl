@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.after;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree;
@@ -10,14 +7,17 @@ import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
 /**
  * 遍历所有的节点，如果有merge的情况下，记录下merge的limit from to。 会修改所有merge节点下面的limit from to
- * 
+ *
  * @author Whisper
  */
 public class LimitOptimizer implements QueryPlanOptimizer {
 
-    public LimitOptimizer(){
+    public LimitOptimizer() {
     }
 
     /**

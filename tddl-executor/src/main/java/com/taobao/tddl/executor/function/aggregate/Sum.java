@@ -11,7 +11,7 @@ import com.taobao.tddl.optimizer.exceptions.FunctionException;
  */
 public class Sum extends AggregateFunction {
 
-    public Sum(){
+    public Sum() {
     }
 
     @Override

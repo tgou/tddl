@@ -1,26 +1,22 @@
 package com.taobao.tddl.optimizer.core.ast.build;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
 import com.taobao.tddl.optimizer.core.ast.query.MergeNode;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
-import com.taobao.tddl.optimizer.core.expression.ISelectable;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @since 5.0.0
  */
 public class MergeNodeBuilder extends QueryTreeNodeBuilder {
 
-    public MergeNodeBuilder(MergeNode mergeNode){
+    public MergeNodeBuilder(MergeNode mergeNode) {
         this.setNode(mergeNode);
     }
 
@@ -249,7 +245,7 @@ public class MergeNodeBuilder extends QueryTreeNodeBuilder {
 
     /**
      * 构建列信息
-     * 
+     *
      * @param indexNode
      */
     public void buildSelected() {
@@ -259,8 +255,8 @@ public class MergeNodeBuilder extends QueryTreeNodeBuilder {
     private void buildSelectedFromSelectableObject() {
         if (this.getNode().getColumnsSelected().isEmpty()) {
             this.getNode()
-                .getColumnsSelected()
-                .add(ASTNodeFactory.getInstance().createColumn().setColumnName(IColumn.STAR));
+                    .getColumnsSelected()
+                    .add(ASTNodeFactory.getInstance().createColumn().setColumnName(IColumn.STAR));
         }
         // 如果有 * ，最后需要把*删掉
         List<ISelectable> delete = new LinkedList();

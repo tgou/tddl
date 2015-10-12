@@ -3,7 +3,7 @@ package com.taobao.tddl.common.utils.convertor;
 
 /**
  * string <-> Enum 之间的转化
- * 
+ *
  * @author jianghang 2011-7-12 下午12:49:30
  */
 public class StringAndEnumConvertor {

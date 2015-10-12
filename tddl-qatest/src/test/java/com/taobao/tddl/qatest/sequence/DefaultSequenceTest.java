@@ -1,5 +1,15 @@
 package com.taobao.tddl.qatest.sequence;
 
+import com.taobao.tddl.sequence.exception.SequenceException;
+import com.taobao.tddl.sequence.impl.DefaultSequence;
+import com.taobao.tddl.sequence.impl.DefaultSequenceDao;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.dao.DataAccessException;
+
+import javax.sql.DataSource;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -8,18 +18,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.sql.DataSource;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.dao.DataAccessException;
-
-import com.taobao.tddl.sequence.exception.SequenceException;
-import com.taobao.tddl.sequence.impl.DefaultSequence;
-import com.taobao.tddl.sequence.impl.DefaultSequenceDao;
-
 /**
  * 对sequence正确性的验证
  * <p/>
@@ -27,18 +25,18 @@ import com.taobao.tddl.sequence.impl.DefaultSequenceDao;
  */
 public class DefaultSequenceTest {
 
-    protected static ClassPathXmlApplicationContext context   = new ClassPathXmlApplicationContext(new String[] { "classpath:sequence/spring_context_default_sequence.xml" });
-    protected static DataSource                     normal0DS = (DataSource) context.getBean("normal_0");
-    private int                                     step      = 1000;
-    protected static DefaultSequence                seque     = null;
-    protected static DefaultSequence                sq1       = null;
-    protected static DefaultSequence                sq2       = null;
-    protected static DefaultSequence                sq3       = null;
-    protected static DefaultSequence                sq4       = null;
-    protected static DefaultSequence                sq5       = null;
-    protected static DefaultSequence                sq6       = null;
-    private Set<Long>                               set       = new HashSet<Long>();
-    private AtomicInteger                           seqCnt    = new AtomicInteger();
+    protected static ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"classpath:sequence/spring_context_default_sequence.xml"});
+    protected static DataSource normal0DS = (DataSource) context.getBean("normal_0");
+    protected static DefaultSequence seque = null;
+    protected static DefaultSequence sq1 = null;
+    protected static DefaultSequence sq2 = null;
+    protected static DefaultSequence sq3 = null;
+    protected static DefaultSequence sq4 = null;
+    protected static DefaultSequence sq5 = null;
+    protected static DefaultSequence sq6 = null;
+    private int step = 1000;
+    private Set<Long> set = new HashSet<Long>();
+    private AtomicInteger seqCnt = new AtomicInteger();
 
     @BeforeClass
     public static void setup() {
@@ -71,7 +69,7 @@ public class DefaultSequenceTest {
 
     /**
      * 验证取到下个值为上个值加1
-     * 
+     *
      * @throws SequenceException
      */
     @Test
@@ -83,7 +81,7 @@ public class DefaultSequenceTest {
 
     /**
      * 同个线程，验证取下个值为当前加1
-     * 
+     *
      * @throws SequenceException
      */
     @Test
@@ -96,7 +94,7 @@ public class DefaultSequenceTest {
 
     /**
      * 不同线程，验证取到的值为上个取到值的下个区间
-     * 
+     *
      * @throws SequenceException
      */
     @Test
@@ -108,7 +106,7 @@ public class DefaultSequenceTest {
 
     /**
      * 不同线程，上个线程为执行数小于步长情况
-     * 
+     *
      * @throws SequenceException
      */
     @Test
@@ -121,12 +119,12 @@ public class DefaultSequenceTest {
         }
         long value1 = sq4.nextValue();
         Assert.assertEquals(times % step == 0 ? (times / step) * step + value : (times / step + 1) * step + value,
-            value1);
+                value1);
     }
 
     /**
      * 不同线程，上个本线程执行数大于步长情况
-     * 
+     *
      * @throws SequenceException
      */
     @Test
@@ -139,12 +137,12 @@ public class DefaultSequenceTest {
         }
         long value1 = sq6.nextValue();
         Assert.assertEquals(times % step == 0 ? (times / step) * step + value : (times / step + 1) * step + value,
-            value1);
+                value1);
     }
 
     /**
      * 验证从不同的记录的正确性
-     * 
+     *
      * @throws SequenceException
      */
     @Test
@@ -171,7 +169,7 @@ public class DefaultSequenceTest {
 
     /**
      * 多个线程去取，验证取到的数据都不一样
-     * 
+     *
      * @throws SequenceException
      */
     @Test
@@ -189,7 +187,7 @@ public class DefaultSequenceTest {
 
     /**
      * 同时起多个线程
-     * 
+     *
      * @throws SequenceException
      * @throws InterruptedException
      */

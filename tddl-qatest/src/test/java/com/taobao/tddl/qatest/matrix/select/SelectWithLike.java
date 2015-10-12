@@ -1,10 +1,9 @@
 package com.taobao.tddl.qatest.matrix.select;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -12,10 +11,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Comment for SelectWithLike
@@ -25,13 +24,13 @@ import com.taobao.tddl.qatest.util.EclipseParameterized;
 @RunWith(EclipseParameterized.class)
 public class SelectWithLike extends BaseMatrixTestCase {
 
+    public SelectWithLike(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
+
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectWithLike(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -42,13 +41,13 @@ public class SelectWithLike extends BaseMatrixTestCase {
 
     /**
      * like模糊匹配 '%'匹配符测试
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void LikeAnyTest() throws Exception {
         String sql = "select * from " + normaltblTableName + " where name like 'zhuo%'";
-        String[] columnParam = { "ID", "NAME" };
+        String[] columnParam = {"ID", "NAME"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
 
         sql = "select * from " + normaltblTableName + " where name like '%uo%'";
@@ -60,13 +59,13 @@ public class SelectWithLike extends BaseMatrixTestCase {
 
     /**
      * like模糊匹配 '_'匹配符测试
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void LikeOneTest() throws Exception {
         String sql = "select * from " + normaltblTableName + " where name like 'zhuoxu_'";
-        String[] columnParam = { "ID", "NAME" };
+        String[] columnParam = {"ID", "NAME"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
 
         sql = "select * from " + normaltblTableName + " where name like '_huoxu_'";
@@ -78,13 +77,13 @@ public class SelectWithLike extends BaseMatrixTestCase {
 
     /**
      * like对特定字符测试，like匹配不区别大小写
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void LikeSpecificTest() throws Exception {
         String sql = "select * from " + normaltblTableName + " where name like 'zhuoxue'";
-        String[] columnParam = { "ID", "NAME" };
+        String[] columnParam = {"ID", "NAME"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
 
         if (!normaltblTableName.contains("ob_")) {
@@ -95,7 +94,7 @@ public class SelectWithLike extends BaseMatrixTestCase {
 
     /**
      * like对特定字符测试，like binary 区别大小写 暂时不支持
-     * 
+     *
      * @throws Exception
      */
     @Ignore("like binary暂时不支持")
@@ -110,13 +109,13 @@ public class SelectWithLike extends BaseMatrixTestCase {
 
     /**
      * like对包含_和%匹配字段的匹配
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void MatchCharTest() throws Exception {
         String sql = "select * from " + normaltblTableName + " where name like 'zhuoxue\\_yll'";
-        String[] columnParam = { "ID", "NAME" };
+        String[] columnParam = {"ID", "NAME"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
 
         sql = "select * from " + normaltblTableName + " where name like 'zhuoxue\\%yll'";
@@ -157,14 +156,14 @@ public class SelectWithLike extends BaseMatrixTestCase {
 
     /**
      * like和其他字段一起的测试
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void likeWithAndTest() throws Exception {
         int id = 500;
         String sql = "select * from " + normaltblTableName + " where name like 'zhuoxue' and id>" + id;
-        String[] columnParam = { "ID", "NAME" };
+        String[] columnParam = {"ID", "NAME"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
 
         sql = "select * from " + normaltblTableName + " where name like 'zhuoxue\\%yll' and id <" + id;
@@ -200,10 +199,10 @@ public class SelectWithLike extends BaseMatrixTestCase {
 
     @Test
     public void likeWithOrder() throws Exception {
-        String[] columnParam = { "name", "gmt_timestamp" };
+        String[] columnParam = {"name", "gmt_timestamp"};
         String notKeyCloumn = "gmt_timestamp";
         String sql = "SELECT * from " + normaltblTableName
-                     + " where name like ? and gmt_timestamp> ? and gmt_timestamp< ? order by gmt_timestamp";
+                + " where name like ? and gmt_timestamp> ? and gmt_timestamp< ? order by gmt_timestamp";
         List<Object> param = new ArrayList<Object>();
         param.add("%zh%xue%");
         param.add(gmtBefore);
@@ -211,21 +210,21 @@ public class SelectWithLike extends BaseMatrixTestCase {
         selectOrderAssertNotKeyCloumn(sql, columnParam, param, notKeyCloumn);
 
         sql = "SELECT * from " + normaltblTableName
-              + " where name like ? and gmt_timestamp> ? and gmt_timestamp< ? order by gmt_timestamp desc";
+                + " where name like ? and gmt_timestamp> ? and gmt_timestamp< ? order by gmt_timestamp desc";
         selectOrderAssertNotKeyCloumn(sql, columnParam, param, notKeyCloumn);
 
         sql = "SELECT * from " + normaltblTableName
-              + " as tab where (name like ? and (gmt_timestamp> ? and gmt_timestamp< ?)) order by  gmt_timestamp desc";
+                + " as tab where (name like ? and (gmt_timestamp> ? and gmt_timestamp< ?)) order by  gmt_timestamp desc";
         selectOrderAssertNotKeyCloumn(sql, columnParam, param, notKeyCloumn);
 
         sql = "SELECT * from "
-              + normaltblTableName
-              + " as tab where (name like '%zhuo%' and (gmt_timestamp> '2011-1-1' and gmt_timestamp< '2018-7-9')) order by  gmt_timestamp desc limit 10";
+                + normaltblTableName
+                + " as tab where (name like '%zhuo%' and (gmt_timestamp> '2011-1-1' and gmt_timestamp< '2018-7-9')) order by  gmt_timestamp desc limit 10";
         selectOrderAssertNotKeyCloumn(sql, columnParam, Collections.EMPTY_LIST, notKeyCloumn);
 
         sql = "SELECT * from "
-              + normaltblTableName
-              + " as tab where (name like ? and (gmt_timestamp> ? and gmt_timestamp< ?)) order by  gmt_timestamp desc limit ?,?";
+                + normaltblTableName
+                + " as tab where (name like ? and (gmt_timestamp> ? and gmt_timestamp< ?)) order by  gmt_timestamp desc limit ?,?";
         param.clear();
         param.add("%zh%xue%");
         param.add(gmtBefore);

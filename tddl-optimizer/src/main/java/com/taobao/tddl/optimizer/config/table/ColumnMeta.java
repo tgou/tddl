@@ -1,49 +1,42 @@
 package com.taobao.tddl.optimizer.config.table;
 
-import java.io.Serializable;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
+import org.apache.commons.lang.StringUtils;
+
+import java.io.Serializable;
 
 /**
  * Column 的元信息描述
- * 
+ *
  * @author whisper
  */
 public class ColumnMeta implements Serializable {
 
     private static final long serialVersionUID = 1748510851861759314L;
-
-    /**
-     * 表名
-     */
-    private final String      tableName;
-
     /**
      * 列名
      */
-    protected final String    name;
-
+    protected final String name;
     /**
      * 当前列的类型
      */
-    protected final DataType  dataType;
-
+    protected final DataType dataType;
     /**
      * 当前列的别名
      */
-    protected final String    alias;
-
+    protected final String alias;
     /**
      * 是否准许为空
      */
-    protected final boolean   nullable;
+    protected final boolean nullable;
+    /**
+     * 表名
+     */
+    private final String tableName;
+    private String fullName;
 
-    private String            fullName;
-
-    public ColumnMeta(String tableName, String name, DataType dataType, String alias, boolean nullable){
+    public ColumnMeta(String tableName, String name, DataType dataType, String alias, boolean nullable) {
         this.tableName = StringUtils.upperCase(tableName);
         this.name = StringUtils.upperCase(name);
         this.alias = StringUtils.upperCase(alias);

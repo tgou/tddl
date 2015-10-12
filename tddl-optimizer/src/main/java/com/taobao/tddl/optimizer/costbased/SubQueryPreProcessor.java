@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import java.util.List;
-
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.ASTNode;
 import com.taobao.tddl.optimizer.core.ast.QueryTreeNode;
@@ -14,19 +12,21 @@ import com.taobao.tddl.optimizer.exceptions.OptimizerException;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 
+import java.util.List;
+
 /**
  * 预先处理子查询
- * 
+ * <p/>
  * <pre>
  * 1. 尝试将子查询调整为join
- * 
- * 比如 select * from table1 where table1.id = (select id from table2) 
+ *
+ * 比如 select * from table1 where table1.id = (select id from table2)
  * 转化为 selct table1.* from table1 join table2 on (table1.id = table2.id)
- * 
- * 
+ *
+ *
  * 链接：http://dev.mysql.com/doc/refman/5.6/en/subquery-optimization.html
  * </pre>
- * 
+ *
  * @author jianghang 2013-12-19 下午6:44:55
  * @since 5.0.0
  */
@@ -55,8 +55,8 @@ public class SubQueryPreProcessor {
         find.query = qtn;
         find.filter = null;
         SubQueryAndFilter result = buildSubQuery(find,
-            qtn.getWhereFilter(),
-            !FilterUtils.isCNFNode(qtn.getWhereFilter()));
+                qtn.getWhereFilter(),
+                !FilterUtils.isCNFNode(qtn.getWhereFilter()));
         if (result != find) {
             // 如果出现filter，代表where条件中没有组合条件，只有单自查询的条件，直接替换即可
             result.query.query(result.filter);
@@ -65,12 +65,6 @@ public class SubQueryPreProcessor {
         } else {
             return qtn; // 没变化
         }
-    }
-
-    private static class SubQueryAndFilter {
-
-        QueryTreeNode query; // 自查询可能会改变query节点为join node
-        IFilter       filter; // 子查询带上来的filter
     }
 
     private static SubQueryAndFilter buildSubQuery(SubQueryAndFilter qtn, IFilter filter, boolean existOr) {
@@ -162,6 +156,12 @@ public class SubQueryPreProcessor {
         and.addSubFilter(filter);
         and.addSubFilter(subQueryFilter);
         return and;
+    }
+
+    private static class SubQueryAndFilter {
+
+        QueryTreeNode query; // 自查询可能会改变query节点为join node
+        IFilter filter; // 子查询带上来的filter
     }
 
 }

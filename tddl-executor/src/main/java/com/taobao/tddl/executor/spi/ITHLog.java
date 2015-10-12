@@ -8,13 +8,13 @@ import com.taobao.tddl.optimizer.core.plan.IPut;
 
 /**
  * 写出log的东西
- * 
+ *
  * @author whisper
  */
 public interface ITHLog {
 
     public void parepare(long transId, TableMeta table, IPut.PUT_TYPE putType, IRowSet oldRow, KVPair newRow)
-                                                                                                             throws TddlRuntimeException;
+            throws TddlRuntimeException;
 
     public void rollback(ITransaction trans) throws TddlRuntimeException;
 

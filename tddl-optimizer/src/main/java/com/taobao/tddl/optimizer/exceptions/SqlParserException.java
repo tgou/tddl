@@ -9,23 +9,23 @@ public class SqlParserException extends OptimizerException {
 
     private static final long serialVersionUID = 6432150590171245275L;
 
-    public SqlParserException(String errorCode, String errorDesc, Throwable cause){
+    public SqlParserException(String errorCode, String errorDesc, Throwable cause) {
         super(errorCode, errorDesc, cause);
     }
 
-    public SqlParserException(String errorCode, String errorDesc){
+    public SqlParserException(String errorCode, String errorDesc) {
         super(errorCode, errorDesc);
     }
 
-    public SqlParserException(String errorCode, Throwable cause){
+    public SqlParserException(String errorCode, Throwable cause) {
         super(errorCode, cause);
     }
 
-    public SqlParserException(String errorCode){
+    public SqlParserException(String errorCode) {
         super(errorCode);
     }
 
-    public SqlParserException(Throwable cause){
+    public SqlParserException(Throwable cause) {
         super(cause);
     }
 

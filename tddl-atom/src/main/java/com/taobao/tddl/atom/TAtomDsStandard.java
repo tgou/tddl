@@ -1,9 +1,8 @@
 package com.taobao.tddl.atom;
 
+import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-
-import javax.sql.DataSource;
 
 public interface TAtomDsStandard extends DataSource {
 

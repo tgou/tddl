@@ -1,9 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.executor.cursor.ICursorMeta;
 import com.taobao.tddl.executor.cursor.ISchematicCursor;
@@ -16,26 +12,28 @@ import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.core.plan.query.IJoin;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * join的结果
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-3 上午10:56:08
  * @since 5.0.0
  */
 public class JoinSchematicCursor extends SchematicCursor {
 
-    protected ISchematicCursor    left_cursor;
-    protected ISchematicCursor    right_cursor;
+    protected ISchematicCursor left_cursor;
+    protected ISchematicCursor right_cursor;
     /**
      * 因为左右cursor要拼到一起，所以右值必须加一个偏移量
      */
-    protected Integer             rightCursorOffset;
-    private boolean               schemaInited   = false;
-    protected ICursorMeta         joinCursorMeta = null;
+    protected Integer rightCursorOffset;
+    protected ICursorMeta joinCursorMeta = null;
     protected Comparator<IRowSet> kvPairComparator;
-    protected List<ISelectable>   leftJoinOnColumns;
-    protected List<ISelectable>   rightJoinOnColumns;
-
+    protected List<ISelectable> leftJoinOnColumns;
+    protected List<ISelectable> rightJoinOnColumns;
     /**
      * <pre>
      * 见 com.taobao.tddl.optimizer.core.ast.query.JoinNode
@@ -44,17 +42,18 @@ public class JoinSchematicCursor extends SchematicCursor {
      * rightOuterJoin:
      *      leftOuter=false && rightOuter=true
      * innerJoin:
-     *      leftOuter=false && rightOuter=false 
+     *      leftOuter=false && rightOuter=false
      * outerJoin:
      *      leftOuter=true && rightOuter=true
      * </pre>
      */
-    protected boolean             leftOutJoin    = false;
-    protected boolean             rightOutJoin   = false;
-    private List<ColumnMeta>      returnColumns;
+    protected boolean leftOutJoin = false;
+    protected boolean rightOutJoin = false;
+    private boolean schemaInited = false;
+    private List<ColumnMeta> returnColumns;
 
     public JoinSchematicCursor(ISchematicCursor left_cursor, ISchematicCursor right_cursor, List leftJoinOnColumns,
-                               List rightJoinOnColumns){
+                               List rightJoinOnColumns) {
         super(null, null, null);
         this.left_cursor = left_cursor;
         this.right_cursor = right_cursor;
@@ -102,9 +101,9 @@ public class JoinSchematicCursor extends SchematicCursor {
         List<ColumnMeta> leftColumns = leftCursorMeta.getColumns();
         List<ColumnMeta> rightColumns = rightCursorMeta.getColumns();
         this.kvPairComparator = ExecUtils.getComp(this.leftJoinOnColumns,
-            this.rightJoinOnColumns,
-            leftCursorMeta,
-            rightCursorMeta);
+                this.rightJoinOnColumns,
+                leftCursorMeta,
+                rightCursorMeta);
         List<ColumnMeta> newJoinColumnMsg = new ArrayList<ColumnMeta>(leftColumns.size() + rightColumns.size());
         rightCursorOffset = leftCursorMeta.getIndexRange();
         newJoinColumnMsg.addAll(leftColumns);
@@ -113,8 +112,8 @@ public class JoinSchematicCursor extends SchematicCursor {
         addIndexToNewIndexes(leftCursorMeta, leftColumns, indexes, 0);
         addIndexToNewIndexes(rightCursorMeta, rightColumns, indexes, rightCursorOffset);
         ICursorMeta cursorMetaImpJoin = CursorMetaImp.buildNew(newJoinColumnMsg,
-            indexes,
-            (leftCursorMeta.getIndexRange() + rightCursorMeta.getIndexRange()));
+                indexes,
+                (leftCursorMeta.getIndexRange() + rightCursorMeta.getIndexRange()));
         // setMeta(cursorMetaImpJoin);
 
         this.joinCursorMeta = cursorMetaImpJoin;

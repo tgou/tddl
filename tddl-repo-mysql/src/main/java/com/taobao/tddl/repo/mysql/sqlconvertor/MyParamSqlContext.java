@@ -1,18 +1,17 @@
 package com.taobao.tddl.repo.mysql.sqlconvertor;
 
+import com.taobao.tddl.common.jdbc.ParameterContext;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.taobao.tddl.common.jdbc.ParameterContext;
-
 public class MyParamSqlContext extends SqlAndParam implements Cloneable {
 
-    String        beforeTableStr;
-    String        afterTableStr;
-    String        whereStr;
-    String        tableName;
+    String beforeTableStr;
+    String afterTableStr;
+    String whereStr;
+    String tableName;
     AtomicInteger bindValSequence;
 
     public String getSql() {
@@ -41,16 +40,16 @@ public class MyParamSqlContext extends SqlAndParam implements Cloneable {
         return beforeTableStr;
     }
 
+    public void setBeforeTableStr(String beforeTableStr) {
+        this.beforeTableStr = beforeTableStr;
+    }
+
     public String getTableName() {
         return tableName;
     }
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
-    }
-
-    public void setBeforeTableStr(String beforeTableStr) {
-        this.beforeTableStr = beforeTableStr;
     }
 
     public String getAfterTableStr() {

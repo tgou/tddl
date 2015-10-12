@@ -1,28 +1,28 @@
 package com.taobao.tddl.optimizer.core.datatype;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.model.BaseRowSet;
 import com.taobao.tddl.common.utils.convertor.Convertor;
 import com.taobao.tddl.common.utils.convertor.ConvertorException;
 import com.taobao.tddl.common.utils.convertor.ConvertorHelper;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  * 常见类型的转化处理
- * 
+ *
  * @author jianghang 2014-1-21 上午12:39:45
  * @since 5.0.0
  */
 public abstract class CommonType<DATA> extends AbstractDataType<DATA> {
 
-    private Convertor convertor       = null;
+    private Convertor convertor = null;
     private Convertor stringConvertor = null;
 
-    public CommonType(){
+    public CommonType() {
         convertor = ConvertorHelper.commonToCommon;
         stringConvertor = ConvertorHelper.stringToCommon;
     }

@@ -1,7 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.List;
-
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.cursor.Cursor;
 import com.taobao.tddl.executor.cursor.ICursorMeta;
@@ -10,9 +8,11 @@ import com.taobao.tddl.executor.cursor.SchematicCursor;
 import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 
+import java.util.List;
+
 public class SetOrderByCursor extends SchematicCursor implements ISetOrderCursor {
 
-    public SetOrderByCursor(Cursor cursor, ICursorMeta meta, List<IOrderBy> orderBys){
+    public SetOrderByCursor(Cursor cursor, ICursorMeta meta, List<IOrderBy> orderBys) {
         super(cursor, null, orderBys);
     }
 

@@ -1,42 +1,26 @@
 package com.taobao.tddl.atom.jdbc;
 
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.NClob;
-import java.sql.PreparedStatement;
-import java.sql.SQLClientInfoException;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.sql.Struct;
+import com.taobao.tddl.atom.utils.AtomDataSourceHelper;
+import com.taobao.tddl.atom.utils.ConnRestrictSlot;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
+
+import java.sql.*;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import com.taobao.tddl.atom.utils.AtomDataSourceHelper;
-import com.taobao.tddl.atom.utils.ConnRestrictSlot;
-
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
-
 public class TConnectionWrapper implements Connection {
 
-    private static Logger            log        = LoggerFactory.getLogger(TConnectionWrapper.class);
-    private final Connection         targetConnection;
-    private ConnRestrictSlot         connRestrictSlot;
+    private static Logger log = LoggerFactory.getLogger(TConnectionWrapper.class);
+    private final Connection targetConnection;
     private final TDataSourceWrapper dataSourceWrapper;
-
-    private Set<TStatementWrapper>   statements = new HashSet<TStatementWrapper>(1);
+    private ConnRestrictSlot connRestrictSlot;
+    private Set<TStatementWrapper> statements = new HashSet<TStatementWrapper>(1);
 
     public TConnectionWrapper(Connection targetConnection, ConnRestrictSlot connRestrictSlot,
-                              TDataSourceWrapper dataSourceWrapper){
+                              TDataSourceWrapper dataSourceWrapper) {
         this.targetConnection = targetConnection;
         this.connRestrictSlot = connRestrictSlot;
         this.dataSourceWrapper = dataSourceWrapper;
@@ -102,7 +86,7 @@ public class TConnectionWrapper implements Connection {
     }
 
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-                                                                                                           throws SQLException {
+            throws SQLException {
         Statement s = this.targetConnection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
         TStatementWrapper statementWrapper = new TStatementWrapper(s, this, this.dataSourceWrapper);
         this.statements.add(statementWrapper);
@@ -113,12 +97,24 @@ public class TConnectionWrapper implements Connection {
         return this.targetConnection.getAutoCommit();
     }
 
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+        this.targetConnection.setAutoCommit(autoCommit);
+    }
+
     public String getCatalog() throws SQLException {
         return this.targetConnection.getCatalog();
     }
 
+    public void setCatalog(String catalog) throws SQLException {
+        this.targetConnection.setCatalog(catalog);
+    }
+
     public int getHoldability() throws SQLException {
         return this.targetConnection.getHoldability();
+    }
+
+    public void setHoldability(int holdability) throws SQLException {
+        this.targetConnection.setHoldability(holdability);
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
@@ -130,8 +126,17 @@ public class TConnectionWrapper implements Connection {
         return this.targetConnection.getTransactionIsolation();
     }
 
+    public void setTransactionIsolation(int level) throws SQLException {
+        this.targetConnection.setTransactionIsolation(level);
+
+    }
+
     public Map<String, Class<?>> getTypeMap() throws SQLException {
         return this.targetConnection.getTypeMap();
+    }
+
+    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
+        this.targetConnection.setTypeMap(map);
     }
 
     public SQLWarning getWarnings() throws SQLException {
@@ -144,6 +149,10 @@ public class TConnectionWrapper implements Connection {
 
     public boolean isReadOnly() throws SQLException {
         return this.targetConnection.isReadOnly();
+    }
+
+    public void setReadOnly(boolean readOnly) throws SQLException {
+        this.targetConnection.setReadOnly(readOnly);
     }
 
     public String nativeSQL(String sql) throws SQLException {
@@ -167,9 +176,9 @@ public class TConnectionWrapper implements Connection {
     public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
                                          int resultSetHoldability) throws SQLException {
         CallableStatement cs = this.targetConnection.prepareCall(sql,
-            resultSetType,
-            resultSetConcurrency,
-            resultSetHoldability);
+                resultSetType,
+                resultSetConcurrency,
+                resultSetHoldability);
         CallableStatementWrapper csw = new CallableStatementWrapper(cs, this, this.dataSourceWrapper, sql);
         statements.add(csw);
         return csw;
@@ -204,7 +213,7 @@ public class TConnectionWrapper implements Connection {
     }
 
     public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
-                                                                                                      throws SQLException {
+            throws SQLException {
         PreparedStatement ps = this.targetConnection.prepareStatement(sql, resultSetType, resultSetConcurrency);
         TPreparedStatementWrapper psw = new TPreparedStatementWrapper(ps, this, this.dataSourceWrapper, sql);
         statements.add(psw);
@@ -231,37 +240,12 @@ public class TConnectionWrapper implements Connection {
         this.targetConnection.rollback(savepoint);
     }
 
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-        this.targetConnection.setAutoCommit(autoCommit);
-    }
-
-    public void setCatalog(String catalog) throws SQLException {
-        this.targetConnection.setCatalog(catalog);
-    }
-
-    public void setHoldability(int holdability) throws SQLException {
-        this.targetConnection.setHoldability(holdability);
-    }
-
-    public void setReadOnly(boolean readOnly) throws SQLException {
-        this.targetConnection.setReadOnly(readOnly);
-    }
-
     public Savepoint setSavepoint() throws SQLException {
         return this.targetConnection.setSavepoint();
     }
 
     public Savepoint setSavepoint(String name) throws SQLException {
         return this.targetConnection.setSavepoint(name);
-    }
-
-    public void setTransactionIsolation(int level) throws SQLException {
-        this.targetConnection.setTransactionIsolation(level);
-
-    }
-
-    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-        this.targetConnection.setTypeMap(map);
     }
 
     @SuppressWarnings("unchecked")
@@ -301,16 +285,16 @@ public class TConnectionWrapper implements Connection {
         this.targetConnection.setClientInfo(name, value);
     }
 
-    public void setClientInfo(Properties properties) throws SQLClientInfoException {
-        this.targetConnection.setClientInfo(properties);
-    }
-
     public String getClientInfo(String name) throws SQLException {
         return this.targetConnection.getClientInfo(name);
     }
 
     public Properties getClientInfo() throws SQLException {
         return this.targetConnection.getClientInfo();
+    }
+
+    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+        this.targetConnection.setClientInfo(properties);
     }
 
     public Array createArrayOf(String typeName, Object[] elements) throws SQLException {

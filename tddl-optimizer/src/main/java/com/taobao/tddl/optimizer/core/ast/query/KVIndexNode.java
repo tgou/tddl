@@ -1,13 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast.query;
 
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendField;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.appendln;
-import static com.taobao.tddl.optimizer.utils.OptimizerToString.printFilterString;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
@@ -21,14 +13,20 @@ import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.taobao.tddl.optimizer.utils.OptimizerToString.*;
+
 public class KVIndexNode extends TableNode {
 
-    private IndexMeta          index       = null;
-    private String             kvIndexName = null;
+    private IndexMeta index = null;
+    private String kvIndexName = null;
 
     private KVIndexNodeBuilder builder;
 
-    public KVIndexNode(String kvIndexName){
+    public KVIndexNode(String kvIndexName) {
         this.kvIndexName = kvIndexName;
         builder = new KVIndexNodeBuilder(this);
     }
@@ -213,7 +211,7 @@ public class KVIndexNode extends TableNode {
         appendField(sb, "whereFilter", printFilterString(this.getWhereFilter()), tabContent);
         appendField(sb, "having", printFilterString(this.getHavingFilter()), tabContent);
         if (!(this.getLimitFrom() != null && this.getLimitFrom().equals(0L) && this.getLimitTo() != null && this.getLimitTo()
-            .equals(0L))) {
+                .equals(0L))) {
             appendField(sb, "limitFrom", this.getLimitFrom(), tabContent);
             appendField(sb, "limitTo", this.getLimitTo(), tabContent);
         }

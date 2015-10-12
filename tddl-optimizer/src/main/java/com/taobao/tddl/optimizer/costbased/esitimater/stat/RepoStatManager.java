@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.esitimater.stat;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -13,23 +10,26 @@ import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.common.utils.extension.ExtensionLoader;
 import com.taobao.tddl.optimizer.exceptions.OptimizerException;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 /**
  * 基于repo的{@linkplain StatManager}的委托实现
- * 
+ *
  * @author jianghang 2013-12-6 下午3:41:29
  * @since 5.0.0
  */
 public class RepoStatManager extends AbstractLifecycle implements StatManager {
 
-    private static TableStat                  nullTableStat   = new TableStat();
-    private static KVIndexStat                nullKVIndexStat = new KVIndexStat();
-    private RepoStatManager                   delegate;
-    private boolean                           isDelegate;
-    private Group                             group;
-    private LocalStatManager                  local;
-    private LoadingCache<String, KVIndexStat> kvIndexCache    = null;
-    private LoadingCache<String, TableStat>   tableCache      = null;
-    private boolean                           useCache;
+    private static TableStat nullTableStat = new TableStat();
+    private static KVIndexStat nullKVIndexStat = new KVIndexStat();
+    private RepoStatManager delegate;
+    private boolean isDelegate;
+    private Group group;
+    private LocalStatManager local;
+    private LoadingCache<String, KVIndexStat> kvIndexCache = null;
+    private LoadingCache<String, TableStat> tableCache = null;
+    private boolean useCache;
 
     protected void doInit() throws TddlException {
         if (!isDelegate) {
@@ -39,34 +39,34 @@ public class RepoStatManager extends AbstractLifecycle implements StatManager {
             delegate.init();
 
             kvIndexCache = CacheBuilder.newBuilder()
-                .maximumSize(1000)
-                .expireAfterWrite(30000, TimeUnit.MILLISECONDS)
-                .build(new CacheLoader<String, KVIndexStat>() {
+                    .maximumSize(1000)
+                    .expireAfterWrite(30000, TimeUnit.MILLISECONDS)
+                    .build(new CacheLoader<String, KVIndexStat>() {
 
-                    public KVIndexStat load(String tableName) throws Exception {
-                        KVIndexStat result = delegate.getKVIndex0(tableName);
-                        if (result == null) {
-                            result = nullKVIndexStat;
+                        public KVIndexStat load(String tableName) throws Exception {
+                            KVIndexStat result = delegate.getKVIndex0(tableName);
+                            if (result == null) {
+                                result = nullKVIndexStat;
+                            }
+
+                            return result;
                         }
-
-                        return result;
-                    }
-                });
+                    });
 
             tableCache = CacheBuilder.newBuilder()
-                .maximumSize(1000)
-                .expireAfterWrite(30000, TimeUnit.MILLISECONDS)
-                .build(new CacheLoader<String, TableStat>() {
+                    .maximumSize(1000)
+                    .expireAfterWrite(30000, TimeUnit.MILLISECONDS)
+                    .build(new CacheLoader<String, TableStat>() {
 
-                    public TableStat load(String tableName) throws Exception {
-                        TableStat result = delegate.getTable0(tableName);
-                        if (result == null) {
-                            result = nullTableStat;
+                        public TableStat load(String tableName) throws Exception {
+                            TableStat result = delegate.getTable0(tableName);
+                            if (result == null) {
+                                result = nullTableStat;
+                            }
+
+                            return result;
                         }
-
-                        return result;
-                    }
-                });
+                    });
         }
 
         if (local != null && !local.isInited()) {

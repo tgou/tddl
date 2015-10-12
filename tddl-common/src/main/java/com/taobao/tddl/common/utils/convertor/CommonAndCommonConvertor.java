@@ -5,12 +5,12 @@ import java.math.BigInteger;
 
 /**
  * common <-> common对象之间的转化
- * 
+ * <p/>
  * <pre>
  * common对象范围：8种Primitive和对应的Java类型，BigDecimal, BigInteger
- * 
+ *
  * </pre>
- * 
+ *
  * @author jianghang 2011-6-14 下午10:09:09
  */
 public class CommonAndCommonConvertor {
@@ -21,7 +21,7 @@ public class CommonAndCommonConvertor {
     public static class CommonToCommon extends AbastactConvertor {
 
         private static final Integer ZERO = new Integer(0);
-        private static final Integer ONE  = new Integer(1);
+        private static final Integer ONE = new Integer(1);
 
         // Number数据处理
         private Object toCommon(Class srcClass, Class targetClass, Number value) {
@@ -35,11 +35,11 @@ public class CommonAndCommonConvertor {
                 long longValue = value.longValue();
                 if (longValue > Integer.MAX_VALUE) {
                     throw new ConvertorException(srcClass.getName() + " value '" + value + "' is too large for "
-                                                 + targetClass.getName());
+                            + targetClass.getName());
                 }
                 if (longValue < Integer.MIN_VALUE) {
                     throw new ConvertorException(srcClass.getName() + " value '" + value + "' is too small "
-                                                 + targetClass.getName());
+                            + targetClass.getName());
                 }
                 return Integer.valueOf(value.intValue());
             }
@@ -60,11 +60,11 @@ public class CommonAndCommonConvertor {
                 long longValue = value.longValue();
                 if (longValue > Byte.MAX_VALUE) {
                     throw new ConvertorException(srcClass.getName() + " value '" + value + "' is too large for "
-                                                 + targetClass.getName());
+                            + targetClass.getName());
                 }
                 if (longValue < Byte.MIN_VALUE) {
                     throw new ConvertorException(srcClass.getName() + " value '" + value + "' is too small "
-                                                 + targetClass.getName());
+                            + targetClass.getName());
                 }
                 return Byte.valueOf(value.byteValue());
             }
@@ -99,11 +99,11 @@ public class CommonAndCommonConvertor {
                 long longValue = value.longValue();
                 if (longValue > Short.MAX_VALUE) {
                     throw new ConvertorException(srcClass.getName() + " value '" + value + "' is too large for "
-                                                 + targetClass.getName());
+                            + targetClass.getName());
                 }
                 if (longValue < Short.MIN_VALUE) {
                     throw new ConvertorException(srcClass.getName() + " value '" + value + "' is too small "
-                                                 + targetClass.getName());
+                            + targetClass.getName());
                 }
                 return Short.valueOf(value.shortValue());
             }
@@ -130,7 +130,7 @@ public class CommonAndCommonConvertor {
             }
 
             throw new ConvertorException("Unsupported convert: [" + srcClass.getName() + "," + targetClass.getName()
-                                         + "]");
+                    + "]");
         }
 
         // BigDecimal数据处理
@@ -144,7 +144,7 @@ public class CommonAndCommonConvertor {
             }
 
             if (targetClass == Double.class || targetClass == double.class || targetClass == Float.class
-                || targetClass == float.class) {
+                    || targetClass == float.class) {
                 // 其他类型的处理，先转化为String，再转到对应的目标对象
                 // StringAndCommonConvertor.StringToCommon strConvertor = new
                 // StringAndCommonConvertor.StringToCommon();

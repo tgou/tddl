@@ -5,7 +5,7 @@ import com.taobao.tddl.common.utils.thread.ThreadLocalMap;
 
 /**
  * 提供给单独使用GroupDataSource的用户指定数据源以及相关执行信息
- * 
+ *
  * @author junyu
  */
 public class GroupDataSourceRouteHelper {
@@ -13,16 +13,16 @@ public class GroupDataSourceRouteHelper {
     /**
      * 从一组数据源中选择一个指定序号上的数据源执行SQL。 如：groupKey=ExampleGroup 对应的content为
      * db1:rw,db2:r,db3:r
-     * 
+     * <p/>
      * <pre>
      * RouteHelper.executeByGroupDataSourceIndex(2);
      * jdbcTemplate.queryForList(sql);
      * </pre>
-     * 
+     * <p/>
      * 最终查询肯定会在第三个数据源上执行（db3） 注意，指定db的读写特性需要满足要求，如不可在 指定只读数据源上进行写操作，否则抛错。
-     * 
-     * @author junyu
+     *
      * @param dataSourceIndex 在指定Group中，所需要执行的db序号
+     * @author junyu
      */
     public static void executeByGroupDataSourceIndex(int dataSourceIndex) {
         ThreadLocalMap.put(ThreadLocalString.DATASOURCE_INDEX, dataSourceIndex);

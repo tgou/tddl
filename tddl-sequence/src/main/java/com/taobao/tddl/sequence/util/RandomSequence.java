@@ -1,20 +1,15 @@
 package com.taobao.tddl.sequence.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-
 import com.taobao.tddl.sequence.exception.SequenceException;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class RandomSequence {
 
     /**
      * 产生包含0~n-1的n个数值的随机序列
-     * 
+     *
      * @param n
      * @return
      * @throws SequenceException
@@ -54,7 +49,7 @@ public class RandomSequence {
 
     /**
      * 乱序一个数组
-     * 
+     *
      * @param sourceQueue
      * @return
      * @throws SequenceException

@@ -1,12 +1,12 @@
 package com.taobao.tddl.qatest.util;
 
+import com.taobao.tddl.common.exception.TddlRuntimeException;
+import com.taobao.tddl.qatest.BaseTestCase;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.taobao.tddl.common.exception.TddlRuntimeException;
-import com.taobao.tddl.qatest.BaseTestCase;
 
 public class PrepareData extends BaseTestCase {
 
@@ -18,7 +18,7 @@ public class PrepareData extends BaseTestCase {
         mysqlUpdateData("delete from  " + normaltblTableName, null);
 
         String sql = "REPLACE INTO " + normaltblTableName
-                     + " (pk,id,gmt_create,gmt_timestamp,gmt_datetime,name,floatCol) VALUES(?,?,?,?,?,?,?)";
+                + " (pk,id,gmt_create,gmt_timestamp,gmt_datetime,name,floatCol) VALUES(?,?,?,?,?,?,?)";
         con.setAutoCommit(false);
         ps = con.prepareStatement(sql);
         andorPs = andorCon.prepareStatement(sql);
@@ -91,7 +91,7 @@ public class PrepareData extends BaseTestCase {
         mysqlUpdateData("delete from  " + normaltblTableName, null);
 
         String sql = "REPLACE INTO " + normaltblTableName
-                     + " (pk,id,gmt_create,gmt_timestamp,gmt_datetime,name,floatCol) VALUES(?,?,?,?,?,?,?)";
+                + " (pk,id,gmt_create,gmt_timestamp,gmt_datetime,name,floatCol) VALUES(?,?,?,?,?,?,?)";
         con.setAutoCommit(false);
         ps = con.prepareStatement(sql);
         PreparedStatement andorPs = andorCon.prepareStatement(sql);
@@ -228,7 +228,7 @@ public class PrepareData extends BaseTestCase {
         mysqlUpdateData("delete from  " + hostgroup, null);
         try {
             String sql = "replace into " + hostgroup
-                         + "(hostgroup_id,hostgroup_name,module_id,station_id) values(?,?,?,?)";
+                    + "(hostgroup_id,hostgroup_name,module_id,station_id) values(?,?,?,?)";
             con.setAutoCommit(false);
             ps = con.prepareStatement(sql);
             for (int i = start; i < end; i++) {
@@ -260,7 +260,7 @@ public class PrepareData extends BaseTestCase {
     public void hostgroupDataAdd(int start, int end, long moduleIdValue) throws Exception, SQLException {
         try {
             String sql = "replace into " + hostgroup
-                         + "(hostgroup_id,hostgroup_name,module_id,station_id) values(?,?,?,?)";
+                    + "(hostgroup_id,hostgroup_name,module_id,station_id) values(?,?,?,?)";
             con.setAutoCommit(false);
             ps = con.prepareStatement(sql);
             for (int i = start; i < end; i++) {

@@ -1,20 +1,20 @@
 package com.taobao.tddl.repo.bdb.spi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.taobao.tddl.executor.common.KVPair;
 import com.taobao.tddl.executor.cursor.ICursorMeta;
 import com.taobao.tddl.executor.record.CloneableRecord;
 import com.taobao.tddl.executor.rowset.AbstractRowSet;
 import com.taobao.tddl.executor.rowset.IRowSet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RowSetKVPairImp extends AbstractRowSet implements IRowSet {
 
     private final KVPair kvPair;
-    private final int    keyLength;
+    private final int keyLength;
 
-    public RowSetKVPairImp(ICursorMeta cursorMeta, KVPair kvPair){
+    public RowSetKVPairImp(ICursorMeta cursorMeta, KVPair kvPair) {
         super(cursorMeta);
         this.kvPair = kvPair;
         keyLength = kvPair.getKey().getColumnMap().size();

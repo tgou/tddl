@@ -1,8 +1,5 @@
 package com.taobao.tddl.optimizer.parse.cobar.visitor;
 
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.cobar.parser.ast.expression.Expression;
 import com.alibaba.cobar.parser.ast.expression.misc.QueryExpression;
 import com.alibaba.cobar.parser.ast.expression.primary.Identifier;
@@ -20,9 +17,12 @@ import com.alibaba.cobar.parser.util.Pair;
 import com.alibaba.cobar.parser.visitor.MySQLOutputASTVisitor;
 import com.taobao.tddl.optimizer.exceptions.OptimizerException;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 将cobar parser的语法树直接生成sql，允许替换表名
- * 
+ *
  * @author jianghang 2014-1-13 下午3:27:56
  * @since 5.0.0
  */
@@ -31,14 +31,14 @@ public class MysqlOutputVisitor extends MySQLOutputASTVisitor {
     // 表名替换使用，注意表名都需为大写
     private Map<String/* logic table */, String/* real table */> logicTable2RealTable;
     // 路由结果是否为单库单表,是则limit参数不做改变
-    private boolean                                              singleNode;
+    private boolean singleNode;
 
-    public MysqlOutputVisitor(StringBuilder appendable, boolean singleNode, Map<String, String> logicTable2RealTable){
+    public MysqlOutputVisitor(StringBuilder appendable, boolean singleNode, Map<String, String> logicTable2RealTable) {
         this(appendable, null, singleNode, logicTable2RealTable);
     }
 
     public MysqlOutputVisitor(StringBuilder appendable, Object[] args, boolean singleNode,
-                              Map<String, String> logicTable2RealTable){
+                              Map<String, String> logicTable2RealTable) {
         super(appendable, args);
         this.singleNode = singleNode;
         this.logicTable2RealTable = logicTable2RealTable;

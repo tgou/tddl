@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.core.ast.dml;
 
-import java.util.List;
-
 import com.taobao.tddl.optimizer.core.ASTNodeFactory;
 import com.taobao.tddl.optimizer.core.ast.DMLNode;
 import com.taobao.tddl.optimizer.core.ast.query.KVIndexNode;
@@ -11,10 +9,16 @@ import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.dml.IUpdate;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
 
+import java.util.List;
+
 public class UpdateNode extends DMLNode<UpdateNode> {
 
-    public UpdateNode(TableNode table){
+    public UpdateNode(TableNode table) {
         super(table);
+    }
+
+    public List<ISelectable> getUpdateColumns() {
+        return this.columns;
     }
 
     public UpdateNode setUpdateColumns(List<ISelectable> columns) {
@@ -22,17 +26,13 @@ public class UpdateNode extends DMLNode<UpdateNode> {
         return this;
     }
 
-    public List<ISelectable> getUpdateColumns() {
-        return this.columns;
+    public List<Object> getUpdateValues() {
+        return this.values;
     }
 
     public UpdateNode setUpdateValues(List<Object> values) {
         this.values = values;
         return this;
-    }
-
-    public List<Object> getUpdateValues() {
-        return this.values;
     }
 
     @Override

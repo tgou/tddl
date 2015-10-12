@@ -12,38 +12,42 @@ import java.sql.Timestamp;
  */
 public class NormalTblRow {
 
-    private Long       pk;
-    private String     varcharr;
-    private String     charr;
-    private String     varbinaryr;
-    private String     binaryr;
-    private byte[]     blobr;
-    private String     textr;
-    private Integer    tinyintr;
-    private Integer    smallintr;
-    private Integer    mediumintr;
-    private Integer    integerr;
-    private Long       bigintr;
-    private Integer    utinyintr;
-    private Integer    usmallintr;
-    private Integer    umediumintr;
-    private Long       uintegerr;
+    private Long pk;
+    private String varcharr;
+    private String charr;
+    private String varbinaryr;
+    private String binaryr;
+    private byte[] blobr;
+    private String textr;
+    private Integer tinyintr;
+    private Integer smallintr;
+    private Integer mediumintr;
+    private Integer integerr;
+    private Long bigintr;
+    private Integer utinyintr;
+    private Integer usmallintr;
+    private Integer umediumintr;
+    private Long uintegerr;
     private BigDecimal ubigintr;
-    private Boolean    bitr;
-    private Float      floatr;
-    private Double     doubler;
+    private Boolean bitr;
+    private Float floatr;
+    private Double doubler;
     private BigDecimal decimalr;
 
-    private Date       dater;
-    private String     dateString;
-    private Time       timer;
-    private Timestamp  datetimer;
-    private Timestamp  timestampr;
-    private Date       yearr;
-    private Date       datetimeDate;
+    private Date dater;
+    private String dateString;
+    private Time timer;
+    private Timestamp datetimer;
+    private Timestamp timestampr;
+    private Date yearr;
+    private Date datetimeDate;
 
     public long getPk() {
         return pk;
+    }
+
+    public void setPk(Long pk) {
+        this.pk = pk;
     }
 
     public void setPk(long pk) {
@@ -88,10 +92,6 @@ public class NormalTblRow {
 
     public void setBlobr(byte[] blobr) {
         this.blobr = blobr;
-    }
-
-    public void setPk(Long pk) {
-        this.pk = pk;
     }
 
     public String getTextr() {

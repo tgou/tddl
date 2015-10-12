@@ -1,19 +1,18 @@
 package com.taobao.tddl.qatest.group.selector;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.taobao.diamond.mockserver.MockServer;
+import com.taobao.tddl.atom.common.TAtomConstants;
+import com.taobao.tddl.common.GroupDataSourceRouteHelper;
+import com.taobao.tddl.qatest.group.GroupTestCase;
+import com.taobao.tddl.qatest.util.DateUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.dao.DataAccessException;
 
-import com.taobao.diamond.mockserver.MockServer;
-import com.taobao.tddl.atom.common.TAtomConstants;
-import com.taobao.tddl.common.GroupDataSourceRouteHelper;
-import com.taobao.tddl.qatest.group.GroupTestCase;
-import com.taobao.tddl.qatest.util.DateUtil;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Comment for GroupSelectDbUseWeightTest
@@ -24,7 +23,7 @@ import com.taobao.tddl.qatest.util.DateUtil;
 public class GroupSelectDbUseWeightTest extends GroupTestCase {
 
     private String theDayAfterTomorow = DateUtil.getDiffDate(2, DateUtil.DATE_FULLHYPHEN);
-    private int    operationCnt       = 1000;
+    private int operationCnt = 1000;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -37,11 +36,11 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         // 插入不同的数据到3个库
         String sql = "insert into normaltbl_0001 (pk,gmt_create) values (?,?)";
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(0);
-        tddlJT.update(sql, new Object[] { RANDOM_ID, time });
+        tddlJT.update(sql, new Object[]{RANDOM_ID, time});
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(1);
-        tddlJT.update(sql, new Object[] { RANDOM_ID, nextDay });
+        tddlJT.update(sql, new Object[]{RANDOM_ID, nextDay});
         GroupDataSourceRouteHelper.executeByGroupDataSourceIndex(2);
-        tddlJT.update(sql, new Object[] { RANDOM_ID, theDayAfterTomorow });
+        tddlJT.update(sql, new Object[]{RANDOM_ID, theDayAfterTomorow});
     }
 
     @Test
@@ -49,25 +48,25 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         // qatest_normal_0:w0r0,qatest_normal_0_bac:r0,qatest_normal_1:r10，肯定会读到qatest_normal_1库(确保推送成功)
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:wr0,qatest_normal_0_bac:r0,qatest_normal_1_bac:r10");
+                    "qatest_normal_0:wr0,qatest_normal_0_bac:r0,qatest_normal_1_bac:r10");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
         // 肯定查到qatest_normal_1_bac库
-        Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+        Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
         Assert.assertEquals(theDayAfterTomorow, String.valueOf(rex.get("gmt_create")));
 
         // 三个数据源R全变成0(确保推送成功)
         for (int i = 0; i < 2; i++) {
 
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:wr0,qatest_normal_0_bac:r0,qatest_normal_1_bac:r0");
+                    "qatest_normal_0:wr0,qatest_normal_0_bac:r0,qatest_normal_1_bac:r0");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
         // 3个数据源查询全为0，肯定查不到任何数据，肯定抛异常
         try {
-            tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            tddlJT.queryForList("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             Assert.fail();
         } catch (DataAccessException e1) {
 
@@ -81,7 +80,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         int secondCnt = 0;
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
-            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (time.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
                 firstCnt++;
             } else if (nextDay.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
@@ -105,7 +104,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         /* 均衡权重(确保推送成功) */
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:wr10,qatest_normal_0_bac:r10,qatest_normal_1_bac:r10");
+                    "qatest_normal_0:wr10,qatest_normal_0_bac:r10,qatest_normal_1_bac:r10");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
@@ -113,7 +112,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         int secondCnt = 0;
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
-            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (time.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
                 firstCnt++;
             } else if (nextDay.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
@@ -137,7 +136,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         /* 不等权重(确保推送成功) */
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:wr1,qatest_normal_0_bac:r2,qatest_normal_1_bac:r3");
+                    "qatest_normal_0:wr1,qatest_normal_0_bac:r2,qatest_normal_1_bac:r3");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
@@ -145,7 +144,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         int secondCnt = 0;
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
-            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (time.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
                 firstCnt++;
             } else if (nextDay.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
@@ -170,7 +169,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         /* 0权重(确保推送成功) */
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:wr1,qatest_normal_0_bac:r0,qatest_normal_1_bac:r3");
+                    "qatest_normal_0:wr1,qatest_normal_0_bac:r0,qatest_normal_1_bac:r3");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
@@ -178,7 +177,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         int secondCnt = 0;
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
-            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (time.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
                 firstCnt++;
             } else if (nextDay.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
@@ -202,7 +201,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         /* 有部分DS没有设置权重值(确保推送成功) */
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:wr1,qatest_normal_0_bac:r,qatest_normal_1_bac:r3");
+                    "qatest_normal_0:wr1,qatest_normal_0_bac:r,qatest_normal_1_bac:r3");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
@@ -210,7 +209,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         int secondCnt = 0;
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
-            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (time.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
                 firstCnt++;
             } else if (nextDay.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
@@ -239,7 +238,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         /* 有部分DS没有设置权重值(确保推送成功) */
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(tds.getFullDbGroupKey(),
-                "qatest_normal_0:wr1,qatest_normal_0_bac:w,qatest_normal_1_bac:r3");
+                    "qatest_normal_0:wr1,qatest_normal_0_bac:w,qatest_normal_1_bac:r3");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
 
@@ -247,7 +246,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         int secondCnt = 0;
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
-            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (time.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
                 firstCnt++;
             } else if (nextDay.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
@@ -278,7 +277,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         int secondCnt = 0;
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
-            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (time.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
                 firstCnt++;
             } else if (nextDay.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
@@ -302,7 +301,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         /* 有部分DS没有设置权重值 */
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(TAtomConstants.getGlobalDataId(DBKEY_0_BAC),
-                "ip=10.232.31.154\r\nport=3306\r\ndbName=qatest_normal_0_bac\r\ndbType=mysql\r\ndbStatus=NA");
+                    "ip=10.232.31.154\r\nport=3306\r\ndbName=qatest_normal_0_bac\r\ndbType=mysql\r\ndbStatus=NA");
             MockServer.setConfigInfo(tds.getFullDbGroupKey(), "qatest_normal_0:wr1,,qatest_normal_1_bac:r3");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
@@ -311,7 +310,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         int secondCnt = 0;
         int thirdCnt = 0;
         for (int i = 0; i < operationCnt; i++) {
-            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[] { RANDOM_ID });
+            Map rex = tddlJT.queryForMap("select * from normaltbl_0001 where pk=?", new Object[]{RANDOM_ID});
             if (time.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
                 firstCnt++;
             } else if (nextDay.equalsIgnoreCase(String.valueOf(rex.get("gmt_create")))) {
@@ -332,7 +331,7 @@ public class GroupSelectDbUseWeightTest extends GroupTestCase {
         // 恢复配置(确保推送成功)
         for (int i = 0; i < 2; i++) {
             MockServer.setConfigInfo(TAtomConstants.getGlobalDataId(DBKEY_0_BAC),
-                "ip=10.232.31.154\r\nport=3306\r\ndbName=qatest_normal_0_bac\r\ndbType=mysql\r\ndbStatus=RW");
+                    "ip=10.232.31.154\r\nport=3306\r\ndbName=qatest_normal_0_bac\r\ndbType=mysql\r\ndbStatus=RW");
             TimeUnit.SECONDS.sleep(SLEEP_TIME);
         }
     }

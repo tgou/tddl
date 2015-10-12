@@ -18,21 +18,88 @@
  */
 package com.alibaba.cobar.parser.recognizer.mysql.lexer;
 
+import com.alibaba.cobar.parser.recognizer.mysql.MySQLToken;
+import com.alibaba.cobar.parser.util.CharTypes;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLSyntaxErrorException;
 
-import com.alibaba.cobar.parser.recognizer.mysql.MySQLToken;
-import com.alibaba.cobar.parser.util.CharTypes;
-
 /**
  * support MySQL 5.5 token
- * 
+ *
  * @author <a href="mailto:shuo.qius@alibaba-inc.com">QIU Shuo</a>
  */
 public class MySQLLexer {
 
+    /**
+     * A character buffer for literals.
+     */
+    protected final static ThreadLocal<char[]> sbufRef = new ThreadLocal<char[]>();
+    /**
+     * End of input character. Used as a sentinel to denote the character one beyond the last defined character in a
+     * source file.
+     */
+    private final static byte EOI = 0x1A;
     private static int C_STYLE_COMMENT_VERSION = 50599;
+    protected final char[] sql;
+    /**
+     * always be {@link #sql}.length - 1
+     */
+    protected final int eofIndex;
+
+    /**
+     * current index of {@link #sql}
+     */
+    protected int curIndex = -1;
+    /**
+     * always be {@link #sql}[{@link #curIndex}]
+     */
+    protected char ch;
+    protected char[] sbuf;
+    protected MySQLKeywords keywods = MySQLKeywords.DEFAULT_KEYWORDS;
+    protected boolean inCStyleComment;
+    protected boolean inCStyleCommentIgnore;
+    protected int offsetCache;
+    protected int sizeCache;
+    // /** current token, set by {@link #nextToken()} */
+    // private int tokenPos = 0;
+    private MySQLToken token;
+    /**
+     * keyword only
+     */
+    private MySQLToken tokenCache;
+    private MySQLToken tokenCache2;
+    /**
+     * 1 represents first parameter
+     */
+    private int paramIndex = 0;
+    private String stringValue;
+    /**
+     * make sense only for {@link MySQLToken#IDENTIFIER}
+     */
+    private String stringValueUppercase;
+
+    public MySQLLexer(char[] sql) throws SQLSyntaxErrorException {
+        if ((this.sbuf = sbufRef.get()) == null) {
+            this.sbuf = new char[1024];
+            sbufRef.set(this.sbuf);
+        }
+        if (CharTypes.isWhitespace(sql[sql.length - 1])) {
+            this.sql = sql;
+        } else {
+            this.sql = new char[sql.length + 1];
+            System.arraycopy(sql, 0, this.sql, 0, sql.length);
+        }
+        this.eofIndex = this.sql.length - 1;
+        this.sql[this.eofIndex] = MySQLLexer.EOI;
+        scanChar();
+        nextToken();
+    }
+
+    public MySQLLexer(String sql) throws SQLSyntaxErrorException {
+        this(fromSQL2Chars(sql));
+    }
 
     /**
      * @return previous value
@@ -43,37 +110,15 @@ public class MySQLLexer {
         return v;
     }
 
-    /**
-     * End of input character. Used as a sentinel to denote the character one beyond the last defined character in a
-     * source file.
-     */
-    private final static byte                  EOI        = 0x1A;
-
-    protected final char[]                     sql;
-    /** always be {@link #sql}.length - 1 */
-    protected final int                        eofIndex;
-
-    /** current index of {@link #sql} */
-    protected int                              curIndex   = -1;
-    /** always be {@link #sql}[{@link #curIndex}] */
-    protected char                             ch;
-
-    // /** current token, set by {@link #nextToken()} */
-    // private int tokenPos = 0;
-    private MySQLToken                         token;
-    /** keyword only */
-    private MySQLToken                         tokenCache;
-    private MySQLToken                         tokenCache2;
-    /** 1 represents first parameter */
-    private int                                paramIndex = 0;
-
-    /** A character buffer for literals. */
-    protected final static ThreadLocal<char[]> sbufRef    = new ThreadLocal<char[]>();
-    protected char[]                           sbuf;
-
-    private String                             stringValue;
-    /** make sense only for {@link MySQLToken#IDENTIFIER} */
-    private String                             stringValueUppercase;
+    private static char[] fromSQL2Chars(String sql) {
+        if (CharTypes.isWhitespace(sql.charAt(sql.length() - 1))) {
+            return sql.toCharArray();
+        }
+        char[] chars = new char[sql.length() + 1];
+        sql.getChars(0, sql.length(), chars, 0);
+        chars[chars.length - 1] = ' ';
+        return chars;
+    }
 
     /**
      * update {@link MySQLLexer#stringValue} and {@link MySQLLexer#stringValueUppercase}. It is possible that
@@ -113,39 +158,6 @@ public class MySQLLexer {
             stringValueUppercase = new String(src, srcOffset, len);
         }
     }
-
-    public MySQLLexer(char[] sql) throws SQLSyntaxErrorException{
-        if ((this.sbuf = sbufRef.get()) == null) {
-            this.sbuf = new char[1024];
-            sbufRef.set(this.sbuf);
-        }
-        if (CharTypes.isWhitespace(sql[sql.length - 1])) {
-            this.sql = sql;
-        } else {
-            this.sql = new char[sql.length + 1];
-            System.arraycopy(sql, 0, this.sql, 0, sql.length);
-        }
-        this.eofIndex = this.sql.length - 1;
-        this.sql[this.eofIndex] = MySQLLexer.EOI;
-        scanChar();
-        nextToken();
-    }
-
-    public MySQLLexer(String sql) throws SQLSyntaxErrorException{
-        this(fromSQL2Chars(sql));
-    }
-
-    private static char[] fromSQL2Chars(String sql) {
-        if (CharTypes.isWhitespace(sql.charAt(sql.length() - 1))) {
-            return sql.toCharArray();
-        }
-        char[] chars = new char[sql.length() + 1];
-        sql.getChars(0, sql.length(), chars, 0);
-        chars[chars.length - 1] = ' ';
-        return chars;
-    }
-
-    protected MySQLKeywords keywods = MySQLKeywords.DEFAULT_KEYWORDS;
 
     /**
      * @param token must be a keyword
@@ -469,12 +481,6 @@ public class MySQLLexer {
         return t;
     }
 
-    protected boolean inCStyleComment;
-    protected boolean inCStyleCommentIgnore;
-
-    protected int     offsetCache;
-    protected int     sizeCache;
-
     /**
      * first <code>@</code> is included
      */
@@ -488,7 +494,8 @@ public class MySQLLexer {
             case '"':
                 dq = true;
             case '\'':
-                loop1: for (++sizeCache;; ++sizeCache) {
+                loop1:
+                for (++sizeCache; ; ++sizeCache) {
                     switch (scanChar()) {
                         case '\\':
                             ++sizeCache;
@@ -516,7 +523,8 @@ public class MySQLLexer {
                 }
                 break;
             case '`':
-                loop1: for (++sizeCache;; ++sizeCache) {
+                loop1:
+                for (++sizeCache; ; ++sizeCache) {
                     switch (scanChar()) {
                         case '`':
                             ++sizeCache;
@@ -546,7 +554,7 @@ public class MySQLLexer {
         sizeCache = 0;
         scanChar(2);
         if (ch == '`') {
-            for (++sizeCache;; ++sizeCache) {
+            for (++sizeCache; ; ++sizeCache) {
                 if (scanChar() == '`') {
                     ++sizeCache;
                     if (scanChar() != '`') {
@@ -576,7 +584,8 @@ public class MySQLLexer {
         int size = 1;
         sbuf[0] = '\'';
         if (dq) {
-            loop: while (true) {
+            loop:
+            while (true) {
                 switch (scanChar()) {
                     case '\'':
                         putChar('\\', size++);
@@ -604,7 +613,8 @@ public class MySQLLexer {
                 }
             }
         } else {
-            loop: while (true) {
+            loop:
+            while (true) {
                 switch (scanChar()) {
                     case '\\':
                         putChar('\\', size++);
@@ -870,7 +880,7 @@ public class MySQLLexer {
      * will be regarded as <code>".123"</code> and <code>"f"</code> in MySQL, but in this {@link MySQLLexer}, it will be
      * <code>"."</code> and <code>"123f"</code> because <code>".123f"</code> may be part of <code>"db1.123f"</code> and
      * <code>"123f"</code> is the table name.
-     * 
+     *
      * @param initSize how many char has already been consumed
      */
     private void scanIdentifierFromNumber(int initOffset, int initSize) throws SQLSyntaxErrorException {
@@ -918,7 +928,7 @@ public class MySQLLexer {
      */
     protected void scanIdentifierWithAccent() throws SQLSyntaxErrorException {
         offsetCache = curIndex;
-        for (; scanChar() != MySQLLexer.EOI;) {
+        for (; scanChar() != MySQLLexer.EOI; ) {
             if (ch == '`' && scanChar() != '`') {
                 break;
             }
@@ -931,13 +941,13 @@ public class MySQLLexer {
      * skip whitespace and comment
      */
     protected void skipSeparator() {
-        for (; !eof();) {
+        for (; !eof(); ) {
             for (; CharTypes.isWhitespace(ch); scanChar())
                 ;
 
             switch (ch) {
                 case '#': // MySQL specified
-                    for (; scanChar() != '\n';) {
+                    for (; scanChar() != '\n'; ) {
                         if (eof()) {
                             return;
                         }
@@ -954,8 +964,8 @@ public class MySQLLexer {
                             commentSkip = false;
                             // MySQL use 5 digits to indicate version. 50508 means MySQL 5.5.8
                             if (hasChars(5) && CharTypes.isDigit(ch) && CharTypes.isDigit(sql[curIndex + 1])
-                                && CharTypes.isDigit(sql[curIndex + 2]) && CharTypes.isDigit(sql[curIndex + 3])
-                                && CharTypes.isDigit(sql[curIndex + 4])) {
+                                    && CharTypes.isDigit(sql[curIndex + 2]) && CharTypes.isDigit(sql[curIndex + 3])
+                                    && CharTypes.isDigit(sql[curIndex + 4])) {
                                 int version = ch - '0';
                                 version *= 10;
                                 version += sql[curIndex + 1] - '0';
@@ -1026,10 +1036,10 @@ public class MySQLLexer {
         sb.append(getClass().getSimpleName()).append('@').append(hashCode()).append('{');
         String sqlLeft = new String(sql, curIndex, sql.length - curIndex);
         sb.append("curIndex=").append(curIndex).append(", ch=").append(ch).append(", token=").append(token).append(
-                                                                                                                   ", sqlLeft=").append(
-                                                                                                                                        sqlLeft).append(
-                                                                                                                                                        ", sql=").append(
-                                                                                                                                                                         sql);
+                ", sqlLeft=").append(
+                sqlLeft).append(
+                ", sql=").append(
+                sql);
         sb.append('}');
         return sb.toString();
     }
@@ -1041,7 +1051,7 @@ public class MySQLLexer {
         // 2147483647
         // 9223372036854775807
         if (sizeCache < 10 || sizeCache == 10
-            && (sql[offsetCache] < '2' || sql[offsetCache] == '2' && sql[offsetCache + 1] == '0')) {
+                && (sql[offsetCache] < '2' || sql[offsetCache] == '2' && sql[offsetCache + 1] == '0')) {
             int rst = 0;
             int end = offsetCache + sizeCache;
             for (int i = offsetCache; i < end; ++i) {

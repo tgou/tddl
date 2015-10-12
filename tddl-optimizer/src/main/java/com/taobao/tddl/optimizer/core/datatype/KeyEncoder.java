@@ -18,15 +18,10 @@
 
 package com.taobao.tddl.optimizer.core.datatype;
 
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NOT_NULL_BYTE_LOW;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NULL_BYTE_HIGH;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.NULL_BYTE_LOW;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.ONE_HUNDRED;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.ONE_THOUSAND;
-import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.TERMINATOR;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import static com.taobao.tddl.optimizer.core.datatype.EncodingConstants.*;
 
 /**
  * A very low-level class that supports encoding of primitive data into unique,
@@ -36,7 +31,7 @@ import java.math.BigInteger;
  * Terminators for variable data can be encoded using 1 for ascending order and
  * 254 for descending order. Nulls can be encoded as 255 for high ordering and 0
  * for low ordering.
- * 
+ *
  * @author Brian S O'Neill
  * @see KeyDecoder
  * @see DataEncoder
@@ -46,9 +41,9 @@ public class KeyEncoder {
     /**
      * Encodes the given signed integer into exactly 4 bytes for descending
      * order.
-     * 
-     * @param value signed integer value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     signed integer value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(int value, byte[] dst, int dstOffset) {
@@ -59,9 +54,9 @@ public class KeyEncoder {
      * Encodes the given signed Integer object into exactly 1 or 5 bytes for
      * descending order. If the Integer object is never expected to be null,
      * consider encoding as an int primitive.
-     * 
-     * @param value optional signed Integer value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional signed Integer value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -78,9 +73,9 @@ public class KeyEncoder {
 
     /**
      * Encodes the given signed long into exactly 8 bytes for descending order.
-     * 
-     * @param value signed long value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     signed long value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(long value, byte[] dst, int dstOffset) {
@@ -91,9 +86,9 @@ public class KeyEncoder {
      * Encodes the given signed Long object into exactly 1 or 9 bytes for
      * descending order. If the Long object is never expected to be null,
      * consider encoding as a long primitive.
-     * 
-     * @param value optional signed Long value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional signed Long value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -110,9 +105,9 @@ public class KeyEncoder {
 
     /**
      * Encodes the given signed byte into exactly 1 byte for descending order.
-     * 
-     * @param value signed byte value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     signed byte value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(byte value, byte[] dst, int dstOffset) {
@@ -123,9 +118,9 @@ public class KeyEncoder {
      * Encodes the given signed Byte object into exactly 1 or 2 bytes for
      * descending order. If the Byte object is never expected to be null,
      * consider encoding as a byte primitive.
-     * 
-     * @param value optional signed Byte value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional signed Byte value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -142,9 +137,9 @@ public class KeyEncoder {
 
     /**
      * Encodes the given signed short into exactly 2 bytes for descending order.
-     * 
-     * @param value signed short value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     signed short value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(short value, byte[] dst, int dstOffset) {
@@ -155,9 +150,9 @@ public class KeyEncoder {
      * Encodes the given signed Short object into exactly 1 or 3 bytes for
      * descending order. If the Short object is never expected to be null,
      * consider encoding as a short primitive.
-     * 
-     * @param value optional signed Short value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional signed Short value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -174,9 +169,9 @@ public class KeyEncoder {
 
     /**
      * Encodes the given character into exactly 2 bytes for descending order.
-     * 
-     * @param value character value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     character value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(char value, byte[] dst, int dstOffset) {
@@ -187,9 +182,9 @@ public class KeyEncoder {
      * Encodes the given Character object into exactly 1 or 3 bytes for
      * descending order. If the Character object is never expected to be null,
      * consider encoding as a char primitive.
-     * 
-     * @param value optional Character value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional Character value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -206,9 +201,9 @@ public class KeyEncoder {
 
     /**
      * Encodes the given boolean into exactly 1 byte for descending order.
-     * 
-     * @param value boolean value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     boolean value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(boolean value, byte[] dst, int dstOffset) {
@@ -218,9 +213,9 @@ public class KeyEncoder {
     /**
      * Encodes the given Boolean object into exactly 1 byte for descending
      * order.
-     * 
-     * @param value optional Boolean value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional Boolean value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(Boolean value, byte[] dst, int dstOffset) {
@@ -233,9 +228,9 @@ public class KeyEncoder {
 
     /**
      * Encodes the given float into exactly 4 bytes for descending order.
-     * 
-     * @param value float value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     float value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(float value, byte[] dst, int dstOffset) {
@@ -252,9 +247,9 @@ public class KeyEncoder {
     /**
      * Encodes the given Float object into exactly 4 bytes for descending order.
      * A non-canonical NaN value is used to represent null.
-     * 
-     * @param value optional Float value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional Float value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(Float value, byte[] dst, int dstOffset) {
@@ -267,9 +262,9 @@ public class KeyEncoder {
 
     /**
      * Encodes the given double into exactly 8 bytes for descending order.
-     * 
-     * @param value double value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     double value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(double value, byte[] dst, int dstOffset) {
@@ -292,9 +287,9 @@ public class KeyEncoder {
     /**
      * Encodes the given Double object into exactly 8 bytes for descending
      * order. A non-canonical NaN value is used to represent null.
-     * 
-     * @param value optional Double value to encode
-     * @param dst destination for encoded bytes
+     *
+     * @param value     optional Double value to encode
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      */
     public static void encodeDesc(Double value, byte[] dst, int dstOffset) {
@@ -309,9 +304,9 @@ public class KeyEncoder {
      * Encodes the given optional BigInteger into a variable amount of bytes. If
      * the BigInteger is null, exactly 1 byte is written. Otherwise, the amount
      * written can be determined by calling calculateEncodedLength.
-     * 
-     * @param value BigInteger value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     BigInteger value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      * @since 1.2
@@ -359,9 +354,9 @@ public class KeyEncoder {
      * descending order. If the BigInteger is null, exactly 1 byte is written.
      * Otherwise, the amount written can be determined by calling
      * calculateEncodedLength.
-     * 
-     * @param value BigInteger value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     BigInteger value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      * @since 1.2
@@ -409,7 +404,7 @@ public class KeyEncoder {
 
     /**
      * Returns the amount of bytes required to encode a BigInteger.
-     * 
+     *
      * @param value BigInteger value to encode, may be null
      * @return amount of bytes needed to encode
      * @since 1.2
@@ -426,12 +421,12 @@ public class KeyEncoder {
      * Encodes the given optional BigDecimal into a variable amount of bytes. If
      * the BigDecimal is null, exactly 1 byte is written. Otherwise, the amount
      * written can be determined by calling calculateEncodedLength.
-     * <p>
+     * <p/>
      * <i>Note:</i> It is recommended that value be normalized by stripping
      * trailing zeros. This makes searching by value much simpler.
-     * 
-     * @param value BigDecimal value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     BigDecimal value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      * @since 1.2
@@ -455,12 +450,12 @@ public class KeyEncoder {
      * descending order. If the BigDecimal is null, exactly 1 byte is written.
      * Otherwise, the amount written can be determined by calling
      * calculateEncodedLength.
-     * <p>
+     * <p/>
      * <i>Note:</i> It is recommended that value be normalized by stripping
      * trailing zeros. This makes searching by value much simpler.
-     * 
-     * @param value BigDecimal value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     BigDecimal value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      * @since 1.2
@@ -481,10 +476,10 @@ public class KeyEncoder {
 
     /**
      * Returns the amount of bytes required to encode a BigDecimal.
-     * <p>
+     * <p/>
      * <i>Note:</i> It is recommended that value be normalized by stripping
      * trailing zeros. This makes searching by value much simpler.
-     * 
+     *
      * @param value BigDecimal value to encode, may be null
      * @return amount of bytes needed to encode
      * @since 1.2
@@ -495,36 +490,6 @@ public class KeyEncoder {
         }
 
         return encode(value).mLength;
-    }
-
-    private static class CachedBigDecimal {
-
-        static final ThreadLocal<CachedBigDecimal> cLocal = new ThreadLocal<CachedBigDecimal>();
-
-        final BigDecimal                           mValue;
-        final byte[]                               mEncoded;
-        final int                                  mLength;
-
-        CachedBigDecimal(BigDecimal value, byte[] encoded, int length){
-            mValue = value;
-            mEncoded = encoded;
-            mLength = length;
-        }
-
-        int copyTo(byte[] dst, int dstOffset) {
-            int length = mLength;
-            System.arraycopy(mEncoded, 0, dst, dstOffset, length);
-            return length;
-        }
-
-        int copyDescTo(byte[] dst, int dstOffset) {
-            byte[] encoded = mEncoded;
-            int length = mLength;
-            for (int i = 0; i < length; i++) {
-                dst[dstOffset++] = (byte) ~encoded[i];
-            }
-            return length;
-        }
     }
 
     /**
@@ -682,9 +647,9 @@ public class KeyEncoder {
      * Encodes the given optional unsigned byte array into a variable amount of
      * bytes. If the byte array is null, exactly 1 byte is written. Otherwise,
      * the amount written can be determined by calling calculateEncodedLength.
-     * 
-     * @param value byte array value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     byte array value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -700,12 +665,12 @@ public class KeyEncoder {
      * Encodes the given optional unsigned byte array into a variable amount of
      * bytes. If the byte array is null, exactly 1 byte is written. Otherwise,
      * the amount written can be determined by calling calculateEncodedLength.
-     * 
-     * @param value byte array value to encode, may be null
+     *
+     * @param value       byte array value to encode, may be null
      * @param valueOffset offset into byte array
      * @param valueLength length of data in byte array
-     * @param dst destination for encoded bytes
-     * @param dstOffset offset into destination array
+     * @param dst         destination for encoded bytes
+     * @param dstOffset   offset into destination array
      * @return amount of bytes written
      */
     public static int encode(byte[] value, int valueOffset, int valueLength, byte[] dst, int dstOffset) {
@@ -717,9 +682,9 @@ public class KeyEncoder {
      * bytes for descending order. If the byte array is null, exactly 1 byte is
      * written. Otherwise, the amount written is determined by calling
      * calculateEncodedLength.
-     * 
-     * @param value byte array value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     byte array value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -736,12 +701,12 @@ public class KeyEncoder {
      * bytes for descending order. If the byte array is null, exactly 1 byte is
      * written. Otherwise, the amount written is determined by calling
      * calculateEncodedLength.
-     * 
-     * @param value byte array value to encode, may be null
+     *
+     * @param value       byte array value to encode, may be null
      * @param valueOffset offset into byte array
      * @param valueLength length of data in byte array
-     * @param dst destination for encoded bytes
-     * @param dstOffset offset into destination array
+     * @param dst         destination for encoded bytes
+     * @param dstOffset   offset into destination array
      * @return amount of bytes written
      */
     public static int encodeDesc(byte[] value, int valueOffset, int valueLength, byte[] dst, int dstOffset) {
@@ -813,11 +778,11 @@ public class KeyEncoder {
     /**
      * Emits a base-32768 digit using exactly two bytes. The first byte is in
      * the range 32..202 and the second byte is in the range 32..223.
-     * 
-     * @param value digit value in the range 0..32767
-     * @param dst destination for encoded bytes
+     *
+     * @param value     digit value in the range 0..32767
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
-     * @param xorMask 0 for normal encoding, -1 for descending encoding
+     * @param xorMask   0 for normal encoding, -1 for descending encoding
      */
     private static void emitDigit(int value, byte[] dst, int dstOffset, int xorMask) {
         // The first byte is computed as ((value / 192) + 32) and the second
@@ -845,7 +810,7 @@ public class KeyEncoder {
     /**
      * Returns the amount of bytes required to encode a byte array of the given
      * length.
-     * 
+     *
      * @param value byte array value to encode, may be null
      * @return amount of bytes needed to encode
      */
@@ -855,8 +820,8 @@ public class KeyEncoder {
 
     /**
      * Returns the amount of bytes required to encode the given byte array.
-     * 
-     * @param value byte array value to encode, may be null
+     *
+     * @param value       byte array value to encode, may be null
      * @param valueOffset offset into byte array
      * @param valueLength length of data in byte array
      * @return amount of bytes needed to encode
@@ -869,13 +834,13 @@ public class KeyEncoder {
     /**
      * Encodes the given optional String into a variable amount of bytes. The
      * amount written can be determined by calling calculateEncodedStringLength.
-     * <p>
+     * <p/>
      * Strings are encoded in a fashion similar to UTF-8, in that ASCII
      * characters are usually written in one byte. This encoding is more
      * efficient than UTF-8, but it isn't compatible with UTF-8.
-     * 
-     * @param value String value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     String value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -887,13 +852,13 @@ public class KeyEncoder {
      * Encodes the given optional String into a variable amount of bytes for
      * descending order. The amount written can be determined by calling
      * calculateEncodedStringLength.
-     * <p>
+     * <p/>
      * Strings are encoded in a fashion similar to UTF-8, in that ASCII
      * characters are usually written in one byte. This encoding is more
      * efficient than UTF-8, but it isn't compatible with UTF-8.
-     * 
-     * @param value String value to encode, may be null
-     * @param dst destination for encoded bytes
+     *
+     * @param value     String value to encode, may be null
+     * @param dst       destination for encoded bytes
      * @param dstOffset offset into destination array
      * @return amount of bytes written
      */
@@ -1006,7 +971,7 @@ public class KeyEncoder {
 
     /**
      * Returns the amount of bytes required to encode the given String.
-     * 
+     *
      * @param value String to encode, may be null
      */
     public static int calculateEncodedStringLength(String value) {
@@ -1051,11 +1016,11 @@ public class KeyEncoder {
      * Encodes the given byte array for use when there is only a single required
      * property, descending order, whose type is a byte array. The original byte
      * array is returned if the length and padding lengths are zero.
-     * 
+     *
      * @param prefixPadding amount of extra bytes to allocate at start of
-     * encoded byte array
+     *                      encoded byte array
      * @param suffixPadding amount of extra bytes to allocate at end of encoded
-     * byte array
+     *                      byte array
      */
     public static byte[] encodeSingleDesc(byte[] value, int prefixPadding, int suffixPadding) {
         int length = value.length;
@@ -1080,21 +1045,21 @@ public class KeyEncoder {
     /**
      * Encodes the given byte array for use when there is only a single nullable
      * property, descending order, whose type is a byte array.
-     * 
+     *
      * @param prefixPadding amount of extra bytes to allocate at start of
-     * encoded byte array
+     *                      encoded byte array
      * @param suffixPadding amount of extra bytes to allocate at end of encoded
-     * byte array
+     *                      byte array
      */
     public static byte[] encodeSingleNullableDesc(byte[] value, int prefixPadding, int suffixPadding) {
         if (prefixPadding <= 0 && suffixPadding <= 0) {
             if (value == null) {
-                return new byte[] { NULL_BYTE_LOW };
+                return new byte[]{NULL_BYTE_LOW};
             }
 
             int length = value.length;
             if (length == 0) {
-                return new byte[] { NOT_NULL_BYTE_LOW };
+                return new byte[]{NOT_NULL_BYTE_LOW};
             }
 
             byte[] dst = new byte[1 + length];
@@ -1118,5 +1083,35 @@ public class KeyEncoder {
             dst[prefixPadding + 1 + length] = (byte) (~value[length]);
         }
         return dst;
+    }
+
+    private static class CachedBigDecimal {
+
+        static final ThreadLocal<CachedBigDecimal> cLocal = new ThreadLocal<CachedBigDecimal>();
+
+        final BigDecimal mValue;
+        final byte[] mEncoded;
+        final int mLength;
+
+        CachedBigDecimal(BigDecimal value, byte[] encoded, int length) {
+            mValue = value;
+            mEncoded = encoded;
+            mLength = length;
+        }
+
+        int copyTo(byte[] dst, int dstOffset) {
+            int length = mLength;
+            System.arraycopy(mEncoded, 0, dst, dstOffset, length);
+            return length;
+        }
+
+        int copyDescTo(byte[] dst, int dstOffset) {
+            byte[] encoded = mEncoded;
+            int length = mLength;
+            for (int i = 0; i < length; i++) {
+                dst[dstOffset++] = (byte) ~encoded[i];
+            }
+            return length;
+        }
     }
 }

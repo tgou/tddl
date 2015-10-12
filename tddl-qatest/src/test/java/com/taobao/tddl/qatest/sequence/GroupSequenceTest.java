@@ -1,5 +1,15 @@
 package com.taobao.tddl.qatest.sequence;
 
+import com.taobao.diamond.mockserver.MockServer;
+import com.taobao.tddl.common.GroupDataSourceRouteHelper;
+import com.taobao.tddl.qatest.BaseAtomGroupTestCase;
+import com.taobao.tddl.sequence.exception.SequenceException;
+import com.taobao.tddl.sequence.impl.GroupSequence;
+import com.taobao.tddl.sequence.impl.GroupSequenceDao;
+import org.junit.*;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.dao.DataAccessException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -12,30 +22,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.dao.DataAccessException;
-
-import com.taobao.diamond.mockserver.MockServer;
-import com.taobao.tddl.common.GroupDataSourceRouteHelper;
-import com.taobao.tddl.qatest.BaseAtomGroupTestCase;
-import com.taobao.tddl.sequence.exception.SequenceException;
-import com.taobao.tddl.sequence.impl.GroupSequence;
-import com.taobao.tddl.sequence.impl.GroupSequenceDao;
-
 /**
  * @author yaolingling.pt
  */
 public class GroupSequenceTest extends BaseAtomGroupTestCase {
 
     protected static ClassPathXmlApplicationContext context = null;
-    protected static GroupSequence                  seque   = null;
-    private Set<Long>                               set     = new HashSet<Long>();
-    private AtomicInteger                           seqCnt  = new AtomicInteger();
+    protected static GroupSequence seque = null;
+    private Set<Long> set = new HashSet<Long>();
+    private AtomicInteger seqCnt = new AtomicInteger();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -45,7 +40,7 @@ public class GroupSequenceTest extends BaseAtomGroupTestCase {
 
     @Before
     public void before() {
-        context = new ClassPathXmlApplicationContext(new String[] { "classpath:sequence/spring_context_group_sequence.xml" });
+        context = new ClassPathXmlApplicationContext(new String[]{"classpath:sequence/spring_context_group_sequence.xml"});
         seque = (GroupSequence) context.getBean("sequence");
     }
 
@@ -94,7 +89,7 @@ public class GroupSequenceTest extends BaseAtomGroupTestCase {
 
     /**
      * *
-     * 
+     *
      * @throws SequenceException
      */
     @Test

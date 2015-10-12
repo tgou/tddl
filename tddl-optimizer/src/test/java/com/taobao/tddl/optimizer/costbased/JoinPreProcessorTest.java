@@ -1,11 +1,10 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.optimizer.BaseOptimizerTest;
 import com.taobao.tddl.optimizer.core.ast.query.JoinNode;
 import com.taobao.tddl.optimizer.core.ast.query.TableNode;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class JoinPreProcessorTest extends BaseOptimizerTest {
 

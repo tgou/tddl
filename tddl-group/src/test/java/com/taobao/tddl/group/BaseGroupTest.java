@@ -1,15 +1,5 @@
 package com.taobao.tddl.group;
 
-import java.sql.Connection;
-import java.sql.Statement;
-
-import javax.sql.DataSource;
-
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-
 import com.alibaba.druid.pool.DruidDataSource;
 import com.taobao.diamond.mockserver.MockServer;
 import com.taobao.tddl.atom.common.TAtomConstants;
@@ -19,17 +9,25 @@ import com.taobao.tddl.common.model.DBType;
 import com.taobao.tddl.group.jdbc.DataSourceWrapper;
 import com.taobao.tddl.group.jdbc.TGroupDataSource;
 import com.taobao.tddl.group.utils.PropLoadTestUtil;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.Statement;
 
 @Ignore("测试基类")
 public class BaseGroupTest {
 
     protected static final String APPNAME = "tddl_sample";
-    protected static final String GROUP0  = "tddl_sample_group_0";
-    protected static final String GROUP1  = "tddl_sample_group_1";
-    protected static final String GROUP2  = "tddl_sample_group_2";
-    protected static final String DSKEY0  = "tddl_sample_0";
-    protected static final String DSKEY1  = "tddl_sample_1";
-    protected static final String DSKEY2  = "tddl_sample_2";
+    protected static final String GROUP0 = "tddl_sample_group_0";
+    protected static final String GROUP1 = "tddl_sample_group_1";
+    protected static final String GROUP2 = "tddl_sample_group_2";
+    protected static final String DSKEY0 = "tddl_sample_0";
+    protected static final String DSKEY1 = "tddl_sample_1";
+    protected static final String DSKEY2 = "tddl_sample_2";
 
     @BeforeClass
     public static void beforeClass() {
@@ -45,11 +43,6 @@ public class BaseGroupTest {
         MockServer.tearDownMockServer();
     }
 
-    @Before
-    public void setUp() throws Exception {
-        deleteAll();
-    }
-
     private static void mockConfig(String dir, String appName, String groupName, String dbKey) {
         String globaStr = PropLoadTestUtil.loadPropFile2String("conf/" + dir + "/globa.properties");
         MockServer.setConfigInfo(TAtomConstants.getGlobalDataId(dbKey), globaStr);
@@ -61,8 +54,8 @@ public class BaseGroupTest {
         // 解析配置
         TAtomDsConfDO tAtomDsConfDO = TAtomConfParser.parserTAtomDsConfDO(globaStr, appStr);
         String passwdDataId = TAtomConstants.getPasswdDataId(tAtomDsConfDO.getDbName(),
-            tAtomDsConfDO.getDbType(),
-            tAtomDsConfDO.getUserName());
+                tAtomDsConfDO.getDbType(),
+                tAtomDsConfDO.getUserName());
         MockServer.setConfigInfo(passwdDataId, passwdStr);
     }
 
@@ -119,5 +112,10 @@ public class BaseGroupTest {
         stmt.executeUpdate("delete from tddl_test_0000");
         stmt.close();
         conn.close();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        deleteAll();
     }
 }

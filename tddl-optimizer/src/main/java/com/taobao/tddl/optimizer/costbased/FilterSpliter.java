@@ -1,12 +1,5 @@
 package com.taobao.tddl.optimizer.costbased;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.optimizer.config.table.IndexMeta;
@@ -22,11 +15,13 @@ import com.taobao.tddl.optimizer.exceptions.QueryException;
 import com.taobao.tddl.optimizer.utils.FilterUtils;
 import com.taobao.tddl.optimizer.utils.OptimizerUtils;
 
+import java.util.*;
+
 /**
  * 条件分离器 简单来说 一个查询 A = 1 and B = 2 <br/>
  * 需要分析出哪些是key filter?哪些是 post filter( ResultFilter) <br/>
  * 在这里进行分离 key filter就是能走索引的那些filter，post filter就是必须遍历结果集的那些filter
- * 
+ *
  * @author Dreamond
  * @since 5.0.0
  */
@@ -99,7 +94,7 @@ public class FilterSpliter {
         if (index != null) {
             indexKeyColumns = OptimizerUtils.columnMetaListToIColumnList(index.getKeyColumns(), table.getTableName());
             indexValueColumns = OptimizerUtils.columnMetaListToIColumnList(index.getValueColumns(),
-                table.getTableName());
+                    table.getTableName());
         }
 
         List<IFilter> indexQueryKeyFilters = new LinkedList();
@@ -112,12 +107,12 @@ public class FilterSpliter {
                 for (IFilter f : fs) {
                     // filter右边不是常量的，不能走索引
                     if (((IBooleanFilter) f).getValue() != null
-                        && (((IBooleanFilter) f).getValue() instanceof ISelectable)) {
+                            && (((IBooleanFilter) f).getValue() instanceof ISelectable)) {
                         continue;
                     }
 
                     if (f != null && f.getOperation() != OPERATION.NOT_EQ && f.getOperation() != OPERATION.IS_NOT_NULL
-                        && f.getOperation() != OPERATION.IS_NULL && f.getOperation() != OPERATION.LIKE) {
+                            && f.getOperation() != OPERATION.IS_NULL && f.getOperation() != OPERATION.LIKE) {
                         indexQueryKeyFilters.add(f);
                     } else {
                         indexQueryValueFilters.add(f);
@@ -134,7 +129,7 @@ public class FilterSpliter {
                 for (IFilter f : fs) {
                     // filter右边不是常量的，不能走索引
                     if (((IBooleanFilter) f).getValue() != null
-                        && (((IBooleanFilter) f).getValue() instanceof ISelectable)) {
+                            && (((IBooleanFilter) f).getValue() instanceof ISelectable)) {
                         continue;
                     }
 

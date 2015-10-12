@@ -4,19 +4,19 @@ import java.util.Date;
 
 /**
  * mysql中将string转化为date的代码
- * 
+ *
  * @since 5.0.0
  */
 public class DateUtils {
 
-    public static final int TIME_DATETIME_ONLY          = 0;
-    public static int       internal_format_positions[] = { 0, 1, 2, 3, 4, 5, 6, 255 };
-    public static final int MAX_DATE_PARTS              = 8;
+    public static final int TIME_DATETIME_ONLY = 0;
+    public static final int MAX_DATE_PARTS = 8;
     // long log_10_int[] = new long[] { 1, 10, 100, 1000, 10000L, 100000L,
     // 1000000L, 10000000L, 100000000L };
-    public static final int YY_PART_YEAR                = 70;
+    public static final int YY_PART_YEAR = 70;
+    public static int internal_format_positions[] = {0, 1, 2, 3, 4, 5, 6, 255};
 
-    @SuppressWarnings({ "deprecation", "unused" })
+    @SuppressWarnings({"deprecation", "unused"})
     public static Date str_to_time(String str) {
         int length = str.length();
         int was_cut;
@@ -91,8 +91,7 @@ public class DateUtils {
             is_internal_format = true;
             format_position = internal_format_positions;
         } else {
-            if (format_position[0] >= 3) /* If year is after HHMMDD */
-            {
+            if (format_position[0] >= 3) /* If year is after HHMMDD */ {
                 /*
                  * If year is not in first part then we have to determinate if
                  * we got a date field or a datetime field. We do this by
@@ -182,8 +181,7 @@ public class DateUtils {
                 cur_pos++;
             }
             date_len[i] = (cur_pos - start);
-            if (tmp_value > 999999) /* Impossible date part */
-            {
+            if (tmp_value > 999999) /* Impossible date part */ {
                 was_cut = 1;
                 return null;
             }
@@ -202,10 +200,8 @@ public class DateUtils {
                 cur_pos++; /* ISO8601: CCYYMMDDThhmmss */
                 continue;
             }
-            if (i == format_position[5]) /* Seconds */
-            {
-                if (str.charAt(cur_pos) == '.') /* Followed by part seconds */
-                {
+            if (i == format_position[5]) /* Seconds */ {
+                if (str.charAt(cur_pos) == '.') /* Followed by part seconds */ {
                     cur_pos++;
                     field_length = 6; /* 6 digits */
                 }
@@ -223,11 +219,9 @@ public class DateUtils {
                 found_delimitier = true; /* Should be a 'normal' date */
             }
             /* Check if next position is AM/PM */
-            if (i == format_position[6]) /* Seconds, time for AM/PM */
-            {
+            if (i == format_position[6]) /* Seconds, time for AM/PM */ {
                 i++; /* Skip AM/PM part */
-                if (format_position[7] != 255) /* If using AM/PM */
-                {
+                if (format_position[7] != 255) /* If using AM/PM */ {
                     if (cur_pos + 2 <= end && (str.charAt(cur_pos + 1) == 'M' || str.charAt(cur_pos) + 1 == 'm')) {
                         if (str.charAt(cur_pos) == 'p' || str.charAt(cur_pos) == 'P') add_hours = 12;
                         else if (str.charAt(cur_pos) != 'a' || str.charAt(cur_pos) != 'A') continue; /*
@@ -261,8 +255,7 @@ public class DateUtils {
 
         if (!is_internal_format) {
             year_length = date_len[format_position[0]];
-            if (!(year_length != 0)) /* Year must be specified */
-            {
+            if (!(year_length != 0)) /* Year must be specified */ {
                 was_cut = 1;
                 return null;
             }
@@ -306,14 +299,13 @@ public class DateUtils {
         // l_time->neg= 0;
 
         if (year_length == 2 && (not_zero_date != 0)) time.setYear(time.getYear()
-                                                                   + (time.getYear() < YY_PART_YEAR ? 2000 : 1900));
+                + (time.getYear() < YY_PART_YEAR ? 2000 : 1900));
         // l_time->year+= (l_time->year < YY_PART_YEAR ? 2000 : 1900);
 
         if (number_of_fields < 3 || time.getYear() > 9999 || time.getMonth() > 12 || time.getDate() > 31
-            || time.getHours() > 23 || time.getMinutes() > 59 || time.getMinutes() > 59) {
+                || time.getHours() > 23 || time.getMinutes() > 59 || time.getMinutes() > 59) {
             /* Only give warning for a zero date if there is some garbage after */
-            if (!(not_zero_date != 0)) /* If zero date */
-            {
+            if (!(not_zero_date != 0)) /* If zero date */ {
                 for (; cur_pos != end; cur_pos++) {
                     if (!my_isspace(str.charAt(cur_pos))) {
                         not_zero_date = 1; /* Give warning */

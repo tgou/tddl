@@ -1,31 +1,30 @@
 package com.taobao.tddl.qatest.matrix.select.function;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.ExecuteTableName;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @RunWith(EclipseParameterized.class)
 public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
 
+    public SelectCharacterFunctionTest(String tableName) {
+        BaseTestCase.normaltblTableName = tableName;
+    }
+
     @Parameters(name = "{index}:table={0}")
     public static List<String[]> prepareData() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectCharacterFunctionTest(String tableName){
-        BaseTestCase.normaltblTableName = tableName;
     }
 
     @Before
@@ -47,7 +46,7 @@ public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
             List<Object> param = new ArrayList<Object>();
             param.add("zhuo");
             param.add("xue");
-            String[] columnParam = { "ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME" };
+            String[] columnParam = {"ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME"};
             selectContentSameAssert(sql, columnParam, param);
             sql = "select * from " + normaltblTableName + " where name like concat (?,?,?)";
             param.clear();
@@ -68,7 +67,7 @@ public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
             List<Object> param = new ArrayList<Object>();
             param.add("%uo");
             param.add("xu_");
-            String[] columnParam = { "ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME" };
+            String[] columnParam = {"ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME"};
             selectContentSameAssert(sql, columnParam, param);
         }
     }
@@ -77,7 +76,7 @@ public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
     public void ifnullTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = "select ifnull(name,pk) as notNullName from " + normaltblTableName;
-            String[] columnParam = { "notNullName" };
+            String[] columnParam = {"notNullName"};
             selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
 
             sql = "replace into " + normaltblTableName + " (pk,name) values (10,null)";
@@ -95,7 +94,7 @@ public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
     public void ifnullTestTypeNotSame() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = "select ifnull(name,pk) as notNullName from " + normaltblTableName;
-            String[] columnParam = { "notNullName" };
+            String[] columnParam = {"notNullName"};
             selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
         }
     }
@@ -106,7 +105,7 @@ public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
             String sql = "replace into " + normaltblTableName + " (pk,floatCol) values (10,null)";
             execute(sql, null);
             sql = "select ifnull(round(floatCol/4,4),0) as a from " + normaltblTableName;
-            String[] columnParam = { "a" };
+            String[] columnParam = {"a"};
             selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
         }
     }
@@ -120,7 +119,7 @@ public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
             execute(sql, param);
 
             sql = String.format("select * from %s where name =quote(?)", normaltblTableName);
-            String[] columnParam = { "ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME" };
+            String[] columnParam = {"ID", "GMT_CREATE", "NAME", "FLOATCOL", "GMT_TIMESTAMP", "GMT_DATETIME"};
             selectContentSameAssert(sql, columnParam, param);
         }
     }
@@ -129,7 +128,7 @@ public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
     public void convTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = String.format("select conv(id,16,2) as a from %s where pk=1", normaltblTableName);
-            String[] columnParam = { "a" };
+            String[] columnParam = {"a"};
             selectContentSameAssert(sql, columnParam, null);
         }
     }
@@ -138,7 +137,7 @@ public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
     public void asciiTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = String.format("select ASCII(name) as a from %s", normaltblTableName);
-            String[] columnParam = { "a" };
+            String[] columnParam = {"a"};
             selectContentSameAssert(sql, columnParam, null);
         }
     }
@@ -147,7 +146,7 @@ public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
     public void bit_lengthTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = String.format("select BIT_LENGTH(name) as a from %s", normaltblTableName);
-            String[] columnParam = { "a" };
+            String[] columnParam = {"a"};
             selectContentSameAssert(sql, columnParam, null);
         }
     }
@@ -156,7 +155,7 @@ public class SelectCharacterFunctionTest extends BaseMatrixTestCase {
     public void bitTest() throws Exception {
         if (!normaltblTableName.startsWith("ob")) {
             String sql = String.format("select bin(name) as a from %s", normaltblTableName);
-            String[] columnParam = { "a" };
+            String[] columnParam = {"a"};
             selectContentSameAssert(sql, columnParam, null);
         }
     }

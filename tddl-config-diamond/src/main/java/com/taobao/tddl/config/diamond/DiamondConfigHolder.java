@@ -1,9 +1,5 @@
 package com.taobao.tddl.config.diamond;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.taobao.diamond.client.BatchHttpResult;
 import com.taobao.diamond.client.impl.DiamondEnv;
 import com.taobao.diamond.client.impl.DiamondEnvRepo;
@@ -11,10 +7,13 @@ import com.taobao.diamond.client.impl.DiamondUnitSite;
 import com.taobao.diamond.domain.ConfigInfoEx;
 import com.taobao.tddl.common.utils.TStringUtil;
 import com.taobao.tddl.common.utils.extension.Activate;
-import com.taobao.tddl.config.impl.holder.AbstractConfigDataHolder;
-
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import com.taobao.tddl.config.impl.holder.AbstractConfigDataHolder;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Activate(order = 1)
 public class DiamondConfigHolder extends AbstractConfigDataHolder {

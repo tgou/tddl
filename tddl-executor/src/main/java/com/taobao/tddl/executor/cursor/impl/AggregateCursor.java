@@ -1,12 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.common.utils.logger.Logger;
@@ -26,38 +19,40 @@ import com.taobao.tddl.optimizer.core.expression.IFunction.FunctionType;
 import com.taobao.tddl.optimizer.core.expression.IOrderBy;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
 
+import java.util.*;
+import java.util.Map.Entry;
+
 /**
  * 用来计算聚合函数，group by
- * 
+ *
  * @author mengshi.sunmengshi 2013-12-3 上午10:53:31
  * @since 5.0.0
  */
 public class AggregateCursor extends SchematicCursor implements IAggregateCursor {
 
-    private final static Logger logger                    = LoggerFactory.getLogger(AggregateCursor.class);
+    private final static Logger logger = LoggerFactory.getLogger(AggregateCursor.class);
     /**
      * 查询中涉及的所有聚合函数
      */
-    protected List<IFunction>   aggregates                = new LinkedList<IFunction>();
+    protected List<IFunction> aggregates = new LinkedList<IFunction>();
     /**
      * 查询中涉及的所有scalar函数
      */
-    List<IFunction>             scalars                   = new LinkedList<IFunction>();
+    List<IFunction> scalars = new LinkedList<IFunction>();
     /**
      * 当前节点是不是归并节点
      */
-    boolean                     isMerge                   = false;
-    List<ColumnMeta>            groupBys                  = new ArrayList<ColumnMeta>();
-    Map<ColumnMeta, Object>     currentGroupByValue       = null;
-    private boolean             schemaInited              = false;
-    private ICursorMeta         cursorMeta                = null;
-
-    boolean                     end                       = false;
-    IRowSet                     firstRowSetInCurrentGroup = null;
-    boolean                     isFirstTime               = true;
+    boolean isMerge = false;
+    List<ColumnMeta> groupBys = new ArrayList<ColumnMeta>();
+    Map<ColumnMeta, Object> currentGroupByValue = null;
+    boolean end = false;
+    IRowSet firstRowSetInCurrentGroup = null;
+    boolean isFirstTime = true;
+    private boolean schemaInited = false;
+    private ICursorMeta cursorMeta = null;
 
     public AggregateCursor(ISchematicCursor cursor, List<IFunction> functions, List<IOrderBy> groupBycols,
-                           List<ISelectable> retColumns, boolean isMerge){
+                           List<ISelectable> retColumns, boolean isMerge) {
         super(cursor, null, cursor.getOrderBy());
 
         this.groupBys.addAll(ExecUtils.getColumnMetaWithLogicTablesFromOrderBys(groupBycols));
@@ -101,9 +96,9 @@ public class AggregateCursor extends SchematicCursor implements IAggregateCursor
                     currentGroupByValue = null;
                 } else {
                     Object value = ExecUtils.getObject(firstRowSetInCurrentGroup.getParentCursorMeta(),
-                        firstRowSetInCurrentGroup,
-                        cm.getTableName(),
-                        cm.getName());
+                            firstRowSetInCurrentGroup,
+                            cm.getTableName(),
+                            cm.getName());
                     currentGroupByValue.put(cm, value);
                 }
             }
@@ -331,10 +326,10 @@ public class AggregateCursor extends SchematicCursor implements IAggregateCursor
         }
 
         ColumnMeta cm = new ColumnMeta(ExecUtils.getLogicTableName(column.getTableName()),
-            columnName,
-            type,
-            column.getAlias(),
-            true);
+                columnName,
+                type,
+                column.getAlias(),
+                true);
         metaColumns.add(cm);
     }
 

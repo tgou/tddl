@@ -1,9 +1,5 @@
 package com.taobao.tddl.executor.cursor;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import com.taobao.tddl.executor.cursor.impl.ColMetaAndIndex;
 import com.taobao.tddl.executor.cursor.impl.CursorMetaImp;
 import com.taobao.tddl.executor.function.ExtraFunction;
@@ -13,21 +9,14 @@ import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
 import com.taobao.tddl.optimizer.core.datatype.DataTypeUtil;
-import com.taobao.tddl.optimizer.core.expression.IBooleanFilter;
-import com.taobao.tddl.optimizer.core.expression.IColumn;
-import com.taobao.tddl.optimizer.core.expression.IFilter;
+import com.taobao.tddl.optimizer.core.expression.*;
 import com.taobao.tddl.optimizer.core.expression.IFilter.OPERATION;
-import com.taobao.tddl.optimizer.core.expression.IFunction;
-import com.taobao.tddl.optimizer.core.expression.ILogicalFilter;
-import com.taobao.tddl.optimizer.core.expression.IOrderBy;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class RangeMaker {
-
-    public static class Range {
-
-        public IRowSet from;
-        public IRowSet to;
-    }
 
     public RangeMaker.Range makeRange(IFilter lf, List<IOrderBy> orderBys) {
         RangeMaker.Range range = new RangeMaker.Range();
@@ -74,7 +63,7 @@ public class RangeMaker {
 
     /**
      * 将大于等于 变成大于 小于 变成小于等于 将
-     * 
+     *
      * @param lf
      * @param cursorMetaNew
      */
@@ -160,16 +149,6 @@ public class RangeMaker {
             type = DataTypeUtil.getTypeOfObject(c); // 可能为null
         }
         return type.decr(c);
-    }
-
-    /**
-     * 用来做一些值的处理工作
-     * 
-     * @author whisper
-     */
-    public static interface ColumnEQProcessor {
-
-        public Object process(Object c, DataType type);
     }
 
     public Object incr(Object c, DataType type) {
@@ -262,6 +241,22 @@ public class RangeMaker {
             return type.getMinValue();
         }
         // return null;
+    }
+
+    /**
+     * 用来做一些值的处理工作
+     *
+     * @author whisper
+     */
+    public static interface ColumnEQProcessor {
+
+        public Object process(Object c, DataType type);
+    }
+
+    public static class Range {
+
+        public IRowSet from;
+        public IRowSet to;
     }
 
 }

@@ -1,10 +1,9 @@
 package com.taobao.tddl.optimizer.core.function;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.taobao.tddl.optimizer.core.expression.ExtraFunctionManager;
 import com.taobao.tddl.optimizer.core.expression.IExtraFunction;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author jianghang 2013-11-8 下午7:44:27

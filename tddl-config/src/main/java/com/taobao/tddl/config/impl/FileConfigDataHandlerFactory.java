@@ -1,5 +1,9 @@
 package com.taobao.tddl.config.impl;
 
+import com.taobao.tddl.config.ConfigDataHandler;
+import com.taobao.tddl.config.ConfigDataHandlerFactory;
+import com.taobao.tddl.config.ConfigDataListener;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -7,18 +11,24 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import com.taobao.tddl.config.ConfigDataHandler;
-import com.taobao.tddl.config.ConfigDataHandlerFactory;
-import com.taobao.tddl.config.ConfigDataListener;
-
 public class FileConfigDataHandlerFactory implements ConfigDataHandlerFactory {
 
-    private String                                                    directory        = "";
-    private String                                                    appName;
-    private final static ConcurrentHashMap<String, ConfigDataHandler> filePath         = new ConcurrentHashMap<String, ConfigDataHandler>();
-    public static final String                                        configure_prefix = "com.taobao.tddl.";
+    public static final String configure_prefix = "com.taobao.tddl.";
+    private final static ConcurrentHashMap<String, ConfigDataHandler> filePath = new ConcurrentHashMap<String, ConfigDataHandler>();
+    private final static Executor default_Executor = Executors.newCachedThreadPool(new ThreadFactory() {
 
-    public FileConfigDataHandlerFactory(String directory, String appName, Executor executor){
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread thd = new Thread(r);
+            thd.setName("configure file checker");
+            return thd;
+        }
+    });
+    private String directory = "";
+    private String appName;
+    private Executor executor = null;
+
+    public FileConfigDataHandlerFactory(String directory, String appName, Executor executor) {
         super();
         this.directory = directory;
         this.appName = appName;
@@ -28,18 +38,6 @@ public class FileConfigDataHandlerFactory implements ConfigDataHandlerFactory {
             this.executor = default_Executor;
         }
     }
-
-    private Executor              executor         = null;
-
-    private final static Executor default_Executor = Executors.newCachedThreadPool(new ThreadFactory() {
-
-                                                       @Override
-                                                       public Thread newThread(Runnable r) {
-                                                           Thread thd = new Thread(r);
-                                                           thd.setName("configure file checker");
-                                                           return thd;
-                                                       }
-                                                   });
 
     public String getDirectory() {
         return directory;
@@ -67,11 +65,11 @@ public class FileConfigDataHandlerFactory implements ConfigDataHandlerFactory {
                 // dcl
                 if (configDataHandler == null) {
                     configDataHandler = new FileConfigDataHandler(appName,
-                        executor,
-                        configure_prefix,
-                        directory,
-                        dataId,
-                        configDataListener);
+                            executor,
+                            configure_prefix,
+                            directory,
+                            dataId,
+                            configDataListener);
                     ConfigDataHandler tempCdh = filePath.putIfAbsent(key, configDataHandler);
                     if (tempCdh != null) {
                         configDataHandler = tempCdh;

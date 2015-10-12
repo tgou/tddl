@@ -1,18 +1,17 @@
 package com.taobao.tddl.matrix.test;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.executor.common.ExecutionContext;
 import com.taobao.tddl.matrix.jdbc.TConnection;
 import com.taobao.tddl.matrix.jdbc.TDataSource;
 import com.taobao.tddl.repo.mysql.spi.My_Transaction;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class TransactionTest {
 
@@ -151,7 +150,7 @@ public class TransactionTest {
 
     /**
      * 先做非auto的，再做auto的 两次的连接都应该被关闭
-     * 
+     *
      * @throws Exception
      */
     @Test

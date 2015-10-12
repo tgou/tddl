@@ -1,7 +1,5 @@
 package com.taobao.tddl.optimizer.costbased.after;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.utils.AddressUtils;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
@@ -11,16 +9,18 @@ import com.taobao.tddl.optimizer.core.plan.query.IMerge;
 import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.optimizer.utils.RequestIDGen;
 
+import java.util.Map;
+
 /**
  * 添加id 不会改变结构
- * 
+ *
  * @author Whisper
  */
 public class FillRequestIDAndSubRequestID implements QueryPlanOptimizer {
 
     String hostname = "";
 
-    public FillRequestIDAndSubRequestID(){
+    public FillRequestIDAndSubRequestID() {
         hostname = AddressUtils.getHostIp() + "_" + System.currentTimeMillis();
     }
 

@@ -1,23 +1,22 @@
 package com.taobao.tddl.rule.virtualnode;
 
-import java.util.List;
-
+import com.taobao.tddl.rule.TddlRule;
+import com.taobao.tddl.rule.model.MatcherResult;
+import com.taobao.tddl.rule.model.TargetDB;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.taobao.tddl.rule.TddlRule;
-import com.taobao.tddl.rule.model.MatcherResult;
-import com.taobao.tddl.rule.model.TargetDB;
+import java.util.List;
 
 /**
- * @description
  * @author <a href="junyu@taobao.com">junyu</a>
  * @version 1.0
- * @since 1.6
+ * @description
  * @date 2011-8-11 11:19:02
+ * @since 1.6
  */
 public class TddlVirtualRuleTest {
 

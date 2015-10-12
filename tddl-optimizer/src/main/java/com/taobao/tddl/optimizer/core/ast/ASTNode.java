@@ -1,23 +1,23 @@
 package com.taobao.tddl.optimizer.core.ast;
 
-import java.util.Map;
-
 import com.taobao.tddl.common.exception.NotSupportException;
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.exceptions.QueryException;
 
+import java.util.Map;
+
 /**
  * 可优化的语法树
- * 
+ *
  * @since 5.0.0
  */
 public abstract class ASTNode<RT extends ASTNode> implements Comparable {
 
-    protected String  dataNode  = null; // 数据处理节点,比如group name
-    protected Object  extra;            // 比如唯一标识，join merge join中使用
+    protected String dataNode = null; // 数据处理节点,比如group name
+    protected Object extra;            // 比如唯一标识，join merge join中使用
     protected boolean broadcast = false; // 是否为广播表
-    protected String  sql;
+    protected String sql;
 
     /**
      * <pre>

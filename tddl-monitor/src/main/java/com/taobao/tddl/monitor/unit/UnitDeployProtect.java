@@ -1,10 +1,10 @@
 package com.taobao.tddl.monitor.unit;
 
-import java.sql.SQLException;
-import java.util.Map;
-
 import com.taobao.tddl.common.jdbc.ParameterContext;
 import com.taobao.tddl.common.utils.extension.ExtensionLoader;
+
+import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * @author mengshi.sunmengshi 2013-11-13 下午4:41:53
@@ -13,6 +13,7 @@ import com.taobao.tddl.common.utils.extension.ExtensionLoader;
 public class UnitDeployProtect {
 
     static TddlUnitDeployProtect delegate = null;
+
     static {
         delegate = ExtensionLoader.load(TddlUnitDeployProtect.class);
     }
@@ -30,8 +31,8 @@ public class UnitDeployProtect {
     }
 
     protected static void unitDeployProtectWithCause(String sql, Map<Integer, ParameterContext> params)
-                                                                                                       throws UnitDeployInvalidException,
-                                                                                                       SQLException {
+            throws UnitDeployInvalidException,
+            SQLException {
 
         delegate.unitDeployProtectWithCause(sql, params);
     }

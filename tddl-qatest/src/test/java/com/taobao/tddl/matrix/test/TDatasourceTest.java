@@ -1,15 +1,14 @@
 package com.taobao.tddl.matrix.test;
 
+import com.taobao.tddl.common.exception.TddlException;
+import com.taobao.tddl.matrix.jdbc.TDataSource;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.taobao.tddl.common.exception.TddlException;
-import com.taobao.tddl.matrix.jdbc.TDataSource;
 
 public class TDatasourceTest {
 

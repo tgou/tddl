@@ -8,7 +8,7 @@ import com.taobao.tddl.optimizer.exceptions.FunctionException;
 /**
  * map是分发过程，reduce是合并过程。<br/>
  * 分发和合并都是在计算节点上进行的（计算节点在客户端内，包含数据节点、合并节点和客户端节点） 其余的与map reduce模式一致。
- * 
+ *
  * @author Whisper
  * @author jianghang 2013-11-8 下午3:42:52
  * @since 5.0.0

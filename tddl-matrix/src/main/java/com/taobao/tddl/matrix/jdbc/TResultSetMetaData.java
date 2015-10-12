@@ -1,12 +1,12 @@
 package com.taobao.tddl.matrix.jdbc;
 
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.List;
-
 import com.taobao.tddl.common.utils.TStringUtil;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.core.datatype.DataType;
+
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @author mengshi.sunmengshi 2013-12-3 下午6:25:57
@@ -16,7 +16,7 @@ public class TResultSetMetaData implements ResultSetMetaData {
 
     private List<ColumnMeta> columnMetas;
 
-    public TResultSetMetaData(List<ColumnMeta> columns){
+    public TResultSetMetaData(List<ColumnMeta> columns) {
         this.columnMetas = columns;
     }
 
@@ -45,7 +45,7 @@ public class TResultSetMetaData implements ResultSetMetaData {
     public String getColumnLabel(int column) throws SQLException {
         column--;
         return TStringUtil.isBlank(this.columnMetas.get(column).getAlias()) ? this.columnMetas.get(column).getName() : this.columnMetas.get(column)
-            .getAlias();
+                .getAlias();
     }
 
     @Override

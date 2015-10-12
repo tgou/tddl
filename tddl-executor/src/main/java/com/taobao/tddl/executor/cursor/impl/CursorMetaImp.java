@@ -1,16 +1,5 @@
 package com.taobao.tddl.executor.cursor.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.tddl.common.utils.GeneralUtil;
 import com.taobao.tddl.executor.common.IRowsValueScaner;
 import com.taobao.tddl.executor.common.RowsValueScanerImp;
@@ -19,10 +8,20 @@ import com.taobao.tddl.executor.utils.ExecUtils;
 import com.taobao.tddl.optimizer.config.table.ColumnMessage;
 import com.taobao.tddl.optimizer.config.table.ColumnMeta;
 import com.taobao.tddl.optimizer.core.expression.ISelectable;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class CursorMetaImp implements ICursorMeta {
 
-    private CursorMetaImp(String name, List<ColumnMessage> columns, Integer indexRange){
+    private String name;
+    private List<ColumnMeta> columns;
+    private Map<String/* 列名字哦。注意，不是表名，因为列名更长取，量也更大 */, ColumnHolder> indexMap = null;
+    private Integer indexRange;
+    private boolean isSureLogicalIndexEqualActualIndex;
+
+    private CursorMetaImp(String name, List<ColumnMessage> columns, Integer indexRange) {
         super();
         // this.name = name;
         this.columns = new ArrayList<ColumnMeta>();
@@ -37,7 +36,7 @@ public class CursorMetaImp implements ICursorMeta {
         }
     }
 
-    private CursorMetaImp(String name, List<ColumnMessage> columns, List<Integer> indexes, Integer indexRange){
+    private CursorMetaImp(String name, List<ColumnMessage> columns, List<Integer> indexes, Integer indexRange) {
         // this.name = name;
         this.columns = new ArrayList<ColumnMeta>();
         Iterator<Integer> iteratorIndex = indexes.iterator();
@@ -53,7 +52,7 @@ public class CursorMetaImp implements ICursorMeta {
         this.indexRange = indexRange;
     }
 
-    private CursorMetaImp(List<ColumnMeta> columns, List<Integer> indexes, Integer indexRange){
+    private CursorMetaImp(List<ColumnMeta> columns, List<Integer> indexes, Integer indexRange) {
         this.columns = new ArrayList<ColumnMeta>(columns);
         Iterator<Integer> iteratorIndex = indexes.iterator();
         for (ColumnMeta cm : columns) {
@@ -67,7 +66,7 @@ public class CursorMetaImp implements ICursorMeta {
         this.indexRange = indexRange;
     }
 
-    private CursorMetaImp(List<ColumnMeta> columns, Integer indexRange){
+    private CursorMetaImp(List<ColumnMeta> columns, Integer indexRange) {
         super();
         this.columns = new ArrayList<ColumnMeta>(columns);
         int index = 0;
@@ -80,7 +79,7 @@ public class CursorMetaImp implements ICursorMeta {
         this.indexRange = indexRange;
     }
 
-    private CursorMetaImp(List<ColumnMeta> columns){
+    private CursorMetaImp(List<ColumnMeta> columns) {
         super();
         this.columns = new ArrayList<ColumnMeta>(columns);
         int index = 0;
@@ -96,77 +95,68 @@ public class CursorMetaImp implements ICursorMeta {
         this.indexRange = index;
     }
 
-    /**
-     * 就是表名+index 因为可能出现多个表有相同列的情况。 但从速度上考虑，列必然应该做hash,否则效率太低了。表重的可能性，有，但不会很多。
-     * 所以不想用map结构。
-     * 
-     * @author whisper
-     */
-    public static class ColumnHolder {
-
-        public ColumnHolder(ColumnHolder next, String tablename, Integer index){
-            super();
-            this.next = next;
-            this.tablename = tablename;
-            this.index = index;
+    private static Integer findTableName(String tableName, ColumnHolder ch) {
+        if (StringUtils.equals(tableName, ch.tablename)) {
+            return ch.index;
         }
-
-        /**
-         * 如果有同列名，不同表名，放这里， 预计不会出现很多这样的情况。
-         */
-        ColumnHolder next      = null;
-        /**
-         * 表名
-         */
-        String       tablename = null;
-        /**
-         * indexName
-         */
-        Integer      index     = null;
-
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("ColumnHolder [\t");
-            if (next != null) {
-                builder.append("next:");
-                builder.append(next);
-                builder.append(", \t");
-            }
-            if (tablename != null) {
-                builder.append("tablename:");
-                builder.append(tablename);
-                builder.append(",\t");
-            }
-            if (index != null) {
-                builder.append("index:");
-                builder.append(index);
-            }
-            builder.append("]\n");
-            return builder.toString();
-        }
-
+        return null;
     }
 
-    private String                                                   name;
-
-    private List<ColumnMeta>                                         columns;
-
-    private Map<String/* 列名字哦。注意，不是表名，因为列名更长取，量也更大 */, ColumnHolder> indexMap = null;
-
-    private Integer                                                  indexRange;
-
-    private boolean                                                  isSureLogicalIndexEqualActualIndex;
-
-    @Override
-    public Integer getIndexRange() {
-        return indexRange;
+    public static CursorMetaImp buildNew(List<ColumnMeta> columns) {
+        return new CursorMetaImp(columns);
     }
 
     // @Override
     // public String getName() {
     // return name;
     // }
+
+    public static CursorMetaImp buildNew(String name, List<ColumnMessage> columns, Integer indexRange) {
+        return new CursorMetaImp(name, columns, indexRange);
+    }
+
+    public static CursorMetaImp buildNew(List<ColumnMeta> columns, Integer indexRange) {
+        return new CursorMetaImp(columns, indexRange);
+    }
+
+    public static CursorMetaImp buildNew(String name, List<ColumnMessage> columns, List<Integer> indexes,
+                                         Integer indexRange) {
+        return new CursorMetaImp(name, columns, indexes, indexRange);
+    }
+
+    public static CursorMetaImp buildNew(List<ColumnMeta> columns, List<Integer> indexes, Integer indexRange) {
+        return new CursorMetaImp(columns, indexes, indexRange);
+    }
+
+    /**
+     * 如果能找到同表名的，就替换对应的index 如果不能找到，但链表下一个为空，则构建新的ColumnHolder 放到队尾，也算成功 其他算失败
+     *
+     * @param tableName
+     * @param index
+     * @param ch
+     * @return
+     */
+    private static boolean findTableAndReplaceIndexNumber(String tableName, Integer index, ColumnHolder ch) {
+        boolean success = false;
+        if (StringUtils.equals(tableName, ch.tablename)) {
+            ch.index = index;
+            success = true;
+        } else if (ch.next == null) {
+            ch.next = new ColumnHolder(null, tableName, index);
+            success = true;
+        }
+        return success;
+    }
+
+    public static ICursorMeta buildEmpty() {
+        List<ColumnMeta> empty = Collections.emptyList();
+        return new CursorMetaImp(empty);
+    }
+
+    @Override
+    public Integer getIndexRange() {
+        return indexRange;
+    }
 
     @Override
     public List<ColumnMeta> getColumns() {
@@ -204,37 +194,14 @@ public class CursorMetaImp implements ICursorMeta {
         return null;
     }
 
-    private static Integer findTableName(String tableName, ColumnHolder ch) {
-        if (StringUtils.equals(tableName, ch.tablename)) {
-            return ch.index;
-        }
-        return null;
-    }
-
     public Map<String, ColumnHolder> getIndexMap() {
         return Collections.unmodifiableMap(indexMap);
     }
 
-    public static CursorMetaImp buildNew(List<ColumnMeta> columns) {
-        return new CursorMetaImp(columns);
-    }
-
-    public static CursorMetaImp buildNew(String name, List<ColumnMessage> columns, Integer indexRange) {
-        return new CursorMetaImp(name, columns, indexRange);
-    }
-
-    public static CursorMetaImp buildNew(List<ColumnMeta> columns, Integer indexRange) {
-        return new CursorMetaImp(columns, indexRange);
-    }
-
-    public static CursorMetaImp buildNew(String name, List<ColumnMessage> columns, List<Integer> indexes,
-                                         Integer indexRange) {
-        return new CursorMetaImp(name, columns, indexes, indexRange);
-    }
-
-    public static CursorMetaImp buildNew(List<ColumnMeta> columns, List<Integer> indexes, Integer indexRange) {
-        return new CursorMetaImp(columns, indexes, indexRange);
-    }
+    // protected void addAColumn(Map<String, ColumnHolder> columnHolderMap,
+    // String tableName, String colName, Integer index) {
+    //
+    // }
 
     protected void addAColumn(String tableName, String colName, String colAlias, Integer index) {
         if (indexMap == null) {
@@ -270,31 +237,6 @@ public class CursorMetaImp implements ICursorMeta {
 
     }
 
-    // protected void addAColumn(Map<String, ColumnHolder> columnHolderMap,
-    // String tableName, String colName, Integer index) {
-    //
-    // }
-
-    /**
-     * 如果能找到同表名的，就替换对应的index 如果不能找到，但链表下一个为空，则构建新的ColumnHolder 放到队尾，也算成功 其他算失败
-     * 
-     * @param tableName
-     * @param index
-     * @param ch
-     * @return
-     */
-    private static boolean findTableAndReplaceIndexNumber(String tableName, Integer index, ColumnHolder ch) {
-        boolean success = false;
-        if (StringUtils.equals(tableName, ch.tablename)) {
-            ch.index = index;
-            success = true;
-        } else if (ch.next == null) {
-            ch.next = new ColumnHolder(null, tableName, index);
-            success = true;
-        }
-        return success;
-    }
-
     @Override
     public String toStringWithInden(int inden) {
         StringBuilder sb = new StringBuilder();
@@ -313,15 +255,92 @@ public class CursorMetaImp implements ICursorMeta {
 
     }
 
+    @Override
+    public Iterator<ColMetaAndIndex> indexIterator() {
+        return new IndexMetaIterator(indexMap);
+    }
+
+    @Override
+    public IRowsValueScaner scaner(List<ISelectable> columnsYouWant) {
+        RowsValueScanerImp rvs = new RowsValueScanerImp(this, columnsYouWant);
+        return rvs;
+    }
+
+    @Override
+    public String toString() {
+        return toStringWithInden(0);
+    }
+
+    @Override
+    public boolean isSureLogicalIndexEqualActualIndex() {
+        return this.isSureLogicalIndexEqualActualIndex;
+    }
+
+    @Override
+    public void setIsSureLogicalIndexEqualActualIndex(boolean b) {
+        this.isSureLogicalIndexEqualActualIndex = b;
+    }
+
+    /**
+     * 就是表名+index 因为可能出现多个表有相同列的情况。 但从速度上考虑，列必然应该做hash,否则效率太低了。表重的可能性，有，但不会很多。
+     * 所以不想用map结构。
+     *
+     * @author whisper
+     */
+    public static class ColumnHolder {
+
+        /**
+         * 如果有同列名，不同表名，放这里， 预计不会出现很多这样的情况。
+         */
+        ColumnHolder next = null;
+        /**
+         * 表名
+         */
+        String tablename = null;
+        /**
+         * indexName
+         */
+        Integer index = null;
+        public ColumnHolder(ColumnHolder next, String tablename, Integer index) {
+            super();
+            this.next = next;
+            this.tablename = tablename;
+            this.index = index;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("ColumnHolder [\t");
+            if (next != null) {
+                builder.append("next:");
+                builder.append(next);
+                builder.append(", \t");
+            }
+            if (tablename != null) {
+                builder.append("tablename:");
+                builder.append(tablename);
+                builder.append(",\t");
+            }
+            if (index != null) {
+                builder.append("index:");
+                builder.append(index);
+            }
+            builder.append("]\n");
+            return builder.toString();
+        }
+
+    }
+
     private static class IndexMetaIterator implements Iterator<ColMetaAndIndex> {
 
         Iterator<Entry<String, ColumnHolder>> entryIterator = null;
         /**
          * 临时iterator 因为可能出现同列名，不同表名的情况
          */
-        ColMetaAndIndex                       current       = null;
+        ColMetaAndIndex current = null;
 
-        public IndexMetaIterator(Map<String/* 列名字 */, ColumnHolder> indexMap){
+        public IndexMetaIterator(Map<String/* 列名字 */, ColumnHolder> indexMap) {
             entryIterator = indexMap.entrySet().iterator();
         }
 
@@ -369,36 +388,5 @@ public class CursorMetaImp implements ICursorMeta {
 
         }
 
-    }
-
-    @Override
-    public Iterator<ColMetaAndIndex> indexIterator() {
-        return new IndexMetaIterator(indexMap);
-    }
-
-    @Override
-    public IRowsValueScaner scaner(List<ISelectable> columnsYouWant) {
-        RowsValueScanerImp rvs = new RowsValueScanerImp(this, columnsYouWant);
-        return rvs;
-    }
-
-    @Override
-    public String toString() {
-        return toStringWithInden(0);
-    }
-
-    @Override
-    public boolean isSureLogicalIndexEqualActualIndex() {
-        return this.isSureLogicalIndexEqualActualIndex;
-    }
-
-    @Override
-    public void setIsSureLogicalIndexEqualActualIndex(boolean b) {
-        this.isSureLogicalIndexEqualActualIndex = b;
-    }
-
-    public static ICursorMeta buildEmpty() {
-        List<ColumnMeta> empty = Collections.emptyList();
-        return new CursorMetaImp(empty);
     }
 }

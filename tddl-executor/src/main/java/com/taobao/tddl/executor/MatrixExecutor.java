@@ -1,14 +1,11 @@
 package com.taobao.tddl.executor;
 
-import java.util.List;
-import java.util.concurrent.Future;
-
-import org.apache.commons.lang.exception.ExceptionUtils;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.model.ExtraCmd;
 import com.taobao.tddl.common.model.lifecycle.AbstractLifecycle;
 import com.taobao.tddl.common.utils.GeneralUtil;
+import com.taobao.tddl.common.utils.logger.Logger;
+import com.taobao.tddl.common.utils.logger.LoggerFactory;
 import com.taobao.tddl.executor.common.AtomicNumberCreator;
 import com.taobao.tddl.executor.common.ExecutionContext;
 import com.taobao.tddl.executor.common.ExecutorContext;
@@ -22,18 +19,19 @@ import com.taobao.tddl.optimizer.core.expression.ISelectable;
 import com.taobao.tddl.optimizer.core.plan.IDataNodeExecutor;
 import com.taobao.tddl.optimizer.core.plan.IQueryTree;
 import com.taobao.tddl.optimizer.exceptions.EmptyResultFilterException;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
-import com.taobao.tddl.common.utils.logger.Logger;
-import com.taobao.tddl.common.utils.logger.LoggerFactory;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class MatrixExecutor extends AbstractLifecycle implements IExecutor {
 
-    private final static Logger logger  = LoggerFactory.getLogger(MatrixExecutor.class);
+    private final static Logger logger = LoggerFactory.getLogger(MatrixExecutor.class);
     private static final String EXPLAIN = "explain";
     /**
      * id 生成器
      */
-    private AtomicNumberCreator idGen   = AtomicNumberCreator.getNewInstance();
+    private AtomicNumberCreator idGen = AtomicNumberCreator.getNewInstance();
 
     /**
      * client端核心流程 解析 优化 执行
@@ -89,17 +87,17 @@ public class MatrixExecutor extends AbstractLifecycle implements IExecutor {
 
     public IDataNodeExecutor parseAndOptimize(String sql, ExecutionContext executionContext) throws TddlException {
         boolean cache = GeneralUtil.getExtraCmdBoolean(executionContext.getExtraCmds(),
-            ExtraCmd.OPTIMIZER_CACHE,
-            true);
+                ExtraCmd.OPTIMIZER_CACHE,
+                true);
 
         return OptimizerContext.getContext()
-            .getOptimizer()
-            .optimizeAndAssignment(sql, executionContext.getParams(), executionContext.getExtraCmds(), cache);
+                .getOptimizer()
+                .optimizeAndAssignment(sql, executionContext.getParams(), executionContext.getExtraCmds(), cache);
     }
 
     @Override
     public ResultCursor execByExecPlanNode(IDataNodeExecutor qc, ExecutionContext executionContext)
-                                                                                                   throws TddlException {
+            throws TddlException {
         if (logger.isDebugEnabled()) {
             logger.warn("extraCmd:\n" + executionContext.getExtraCmds());
             logger.warn("ParameterContext:\n" + executionContext.getParams());
@@ -109,8 +107,8 @@ public class MatrixExecutor extends AbstractLifecycle implements IExecutor {
         try {
             long time = System.currentTimeMillis();
             ISchematicCursor sc = ExecutorContext.getContext()
-                .getTopologyExecutor()
-                .execByExecPlanNode(qc, executionContext);
+                    .getTopologyExecutor()
+                    .execByExecPlanNode(qc, executionContext);
             ResultCursor rc = this.wrapResultCursor(qc, sc, executionContext);
             // 控制语句
             time = Monitor.monitorAndRenewTime(Monitor.KEY1, Monitor.TDDL_EXECUTE, Monitor.Key3Success, time);
@@ -139,7 +137,7 @@ public class MatrixExecutor extends AbstractLifecycle implements IExecutor {
 
     @Override
     public Future<ISchematicCursor> execByExecPlanNodeFuture(IDataNodeExecutor qc, ExecutionContext executionContext)
-                                                                                                                     throws TddlException {
+            throws TddlException {
         return ExecutorContext.getContext().getTopologyExecutor().execByExecPlanNodeFuture(qc, executionContext);
     }
 

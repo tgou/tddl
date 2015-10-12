@@ -1,19 +1,18 @@
 package com.taobao.tddl.qatest.matrix.select;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.taobao.tddl.qatest.BaseMatrixTestCase;
+import com.taobao.tddl.qatest.BaseTestCase;
+import com.taobao.tddl.qatest.ExecuteTableName;
+import com.taobao.tddl.qatest.util.EclipseParameterized;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.taobao.tddl.qatest.BaseMatrixTestCase;
-import com.taobao.tddl.qatest.BaseTestCase;
-import com.taobao.tddl.qatest.util.EclipseParameterized;
-import com.taobao.tddl.qatest.ExecuteTableName;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Comment for SelectWithNoData
@@ -24,15 +23,15 @@ import com.taobao.tddl.qatest.ExecuteTableName;
 public class SelectWithNoData extends BaseMatrixTestCase {
 
     long pk = 1l;
-    int  id = 1;
+    int id = 1;
+
+    public SelectWithNoData(String normaltblTableName) {
+        BaseTestCase.normaltblTableName = normaltblTableName;
+    }
 
     @Parameters(name = "{index}:table0={0}")
     public static List<String[]> prepare() {
         return Arrays.asList(ExecuteTableName.normaltblTable(dbType));
-    }
-
-    public SelectWithNoData(String normaltblTableName){
-        BaseTestCase.normaltblTableName = normaltblTableName;
     }
 
     @Before
@@ -46,7 +45,7 @@ public class SelectWithNoData extends BaseMatrixTestCase {
         String sql = "select name as xingming ,id as pid from  " + normaltblTableName + "  as nor where pk=?";
         List<Object> param = new ArrayList<Object>();
         param.add(pk);
-        String[] columnParam = { "xingming", "pid" };
+        String[] columnParam = {"xingming", "pid"};
         assertAlias(sql, columnParam, "nor", param);
     }
 
@@ -59,13 +58,13 @@ public class SelectWithNoData extends BaseMatrixTestCase {
         List<Object> param = new ArrayList<Object>();
         param.add(pk);
         param.add(id);
-        String[] columnParam = { "name", "pk", "id" };
+        String[] columnParam = {"name", "pk", "id"};
         selectContentSameAssert(sql, columnParam, param);
     }
 
     @Test
     public void conditionWithGreaterTest() throws Exception {
-        String[] columnParam = { "PK", "NAME", "ID" };
+        String[] columnParam = {"PK", "NAME", "ID"};
         String sql = "select * from " + normaltblTableName + " where pk>? order by pk";
         List<Object> param = new ArrayList<Object>();
         param.add(Long.parseLong(0 + ""));
@@ -80,14 +79,14 @@ public class SelectWithNoData extends BaseMatrixTestCase {
     @Test
     public void InTest() throws Exception {
         String sql = "select * from " + normaltblTableName + " where pk in (1,2,3)";
-        String[] columnParam = { "PK", "NAME" };
+        String[] columnParam = {"PK", "NAME"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
     @Test
     public void LikeAnyTest() throws Exception {
         String sql = "select * from " + normaltblTableName + " where name like 'zhuo%'";
-        String[] columnParam = { "ID", "NAME" };
+        String[] columnParam = {"ID", "NAME"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
 
         sql = "select * from " + normaltblTableName + " where name like '%uo%'";
@@ -102,14 +101,14 @@ public class SelectWithNoData extends BaseMatrixTestCase {
         String sql = "select * from " + normaltblTableName + " where name= ? order by id asc";
         List<Object> param = new ArrayList<Object>();
         param.add(name);
-        String[] columnParam = { "PK", "ID", "NAME" };
+        String[] columnParam = {"PK", "ID", "NAME"};
         selectOrderAssertNotKeyCloumn(sql, columnParam, param, "id");
     }
 
     @Test
     public void GroupByTest() throws Exception {
         String sql = "select count(pk) ,name as n from  " + normaltblTableName + "   group by n";
-        String[] columnParam = { "count(pk)", "n" };
+        String[] columnParam = {"count(pk)", "n"};
         selectOrderAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 
@@ -118,7 +117,7 @@ public class SelectWithNoData extends BaseMatrixTestCase {
         int start = 5;
         int limit = 6;
         String sql = "SELECT * FROM " + normaltblTableName + " order by pk LIMIT " + start + "," + limit;
-        String[] columnParam = { "name", "pk", "id" };
+        String[] columnParam = {"name", "pk", "id"};
         selectContentSameAssert(sql, columnParam, Collections.EMPTY_LIST);
     }
 

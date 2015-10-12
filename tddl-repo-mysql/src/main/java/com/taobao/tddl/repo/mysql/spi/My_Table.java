@@ -1,14 +1,5 @@
 package com.taobao.tddl.repo.mysql.spi;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.sql.DataSource;
-
 import com.taobao.tddl.common.exception.TddlException;
 import com.taobao.tddl.common.utils.logger.Logger;
 import com.taobao.tddl.common.utils.logger.LoggerFactory;
@@ -25,19 +16,27 @@ import com.taobao.tddl.optimizer.core.plan.query.IQuery;
 import com.taobao.tddl.repo.mysql.cursor.SchematicMyCursor;
 import com.taobao.tddl.repo.mysql.utils.MysqlRepoUtils;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
 public class My_Table implements ITable {
 
-    private static final Logger log      = LoggerFactory.getLogger(My_Table.class);
-    protected DataSource        ds;
-    protected TableMeta         schema;
-    protected String            groupNodeName;
+    private static final Logger log = LoggerFactory.getLogger(My_Table.class);
+    protected DataSource ds;
+    protected TableMeta schema;
+    protected String groupNodeName;
     protected IDataSourceGetter dsGetter = new DatasourceMySQLImplement();
     // 在插入或者更新的时候判断是否存在，如果存在则用insert否则update
-    protected CloneableRecord   tmpKey   = null;
+    protected CloneableRecord tmpKey = null;
     // 判断是否已经做过了查询
-    protected boolean           isSelect = false;
+    protected boolean isSelect = false;
 
-    public My_Table(DataSource ds, TableMeta schema, String groupNodeName){
+    public My_Table(DataSource ds, TableMeta schema, String groupNodeName) {
         this.ds = ds;
         this.schema = schema;
         this.groupNodeName = groupNodeName;
@@ -62,7 +61,7 @@ public class My_Table implements ITable {
 
     @Override
     public ISchematicCursor getCursor(ExecutionContext executionContext, IndexMeta indexName, IQuery executor)
-                                                                                                              throws TddlException {
+            throws TddlException {
         My_JdbcHandler jdbcHandler = MysqlRepoUtils.getJdbcHandler(this.dsGetter, executor, executionContext);
         ICursorMeta meta = ExecUtils.convertToICursorMeta(indexName);
         My_Cursor my_cursor = new My_Cursor(jdbcHandler, meta, executor, executor.isStreaming());
@@ -147,7 +146,7 @@ public class My_Table implements ITable {
 
     @Override
     public void delete(ExecutionContext executionContext, CloneableRecord key, IndexMeta indexMeta, String dbName)
-                                                                                                                  throws TddlException {
+            throws TddlException {
         StringBuilder delSb = new StringBuilder("delete from ");
         delSb.append(schema.getTableName()).append(" where ");
         if (key != null) {
@@ -218,7 +217,7 @@ public class My_Table implements ITable {
 
     @Override
     public ISchematicCursor getCursor(ExecutionContext executionContext, IndexMeta indexMeta, String indexMetaName)
-                                                                                                                   throws TddlException {
+            throws TddlException {
         throw new UnsupportedOperationException();
     }
 

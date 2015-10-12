@@ -1,10 +1,10 @@
 package com.taobao.tddl.common.utils.convertor;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  * @author jianghang 2011-6-21 下午09:46:42
@@ -228,11 +228,11 @@ public class CommonAndCommonTest {
         Assert.assertEquals(doubleValue, Double.valueOf((double) value));
 
         Object bigIntegerValue = helper.getConvertor(Boolean.class, BigInteger.class).convert(boolTest,
-            BigInteger.class);
+                BigInteger.class);
         Assert.assertEquals(bigIntegerValue, BigInteger.valueOf(value));
 
         Object bigDecimalValue = helper.getConvertor(Boolean.class, BigDecimal.class).convert(boolTest,
-            BigDecimal.class);
+                BigDecimal.class);
         Assert.assertEquals(bigDecimalValue, BigDecimal.valueOf(value));
 
         Object boolValue = helper.getConvertor(Boolean.class, boolean.class).convert(boolTest, boolean.class);
@@ -306,11 +306,11 @@ public class CommonAndCommonTest {
         Assert.assertEquals(doubleValue, Double.valueOf((double) value));
 
         Object bigIntegerValue = helper.getConvertor(Character.class, BigInteger.class)
-            .convert(value, BigInteger.class);
+                .convert(value, BigInteger.class);
         Assert.assertEquals(bigIntegerValue, BigInteger.valueOf(value));
 
         Object bigDecimalValue = helper.getConvertor(Character.class, BigDecimal.class)
-            .convert(value, BigDecimal.class);
+                .convert(value, BigDecimal.class);
         Assert.assertEquals(bigDecimalValue, BigDecimal.valueOf(value));
 
         Object boolValue = helper.getConvertor(Character.class, boolean.class).convert(value, boolean.class);
@@ -350,7 +350,7 @@ public class CommonAndCommonTest {
         Assert.assertNull(nullConvertor);// 相同类型，不需要转化
 
         Object bigDecimalValue = helper.getConvertor(BigInteger.class, BigDecimal.class).convert(oneValue,
-            BigDecimal.class);
+                BigDecimal.class);
         Assert.assertEquals(bigDecimalValue, BigDecimal.valueOf(value));
 
         Object boolValue = helper.getConvertor(BigInteger.class, boolean.class).convert(oneValue, boolean.class);
@@ -387,7 +387,7 @@ public class CommonAndCommonTest {
         Assert.assertEquals(doubleValue, Double.valueOf((double) value));
 
         Object bigIntegerValue = helper.getConvertor(BigDecimal.class, BigInteger.class).convert(oneValue,
-            BigInteger.class);
+                BigInteger.class);
         Assert.assertEquals(bigIntegerValue, BigInteger.valueOf(value));
 
         Convertor nullConvertor = helper.getConvertor(BigDecimal.class, BigDecimal.class);
@@ -448,7 +448,7 @@ public class CommonAndCommonTest {
         Assert.assertEquals(bigIntegerValue, BigInteger.valueOf(maxLong));
 
         Object bigDecimalValue = helper.getConvertor(Double.class, BigDecimal.class).convert(maxDouble,
-            BigDecimal.class);
+                BigDecimal.class);
         Assert.assertEquals(bigDecimalValue, BigDecimal.valueOf(maxDouble));
 
         try {

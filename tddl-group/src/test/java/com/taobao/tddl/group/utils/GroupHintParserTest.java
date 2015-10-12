@@ -1,9 +1,8 @@
 package com.taobao.tddl.group.utils;
 
+import com.taobao.tddl.group.config.GroupIndex;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.taobao.tddl.group.config.GroupIndex;
 
 public class GroupHintParserTest {
 
@@ -45,7 +44,7 @@ public class GroupHintParserTest {
             Assert.fail();
         } catch (Exception e) {
             Assert.assertEquals("the standard group hint is:'groupIndex:12[,failRetry:true]',current index hint is:failRetry:true",
-                e.getMessage());
+                    e.getMessage());
         }
     }
 
@@ -57,7 +56,7 @@ public class GroupHintParserTest {
             Assert.fail();
         } catch (Exception e) {
             Assert.assertEquals("the standard group hint is:'groupIndex:12[,failRetry:true]',current index hint is:groupIndexx:12",
-                e.getMessage());
+                    e.getMessage());
         }
     }
 }
