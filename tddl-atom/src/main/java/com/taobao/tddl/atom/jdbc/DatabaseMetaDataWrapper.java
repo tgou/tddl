@@ -738,6 +738,16 @@ public class DatabaseMetaDataWrapper implements DatabaseMetaData {
         return this.targetMetaData.getFunctionColumns(catalog, schemaPattern, functionNamePattern, columnNamePattern);
     }
 
+    @Override
+    public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
+        return this.targetMetaData.getPseudoColumns(catalog, schemaPattern, tableNamePattern, columnNamePattern);
+    }
+
+    @Override
+    public boolean generatedKeyAlwaysReturned() throws SQLException {
+        return this.targetMetaData.generatedKeyAlwaysReturned();
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T unwrap(Class<T> iface) throws SQLException {
         try {

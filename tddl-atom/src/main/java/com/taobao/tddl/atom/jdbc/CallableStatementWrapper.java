@@ -464,4 +464,14 @@ public class CallableStatementWrapper extends TPreparedStatementWrapper implemen
     public void setNClob(String parameterName, Reader reader) throws SQLException {
         ((CallableStatement) targetStatement).setNClob(parameterName, reader);
     }
+
+    @Override
+    public <T> T getObject(int parameterIndex, Class<T> type) throws SQLException {
+        return ((CallableStatement)this.targetStatement).getObject(parameterIndex, type);
+    }
+
+    @Override
+    public <T> T getObject(String parameterName, Class<T> type) throws SQLException {
+        return ((CallableStatement)this.targetStatement).getObject(parameterName, type);
+    }
 }

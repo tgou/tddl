@@ -12,6 +12,7 @@ import com.taobao.tddl.monitor.unit.UnitDeployProtect;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.Executor;
 
 /**
  * 相关的JDBC规范： 1.
@@ -680,6 +681,32 @@ public class TGroupConnection implements Connection {
 
     public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
         throw new SQLException("not support exception");
+    }
+
+    @Override
+    public void setSchema(String schema) throws SQLException {
+        this.wBaseConnection.setSchema(schema);
+    }
+
+    @Override
+    public String getSchema() throws SQLException {
+        return this.rBaseConnection.getSchema();
+    }
+
+    @Override
+    public void abort(Executor executor) throws SQLException {
+        this.wBaseConnection.abort(executor);
+    }
+
+    @Override
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+        this.wBaseConnection.setNetworkTimeout(executor, milliseconds);
+        this.rBaseConnection.setNetworkTimeout(executor, milliseconds);
+    }
+
+    @Override
+    public int getNetworkTimeout() throws SQLException {
+        return this.wBaseConnection.getNetworkTimeout();
     }
 
 }

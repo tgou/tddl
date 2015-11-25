@@ -323,6 +323,16 @@ public class MockStatement implements Statement {
         return false;
     }
 
+    @Override
+    public void closeOnCompletion() throws SQLException {
+
+    }
+
+    @Override
+    public boolean isCloseOnCompletion() throws SQLException {
+        return false;
+    }
+
     public void setPoolable(boolean poolable) throws SQLException {
     }
 

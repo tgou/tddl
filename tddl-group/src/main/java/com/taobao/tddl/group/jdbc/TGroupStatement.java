@@ -557,6 +557,16 @@ public class TGroupStatement implements TStatement {
         throw new SQLException("not support exception");
     }
 
+    @Override
+    public void closeOnCompletion() throws SQLException {
+        // TODO
+    }
+
+    @Override
+    public boolean isCloseOnCompletion() throws SQLException {
+        return true; // TODO
+    }
+
     public void setPoolable(boolean poolable) throws SQLException {
         throw new SQLException("not support exception");
     }

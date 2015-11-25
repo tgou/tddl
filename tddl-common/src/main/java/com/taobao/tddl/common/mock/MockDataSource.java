@@ -7,7 +7,9 @@ import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class MockDataSource implements DataSource, Cloneable {
 
@@ -277,6 +279,11 @@ public class MockDataSource implements DataSource, Cloneable {
 
     public int getLoginTimeout() throws SQLException {
         throw new NotSupportException("");
+    }
+
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return null;
     }
 
     public void setLoginTimeout(int seconds) throws SQLException {

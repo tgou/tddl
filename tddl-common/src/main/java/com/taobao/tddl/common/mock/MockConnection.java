@@ -6,6 +6,7 @@ import com.taobao.tddl.common.mock.MockDataSource.ExecuteInfo;
 import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 public class MockConnection implements Connection {
 
@@ -283,6 +284,31 @@ public class MockConnection implements Connection {
 
     public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
         return null;
+    }
+
+    @Override
+    public void setSchema(String schema) throws SQLException {
+
+    }
+
+    @Override
+    public String getSchema() throws SQLException {
+        return null;
+    }
+
+    @Override
+    public void abort(Executor executor) throws SQLException {
+
+    }
+
+    @Override
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+
+    }
+
+    @Override
+    public int getNetworkTimeout() throws SQLException {
+        return 0;
     }
 
     public int getCloseInvokingTimes() {

@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 
 public class HintExecuteTest {
 
-    @Test
+    //@Test TODO
     public void initTestWithConfigHolder() throws TddlException {
         MatrixConfigHolder configHolder = new MatrixConfigHolder();
         configHolder.setAppName("andor_show");

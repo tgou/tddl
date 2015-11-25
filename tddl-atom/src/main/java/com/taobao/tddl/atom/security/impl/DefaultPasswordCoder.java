@@ -1,6 +1,6 @@
-package com.taobao.tddl.atom.securety.impl;
+package com.taobao.tddl.atom.security.impl;
 
-import com.taobao.tddl.atom.securety.TPasswordCoder;
+import com.taobao.tddl.atom.security.TPasswordCoder;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

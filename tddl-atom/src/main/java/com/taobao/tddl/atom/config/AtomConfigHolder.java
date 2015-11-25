@@ -48,8 +48,8 @@ public class AtomConfigHolder extends AbstractConfigDataHolder {
                         + unitName + " ## AtomKey >> " + atomKey);
             }
             Properties globalProperties = TAtomConfParser.parserConfStr2Properties(globalValue);
-            String dbName = globalProperties.getProperty(TAtomConfParser.GLOBA_DB_NAME_KEY);
-            String dbType = globalProperties.getProperty(TAtomConfParser.GLOBA_DB_TYPE_KEY);
+            String dbName = globalProperties.getProperty(TAtomConfParser.GLOBAL_DB_NAME_KEY);
+            String dbType = globalProperties.getProperty(TAtomConfParser.GLOBAL_DB_TYPE_KEY);
 
             String appValue = appKeyResults.get(TAtomConstants.getAppDataId(appName, atomKey));
             if (StringUtils.isEmpty(appValue)) {

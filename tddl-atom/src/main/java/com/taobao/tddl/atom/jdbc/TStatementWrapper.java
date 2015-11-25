@@ -459,6 +459,16 @@ public class TStatementWrapper implements TStatement {
         return this.targetStatement.isPoolable();
     }
 
+    @Override
+    public void closeOnCompletion() throws SQLException {
+        this.targetStatement.closeOnCompletion();
+    }
+
+    @Override
+    public boolean isCloseOnCompletion() throws SQLException {
+        return this.targetStatement.isCloseOnCompletion();
+    }
+
     public void setPoolable(boolean poolable) throws SQLException {
         this.targetStatement.setPoolable(poolable);
     }

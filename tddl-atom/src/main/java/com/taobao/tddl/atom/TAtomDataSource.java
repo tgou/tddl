@@ -10,6 +10,7 @@ import com.taobao.tddl.common.utils.logger.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,4 +152,12 @@ public class TAtomDataSource extends AbstractTAtomDataSource {
         return this.dsConfHandle.getDataSource();
     }
 
+    @Override
+    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        try {
+            return getDataSource().getParentLogger();
+        } catch (SQLException e) {
+            return null;
+        }
+    }
 }

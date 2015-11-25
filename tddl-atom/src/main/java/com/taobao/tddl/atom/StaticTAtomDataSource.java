@@ -9,6 +9,7 @@ import com.taobao.tddl.common.utils.logger.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Map;
 
 /**
@@ -191,7 +192,7 @@ public class StaticTAtomDataSource extends AbstractTAtomDataSource {
 
     @Override
     public TAtomDbStatusEnum getDbStatus() {
-        return confDO.getDbStautsEnum();
+        return confDO.getDbStatusEnum();
     }
 
     @Override
@@ -201,5 +202,10 @@ public class StaticTAtomDataSource extends AbstractTAtomDataSource {
 
     public void setDbType(String dbType) {
         this.confDO.setDbType(dbType);
+    }
+
+    @Override
+    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return this.druidDataSource.getParentLogger();
     }
 }

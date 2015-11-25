@@ -21,13 +21,17 @@ import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 public class TDataSourceWrapper implements DataSource, SnapshotValuesOutputCallBack {
+
+    private static Log logger = LogFactory.getLog(TDataSourceWrapper.class);
 
     private static final Map<String, ExceptionSorter> exceptionSorters = new HashMap<String, ExceptionSorter>(2);
     static {
@@ -48,7 +52,7 @@ public class TDataSourceWrapper implements DataSource, SnapshotValuesOutputCallB
         }
         retryBadDbInterval = interval;
     }
-    private static Log logger = LogFactory.getLog(TDataSourceWrapper.class);
+
     /**
      * 当前线程的threadCount值,如果进行了切换。 那么使用的是不同的Datasource包装类，不会相互影响。
      * threadCount输出在切换过程中在那个时候不能反应准确的值。
@@ -389,6 +393,11 @@ public class TDataSourceWrapper implements DataSource, SnapshotValuesOutputCallB
     @Override
     public int getLoginTimeout() throws SQLException {
         return targetDataSource.getLoginTimeout();
+    }
+
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return targetDataSource.getParentLogger();
     }
 
     @Override

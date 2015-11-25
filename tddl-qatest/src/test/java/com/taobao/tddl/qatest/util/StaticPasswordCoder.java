@@ -1,6 +1,6 @@
 package com.taobao.tddl.qatest.util;
 
-import com.taobao.tddl.atom.securety.TPasswordCoder;
+import com.taobao.tddl.atom.security.TPasswordCoder;
 import com.taobao.tddl.common.utils.extension.Activate;
 
 import javax.crypto.BadPaddingException;

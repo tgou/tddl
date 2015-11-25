@@ -52,6 +52,7 @@ public class AtomConfigManager implements DbConfManager {
         return appConfigDataId;
     }
 
+    @Override
     public String getAppDbDbConf() {
         if (null != appDBHandler) {
             return appDBHandler.getData(ConfigDataHandler.GET_DATA_TIMEOUT,
@@ -61,6 +62,7 @@ public class AtomConfigManager implements DbConfManager {
         return null;
     }
 
+    @Override
     public String getGlobalDbConf() {
         if (null != globalHandler) {
             return globalHandler.getData(ConfigDataHandler.GET_DATA_TIMEOUT,
@@ -93,13 +95,15 @@ public class AtomConfigManager implements DbConfManager {
     /**
      * @param Listener
      */
-    public void registerGlobaDbConfListener(ConfigDataListener listener) {
+    @Override
+    public void registerGlobalDbConfListener(ConfigDataListener listener) {
         globalDbConfListener.add(listener);
     }
 
     /**
      * @param Listener
      */
+    @Override
     public void registerAppDbConfListener(ConfigDataListener listener) {
         appDbConfListener.add(listener);
     }

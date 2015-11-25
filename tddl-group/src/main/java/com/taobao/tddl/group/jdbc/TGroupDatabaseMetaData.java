@@ -169,6 +169,16 @@ public class TGroupDatabaseMetaData implements DatabaseMetaData {
         return getDatabaseMetaData().getFunctionColumns(catalog, schemaPattern, functionNamePattern, columnNamePattern);
     }
 
+    @Override
+    public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
+        return getDatabaseMetaData().getPseudoColumns(catalog, schemaPattern, tableNamePattern, columnNamePattern);
+    }
+
+    @Override
+    public boolean generatedKeyAlwaysReturned() throws SQLException {
+        return getDatabaseMetaData().generatedKeyAlwaysReturned();
+    }
+
     public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern) throws SQLException {
         return getDatabaseMetaData().getFunctions(catalog, schemaPattern, functionNamePattern);
     }

@@ -1386,6 +1386,16 @@ public class TResultSet implements ResultSet {
     }
 
     @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return this.getClass().isAssignableFrom(iface);
     }

@@ -14,9 +14,11 @@ import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 /**
  * matrix的jdbc datasource实现
@@ -221,6 +223,11 @@ public class TDataSource extends AbstractLifecycle implements DataSource {
     @Override
     public int getLoginTimeout() throws SQLException {
         throw new UnsupportedOperationException("getLoginTimeout");
+    }
+
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new UnsupportedOperationException("getParentLogger");
     }
 
     @Override

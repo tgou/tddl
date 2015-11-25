@@ -5,7 +5,7 @@ import com.taobao.tddl.matrix.jdbc.TDataSource;
 import com.taobao.tddl.qatest.util.DateUtil;
 import com.taobao.tddl.qatest.util.Validator;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -28,7 +28,7 @@ public class BaseTestCase extends Validator {
 
     // --------------公用变量
     protected static final long RANDOM_ID = Long.valueOf(RandomStringUtils.randomNumeric(8));
-    protected static final Logger logger = Logger.getLogger(BaseTestCase.class);
+    //protected static final Logger logger = Logger.getLogger(BaseTestCase.class);
     protected static final Properties properties = new Properties();
     // --------------公用表名
     protected static String normaltblTableName;

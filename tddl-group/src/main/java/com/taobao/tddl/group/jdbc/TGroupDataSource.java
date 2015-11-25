@@ -13,10 +13,12 @@ import com.taobao.tddl.monitor.Monitor;
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * TGroupDataSource并不是像名字所暗示的那样有一组DataSource，
@@ -110,7 +112,7 @@ public class TGroupDataSource implements DataSource {
     /**
      * 基于dbGroupKey、appName来初始化多个TAtomDataSource
      *
-     * @throws com.taobao.tddl.jdbc.group.exception.ConfigException
+     * @throws
      */
     public void init() {
         if (dsKeyAndWeightCommaArray != null) {
@@ -269,6 +271,11 @@ public class TGroupDataSource implements DataSource {
     @Override
     public int getLoginTimeout() throws SQLException {
         return seconds;
+    }
+
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return getCurrentTarget().getParentLogger();
     }
 
     @Override

@@ -341,6 +341,16 @@ public class TStatement implements Statement {
         throw new SQLException("not support exception");
     }
 
+    @Override
+    public void closeOnCompletion() throws SQLException {
+        // TODO
+    }
+
+    @Override
+    public boolean isCloseOnCompletion() throws SQLException {
+        return false;
+    }
+
     public void setPoolable(boolean poolable) throws SQLException {
         throw new SQLException("not support exception");
     }

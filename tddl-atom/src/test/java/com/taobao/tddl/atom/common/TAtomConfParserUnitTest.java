@@ -2,7 +2,7 @@ package com.taobao.tddl.atom.common;
 
 import com.taobao.tddl.atom.config.TAtomConfParser;
 import com.taobao.tddl.atom.config.TAtomDsConfDO;
-import com.taobao.tddl.atom.securety.impl.PasswordCoder;
+import com.taobao.tddl.atom.security.impl.PasswordCoder;
 import com.taobao.tddl.atom.utils.ConnRestrictEntry;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,11 +25,11 @@ public class TAtomConfParserUnitTest {
         String globaStr = PropLoadTestUtil.loadPropFile2String(globaFile);
         TAtomDsConfDO tAtomDsConfDO = TAtomConfParser.parserTAtomDsConfDO(globaStr, null);
         Properties prop = PropLoadTestUtil.loadPropFromFile(globaFile);
-        Assert.assertEquals(tAtomDsConfDO.getIp(), prop.get(TAtomConfParser.GLOBA_IP_KEY));
-        Assert.assertEquals(tAtomDsConfDO.getPort(), prop.get(TAtomConfParser.GLOBA_PORT_KEY));
-        Assert.assertEquals(tAtomDsConfDO.getDbName(), prop.get(TAtomConfParser.GLOBA_DB_NAME_KEY));
-        Assert.assertEquals(tAtomDsConfDO.getDbType(), prop.get(TAtomConfParser.GLOBA_DB_TYPE_KEY));
-        Assert.assertEquals(tAtomDsConfDO.getDbStatus(), prop.get(TAtomConfParser.GLOBA_DB_STATUS_KEY));
+        Assert.assertEquals(tAtomDsConfDO.getIp(), prop.get(TAtomConfParser.GLOBAL_IP_KEY));
+        Assert.assertEquals(tAtomDsConfDO.getPort(), prop.get(TAtomConfParser.GLOBAL_PORT_KEY));
+        Assert.assertEquals(tAtomDsConfDO.getDbName(), prop.get(TAtomConfParser.GLOBAL_DB_NAME_KEY));
+        Assert.assertEquals(tAtomDsConfDO.getDbType(), prop.get(TAtomConfParser.GLOBAL_DB_TYPE_KEY));
+        Assert.assertEquals(tAtomDsConfDO.getDbStatus(), prop.get(TAtomConfParser.GLOBAL_DB_STATUS_KEY));
     }
 
     @Test

@@ -29,7 +29,7 @@ public interface DbConfManager {
      *
      * @param Listener
      */
-    public void registerGlobaDbConfListener(ConfigDataListener Listener);
+    public void registerGlobalDbConfListener(ConfigDataListener Listener);
 
     /**
      * 注册应用配置监听

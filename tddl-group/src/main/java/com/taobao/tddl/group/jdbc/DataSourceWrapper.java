@@ -7,6 +7,8 @@ import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 /**
  * 一个线程安全的DataSource包装类 DataSource包装类，因为一个GroupDataSource由多个AtomDataSource组成，
@@ -130,6 +132,11 @@ public class DataSourceWrapper implements DataSource {
 
     public int getLoginTimeout() throws SQLException {
         return wrappedDataSource.getLoginTimeout();
+    }
+
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return wrappedDataSource.getParentLogger();
     }
 
     public void setLoginTimeout(int seconds) throws SQLException {

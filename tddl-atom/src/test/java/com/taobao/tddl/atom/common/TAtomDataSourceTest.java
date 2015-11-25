@@ -42,13 +42,13 @@ public class TAtomDataSourceTest extends BaseAtomTest {
     // AtomAlreadyInitException, Exception {
     // testChange(new ChangeTestConfig() {
     // public Properties doChange(Properties prop) {
-    // prop.setProperty(TAtomConfParser.GLOBA_IP_KEY, "127.0.0.1");
+    // prop.setProperty(TAtomConfParser.GLOBAL_IP_KEY, "127.0.0.1");
     // return prop;
     // }
     // }, new ChangeTestConfig() {
     // public Properties doChange(Properties prop) {
-    // prop.setProperty(TAtomConfParser.GLOBA_IP_KEY,
-    // prop.getProperty(TAtomConfParser.GLOBA_IP_KEY));
+    // prop.setProperty(TAtomConfParser.GLOBAL_IP_KEY,
+    // prop.getProperty(TAtomConfParser.GLOBAL_IP_KEY));
     // return prop;
     // }
     // }, "globa", "oracle", "testOracleChange_切换Ip");
@@ -59,13 +59,13 @@ public class TAtomDataSourceTest extends BaseAtomTest {
         testChange(new ChangeTestConfig() {
 
             public Properties doChange(Properties prop) {
-                prop.setProperty(TAtomConfParser.GLOBA_IP_KEY, "127.0.0.1");
+                prop.setProperty(TAtomConfParser.GLOBAL_IP_KEY, "127.0.0.1");
                 return prop;
             }
         }, new ChangeTestConfig() {
 
             public Properties doChange(Properties prop) {
-                prop.setProperty(TAtomConfParser.GLOBA_IP_KEY, prop.getProperty(TAtomConfParser.GLOBA_IP_KEY));
+                prop.setProperty(TAtomConfParser.GLOBAL_IP_KEY, prop.getProperty(TAtomConfParser.GLOBAL_IP_KEY));
                 return prop;
             }
         }, "globa", "mysql", "testMysqlChange_切换Ip");
@@ -76,13 +76,13 @@ public class TAtomDataSourceTest extends BaseAtomTest {
     // AtomAlreadyInitException, Exception {
     // testChange(new ChangeTestConfig() {
     // public Properties doChange(Properties prop) {
-    // prop.setProperty(TAtomConfParser.GLOBA_PORT_KEY, "1234");
+    // prop.setProperty(TAtomConfParser.GLOBAL_PORT_KEY, "1234");
     // return prop;
     // }
     // }, new ChangeTestConfig() {
     // public Properties doChange(Properties prop) {
-    // prop.setProperty(TAtomConfParser.GLOBA_PORT_KEY,
-    // prop.getProperty(TAtomConfParser.GLOBA_PORT_KEY));
+    // prop.setProperty(TAtomConfParser.GLOBAL_PORT_KEY,
+    // prop.getProperty(TAtomConfParser.GLOBAL_PORT_KEY));
     // return prop;
     // }
     // }, "globa", "oracle", "testOracleChange_切换Port");
@@ -93,13 +93,13 @@ public class TAtomDataSourceTest extends BaseAtomTest {
         testChange(new ChangeTestConfig() {
 
             public Properties doChange(Properties prop) {
-                prop.setProperty(TAtomConfParser.GLOBA_PORT_KEY, "1234");
+                prop.setProperty(TAtomConfParser.GLOBAL_PORT_KEY, "1234");
                 return prop;
             }
         }, new ChangeTestConfig() {
 
             public Properties doChange(Properties prop) {
-                prop.setProperty(TAtomConfParser.GLOBA_PORT_KEY, prop.getProperty(TAtomConfParser.GLOBA_PORT_KEY));
+                prop.setProperty(TAtomConfParser.GLOBAL_PORT_KEY, prop.getProperty(TAtomConfParser.GLOBAL_PORT_KEY));
                 return prop;
             }
         }, "globa", "mysql", "testMysqlChange_切换Port");
@@ -110,13 +110,13 @@ public class TAtomDataSourceTest extends BaseAtomTest {
     // AtomAlreadyInitException, Exception {
     // testChange(new ChangeTestConfig() {
     // public Properties doChange(Properties prop) {
-    // prop.setProperty(TAtomConfParser.GLOBA_DB_NAME_KEY, "test");
+    // prop.setProperty(TAtomConfParser.GLOBAL_DB_NAME_KEY, "test");
     // return prop;
     // }
     // }, new ChangeTestConfig() {
     // public Properties doChange(Properties prop) {
-    // String dbName = prop.getProperty(TAtomConfParser.GLOBA_DB_NAME_KEY);
-    // prop.setProperty(TAtomConfParser.GLOBA_DB_NAME_KEY, dbName);
+    // String dbName = prop.getProperty(TAtomConfParser.GLOBAL_DB_NAME_KEY);
+    // prop.setProperty(TAtomConfParser.GLOBAL_DB_NAME_KEY, dbName);
     // return prop;
     // }
     // }, "globa", "oracle", "testOracleChange_切换DbName");
@@ -127,14 +127,14 @@ public class TAtomDataSourceTest extends BaseAtomTest {
         testChange(new ChangeTestConfig() {
 
             public Properties doChange(Properties prop) {
-                prop.setProperty(TAtomConfParser.GLOBA_DB_NAME_KEY, "tddl_sample_x");
+                prop.setProperty(TAtomConfParser.GLOBAL_DB_NAME_KEY, "tddl_sample_x");
                 return prop;
             }
         }, new ChangeTestConfig() {
 
             public Properties doChange(Properties prop) {
-                String dbName = prop.getProperty(TAtomConfParser.GLOBA_DB_NAME_KEY);
-                prop.setProperty(TAtomConfParser.GLOBA_DB_NAME_KEY, dbName);
+                String dbName = prop.getProperty(TAtomConfParser.GLOBAL_DB_NAME_KEY);
+                prop.setProperty(TAtomConfParser.GLOBAL_DB_NAME_KEY, dbName);
                 return prop;
             }
         }, "globa", "mysql", "testMsqlChange_切换DbName");
@@ -198,7 +198,7 @@ public class TAtomDataSourceTest extends BaseAtomTest {
     // tAtomDataSource.setDbStatusListeners(dbStatusListeners);
     // Properties prop = PropLoadTestUtil.loadPropFromFile("conf/" + "oracle" +
     // "/globa.properties");
-    // prop.put(TAtomConfParser.GLOBA_DB_STATUS_KEY,
+    // prop.put(TAtomConfParser.GLOBAL_DB_STATUS_KEY,
     // DruidDbStatusEnum.NA_STATUS.getStatus());
     // MockServer.setConfigInfo(TAtomConstants.getGlobalDataId(dbKey),
     // PropLoadTestUtil.convertProp2Str(prop));

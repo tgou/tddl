@@ -1,4 +1,4 @@
-package com.taobao.tddl.atom.securety;
+package com.taobao.tddl.atom.security;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

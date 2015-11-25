@@ -15,7 +15,7 @@
             <properties>
                 <property name="com.taobao.tddl.atom.global.andor_show_group0_atom0">
                     <value>
-                        ip=10.232.31.21
+                        ip=127.0.0.1
                         port=3306
                         dbName=andor_show
                         dbType=mysql

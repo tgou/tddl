@@ -63,7 +63,7 @@ public class TAtomDsConfDO implements Cloneable {
 
     private TAtomDbTypeEnum dbTypeEnum;
 
-    private TAtomDbStatusEnum dbStautsEnum;
+    private TAtomDbStatusEnum dbStatusEnum;
 
     private String dbStatus;
 
@@ -239,12 +239,12 @@ public class TAtomDsConfDO implements Cloneable {
     public void setDbStatus(String dbStatus) {
         this.dbStatus = dbStatus;
         if (TStringUtil.isNotBlank(dbStatus)) {
-            this.dbStautsEnum = TAtomDbStatusEnum.getAtomDbStatusEnumByType(dbStatus);
+            this.dbStatusEnum = TAtomDbStatusEnum.getAtomDbStatusEnumByType(dbStatus);
         }
     }
 
-    public TAtomDbStatusEnum getDbStautsEnum() {
-        return dbStautsEnum;
+    public TAtomDbStatusEnum getDbStatusEnum() {
+        return dbStatusEnum;
     }
 
     public TAtomDbTypeEnum getDbTypeEnum() {

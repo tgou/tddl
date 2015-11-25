@@ -10,7 +10,7 @@ public class StaticTAtomDataSourceTest {
     @Test
     public void createStaticTAtomDataSource() throws Exception {
         StaticTAtomDataSource dataSource = new StaticTAtomDataSource();
-        dataSource.setIp("10.232.31.154");
+        dataSource.setIp("127.0.0.1");
         dataSource.setPort("3306");
         dataSource.setDbName("test");
         dataSource.setDbType("mysql");

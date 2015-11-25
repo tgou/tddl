@@ -24,7 +24,7 @@
             <properties>
                 <property name="com.taobao.tddl.atom.global.andor_mysql_group_0_atom0">
                     <value>
-                        ip=10.232.24.104
+                        ip=127.0.0.1
                         port=3306
                         dbName=andor_mysql_group_0_atom0
                         dbType=mysql
@@ -69,7 +69,7 @@
             <properties>
                 <property name="com.taobao.tddl.atom.global.andor_mysql_group_1_atom0">
                     <value>
-                        ip=10.232.24.104
+                        ip=127.0.0.1
                         port=3306
                         dbName=andor_mysql_group_1_atom0
                         dbType=mysql
@@ -113,7 +113,7 @@
             <properties>
                 <property name="com.taobao.tddl.atom.global.andor_mysql_group_2_atom0">
                     <value>
-                        ip=10.232.24.104
+                        ip=127.0.0.1
                         port=3306
                         dbName=andor_mysql_group_2_atom0
                         dbType=mysql
@@ -159,7 +159,7 @@
             <properties>
                 <property name="com.taobao.tddl.atom.global.andor_mysql_group_atom">
                     <value>
-                        ip=10.232.24.104
+                        ip=127.0.0.1
                         port=3306
                         dbName=andor_mysql_group_atom
                         dbType=mysql

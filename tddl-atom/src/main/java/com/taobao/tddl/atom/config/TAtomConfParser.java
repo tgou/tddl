@@ -1,6 +1,6 @@
 package com.taobao.tddl.atom.config;
 
-import com.taobao.tddl.atom.securety.impl.PasswordCoder;
+import com.taobao.tddl.atom.security.impl.PasswordCoder;
 import com.taobao.tddl.atom.utils.ConnRestrictEntry;
 import com.taobao.tddl.common.utils.TStringUtil;
 import com.taobao.tddl.common.utils.logger.Logger;
@@ -18,11 +18,11 @@ import java.util.*;
  */
 public class TAtomConfParser {
 
-    public static final String GLOBA_IP_KEY = "ip";
-    public static final String GLOBA_PORT_KEY = "port";
-    public static final String GLOBA_DB_NAME_KEY = "dbName";
-    public static final String GLOBA_DB_TYPE_KEY = "dbType";
-    public static final String GLOBA_DB_STATUS_KEY = "dbStatus";
+    public static final String GLOBAL_IP_KEY = "ip";
+    public static final String GLOBAL_PORT_KEY = "port";
+    public static final String GLOBAL_DB_NAME_KEY = "dbName";
+    public static final String GLOBAL_DB_TYPE_KEY = "dbType";
+    public static final String GLOBAL_DB_STATUS_KEY = "dbStatus";
     public static final String APP_USER_NAME_KEY = "userName";
     public static final String APP_INIT_POOL_SIZE_KEY = "initPoolSize";
     public static final String APP_PREFILL = "prefill";
@@ -64,23 +64,23 @@ public class TAtomConfParser {
         if (TStringUtil.isNotBlank(globaConfStr)) {
             Properties globaProp = TAtomConfParser.parserConfStr2Properties(globaConfStr);
             if (!globaProp.isEmpty()) {
-                String ip = TStringUtil.trim(globaProp.getProperty(TAtomConfParser.GLOBA_IP_KEY));
+                String ip = TStringUtil.trim(globaProp.getProperty(TAtomConfParser.GLOBAL_IP_KEY));
                 if (TStringUtil.isNotBlank(ip)) {
                     pasObj.setIp(ip);
                 }
-                String port = TStringUtil.trim(globaProp.getProperty(TAtomConfParser.GLOBA_PORT_KEY));
+                String port = TStringUtil.trim(globaProp.getProperty(TAtomConfParser.GLOBAL_PORT_KEY));
                 if (TStringUtil.isNotBlank(port)) {
                     pasObj.setPort(port);
                 }
-                String dbName = TStringUtil.trim(globaProp.getProperty(TAtomConfParser.GLOBA_DB_NAME_KEY));
+                String dbName = TStringUtil.trim(globaProp.getProperty(TAtomConfParser.GLOBAL_DB_NAME_KEY));
                 if (TStringUtil.isNotBlank(dbName)) {
                     pasObj.setDbName(dbName);
                 }
-                String dbType = TStringUtil.trim(globaProp.getProperty(TAtomConfParser.GLOBA_DB_TYPE_KEY));
+                String dbType = TStringUtil.trim(globaProp.getProperty(TAtomConfParser.GLOBAL_DB_TYPE_KEY));
                 if (TStringUtil.isNotBlank(dbType)) {
                     pasObj.setDbType(dbType);
                 }
-                String dbStatus = TStringUtil.trim(globaProp.getProperty(TAtomConfParser.GLOBA_DB_STATUS_KEY));
+                String dbStatus = TStringUtil.trim(globaProp.getProperty(TAtomConfParser.GLOBAL_DB_STATUS_KEY));
                 if (TStringUtil.isNotBlank(dbStatus)) {
                     pasObj.setDbStatus(dbStatus);
                 }

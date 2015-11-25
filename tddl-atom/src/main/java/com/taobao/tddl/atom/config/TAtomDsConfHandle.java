@@ -70,7 +70,7 @@ public class TAtomDsConfHandle {
     /**
      * 初始化标记为一但初始化过，所有本地的配置禁止改动
      */
-    private volatile boolean initFalg;
+    private volatile boolean initFlag;
     /**
      * Datasource 的包装类
      */
@@ -128,42 +128,42 @@ public class TAtomDsConfHandle {
             localDruidDataSource.setConnectProperties(connectionProperties);
             localDruidDataSource.setValidationQuery(TAtomConstants.DEFAULT_DRUID_ORACLE_VALIDATION_QUERY);
         } else if (TAtomDbTypeEnum.MYSQL == tAtomDsConfDO.getDbTypeEnum()) {
-            String conUlr = TAtomConURLTools.getMySqlConURL(tAtomDsConfDO.getIp(),
+            String conUrl = TAtomConURLTools.getMySqlConURL(tAtomDsConfDO.getIp(),
                     tAtomDsConfDO.getPort(),
                     tAtomDsConfDO.getDbName(),
                     tAtomDsConfDO.getConnectionProperties());
-            localDruidDataSource.setUrl(conUlr);
+            localDruidDataSource.setUrl(conUrl);
             // 如果可以找到mysqlDriver中的Valid就使用，否则不设置valid
-            String validConnnectionCheckerClassName = TAtomConstants.DEFAULT_DRUID_MYSQL_VALID_CONNECTION_CHECKERCLASS;
+            String validConnectionCheckerClassName = TAtomConstants.DEFAULT_DRUID_MYSQL_VALID_CONNECTION_CHECKERCLASS;
             try {
-                Class.forName(validConnnectionCheckerClassName);
-                localDruidDataSource.setValidConnectionCheckerClassName(validConnnectionCheckerClassName);
+                Class.forName(validConnectionCheckerClassName);
+                localDruidDataSource.setValidConnectionCheckerClassName(validConnectionCheckerClassName);
             } catch (ClassNotFoundException e) {
-                logger.warn("MYSQL Driver is Not Suport " + validConnnectionCheckerClassName);
+                logger.warn("MYSQL Driver is Not Suport " + validConnectionCheckerClassName);
             } catch (NoClassDefFoundError e) {
-                logger.warn("MYSQL Driver is Not Suport " + validConnnectionCheckerClassName);
+                logger.warn("MYSQL Driver is Not Suport " + validConnectionCheckerClassName);
             }
 
             // 如果可以找到mysqlDriver中的integrationSorter就使用否则使用默认的
-            String integrationSorterCalssName = TAtomConstants.DRUID_MYSQL_INTEGRATION_SORTER_CLASS;
-            String defaultIntegrationSorterCalssName = TAtomConstants.DEFAULT_DRUID_MYSQL_SORTER_CLASS;
+            String integrationSorterClassName = TAtomConstants.DRUID_MYSQL_INTEGRATION_SORTER_CLASS;
+            String defaultIntegrationSorterClassName = TAtomConstants.DEFAULT_DRUID_MYSQL_SORTER_CLASS;
             try {
-                Class integrationSorterCalss = Class.forName(integrationSorterCalssName);
-                if (null != integrationSorterCalss) {
-                    localDruidDataSource.setExceptionSorterClassName(integrationSorterCalssName);
+                Class integrationSorterClass = Class.forName(integrationSorterClassName);
+                if (null != integrationSorterClass) {
+                    localDruidDataSource.setExceptionSorterClassName(integrationSorterClassName);
                 } else {
-                    localDruidDataSource.setExceptionSorterClassName(defaultIntegrationSorterCalssName);
-                    logger.warn("MYSQL Driver is Not Suport " + integrationSorterCalssName + " use default sorter "
-                            + defaultIntegrationSorterCalssName);
+                    localDruidDataSource.setExceptionSorterClassName(defaultIntegrationSorterClassName);
+                    logger.warn("MYSQL Driver is Not Support " + integrationSorterClassName + " use default sorter "
+                            + defaultIntegrationSorterClassName);
                 }
             } catch (ClassNotFoundException e) {
-                logger.warn("MYSQL Driver is Not Suport " + integrationSorterCalssName + " use default sorter "
-                        + defaultIntegrationSorterCalssName);
-                localDruidDataSource.setExceptionSorterClassName(defaultIntegrationSorterCalssName);
+                logger.warn("MYSQL Driver is Not Support " + integrationSorterClassName + " use default sorter "
+                        + defaultIntegrationSorterClassName);
+                localDruidDataSource.setExceptionSorterClassName(defaultIntegrationSorterClassName);
             } catch (NoClassDefFoundError e) {
-                logger.warn("MYSQL Driver is Not Suport " + integrationSorterCalssName + " use default sorter "
-                        + defaultIntegrationSorterCalssName);
-                localDruidDataSource.setExceptionSorterClassName(defaultIntegrationSorterCalssName);
+                logger.warn("MYSQL Driver is Not Support " + integrationSorterClassName + " use default sorter "
+                        + defaultIntegrationSorterClassName);
+                localDruidDataSource.setExceptionSorterClassName(defaultIntegrationSorterClassName);
             }
             localDruidDataSource.setValidationQuery(TAtomConstants.DEFAULT_DRUID_MYSQL_VALIDATION_QUERY);
         }
@@ -241,7 +241,7 @@ public class TAtomDsConfHandle {
      * @throws Exception
      */
     public void init() throws Exception {
-        if (initFalg) {
+        if (initFlag) {
             throw new AtomAlreadyInitException("[AlreadyInit] double call Init !");
         }
         // 1.初始化参数检查
@@ -259,10 +259,10 @@ public class TAtomDsConfHandle {
         defaultDbConfManager.init(appName);
         dbConfManager = defaultDbConfManager;
         // 3.获取全局配置
-        String globaConfStr = dbConfManager.getGlobalDbConf();
+        String globalConfStr = dbConfManager.getGlobalDbConf();
         // 注册全局配置监听
-        registerGlobaDbConfListener(defaultDbConfManager);
-        if (TStringUtil.isBlank(globaConfStr)) {
+        registerGlobalDbConfListener(defaultDbConfManager);
+        if (TStringUtil.isBlank(globalConfStr)) {
             String errorMsg = "[ConfError] read globalConfig is Empty !";
             logger.error(errorMsg);
             throw new AtomInitialException(errorMsg);
@@ -279,7 +279,7 @@ public class TAtomDsConfHandle {
         lock.lock();
         try {
             // 5.解析配置string成TAtomDsConfDO
-            runTimeConf = TAtomConfParser.parserTAtomDsConfDO(globaConfStr, appConfStr);
+            runTimeConf = TAtomConfParser.parserTAtomDsConfDO(globalConfStr, appConfStr);
             // 6.处理本地优先配置
             overConfByLocal(localConf, runTimeConf);
             // 7.如果没有设置本地密码，则用订的密码，初始化passwdManager
@@ -327,7 +327,7 @@ public class TAtomDsConfHandle {
             // druidDataSource.getDataSourceStat().setMaxSqlSize(DruidDsConfHandle.druidStatMaxKeySize);
             this.druidDataSource = druidDataSource;
             clearDataSourceWrapper();
-            initFalg = true;
+            initFlag = true;
         } finally {
             lock.unlock();
         }
@@ -348,7 +348,7 @@ public class TAtomDsConfHandle {
     private void registerPasswdConfListener(DbPasswdManager dbPasswdManager) {
         dbPasswdManager.registerPasswdConfListener(new ConfigDataListener() {
 
-            public void onDataRecieved(String dataId, String data) {
+            public void onDataReceived(String dataId, String data) {
                 logger.warn("[Passwd HandleData] dataId : " + dataId + " data: " + data);
                 if (null == data || TStringUtil.isBlank(data)) {
                     return;
@@ -395,21 +395,21 @@ public class TAtomDsConfHandle {
     /**
      * 全局配置监听,全局配置发生变化， 需要重新FLUSH数据源
      *
-     * @param defaultDbConfManager
+     * @param dbConfManager
      */
-    private void registerGlobaDbConfListener(DbConfManager dbConfManager) {
-        dbConfManager.registerGlobaDbConfListener(new ConfigDataListener() {
+    private void registerGlobalDbConfListener(DbConfManager dbConfManager) {
+        dbConfManager.registerGlobalDbConfListener(new ConfigDataListener() {
 
-            public void onDataRecieved(String dataId, String data) {
-                logger.warn("[DRUID GlobaConf HandleData] dataId : " + dataId + " data: " + data);
+            public void onDataReceived(String dataId, String data) {
+                logger.warn("[DRUID GlobalConf HandleData] dataId : " + dataId + " data: " + data);
                 if (null == data || TStringUtil.isBlank(data)) {
                     return;
                 }
                 lock.lock();
                 try {
-                    String globaConfStr = data;
+                    String globalConfStr = data;
                     // 如果是全局配置发生变化，可能是IP,PORT,DBNAME,DBTYPE,STATUS
-                    TAtomDsConfDO tmpConf = TAtomConfParser.parserTAtomDsConfDO(globaConfStr, null);
+                    TAtomDsConfDO tmpConf = TAtomConfParser.parserTAtomDsConfDO(globalConfStr, null);
                     TAtomDsConfDO newConf = TAtomDsConfHandle.this.runTimeConf.clone();
                     // 是用推送的配置，覆盖当前的配置
                     newConf.setIp(tmpConf.getIp());
@@ -420,8 +420,8 @@ public class TAtomDsConfHandle {
                     // 处理本地优先配置
                     overConfByLocal(TAtomDsConfHandle.this.localConf, newConf);
                     // 如果推送过来的数据库状态是 RW/R->NA,直接销毁掉数据源，以下业务逻辑不做处理
-                    if (TAtomDbStatusEnum.NA_STATUS != TAtomDsConfHandle.this.runTimeConf.getDbStautsEnum()
-                            && TAtomDbStatusEnum.NA_STATUS == tmpConf.getDbStautsEnum()) {
+                    if (TAtomDbStatusEnum.NA_STATUS != TAtomDsConfHandle.this.runTimeConf.getDbStatusEnum()
+                            && TAtomDbStatusEnum.NA_STATUS == tmpConf.getDbStatusEnum()) {
                         try {
                             TAtomDsConfHandle.this.druidDataSource.close();
                             logger.warn("[DRUID NA STATUS PUSH] destroy DataSource !");
@@ -438,7 +438,7 @@ public class TAtomDsConfHandle {
                                             TAtomDsConfHandle.this.appName,
                                             TAtomDsConfHandle.this.dbKey));
                         } catch (Exception e1) {
-                            logger.error("[DRUID GlobaConfError] convertTAtomDsConf2DruidConf Error! dataId : "
+                            logger.error("[DRUID GlobalConfError] convertTAtomDsConf2DruidConf Error! dataId : "
                                     + dataId + " config : " + data);
                             return;
                         }
@@ -449,9 +449,9 @@ public class TAtomDsConfHandle {
                             return;
                         }
                         // 如果推送的状态时 NA->RW/R 时需要重新创建数据源，无需再刷新
-                        if (TAtomDsConfHandle.this.runTimeConf.getDbStautsEnum() == TAtomDbStatusEnum.NA_STATUS
-                                && (newConf.getDbStautsEnum() == TAtomDbStatusEnum.RW_STATUS
-                                || newConf.getDbStautsEnum() == TAtomDbStatusEnum.R_STATUS || newConf.getDbStautsEnum() == TAtomDbStatusEnum.W_STATUS)) {
+                        if (TAtomDsConfHandle.this.runTimeConf.getDbStatusEnum() == TAtomDbStatusEnum.NA_STATUS
+                                && (newConf.getDbStatusEnum() == TAtomDbStatusEnum.RW_STATUS
+                                || newConf.getDbStatusEnum() == TAtomDbStatusEnum.R_STATUS || newConf.getDbStatusEnum() == TAtomDbStatusEnum.W_STATUS)) {
                             // 创建数据源
                             try {
                                 // 关闭TB-DATASOURCE的JMX注册
@@ -487,13 +487,13 @@ public class TAtomDsConfHandle {
                                 }
                             } else {
                                 logger.warn("[DRUID Create GlobaConf Error]  global config is same!nothing will be done! the global config is:"
-                                        + globaConfStr);
+                                        + globalConfStr);
                             }
                         }
                     }
                     // 处理数据库状态监听器
-                    processDbStatusListener(TAtomDsConfHandle.this.runTimeConf.getDbStautsEnum(),
-                            newConf.getDbStautsEnum());
+                    processDbStatusListener(TAtomDsConfHandle.this.runTimeConf.getDbStatusEnum(),
+                            newConf.getDbStatusEnum());
                     // 是用新的配置覆盖运行时的配置
                     TAtomDsConfHandle.this.runTimeConf = newConf;
                     clearDataSourceWrapper();
@@ -529,12 +529,12 @@ public class TAtomDsConfHandle {
     /**
      * 应用配置监听，当应用配置发生变化时，区分发生 变化的配置，来决定具体是flush还是reCreate
      *
-     * @param defaultDbConfManager
+     * @param dbConfManager
      */
     private void registerAppDbConfListener(DbConfManager dbConfManager) {
         dbConfManager.registerAppDbConfListener(new ConfigDataListener() {
 
-            public void onDataRecieved(String dataId, String data) {
+            public void onDataReceived(String dataId, String data) {
                 logger.warn("[DRUID AppConf HandleData] dataId : " + dataId + " data: " + data);
                 if (null == data || TStringUtil.isBlank(data)) {
                     return;
@@ -739,7 +739,6 @@ public class TAtomDsConfHandle {
     /**
      * 是用本地配置覆盖传入的TAtomDsConfDO的属性
      *
-     * @param tAtomDsConfDO
      */
     private void overConfByLocal(TAtomDsConfDO localDsConfDO, TAtomDsConfDO newDsConfDO) {
         if (null == newDsConfDO || null == localDsConfDO) {
@@ -832,14 +831,14 @@ public class TAtomDsConfHandle {
     }
 
     public void setLocalPasswd(String passwd) throws AtomAlreadyInitException {
-        if (initFalg) {
+        if (initFlag) {
             throw new AtomAlreadyInitException("[AlreadyInit] couldn't Reset passwd !");
         }
         this.localConf.setPasswd(passwd);
     }
 
     public void setLocalConnectionProperties(Map<String, String> map) throws AtomAlreadyInitException {
-        if (initFalg) {
+        if (initFlag) {
             throw new AtomAlreadyInitException("[AlreadyInit] couldn't Reset connectionProperties !");
         }
         this.localConf.setConnectionProperties(map);
@@ -850,14 +849,14 @@ public class TAtomDsConfHandle {
     }
 
     public void setLocalDriverClass(String driverClass) throws AtomAlreadyInitException {
-        if (initFalg) {
+        if (initFlag) {
             throw new AtomAlreadyInitException("[AlreadyInit] couldn't Reset driverClass !");
         }
         this.localConf.setDriverClass(driverClass);
     }
 
     public void setLocalSorterClass(String sorterClass) throws AtomAlreadyInitException {
-        if (initFalg) {
+        if (initFlag) {
             throw new AtomAlreadyInitException("[AlreadyInit] couldn't Reset sorterClass !");
         }
         this.localConf.setSorterClass(sorterClass);
@@ -876,7 +875,7 @@ public class TAtomDsConfHandle {
     }
 
     public void setAppName(String appName) throws AtomAlreadyInitException {
-        if (initFalg) {
+        if (initFlag) {
             throw new AtomAlreadyInitException("[AlreadyInit] couldn't Reset appName !");
         }
         this.appName = appName;
@@ -887,14 +886,14 @@ public class TAtomDsConfHandle {
     }
 
     public void setDbKey(String dbKey) throws AtomAlreadyInitException {
-        if (initFalg) {
+        if (initFlag) {
             throw new AtomAlreadyInitException("[AlreadyInit] couldn't Reset dbKey !");
         }
         this.dbKey = dbKey;
     }
 
     public TAtomDbStatusEnum getStatus() {
-        return this.runTimeConf.getDbStautsEnum();
+        return this.runTimeConf.getDbStatusEnum();
     }
 
     public TAtomDbTypeEnum getDbType() {

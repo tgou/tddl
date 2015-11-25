@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -472,6 +473,31 @@ public class TConnection implements Connection {
     @Override
     public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
         throw new SQLException("not support exception");
+    }
+
+    @Override
+    public void setSchema(String schema) throws SQLException {
+        throw new SQLException("not support exception");
+    }
+
+    @Override
+    public String getSchema() throws SQLException {
+        throw new SQLException("not support exception");
+    }
+
+    @Override
+    public void abort(Executor executor) throws SQLException {
+        throw new SQLException("not support exception");
+    }
+
+    @Override
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+        throw new SQLException("not support exception");
+    }
+
+    @Override
+    public int getNetworkTimeout() throws SQLException {
+        return 0;
     }
 
     @Override

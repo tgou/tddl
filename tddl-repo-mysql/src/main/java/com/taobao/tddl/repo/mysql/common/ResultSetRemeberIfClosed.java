@@ -685,6 +685,16 @@ public class ResultSetRemeberIfClosed implements ResultSet {
         rs.updateNClob(columnLabel, reader);
     }
 
+    @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        return rs.getObject(columnIndex, type);
+    }
+
+    @Override
+    public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
+        return rs.getObject(columnLabel, type);
+    }
+
     public void updateNString(int columnIndex, String nString) throws SQLException {
         rs.updateNString(columnIndex, nString);
     }
