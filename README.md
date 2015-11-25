@@ -1,4 +1,4 @@
 tddl
 ====
 
-tddl use with diamond
+use tddl with diamond
