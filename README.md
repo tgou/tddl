@@ -1,6 +1,4 @@
 tddl
 ====
 
-just tddl
-
-jiechen add this message
+use tddl with diamond
