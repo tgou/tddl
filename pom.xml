@@ -308,18 +308,19 @@
      -->
 
     <distributionManagement>
-        <!-- use the following if you're not using a snapshot version. -->
+        <site>
+            <id>website</id>
+            <url>scp://webhost.company.com/www/website</url>
+        </site>
         <repository>
             <id>releases</id>
-            <name>taobao mirror</name>
-            <url>http://mvnrepo.taobao.ali.com/mvn/releases</url>
-            <!-- <url>http://mvnrepo.taobao.ali.com/mvn/repository</url> -->
+            <name>JP Releases</name>
+            <url>http://10.10.1.247:8081/nexus/content/repositories/releases/</url>
         </repository>
-        <!-- use the following if you ARE using a snapshot version. -->
         <snapshotRepository>
             <id>snapshots</id>
-            <name>taobao mirror snapshots</name>
-            <url>http://mvnrepo.taobao.ali.com/mvn/snapshots</url>
+            <name>JP Snapshots</name>
+            <url>http://10.10.1.247:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
